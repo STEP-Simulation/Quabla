@@ -22,6 +22,9 @@ public class InputParam {
 	//==========================================================================
 
 
+
+	double Ij = 0.8;
+
 	//moment of inertria [kg m^2]===============================================
 	public double Ij_pitch_0  = 1.2;  //[kg m^2] pitch moment of inertia  @take off
 	public double Ij_pitch_f  = 1.0;  //[kg m^2]pitch moment of inertia @engine cut off
