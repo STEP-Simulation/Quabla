@@ -51,28 +51,29 @@ public class Output_log {
 	 * @param 出力先のファイルパス
 	 * @throws IOException 指定されたファイルが存在するが通常ファイルではなくディレクトリである場合、存在せず作成もできない場合、またはなんらかの理由で開くことができない場合
 	 * */
-	public Output_log(String filepath,InputParam spec,double time_array[],double Pos_log[][], double Vel_log[][],double omega_log[][],double quat_log[][]) throws IOException {
+	public Output_log(String filepath,InputParam spec,int index_max,double time_array[],double Pos_log[][], double Vel_log[][],double omega_log[][],double quat_log[][]) throws IOException {
 		writer = new BufferedWriter(new FileWriter(filepath));
 		//dt = step;
 		this.spec = spec;
 		dt = this.spec.dt_output;
+		int length = index_max;
 
 
 
-		double Pos_X_ENU_log[] = new double[time_array.length];
-		double Pos_Y_ENU_log[] = new double[time_array.length];
-		double Pos_Z_ENU_log[] = new double[time_array.length];
-		double Vel_X_ENU_log[] = new double[time_array.length];
-		double Vel_Y_ENU_log[] = new double[time_array.length];
-		double Vel_Z_ENU_log[] = new double[time_array.length];
-		double p_Body_log[] = new double[time_array.length];
-		double q_Body_log[] = new double[time_array.length];
-		double r_Body_log[] = new double[time_array.length];
-		double quat0_log[] = new double[time_array.length];
-		double quat1_log[] = new double[time_array.length];
-		double quat2_log[] = new double[time_array.length];
-		double quat3_log[] = new double[time_array.length];
-		for(int i=0; i<time_array.length; i++) {
+		double Pos_X_ENU_log[] = new double[length];
+		double Pos_Y_ENU_log[] = new double[length];
+		double Pos_Z_ENU_log[] = new double[length];
+		double Vel_X_ENU_log[] = new double[length];
+		double Vel_Y_ENU_log[] = new double[length];
+		double Vel_Z_ENU_log[] = new double[length];
+		double p_Body_log[] = new double[length];
+		double q_Body_log[] = new double[length];
+		double r_Body_log[] = new double[length];
+		double quat0_log[] = new double[length];
+		double quat1_log[] = new double[length];
+		double quat2_log[] = new double[length];
+		double quat3_log[]= new double[length];
+		for(int i=0; i<length; i++) {
 			Pos_X_ENU_log[i] = Pos_log[i][0];
 			Pos_Y_ENU_log[i] = Pos_log[i][1];
 			Pos_Z_ENU_log[i] = Pos_log[i][2];
