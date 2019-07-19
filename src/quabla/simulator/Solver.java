@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import quabla.InputParam;
 import quabla.output.Output_log;
+import quabla.simulator.numerical_analysis.EditArray;
 
 public class Solver {
 
@@ -240,8 +241,11 @@ public class Solver {
 			 * をOutput_logに送る
 			 * それ以外のlogはOutput_log内で計算
 			 * */
+
+			time_array = EditArray.cut_array(index_landing_trajectory, time_array);
+
 			try {
-				output_log = new Output_log(spec.result_filepath+"trajectory_log_data.csv",spec,time_array,Pos_ENU_log,Vel_ENU_log,omega_Body_log,quat_log);
+				output_log = new Output_log(spec.result_filepath+"trajectory_log_data.csv",spec,index_landing_trajectory,time_array,Pos_ENU_log,Vel_ENU_log,omega_Body_log,quat_log);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
