@@ -188,6 +188,7 @@ public class Output_log {
 			for(int j=0;j<3;j++)
 				Vel_air_ENU[j] = Vel_ENU[j] - wind_ENU[j];
 			Vel_air_Body = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
+			Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 			if(Vel_air_abs <= 0.0) {
 				alpha = 0.0;
 				beta = 0.0;
@@ -202,7 +203,7 @@ public class Output_log {
 			side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
 
 			Lcp = aero.Lcp(Mach);
-			Fst = (Lcp - Lcg)/rocket.L;
+			Fst = (Lcp - Lcg)/rocket.L*100;
 
 			attitude = Coodinate.DCM2euler(DCM_ENU2Body);
 
