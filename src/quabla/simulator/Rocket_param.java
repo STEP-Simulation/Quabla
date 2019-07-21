@@ -37,7 +37,7 @@ public class Rocket_param {
 		//==geometory===================================================
 		this.L = spec.l;
 		this.d = spec.d;
-		this.S = 0.25 * Math.PI*Math.pow(d , 2);
+		this.S = 0.25 * Math.PI * Math.pow(d , 2);
 		this.upper_lug = spec.upper_lug;
 		this.lower_lug = spec.lower_lug;
 

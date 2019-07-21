@@ -160,7 +160,7 @@ public class Dynamics {
 		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 
 		double elevation = Coodinate.deg2rad(Coodinate.DCM2euler(DCM_ENU2Body)[2]);
-		double Z0 = (rocket.L-rocket.Lcg_0)*Math.sin(elevation);
+		double Z0 = (rocket.L-rocket.Lcg_0)*Math.sin(Math.abs(elevation));
 
 		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
 		double Vel_air_ENU[] = new double[3];
@@ -208,7 +208,7 @@ public class Dynamics {
 		double Acc_ENU[] = Coodinate.vec_trans(DCM_Body2ENU, Acc_Body);
 
 		//推力が自重に負けているとき(居座り)
-		if(Acc_ENU[2] <= 0.0 && t<rocket.t_burnout && Pos_ENU[2]<=Z0) {
+		if(Acc_ENU[2] <= 0.0 && t<rocket.t_burnout && altitude <= Z0) {
 			for(int i=0; i<3; i++) {
 				Acc_ENU[i] = 0.0;
 			}

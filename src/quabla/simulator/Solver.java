@@ -39,8 +39,10 @@ public class Solver {
 		this.wind = new Wind(spec);
 
 		//Initial attitude
-		this.azimuth0 = ((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec) * Math.PI / 180.0;//[rad]
-		this.elevation0 = spec.elevation_launcher * Math.PI / 180.0;//[rad]
+		//this.azimuth0 = ((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec) * Math.PI / 180.0;//[rad]
+		this.azimuth0 = Coodinate.deg2rad((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec);
+		//this.elevation0 = spec.elevation_launcher * Math.PI / 180.0;//[rad]
+		this.elevation0 = Coodinate.deg2rad( spec.elevation_launcher);
 		if (elevation0 > 0.0)
 			elevation0 *= -1.0;
 		this.roll0 = Math.PI;//[rad]
@@ -199,6 +201,7 @@ public class Solver {
 
 
 
+		//index = index_apogee;
 		index_parachute = index_apogee;
 		//parachute===============================
 		for(int i=0; ; i++) {

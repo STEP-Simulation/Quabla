@@ -19,7 +19,7 @@ public class Output_log {
 	private BufferedWriter writer;
 	private String firstline = "time [s],x_ENU [m],y_ENU [m],z_ENU [m],Vel_x_ENU [m/s],Vel_y_ENU [m/s],Vel_z_ENU [m/s],"
 			+ "p [rad/s],q [rad/s],r [rad/s], m [kg],alttitude [m],downrange [m],Vel_air_abs [m/s],Mach [-],"
-			+ "alpha [deg],beta[deg],azimuth [deg],elevation [deg],roll [deg],Lcg [m],Lcp [m],Fst [-],dynamics_pressure[Pa],"
+			+ "alpha [deg],beta[deg],azimuth [deg],elevation [deg],roll [deg],Lcg [m],Lcp [m],Fst [-],dynamics_pressure[kPa],"
 			+ "drag [N],nomal [N],side [N],thrust [N], Force_x_Body[N],Force_y_Body[N],Force_z_Body[N],"
 			+ "Acc_x_ENU[m/s2],Acc_y_ENU[m/s2],Acc_z_ENU[m/s2],Acc_x_Body [m/s2],Acc_y_Body [m/s2],Acc_z_Body [m/s2],"
 			+ "Acc_abs [m/s2]";
@@ -34,7 +34,7 @@ public class Output_log {
 	private String format = "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
 			+ "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
 			+ "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
-			+ "%f,%f,%f,%f,%f,%f";
+			+ "%f,%f,%f,%f,%f,%f,%f,%f";
 
 	private double dt;
 	//private double landing_time;
@@ -193,8 +193,8 @@ public class Output_log {
 				alpha = 0.0;
 				beta = 0.0;
 			}else {
-				alpha = Coodinate.rad2deg(Math.asin(Vel_air_Body[2]/Vel_air_abs));
-				beta = Coodinate.rad2deg(Math.asin(Vel_air_Body[1]/Vel_air_abs));
+				alpha =Math.asin(Vel_air_Body[2]/Vel_air_abs);
+				beta = Math.asin(Vel_air_Body[1]/Vel_air_abs);
 			}
 			Mach = Vel_air_abs / env.soundspeed(altitude);
 			dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
@@ -235,8 +235,8 @@ public class Output_log {
 
 			try {
 				output_line(t, Pos_ENU, Vel_ENU,
-						omega_Body,m,altitude,downrange,Vel_air_abs, Mach, alpha, beta, attitude,
-						 Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust, Force,Acc_ENU,Acc_Body, Acc_abs);
+						omega_Body,m,altitude,downrange,Vel_air_abs, Mach, Coodinate.rad2deg(alpha), Coodinate.rad2deg(beta), attitude,
+						 Lcg, Lcp, Fst, dynamics_pressure*Math.pow(10, -3), drag, nomal, side, thrust, Force,Acc_ENU,Acc_Body, Acc_abs);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
@@ -271,7 +271,7 @@ public class Output_log {
 	 * @param Lcg 重心位置[-] 1
 	 * @param Lcp 圧力中心位置[m] 1
 	 * @param Fst 全長安定比[-] 1
-	 * @param dynamics_pressure 動圧[Pa] 1
+	 * @param dynamics_pressure 動圧[kPa] 1
 	 * @param drag 抗力[N] 1
 	 * @param nomal 法線力[N] 1
 	 * @param side 横力[N] 1

@@ -11,8 +11,8 @@ public class InputParam {
 	public double lcgf = 1.430;  //center of gravity @engine-cut-off
 	public double lcgp = 1.992;  //center of gravity of fuel & N2
 	public double d    = 0.120;  //outer diameter
-	public double upper_lug = 0.6;//[m] from nose
-	public double lower_lug = 0.8;//[m] from nose
+	public double upper_lug = 0.79;//[m] from nose
+	public double lower_lug = 2.35;//[m] from nose
 	//==========================================================================
 
 
@@ -24,8 +24,8 @@ public class InputParam {
 
 
 	//moment of inertria [kg m^2]===============================================
-	public double Ij_pitch_0  = 1.2;  //[kg m^2] pitch moment of inertia  @take off
-	public double Ij_pitch_f  = 1.0;  //[kg m^2]pitch moment of inertia @engine cut off
+	public double Ij_pitch_0  = 3.47;  //[kg m^2] pitch moment of inertia  @take off
+	public double Ij_pitch_f  = 3.288;  //[kg m^2]pitch moment of inertia @engine cut off
 	public double Ij_roll_0  = 0.5 ;   //[kg m^2]roll moment of inertia @lift off
 	public double Ij_roll_f  =0.4 ;   //[kg m^2] roll moment of inertia @ engine cut off
 	/*
@@ -43,7 +43,7 @@ public class InputParam {
 	public String Cd_file;
 	public String CNa_file;
 	public double Lcp = 1.771 ;//[m] center of pressure
-	public double Cd  = 0.55;    //[-] drag coefficient @zero lift
+	public double Cd  = 0.6;    //[-] drag coefficient @zero lift
 	public double CNa = 10.0;    //[1/rad] nomal force coefficient
 	public double Cmq = -3.00;   //[1/rad] pitch & yaw aero damping moment coefficient
 	public double Clp = -0.10;   //[1/rad] roll aero damping moment coefficient
@@ -64,7 +64,7 @@ public class InputParam {
 
 
 	//launcher==================================================================
-	public double elevation_launcher = 75.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
+	public double elevation_launcher = 77.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
 	public double azimuth_launcher   = 290.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
 	public double length_Launcher     = 5.0;       //[m]length of launcher
 	public double magnetic_dec       = 8.9;      //[deg] magnetic declination
