@@ -8,7 +8,8 @@ public class Wind {
 	double wind_data[][] ;
 	Interpolation speed_analy, direction_analy;
 	boolean Wind_file_exist;
-	double wind_speed, Zr, wind_azimuth,Cdv;
+	private double wind_speed, Zr, wind_azimuth,Cdv;
+	private static double magnetic_dec;
 
 	//分散の時の風向,風速をどう変えるか
 	//風の情報関連をいつセットするか
@@ -23,6 +24,7 @@ public class Wind {
 		this.Zr = spec.Zr;
 		this.wind_azimuth = spec.wind_azimuth ;
 		this.Cdv = spec.Cdv;
+		magnetic_dec = spec.magnetic_dec;
 
 		if(spec.Wind_file_exsit) {
 			wind_data = Getcsv.get3ColumnArray(spec.wind_file);
@@ -61,6 +63,8 @@ public class Wind {
 			direction = wind_azimuth;
 		}
 
+
+		//return Coodinate.deg2rad(direction);//radで返す
 		return direction;
 	}
 
@@ -78,8 +82,7 @@ public class Wind {
 		//todo 磁気偏角
 
 		//-をつけて風向からの風になる
-
-		wind_azimuth_ENU = (- direction + 90.0) * Math.PI /180.0;
+		wind_azimuth_ENU = Coodinate.deg2rad(- direction + 90.0 + magnetic_dec);
 		wind_ENU[0] = - speed * Math.cos(wind_azimuth_ENU);
 		wind_ENU[1] = - speed * Math.sin(wind_azimuth_ENU);
 		wind_ENU[2] = 0.0;

@@ -39,9 +39,7 @@ public class Solver {
 		this.wind = new Wind(spec);
 
 		//Initial attitude
-		//this.azimuth0 = ((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec) * Math.PI / 180.0;//[rad]
 		this.azimuth0 = Coodinate.deg2rad((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec);
-		//this.elevation0 = spec.elevation_launcher * Math.PI / 180.0;//[rad]
 		this.elevation0 = Coodinate.deg2rad( spec.elevation_launcher);
 		if (elevation0 > 0.0)
 			elevation0 *= -1.0;
@@ -55,7 +53,6 @@ public class Solver {
 		double X0_ENU , Y0_ENU , Z0_ENU;
 		double x[] = new double[19];
 		double dx[] = new double[19];
-		//double Pos0_ENU[] = new double[3];
 		double quat0[] = new double[4];
 		double altitude ;
 		double distance_Body_roll,distance_lower_lug;
@@ -77,7 +74,7 @@ public class Solver {
 			dx[i] = 0.0;
 		}
 
-		//InputParam spec = new InputParam();
+
 		Environment env = new Environment(spec.temperture0);
 		Rocket_param rocket = new Rocket_param(spec);
 		Aero_param aero = new Aero_param(spec);
@@ -215,7 +212,7 @@ public class Solver {
 
 			altitude = x[2];
 			for(int j=0; j<3; j++) {
-				Pos_ENU_parachute_log[index][j] = x[j];
+				Pos_ENU_parachute_log[index_parachute][j] = x[j];
 			}
 
 			//着地判定
@@ -254,6 +251,8 @@ public class Solver {
 			}
 			System.out.println("Vel_launchclear = "+ Vel_launchclear);
 			System.out.println("time_launchclear = "+time_launchclear);
+			System.out.println("trajectory landing:"+Pos_ENU_landing_trajectory[0]
+					+","+Pos_ENU_landing_trajectory[1]);
 			System.out.println("max alttitude = "+alt_apogee);
 			System.out.println("t_apogee = "+time_apogee );
 

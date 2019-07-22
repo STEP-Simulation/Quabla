@@ -2,8 +2,8 @@ package quabla.simulator;
 
 public class Environment {
 
-	double temperture0;
-	private double Re = 6378.137 * Math.pow(10, 3);
+	private double temperture0;
+	private double Re = 6378.137 * Math.pow(10, 3);//地球の半径
 
 	/*
 	 * U.S. standard atomosuphere,1976
@@ -13,8 +13,6 @@ public class Environment {
 
 	public Environment(double temperture0){
 		this.temperture0 = temperture0;
-
-
 	}
 
 	private double geopotential_altitude(double altitude) {
@@ -44,11 +42,10 @@ public class Environment {
 
 	public double temperture(double altitude) {
 		double temperture ;
-		//double gamma = 0.0065;
+
 		double geo_alt = geopotential_altitude(altitude);
 
 		temperture = temperture0 - 0.0065 * geo_alt;
-
 
 		return temperture;
 	}
@@ -56,9 +53,8 @@ public class Environment {
 	public double soundspeed(double altitude ) {
 		double Cs; //[m/s] sound speed
 
-//		Cs = 331.5 + 0.61*temperture(altitude);
 		Cs = 20.0468 * Math.sqrt(temperture(altitude) + 237.15);
-		//Cs = Math.sqrt(1.4 * 287.1 *);
+
 
 		return Cs;
 	}
@@ -66,10 +62,8 @@ public class Environment {
 	public double gravity(double altitude) {
 		double gravity;
 		double g0 = 9.80665;
-		//double R_earth = 6378.137 * Math.pow(10, 3) ; //地球の半径
 
 		gravity = g0 * Math.pow(Re / (Re + altitude) , 2);
-		//gravity = g0;
 
 		return gravity;
 	}

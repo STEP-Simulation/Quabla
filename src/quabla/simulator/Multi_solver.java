@@ -30,7 +30,7 @@ public class Multi_solver {
 		for(int i = 0; i < speed_num; i++) {
 			spec.wind_speed = speed_min + i * speed_step;
 			for(int j =0; j <= angle_num; j++) {
-				spec.wind_azimuth = 2.0 * Math.PI * j / angle_num;
+				spec.wind_azimuth = 360.0 * j / angle_num;
 
 				//solverのインスタンスの生成
 				Solver single_solver = new Solver(spec,false);//Multi_solverでは各フライトでのlogは保存しない
@@ -49,18 +49,19 @@ public class Multi_solver {
 		}
 
 		Output_wind_map trajectory = new Output_wind_map();
-		Output_wind_map parachute = new Output_wind_map();
-
 		try {
 			trajectory.output(spec.result_filepath + "trajectory"+spec.elevation_launcher+"[deg].csv",wind_map_trajectory);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
+		Output_wind_map parachute = new Output_wind_map();
 		try {
-			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",wind_map_trajectory);
+			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",wind_map_parachute);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+
 
 	}
 

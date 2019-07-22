@@ -5,21 +5,18 @@ import quabla.simulator.numerical_analysis.Interpolation;
 
 public class Aero_param {
 
-	double Lcp_const;
-	double Cd_const, CNa_const;
-	double Lcp_data[][],Cd_data[][],CNa_data[][];
-	//double
+	private double Lcp_const;
+	private double Cd_const, CNa_const;
 	Interpolation Lcp_analy,Cd_analy,CNa_analy;
-	double Lcp_length;
-	double Clp,Cmq,Cnr;
-	boolean Lcp_file_exist,Cd_file_exist,CNa_file_exist;
+	double Clp,Cmq,Cnr;//インスタンス変数
+	private boolean Lcp_file_exist,Cd_file_exist,CNa_file_exist;
 
 
 	public Aero_param(InputParam spec){
 
 
 		if(spec.Lcp_file_exist) {
-			this.Lcp_data = Getcsv.get2ColumnArray(spec.Lcp_file);
+			double[][] Lcp_data = Getcsv.get2ColumnArray(spec.Lcp_file);
 			double Mach_array[] = new double[Lcp_data.length];
 			double Lcp_array[] = new double[Lcp_data.length];
 			for(int i = 0; i < Lcp_data.length ; i++) {
@@ -28,12 +25,12 @@ public class Aero_param {
 			}
 			this.Lcp_analy = new Interpolation(Mach_array , Lcp_array);//Mach_array,Lcp_arrayってインスタンス変数にする必要ある？
 		}else {
-			this.Lcp_const = spec.Lcp;
+			Lcp_const = spec.Lcp;
 		}
 
 
 		if(spec.Cd_file_exist) {
-			this.Cd_data = Getcsv.get2ColumnArray(spec.Cd_file);
+			double[][] Cd_data = Getcsv.get2ColumnArray(spec.Cd_file);
 			double Mach_array[] = new double[Cd_data.length];
 			double Cd_array[] = new double[Cd_data.length];
 			for(int i = 0 ; i < Cd_data.length ; i++) {
@@ -47,7 +44,7 @@ public class Aero_param {
 
 
 		if(spec.CNa_file_exist) {
-			this.CNa_data = Getcsv.get2ColumnArray(spec.CNa_file);
+			double[][] CNa_data = Getcsv.get2ColumnArray(spec.CNa_file);
 			double Mach_array[] = new double[CNa_data.length];
 			double CNa_array[] = new double[CNa_data.length];
 			for(int i = 0; i < CNa_data.length ; i++) {
@@ -60,9 +57,9 @@ public class Aero_param {
 		}
 
 
-		this.Lcp_file_exist = spec.Lcp_file_exist;
-		this.Cd_file_exist = spec.Cd_file_exist;
-		this.CNa_file_exist = spec.CNa_file_exist;
+		Lcp_file_exist = spec.Lcp_file_exist;
+		Cd_file_exist = spec.Cd_file_exist;
+		CNa_file_exist = spec.CNa_file_exist;
 
 
 		this.Clp = spec.Clp;

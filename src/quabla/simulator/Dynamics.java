@@ -26,6 +26,7 @@ public class Dynamics {
 		//Translation coodinate
 		double DCM_ENU2Body[][] = Coodinate.quat2DCM_ENU2Body(quat);
 		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
+		//double Vel_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_ENU);
 
 		//alpha(angle of attck), beta(side-slip angle)
 		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
@@ -37,7 +38,7 @@ public class Dynamics {
 		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
 		double Vel_air_abs = Math.sqrt(Vel_air_Body[0]*Vel_air_Body[0] + Vel_air_Body[1]*Vel_air_Body[1] + Vel_air_Body[2]*Vel_air_Body[2]);
 
-		double u = Vel_air_Body[0];
+		//double u = Vel_air_Body[0];
 		double v = Vel_air_Body[1];
 		double w = Vel_air_Body[2];
 
@@ -76,14 +77,23 @@ public class Dynamics {
 		double side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
 		double F_aero[] = {- drag , - side , - nomal};
 
+		/*
+		double F_coriolis[] = new double[3];
+		F_coriolis[0] = r*Vel_Body[1] - q*Vel_Body[2];
+		F_coriolis[1] = p*Vel_Body[2] - r*Vel_Body[0];
+		F_coriolis[2] = q*Vel_Body[0] - p*Vel_Body[1];
+		 */
 		//Newton Equation
 		double Force[] = new double[3];
 		for(int i=0; i<3; i++) {
-			Force[i] = thrust[i] + F_aero[i];
+			Force[i] = (thrust[i] + F_aero[i])/m ;
 		}
-		double Acc_ENU[] = Coodinate.vec_trans(DCM_Body2ENU, Force);
+		Force = Coodinate.vec_trans(DCM_Body2ENU, Force);
+
+
+		double Acc_ENU[] = new double[3];
 		for(int i=0; i<3; i++) {
-			Acc_ENU[i] =Acc_ENU[i]/m +  g[i];
+			Acc_ENU[i] = Force[i] +  g[i];
 		}
 
 		//center of gravity
@@ -99,11 +109,12 @@ public class Dynamics {
 		double Ij_dot[] = rocket.Ij_dot(t);
 
 		double moment_aero[] = {0.0, F_aero[2]*(Lcp - Lcg), -F_aero[1]*(Lcp - Lcg)};
+
 		//Aero Dumping Moment
 		double moment_aero_dump[] = new double[3];
 		moment_aero_dump[0] = dynamics_pressure * aero.Clp * rocket.S *(0.5*Math.pow(rocket.d, 2)/Vel_air_abs);
 		moment_aero_dump[1] = dynamics_pressure * aero.Cmq * rocket.S *(0.5*Math.pow(rocket.L, 2)/Vel_air_abs);
-		moment_aero_dump[0] = dynamics_pressure * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/Vel_air_abs);
+		moment_aero_dump[2] = dynamics_pressure * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/Vel_air_abs);
 
 		//Jet Dumping Moment
 		double moment_jet_dump[] = new double[3];
@@ -118,9 +129,9 @@ public class Dynamics {
 
 
 		double k1[] = Acc_anguler(t,p,q,r,Ij,moment_aero,moment_dumping);
-		double k2[] = Acc_anguler(t+0.5*h,p+0.5*h*k1[0],q+0.5*h*k1[1],r+0.5*h*k1[2],Ij,moment_aero,moment_dumping);
-		double k3[] = Acc_anguler(t+0.5*h,p+0.5*h*k2[0],q+0.5*h*k2[1],r+0.5*h*k2[2],Ij,moment_aero,moment_dumping);
-		double k4[] = Acc_anguler(t+h,p+h*k3[0],q+h*k3[1],r+h*k3[2],Ij,moment_aero,moment_dumping);
+		double k2[] = Acc_anguler(t+0.5*h, p+0.5*h*k1[0], q+0.5*h*k1[1], r+0.5*h*k1[2], Ij,moment_aero,moment_dumping);
+		double k3[] = Acc_anguler(t+0.5*h, p+0.5*h*k2[0], q+0.5*h*k2[1], r+0.5*h*k2[2], Ij,moment_aero,moment_dumping);
+		double k4[] = Acc_anguler(t+h, p+h*k3[0], q+h*k3[1], r+h*k3[2], Ij,moment_aero,moment_dumping);
 
 		double omegadot[] = new double[3];
 		for(int i=0; i<3; i++) {
@@ -262,12 +273,15 @@ public class Dynamics {
 
 	}
 
+	//RK4で計算するために関数にしてる
 	public static double[] Acc_anguler(double t, double p,double q,double r,double Ij[],double moment_aero[], double moment_dumping[]) {
 		double omegadot[] = new double[3];
 
 		omegadot[0] = ((Ij[1]-Ij[2])*q*r + moment_aero[0] + moment_dumping[0]*p) / Ij[0];
 		omegadot[1] = ((Ij[2]-Ij[0])*p*r + moment_aero[1] + moment_dumping[1]*q) / Ij[1];
 		omegadot[2] = ((Ij[0]-Ij[1])*p*q + moment_aero[2] + moment_dumping[2]*r) / Ij[2];
+
+
 		return omegadot;
 	}
 

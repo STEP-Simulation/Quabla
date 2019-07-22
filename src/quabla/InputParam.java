@@ -5,18 +5,31 @@ public class InputParam {
 	//======================↓input information↓=================================
 
 
-	//length [m]================================================================
-	public double l    = 2.406;   //total length
-	public double lcg0 = 1.487;  //center of grabity @take-off
-	public double lcgf = 1.430;  //center of gravity @engine-cut-off
-	public double lcgp = 1.992;  //center of gravity of fuel & N2
-	public double d    = 0.120;  //outer diameter
-	public double upper_lug = 0.79;//[m] from nose
-	public double lower_lug = 2.35;//[m] from nose
+	//Length [m]================================================================
+	/**Total Length*/
+	public double l    = 2.406;//[m]
+
+	/**Center of gravity @ take-off*/
+	public double lcg0 = 1.487;//[m]
+
+	/**Center of Gravity @ engine-cut-off*/
+	public double lcgf = 1.430;//[m]
+
+	/**Center of Gravity of Propellant*/
+	public double lcgp = 1.992;  //[m]
+
+	/**Outer Diameter*/
+	public double d    = 0.120;  //[m]
+	/**Upper Launch Lug from Nosecone*/
+
+	public double upper_lug = 0.79;//[m]
+
+	/**Lower Launch Lug from Nosecone*/
+	public double lower_lug = 2.35;//[m]
 	//==========================================================================
 
 
-	//weight [kg]===============================================================
+	//Weight [kg]===============================================================
 	public double m0  = 6.514;   //weight @lift-off
 	public double mf  = 5.708;   //weight @ engnine-cut-off
 	//==========================================================================
@@ -42,32 +55,37 @@ public class InputParam {
 	public String Lcp_file;
 	public String Cd_file;
 	public String CNa_file;
-	public double Lcp = 1.771 ;//[m] center of pressure
-	public double Cd  = 0.6;    //[-] drag coefficient @zero lift
-	public double CNa = 10.0;    //[1/rad] nomal force coefficient
-	public double Cmq = -3.00;   //[1/rad] pitch & yaw aero damping moment coefficient
-	public double Clp = -0.10;   //[1/rad] roll aero damping moment coefficient
+	/**Constant Center of Pressure*/
+	public double Lcp = 1.771 ;//[m]
+	/**Constant Coefficient of Drag*/
+	public double Cd  = 0.6;    //[-]
+	/**Constant Coefficient of Nomal Force*/
+	public double CNa = 10.0;    //[1/rad]
+	/**Coefficient of Aero Dumping Moment in Pitch and Yaw*/
+	public double Cmq = -3.00;   //[1/rad]
+	/**Coefficient of Aero Dumping Moment in Roll*/
+	public double Clp = -0.10;   //[1/rad]
 	//==========================================================================
 
 
 
-	//falling velicity of parachute=============================================
-	public double CdS1 = 0.2;     //[m/s] falling velocity of 1st parachute
+	//Parachute=============================================
+	public double CdS1 = 0.5;     //[m/s] falling velocity of 1st parachute
 	public boolean para2_exist = false;
 											/**
 											 * true : using 2 parachutes
 											 * false : using only a parachute
 											 *  */
-	public double CdS2   = 12.0;   //[m/s] velocity after 2nd para open (falling 1st and 2nd para)
+	public double CdS2   = 0.482;   //[m/s] velocity after 2nd para open (falling 1st and 2nd para)
 	public double alt_para2 = 200.0;  //[m]altitude of 2nd para open
 	//==========================================================================
 
 
 	//launcher==================================================================
-	public double elevation_launcher = 77.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
+	public double elevation_launcher = 85.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
 	public double azimuth_launcher   = 290.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
 	public double length_Launcher     = 5.0;       //[m]length of launcher
-	public double magnetic_dec       = 8.9;      //[deg] magnetic declination
+	public double magnetic_dec       = 0.0;      //[deg] magnetic declination
 	//==========================================================================
 
 
@@ -83,17 +101,14 @@ public class InputParam {
 	public boolean Wind_file_exsit = false; // true or false
 	public String wind_file;
 	public int WindModel   = 1;  // wind model
-									/**
-									 * select wind model
-									 * 1: power model (べき法則)
-									 * 2: uniformity  (定常風)
-									 * */
+
 	public double Cdv      = 6.0;   //coefficient []
 									/**
 									 * coefficient [-]
 									 * in case of WindModel = 1
 									 * */
-	public double wind_azimuth =  160.0;
+
+	public double wind_azimuth =  360.0;
 									/** [deg]azimuth of wind
 									 * 0 deg : from west to east
 									 * 270 deg: from north to south
@@ -109,11 +124,14 @@ public class InputParam {
 	public double speed_min = 1.0; //[m/s]minimun wind speed
 	public double speed_step = 1.0; //[m/s]風速の刻み幅
 	public int speed_num = 8;   //何風速分計算したいか
-	public int angle_num = 8; //何風向分知りたいか
-								//基本,4の倍数で
+	public int angle_num = 8;
+	 							/*何風向分知りたいか
+	 							 * 基本4の倍数で入力
+	 							 * **/
 	//=========================================
 
 	//simulation================================================================
+	public int Mode = 1;
 	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
 	public double dt_output = 0.01;//[s]logデータの時間ステップ
