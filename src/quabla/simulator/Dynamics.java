@@ -28,7 +28,7 @@ public class Dynamics {
 		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 		//double Vel_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_ENU);
 
-		//alpha(angle of attck), beta(side-slip angle)
+		//wind , Vel_air
 		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
 		double Vel_air_ENU[] = new double[3];
 
@@ -36,12 +36,13 @@ public class Dynamics {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
 		}
 		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
-		double Vel_air_abs = Math.sqrt(Vel_air_Body[0]*Vel_air_Body[0] + Vel_air_Body[1]*Vel_air_Body[1] + Vel_air_Body[2]*Vel_air_Body[2]);
+		double Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 
 		//double u = Vel_air_Body[0];
 		double v = Vel_air_Body[1];
 		double w = Vel_air_Body[2];
 
+		//alpha , beta
 		double alpha , beta; //angle of atack , angle of side-slip
 		if(Vel_air_abs <= 0.0) {
 			alpha = 0.0;
@@ -51,6 +52,7 @@ public class Dynamics {
 			beta = Math.asin(v / Vel_air_abs);
 		}
 
+		//Environment
 		double g[] = {0.0 , 0.0 , -env.gravity(altitude)};
 		double P0 = env.atomospheric_pressure(0);
 		double P = env.atomospheric_pressure(altitude);
@@ -59,6 +61,7 @@ public class Dynamics {
 		double Mach = Vel_air_abs / Cs;
 		double dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
 
+		//Thrust
 		double thrust[] = {rocket.thrust(t), 0.0, 0.0};
 		if(thrust[0] <= 0.0) {
 			thrust[0] = 0.0;
@@ -91,13 +94,13 @@ public class Dynamics {
 		}
 		Force = Coodinate.vec_trans(DCM_Body2ENU, Force);
 
-
+		//Accelaration
 		double Acc_ENU[] = new double[3];
 		for(int i=0; i<3; i++) {
 			Acc_ENU[i] = Force[i] +  g[i];
 		}
 
-		//center of gravity
+		//Center of Gravity , Pressure
 		double Lcg = rocket.Lcg(t);
 		double Lcg_p = rocket.Lcg_prop;
 		double Lcp = aero.Lcp(Mach);
@@ -109,6 +112,7 @@ public class Dynamics {
 
 		double Ij_dot[] = rocket.Ij_dot(t);
 
+		//Aero Moment
 		double moment_aero[] = {0.0, F_aero[2]*(Lcp - Lcg), -F_aero[1]*(Lcp - Lcg)};
 
 		//Aero Dumping Moment
@@ -128,28 +132,29 @@ public class Dynamics {
 			moment_dumping[i] = moment_aero_dump[i] + moment_jet_dump[i];
 		}
 
-
+		//RK4
 		double k1[] = Acc_anguler(t,p,q,r,Ij,moment_aero,moment_dumping);
 		double k2[] = Acc_anguler(t+0.5*h, p+0.5*h*k1[0], q+0.5*h*k1[1], r+0.5*h*k1[2], Ij,moment_aero,moment_dumping);
 		double k3[] = Acc_anguler(t+0.5*h, p+0.5*h*k2[0], q+0.5*h*k2[1], r+0.5*h*k2[2], Ij,moment_aero,moment_dumping);
 		double k4[] = Acc_anguler(t+h, p+h*k3[0], q+h*k3[1], r+h*k3[2], Ij,moment_aero,moment_dumping);
-
 		double omegadot[] = new double[3];
 		for(int i=0; i<3; i++) {
 			omegadot[i] = (k1[i] + 2.0*k2[i] + 2.0*k3[i] + k4[i]) / 6.0;
 		}
+
+		//Kinematics Equation
 		double tensor[][] = Coodinate.Omega_tensor(p, q, r);
 		double quatdot[] = Coodinate.vec_trans(tensor, quat);
 		for(int i=0; i<4;i++)
 			quatdot[i] *= 0.5;
 
 		for(int i=0; i<3; i++) {
-			dx[i] = Vel_ENU[i];//Pos_ENU
-			dx[3+i] = Acc_ENU[i];//Vel_ENU
-			dx[6+i] = omegadot[i];//omega_Body
+			dx[i] = Vel_ENU[i];    //Pos_ENU
+			dx[3+i] = Acc_ENU[i];  //Vel_ENU
+			dx[6+i] = omegadot[i]; //omega_Body
 		}
 		for(int i=0; i<4; i++)
-			dx[9+i] = quatdot[i];//quat
+			dx[9+i] = quatdot[i];  //quat
 
 		return dx;
 	}
@@ -163,25 +168,23 @@ public class Dynamics {
 
 		double m = rocket.mass(t);
 
-		double Vel_air_abs;
-
-		//Tronsition coodinate
+		//Tronsition Coodinate
 		double DCM_ENU2Body[][] = Coodinate.quat2DCM_ENU2Body(quat0);
 		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 
 		double elevation = Coodinate.deg2rad(Coodinate.DCM2euler(DCM_ENU2Body)[2]);
 		double Z0 = (rocket.L-rocket.Lcg_0)*Math.sin(Math.abs(elevation));
 
+		//Wind, Vel_air
 		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
 		double Vel_air_ENU[] = new double[3];
 		for(int i = 0; i<3; i++) {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
 		}
-
 		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
+		double Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 
-		Vel_air_abs = Math.sqrt(Vel_air_Body[0]*Vel_air_Body[0] + Vel_air_Body[1]*Vel_air_Body[1] + Vel_air_Body[2]*Vel_air_Body[2]);
-
+		//Environment
 		double g[] = {0.0 , 0.0 , -env.gravity(altitude)};
 		double P0 = env.atomospheric_pressure(0);
 		double P = env.atomospheric_pressure(altitude);
@@ -190,7 +193,7 @@ public class Dynamics {
 		double Mach = Vel_air_abs / Cs;
 		double dynamic_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
 
-		//thrust
+		//Thrust
 		double thrust[] = {rocket.thrust(t) , 0.0 , 0.0};
 		if(thrust[0] <= 0.0) {
 			for(int i = 0; i<3; i++) {
@@ -203,16 +206,17 @@ public class Dynamics {
 			thrust[2] = 0.0;
 		}
 
-		//Aero force
+		//Aero Force
 		double drag = dynamic_pressure * rocket.S * aero.Cd(Mach);
 		double F_aero[] = { -drag , 0.0 , 0.0};
 
-		//Newton equation
+		//Newton Equation
 		double Force[] =  new double[3];
 		for(int i = 0; i<3 ; i++) {
 			Force[i] = thrust[i] + F_aero[i];
 		}
 
+		//Accelaration
 		double Acc_Body[] = {Force[0] / m + Math.abs(g[2])*Math.sin(elevation) , 0.0 , 0.0};
 		double Acc_ENU[] = Coodinate.vec_trans(DCM_Body2ENU, Acc_Body);
 
@@ -235,7 +239,7 @@ public class Dynamics {
 	}
 
 
-	//編集中
+	//実装中
 	public static double[] tip_off_dynamics(double[] x, double t, Rocket_param rocket, Environment env,Aero_param aero, Wind wind,double launcher_rail) {
 		double dx[] = new double[19];
 
@@ -265,7 +269,7 @@ public class Dynamics {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
 		}
 		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
-		double Vel_air_abs = Math.sqrt(Vel_air_Body[0]*Vel_air_Body[0] + Vel_air_Body[1]*Vel_air_Body[1] + Vel_air_Body[2]*Vel_air_Body[2]);
+		double Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 
 		//double u = Vel_air_Body[0];
 		double v = Vel_air_Body[1];
@@ -318,9 +322,11 @@ public class Dynamics {
 		double altitude = Pos_ENU[2];
 		double Vel_descent = x[3];
 
+		//Wind , Velocity
 		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
 		double Vel_ENU[] = {wind_ENU[0], wind_ENU[1], Vel_descent};
 
+		//Environment
 		double g = env.gravity(altitude);
 		double rho = env.density_air(altitude);
 
