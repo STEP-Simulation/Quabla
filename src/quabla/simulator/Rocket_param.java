@@ -27,6 +27,7 @@ public class Rocket_param {
 	double thrust_data[][];
 	Interpolation thrust_analy;
 	double t_burnout;
+	double launcher_rail;
 
 
 
@@ -42,7 +43,7 @@ public class Rocket_param {
 		this.lower_lug = spec.lower_lug;
 
 		this.dth = spec.dth * Math.pow(10, -3);// [mm] => [m]
-		this.eps = spec.eps;
+		this.eps = spec.eps;	//
 		this.Ath = 0.25 * Math.PI * Math.pow(dth, 2);
 		this.Ae = Ath * eps;
 		this.de = Math.sqrt(Ae * 4 / Math.PI);
@@ -87,22 +88,19 @@ public class Rocket_param {
 
 		this.dt = spec.dt;
 
-
+		//thrust=========================================================
 		this.thrust_data = Getcsv.get2ColumnArray(spec.thrustcurve);
-
 		this.t_burnout = thrust_data.length * dt ;
-
 		double time_array[] = new double[thrust_data.length];
 		double thrust_array[] = new double[thrust_data.length];
-
 		for(int i = 0; i < thrust_data.length ; i++) {
 			time_array[i] = thrust_data[i][0];
 			thrust_array[i] = thrust_data[i][1];
 		}
-
 		this.thrust_analy = new Interpolation(time_array , thrust_array);
+		//===============================================================
 
-
+		this.launcher_rail = spec.length_Launcher;
 
 	}
 
