@@ -18,9 +18,9 @@ public class Interpolation {
 
 
 		//xが取得データの範囲外の場合,最大値及び最小値をyの値とする
-		if( x < x_array[0] ) {
+		if( x <= x_array[0] ) {
 			y = y_array[0] ;
-		}else if(x > x_array[length-1] ) {
+		}else if(x >= x_array[length-1] ) {
 			y = y_array[length-1];
 		}else {
 
