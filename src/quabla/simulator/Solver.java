@@ -26,7 +26,6 @@ public class Solver {
 
 	InputParam spec;
 	boolean single;
-	//Wind wind;
 	double azimuth0 , elevation0 , roll0;
 	double Pos_ENU_landing_trajectory[] = new double[2];
 	double Pos_ENU_landing_parachute[] = new double[2];
@@ -34,9 +33,6 @@ public class Solver {
 	public Solver(InputParam spec, boolean single) {
 		this.spec = spec;
 		this.single = single;
-
-		//wind
-		//this.wind = new Wind(spec);
 
 		//Initial attitude
 		this.azimuth0 = Coodinate.deg2rad((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec);
@@ -197,7 +193,7 @@ public class Solver {
 
 
 
-		index = index_apogee;
+		index = index_apogee;//indexの更新
 		//parachute===============================
 		for( ; ; ) {
 			t = index * rocket.dt;
