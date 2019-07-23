@@ -12,14 +12,16 @@ public class QUABLA {
 		//System.out.println(Simulation);
 		System.out.println("Running Solver...");
 
-		//single condition
+
 		InputParam spec = new InputParam();
 		switch(spec.Mode) {
-			case 1:
+		//single condition
+		case 1:
 				Solver solver = new Solver(spec,true);
 				solver.solve_dynamics();
 				break;
-			case 2:
+
+		case 2: //multiple condition
 				Multi_solver multi_solver = new Multi_solver(spec);
 				multi_solver.solve_multi();
 				break;
@@ -27,7 +29,6 @@ public class QUABLA {
 
 		System.out.println("Completed!!");
 
-		//multiple condition
 	}
 
 }
