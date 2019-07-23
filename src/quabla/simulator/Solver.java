@@ -26,7 +26,7 @@ public class Solver {
 
 	InputParam spec;
 	boolean single;
-	Wind wind;
+	//Wind wind;
 	double azimuth0 , elevation0 , roll0;
 	double Pos_ENU_landing_trajectory[] = new double[2];
 	double Pos_ENU_landing_parachute[] = new double[2];
@@ -36,7 +36,7 @@ public class Solver {
 		this.single = single;
 
 		//wind
-		this.wind = new Wind(spec);
+		//this.wind = new Wind(spec);
 
 		//Initial attitude
 		this.azimuth0 = Coodinate.deg2rad((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec);
@@ -56,14 +56,13 @@ public class Solver {
 		double quat0[] = new double[4];
 		double altitude ;
 		double distance_Body_roll,distance_lower_lug;
-		int index = 0,index_parachute;
+		int index = 0;
 		int index_launchclear,index_apogee=0,index_landing_trajectory,index_landing_parachute;
 		double time_launchclear, time_apogee = 0.0,time_landing_trajectory,time_landing_parachute;
 		double Vel_launchclear, alt_apogee=0.0;
 		double time_array[] = new double[spec.n] ;
 		double Pos_ENU_log[][] = new double[spec.n][3];
 		double Vel_ENU_log[][] = new double[spec.n][3];
-		//double Vel_Body_log[][] = new double[spec.n][3];
 		double omega_Body_log[][] = new double[spec.n][3];
 		double quat_log[][] = new double[spec.n][4];
 		double Pos_ENU_parachute_log[][] = new double[spec.n][3];
@@ -78,6 +77,7 @@ public class Solver {
 		Environment env = new Environment(spec.temperture0);
 		Rocket_param rocket = new Rocket_param(spec);
 		Aero_param aero = new Aero_param(spec);
+		Wind wind = new Wind(spec);
 
 
 		//initial position
@@ -95,7 +95,7 @@ public class Solver {
 		for(int i = 0; i < 12 ; i++) {
 			x[i] = X0[i];
 		}
-		for(int i = 0; ; i++) {
+		for(;;) {
 			t = index * spec.dt;
 
 			dx = Dynamics.on_luncher(x, t, rocket, env, aero , wind , quat0);
@@ -131,7 +131,6 @@ public class Solver {
 
 		for(int i=0; i<19; i++) {
 			x[i] = 0.0;
-			//dx[i] = 0.0;
 		}
 		//trajectoryにPos_ENU,Vel_ENU,omega_Body,quatを渡す
 		for(int i=0; i<3; i++) {
@@ -145,7 +144,7 @@ public class Solver {
 
 
 		//trajectory==================================
-		for(int i=0; ; i++) {
+		for(;;) {
 			t = index * rocket.dt;
 
 			dx = Dynamics.trajectory(x, t, rocket, env, aero, wind);
@@ -183,13 +182,12 @@ public class Solver {
 		}
 		for(int i=0; i<2; i++)
 			Pos_ENU_landing_trajectory[i] = Pos_ENU_log[index_landing_trajectory][i];
-
+		//=========================================
 
 
 		altitude = 0.0;
 		for(int i=0; i<19; i++) {
 			x[i] = 0.0;
-			//dx[i] = 0.0;
 		}
 		//parachuteにPos_ENU,Vel_descentを渡す
 		for(int i=0; i<3; i++)
@@ -198,11 +196,11 @@ public class Solver {
 
 
 
-		//index = index_apogee;
-		index_parachute = index_apogee;
+
+		index = index_apogee;
 		//parachute===============================
-		for(int i=0; ; i++) {
-			t = index_parachute * rocket.dt;
+		for( ; ; ) {
+			t = index * rocket.dt;
 
 			dx = Dynamics.parachute(x, t, rocket, env, wind);
 			for(int j=0; j<4; j++)
@@ -212,19 +210,20 @@ public class Solver {
 
 			altitude = x[2];
 			for(int j=0; j<3; j++) {
-				Pos_ENU_parachute_log[index_parachute][j] = x[j];
+				Pos_ENU_parachute_log[index][j] = x[j];
 			}
 
 			//着地判定
 			if(t > rocket.t_burnout && altitude <= 0.0) {
 				time_landing_parachute = t;
-				index_landing_parachute = index_parachute;
+				index_landing_parachute = index;
 				break;
 			}
-			index_parachute ++;
+			index ++;
 		}
 		for(int i=0; i<2; i++)
 			Pos_ENU_landing_parachute[i] = Pos_ENU_parachute_log[index_landing_parachute][i];
+		//========================================
 
 
 		//結果の出力
@@ -249,12 +248,15 @@ public class Solver {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			System.out.println("Vel_launchclear = "+ Vel_launchclear);
-			System.out.println("time_launchclear = "+time_launchclear);
+			System.out.println("Vel_launchclear = "+ Vel_launchclear+"[m/s]");
+			System.out.println("time_launchclear = "+time_launchclear+"[s]");
 			System.out.println("trajectory landing:"+Pos_ENU_landing_trajectory[0]
 					+","+Pos_ENU_landing_trajectory[1]);
 			System.out.println("max alttitude = "+alt_apogee);
 			System.out.println("t_apogee = "+time_apogee );
+			System.out.println("time landing parachute = "+time_landing_parachute+"[s]");
+			//ToDo .txtで出力を行う
+			//ToDo マッハ数、動圧、Max-Qの時間を出力できるようにする
 
 			try {
 				output_log.outputFirstLine();
