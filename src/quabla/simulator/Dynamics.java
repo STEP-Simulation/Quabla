@@ -83,6 +83,7 @@ public class Dynamics {
 		F_coriolis[1] = p*Vel_Body[2] - r*Vel_Body[0];
 		F_coriolis[2] = q*Vel_Body[0] - p*Vel_Body[1];
 		 */
+
 		//Newton Equation
 		double Force[] = new double[3];
 		for(int i=0; i<3; i++) {
@@ -162,8 +163,6 @@ public class Dynamics {
 
 		double m = rocket.mass(t);
 
-
-
 		double Vel_air_abs;
 
 		//Tronsition coodinate
@@ -190,7 +189,6 @@ public class Dynamics {
 		double Cs = env.soundspeed(altitude);
 		double Mach = Vel_air_abs / Cs;
 		double dynamic_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
-
 
 		//thrust
 		double thrust[] = {rocket.thrust(t) , 0.0 , 0.0};
@@ -236,11 +234,82 @@ public class Dynamics {
 		return dx;
 	}
 
-	/*
-	public static double[] tip_off() {
 
+	//編集中
+	public static double[] tip_off_dynamics(double[] x, double t, Rocket_param rocket, Environment env,Aero_param aero, Wind wind,double launcher_rail) {
+		double dx[] = new double[19];
+
+		double Pos_ENU[] = {x[0] , x[1] , x[2]};
+		double altitude = Pos_ENU[2];
+		double distance_Body = x[3];
+		double Vel_ENU[] = {x[6] , x[7] , x[8]};
+		double Vel_Body[] = {x[9] , x[10] , x[11]};
+		double omega_Body[] = {x[12], x[13] , x[14]};
+		double quat[] = {x[15] , x[16] , x[17] , x[18]};
+
+		double m = rocket.mass(t);
+		double m_dot = rocket.mdot(t);
+		double p = omega_Body[0];
+		double q = omega_Body[1];
+		double r = omega_Body[2];
+		quat = Coodinate.quat_nomalization(quat);
+
+		//Tronsition coodinate
+		double DCM_ENU2Body[][] = Coodinate.quat2DCM_ENU2Body(quat);
+		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
+
+		//Vel_air
+		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
+		double Vel_air_ENU[] = new double[3];
+		for(int i = 0; i<3; i++) {
+			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
+		}
+		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
+		double Vel_air_abs = Math.sqrt(Vel_air_Body[0]*Vel_air_Body[0] + Vel_air_Body[1]*Vel_air_Body[1] + Vel_air_Body[2]*Vel_air_Body[2]);
+
+		//double u = Vel_air_Body[0];
+		double v = Vel_air_Body[1];
+		double w = Vel_air_Body[2];
+
+		//alpha , beta
+		double alpha , beta; //angle of atack , angle of side-slip
+		if(Vel_air_abs <= 0.0) {
+			alpha = 0.0;
+			beta = 0.0;
+		}else {
+			alpha = Math.asin(w / Vel_air_abs);
+			beta = Math.asin(v / Vel_air_abs);
+		}
+
+		double g[] = {0.0 , 0.0 , -env.gravity(altitude)};
+		double P0 = env.atomospheric_pressure(0);
+		double P = env.atomospheric_pressure(altitude);
+		double rho = env.density_air(altitude);
+		double Cs = env.soundspeed(altitude);
+		double Mach = Vel_air_abs / Cs;
+		double dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
+
+		double thrust[] = {rocket.thrust(t), 0.0, 0.0};
+		if(thrust[0] <= 0.0) {
+			thrust[0] = 0.0;
+			thrust[1] = 0.0;
+			thrust[2] = 0.0;
+		}else {
+			double pressure_thrust = (P0 - P)*rocket.Ae;
+			thrust[0] += pressure_thrust;
+			thrust[1] = 0.0;
+			thrust[2] = 0.0;
+		}
+
+		//Aero Force
+		double drag = dynamics_pressure * aero.Cd(Mach) * rocket.S;
+		double nomal = dynamics_pressure * aero.CNa(Mach) * rocket.S * alpha;
+		double side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
+		double F_aero[] = {- drag , - side , - nomal};
+
+		return dx;
 	}
-	*/
+
 
 	public static double[] parachute(double x[], double t, Rocket_param rocket, Environment env, Wind wind) {
 		double dx[] = new double[4];
