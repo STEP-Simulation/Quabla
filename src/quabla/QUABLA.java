@@ -15,8 +15,7 @@ public class QUABLA {
 
 		InputParam spec = new InputParam();
 		switch(spec.Mode) {
-		//single condition
-		case 1:
+		case 1: //single condition
 				Solver solver = new Solver(spec,true);
 				solver.solve_dynamics();
 				break;

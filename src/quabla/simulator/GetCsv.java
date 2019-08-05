@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class Getcsv {
+public class GetCsv {
 
 	public static double[] get1ColumnArray(String filepath) {
 		//ArrayListは最初に長さを決めない配列

@@ -41,10 +41,6 @@ public class InputParam {
 	public double Ij_pitch_f  = 3.288;  //[kg m^2]pitch moment of inertia @engine cut off
 	public double Ij_roll_0  = 0.5 ;   //[kg m^2]roll moment of inertia @lift off
 	public double Ij_roll_f  =0.4 ;   //[kg m^2] roll moment of inertia @ engine cut off
-	/*
-	public double Ij_prop_pitch_0 = 0.1825;  //[kg m^2]pitch moment of inertia of fuel & N2O
-	public double Ij_prop_roll_0 ; //[kg m^2]roll moment of inertia fo fuel & N2O
-	*/
 	//==========================================================================
 
 
@@ -57,12 +53,16 @@ public class InputParam {
 	public String CNa_file;
 	/**Constant Center of Pressure*/
 	public double Lcp = 1.771 ;//[m]
+
 	/**Constant Coefficient of Drag*/
 	public double Cd  = 0.6;    //[-]
+
 	/**Constant Coefficient of Nomal Force*/
 	public double CNa = 10.0;    //[1/rad]
+
 	/**Coefficient of Aero Dumping Moment in Pitch and Yaw*/
 	public double Cmq = -3.00;   //[1/rad]
+
 	/**Coefficient of Aero Dumping Moment in Roll*/
 	public double Clp = -0.10;   //[1/rad]
 	//==========================================================================
@@ -70,8 +70,8 @@ public class InputParam {
 
 
 	//Parachute=============================================
-	public double CdS1 = 0.5;     //[m/s] falling velocity of 1st parachute
-	public boolean para2_exist = false;
+	public double CdS1 = 0.21;     //[m/s] falling velocity of 1st parachute
+	public boolean para2_exist = true;
 											/**
 											 * true : using 2 parachutes
 											 * false : using only a parachute
@@ -82,8 +82,8 @@ public class InputParam {
 
 
 	//launcher==================================================================
-	public double elevation_launcher = 85.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
-	public double azimuth_launcher   = 290.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
+	public double elevation_launcher = 88.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
+	public double azimuth_launcher   = 90.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
 	public double length_Launcher     = 5.0;       //[m]length of launcher
 	public double magnetic_dec       = 0.0;      //[deg] magnetic declination
 	//==========================================================================
@@ -92,23 +92,24 @@ public class InputParam {
 
 	//engine configulation======================================================
 	public double dth = 11.45;   //[mm] Nozzle throat diameter
-	public double eps = 2.6951;  //[-] Nozzle ezpansion raitio
+	public double eps = 2.6951;  //[-] Nozzle expansion raitio
 	//==========================================================================
 
 
 
 	//wind======================================================================
 	public boolean Wind_file_exsit = false; // true or false
-	public String wind_file;
+	public String wind_file = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション"
+			+ "\\wind_august_noshiro_nominal.csv";
 	public int WindModel   = 1;  // wind model
 
-	public double Cdv      = 6.0;   //coefficient []
+	public double Cdv      = 4.5;   //coefficient []
 									/**
 									 * coefficient [-]
 									 * in case of WindModel = 1
 									 * */
 
-	public double wind_azimuth =  360.0;
+	public double wind_azimuth =  290.0;
 									/** [deg]azimuth of wind
 									 * 0 deg : from west to east
 									 * 270 deg: from north to south
@@ -124,7 +125,7 @@ public class InputParam {
 	public double speed_min = 1.0; //[m/s]minimun wind speed
 	public double speed_step = 1.0; //[m/s]風速の刻み幅
 	public int speed_num = 8;   //何風速分計算したいか
-	public int angle_num = 8;
+	public int angle_num = 16;
 	 							/*何風向分知りたいか
 	 							 * 基本4の倍数で入力
 	 							 * **/
@@ -134,7 +135,12 @@ public class InputParam {
 	public int Mode = 1;
 	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
-	public double dt_output = 0.01;//[s]logデータの時間ステップ
+
+	/**log dataの時間ステップ
+	 * 粗くしてもメインソルバの精度には影響が出ない
+	 * メインソルバより細かくすると値がおかしくなる
+	 * */
+	public double dt_output = 0.01;//[s]
 	public String  thrustcurve = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\thrust.csv"; //推力データのアドレス
 	public String result_filepath = "C://Users/zoooi/Documents/STEP/機体班/シュミレーション/";//出力先のファイルパス
 	//public String filipath ;

@@ -16,7 +16,7 @@ public class Aero_param {
 
 
 		if(spec.Lcp_file_exist) {
-			double[][] Lcp_data = Getcsv.get2ColumnArray(spec.Lcp_file);
+			double[][] Lcp_data = GetCsv.get2ColumnArray(spec.Lcp_file);
 			double Mach_array[] = new double[Lcp_data.length];
 			double Lcp_array[] = new double[Lcp_data.length];
 			for(int i = 0; i < Lcp_data.length ; i++) {
@@ -30,7 +30,7 @@ public class Aero_param {
 
 
 		if(spec.Cd_file_exist) {
-			double[][] Cd_data = Getcsv.get2ColumnArray(spec.Cd_file);
+			double[][] Cd_data = GetCsv.get2ColumnArray(spec.Cd_file);
 			double Mach_array[] = new double[Cd_data.length];
 			double Cd_array[] = new double[Cd_data.length];
 			for(int i = 0 ; i < Cd_data.length ; i++) {
@@ -44,7 +44,7 @@ public class Aero_param {
 
 
 		if(spec.CNa_file_exist) {
-			double[][] CNa_data = Getcsv.get2ColumnArray(spec.CNa_file);
+			double[][] CNa_data = GetCsv.get2ColumnArray(spec.CNa_file);
 			double Mach_array[] = new double[CNa_data.length];
 			double CNa_array[] = new double[CNa_data.length];
 			for(int i = 0; i < CNa_data.length ; i++) {

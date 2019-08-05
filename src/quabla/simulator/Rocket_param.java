@@ -89,7 +89,7 @@ public class Rocket_param {
 		this.dt = spec.dt;
 
 		//thrust=========================================================
-		this.thrust_data = Getcsv.get2ColumnArray(spec.thrustcurve);
+		this.thrust_data = GetCsv.get2ColumnArray(spec.thrustcurve);
 		this.t_burnout = thrust_data.length * dt ;
 		double time_array[] = new double[thrust_data.length];
 		double thrust_array[] = new double[thrust_data.length];

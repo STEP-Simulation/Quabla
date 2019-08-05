@@ -5,6 +5,7 @@ package quabla.simulator;
  * */
 
 public class Dynamics {
+	//private double Mach;
 
 	public static double[] trajectory(double x[], double t, Rocket_param rocket, Environment env,Aero_param aero, Wind wind) {
 		double dx[] = new double[13];
@@ -21,6 +22,7 @@ public class Dynamics {
 		double p = omega_Body[0];
 		double q = omega_Body[1];
 		double r = omega_Body[2];
+
 		quat = Coodinate.quat_nomalization(quat);
 
 		//Translation coodinate
@@ -145,16 +147,18 @@ public class Dynamics {
 		//Kinematics Equation
 		double tensor[][] = Coodinate.Omega_tensor(p, q, r);
 		double quatdot[] = Coodinate.vec_trans(tensor, quat);
-		for(int i=0; i<4;i++)
+		for(int i=0; i<4;i++) {
 			quatdot[i] *= 0.5;
+		}
 
 		for(int i=0; i<3; i++) {
 			dx[i] = Vel_ENU[i];    //Pos_ENU
 			dx[3+i] = Acc_ENU[i];  //Vel_ENU
 			dx[6+i] = omegadot[i]; //omega_Body
 		}
-		for(int i=0; i<4; i++)
+		for(int i=0; i<4; i++) {
 			dx[9+i] = quatdot[i];  //quat
+		}
 
 		return dx;
 	}
@@ -347,6 +351,14 @@ public class Dynamics {
 		return dx;
 
 	}
+
+	/*
+	public static double getMach() {
+		double Mach;
+
+		return Mach;
+	}
+	*/
 
 	//RK4で計算するために関数にしてる
 	public static double[] Acc_anguler(double t, double p,double q,double r,double Ij[],double moment_aero[], double moment_dumping[]) {

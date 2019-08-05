@@ -1,7 +1,5 @@
 package quabla.simulator;
 
-import java.io.IOException;
-
 import quabla.InputParam;
 import quabla.output.Output_log;
 import quabla.simulator.numerical_analysis.EditArray;
@@ -39,12 +37,18 @@ public class Solver {
 		this.elevation0 = Coodinate.deg2rad( spec.elevation_launcher);
 		if (elevation0 > 0.0)
 			elevation0 *= -1.0;
-		this.roll0 = Math.PI;//[rad]
+		//this.roll0 = Math.PI;//[rad]
+		this.roll0 = 0.0;
+		//rollはPIでも0.0でも計算結果同じ
+
+
 
 	}
 
 
 	public void solve_dynamics() {
+
+
 
 		double X0_ENU , Y0_ENU , Z0_ENU;
 		double x[] = new double[19];
@@ -95,8 +99,9 @@ public class Solver {
 			t = index * spec.dt;
 
 			dx = Dynamics.on_luncher(x, t, rocket, env, aero , wind , quat0);
-			for(int j=0; j<12; j++)
+			for(int j=0; j<12; j++) {
 				x[j] += dx[j] * rocket.dt;
+			}
 
 			//flight log=========================
 			time_array[index] = t;
@@ -224,7 +229,8 @@ public class Solver {
 
 		//結果の出力
 		if(single) {
-			Output_log output_log = null;
+			//Output_log output_log = null;
+
 
 			/**
 			 * spec
@@ -237,13 +243,21 @@ public class Solver {
 			 * それ以外のlogはOutput_log内で計算
 			 * */
 
+			/**@deprecated*/
 			time_array = EditArray.cut_array(index_landing_trajectory, time_array);
+			//余分な配列を消したい
 
+			Output_log output_log = new Output_log(spec,index_landing_trajectory,time_array,Pos_ENU_log,Vel_ENU_log,omega_Body_log,quat_log);
+
+
+			/*
 			try {
-				output_log = new Output_log(spec.result_filepath+"trajectory_log_data.csv",spec,index_landing_trajectory,time_array,Pos_ENU_log,Vel_ENU_log,omega_Body_log,quat_log);
+				output_log = new Output_log(spec,index_landing_trajectory,time_array,Pos_ENU_log,Vel_ENU_log,omega_Body_log,quat_log);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+			*/
+
 			System.out.println("Vel_launchclear = "+ Vel_launchclear+"[m/s]");
 			System.out.println("time_launchclear = "+time_launchclear+"[s]");
 			System.out.println("trajectory landing:"+Pos_ENU_landing_trajectory[0]
@@ -254,11 +268,6 @@ public class Solver {
 			//ToDo .txtで出力を行う
 			//ToDo マッハ数、動圧、Max-Qの時間を出力できるようにする
 
-			try {
-				output_log.outputFirstLine();
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
 
 			output_log.run_output_line(time_landing_trajectory);
 
