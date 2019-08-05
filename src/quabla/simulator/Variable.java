@@ -8,4 +8,5 @@ public class Variable {
 	public double[] omega_Body = new double[3];
 	public double[] quat = new double[4];
 
+
 }

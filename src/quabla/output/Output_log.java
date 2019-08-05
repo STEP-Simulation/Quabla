@@ -14,19 +14,7 @@ import quabla.simulator.numerical_analysis.Interpolation;
 //outputLineをOutput_log内で実行する
 public class Output_log {
 
-	//別クラスに移行=====
-
-	/*
-	private BufferedWriter writer;
-	private String firstline = "time [s],x_ENU [m],y_ENU [m],z_ENU [m],Vel_x_ENU [m/s],Vel_y_ENU [m/s],Vel_z_ENU [m/s],"
-			+ "p [rad/s],q [rad/s],r [rad/s],q0,q1,q2,q3,quat_norm,"
-			+ "m [kg],alttitude [m],downrange [m],Vel_air_abs [m/s],Mach [-],"
-			+ "alpha [deg],beta[deg],azimuth [deg],elevation [deg],roll [deg],Lcg [m],Lcp [m],Fst [-],dynamics_pressure[kPa],"
-			+ "drag [N],nomal [N],side [N],thrust [N], Force_x_Body[N],Force_y_Body[N],Force_z_Body[N],"
-			+ "Acc_x_ENU[m/s2],Acc_y_ENU[m/s2],Acc_z_ENU[m/s2],Acc_x_Body [m/s2],Acc_y_Body [m/s2],Acc_z_Body [m/s2],"
-			+ "Acc_abs [m/s2]";
-	*/
-	/**
+		/**
 	 *出力するもの
 	 *時間,位置x_ENU,位置y_ENU,位置z_ENU,対地速度Vel_x_ENU,対地速度Vel_y_ENU,対地速度Vel_z_ENU,
 	 *角速度p,角速度q,角速度r,質量m,高さalttitude,距離downrange,対気速度Vel_air_abs,マッハ数Mach,迎角alpha,横滑り角beta,
@@ -34,17 +22,8 @@ public class Output_log {
 	 *法線力nomal,横力side,推力thrust,力Force_x_Body,力Force_y_Body,力Force_z_Body,対地加速度Acc_x_ENU,対地加速度Acc_y_ENU,
 	 *対地加速度Acc_z_ENU,機体加速度Acc_x_Body,機体加速度Acc_y_Body,機体加速度Acc_z_Body,スカラー加速度Acc_abs
 	 * */
-	/*
-	private String format = "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
-			+ "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
-			+ "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
-			+ "%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,"
-			+ "%f,%f,%f";
-	*/
-	//==============
 
 	private double dt;
-	//private double landing_time;
 	private Interpolation Pos_X_ENU_analy,Pos_Y_ENU_analy,Pos_Z_ENU_analy;
 	private Interpolation Vel_X_ENU_analy,Vel_Y_ENU_analy,Vel_Z_ENU_analy;
 	private Interpolation p_analy,q_analy,r_analy;
@@ -65,8 +44,7 @@ public class Output_log {
 	 * @throws IOException 指定されたファイルが存在するが通常ファイルではなくディレクトリである場合、存在せず作成もできない場合、またはなんらかの理由で開くことができない場合
 	 * */
 	public Output_log(InputParam spec,int index_max,double time_array[],double Pos_log[][], double Vel_log[][],double omega_log[][],double quat_log[][]) {
-	//	writer = new BufferedWriter(new FileWriter(filepath));
-		//dt = step;
+
 		this.spec = spec;
 		dt = this.spec.dt_output;
 		int length = index_max;
@@ -121,16 +99,6 @@ public class Output_log {
 	}
 
 
-	/**
-	 * 一行目に書き込む文字列を書き込みます
-	 * @throws IOException 入出力エラーが発生した場合
-	 * */
-	/*
-	public void outputFirstLine() throws IOException {
-		writer.write(firstline);
-		writer.newLine();
-	}
-	*/
 
 	public void run_output_line(double landing_time) {
 		Rocket_param rocket = new Rocket_param(spec);
@@ -275,16 +243,6 @@ public class Output_log {
 			//result とnameの要素数が違った時の例外処理
 
 
-			/*
-			//別クラスで処理する
-			try {
-				output_line(t, Pos_ENU, Vel_ENU,omega_Body, quat, quat_norm,m,altitude,downrange,Vel_air_abs, Mach,
-						Coodinate.rad2deg(alpha), Coodinate.rad2deg(beta), attitude,
-						 Lcg, Lcp, Fst, dynamics_pressure*Math.pow(10, -3), drag, nomal, side, thrust, Force,Acc_ENU,Acc_Body, Acc_abs);
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			}
-			*/
 
 			if(t >= landing_time) {
 				break;
@@ -378,35 +336,7 @@ public class Output_log {
 		return result;
 	}
 
-	/*
-	//別クラスに移行
-	public void output_line(double t,double Pos_ENU[],double Vel_ENU[], double omega_Body[], double[] quat,double quat_norm, double m,
-			double altitude, double downrange, double Vel_air_abs,double Mach,double alpha ,double beta,
-			double attitude[], double Lcg, double Lcp, double Fst, double dynamics_pressure, double drag,
-			double nomal, double side, double thrust, double Force[],double Acc_ENU[],double Acc_Body[],double Acc_abs) throws IOException {
 
-		String linestr = String.format(format, t, Pos_ENU[0], Pos_ENU[1], Pos_ENU[2], Vel_ENU[0], Vel_ENU[1], Vel_ENU[2],
-				omega_Body[0], omega_Body[1],omega_Body[2], quat[0], quat[1], quat[2], quat[3],quat_norm, m, altitude,downrange,Vel_air_abs, Mach, alpha, beta, attitude[0],
-				attitude[1], attitude[2], Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust, Force[0], Force[1],
-				Force[2],Acc_ENU[0],Acc_ENU[1],Acc_ENU[2],Acc_Body[0],Acc_Body[1],Acc_Body[2],Acc_abs);
-
-		writer.write(linestr);//文字列をファイルに出力
-		writer.newLine();//改行
-
-	}
-	*/
-
-
-	/**
-	 * 出力を終えます。
-	 *
-	 * @throws IOException
-	 * */
-	/*
-	public void close() throws IOException {
-		this.writer.close();
-	}
-	*/
 
 
 }
