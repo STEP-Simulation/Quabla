@@ -9,13 +9,9 @@ public class OutputCsv {
 
 	private BufferedWriter writer;
 
-	//private String[] name;
 	/**変数の名前*/
 	private String firstline ;
 	//配列で受け取る
-
-	/**数値の出力*/
-	//private String format;
 
 
 	/**
@@ -26,8 +22,6 @@ public class OutputCsv {
 	 * */
 	public OutputCsv(String filepath,String[] name) throws IOException {
 		writer = new BufferedWriter(new FileWriter(filepath));
-		//this.name = name;
-		//set_format(name);
 		make_firstline(name);
 	}
 
@@ -48,13 +42,10 @@ public class OutputCsv {
 
 		//出力したい文字列に整形
 		StringJoiner stj = new StringJoiner(",");
-		String[] str = new String[result.length];
 		for(int i=0; i<result.length; i++) {
-			str[i] = String.valueOf(result[i]);//double値からString型へ
-			stj.add(str[i]);
+			stj.add(String.valueOf(result[i]));
 		}
 		String linestr = stj.toString();
-		//String linestr = String.format(format, result[0]);
 
 		//文字列をファイルに出力
 		writer.write(linestr);
@@ -63,17 +54,6 @@ public class OutputCsv {
 		writer.newLine();
 	}
 
-	/*
-	//formatの生成
-	public void set_format(String[] name) {
-		StringJoiner stj = new StringJoiner(",");
-
-		for(int i=0; i< name.length; i++) {
-			stj.add("%f");
-		}
-		format = stj.toString();
-	}
-	*/
 
 	//firstlineの生成
 	public void make_firstline(String[] name) {

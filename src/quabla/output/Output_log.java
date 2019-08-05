@@ -167,7 +167,6 @@ public class Output_log {
 		double Acc_ENU[] = new double[3];
 		double Acc_abs;
 		double[] result = new double[name.length];
-		//String name_array[];
 
 		OutputCsv flightlog = null;
 
@@ -254,12 +253,6 @@ public class Output_log {
 			Force[1] = - side;
 			Force[2] = - nomal;
 
-			/*
-			Force_coriolis[0] = omega_Body[2]*Vel_ENU[1] - omega_Body[1]*Vel_ENU[2];
-			Force_coriolis[1] = omega_Body[0]*Vel_ENU[2] - omega_Body[2]*Vel_ENU[0];
-			Force_coriolis[2] = omega_Body[1]*Vel_ENU[0] - omega_Body[0]*Vel_ENU[1];
-			*/
-
 			Acc_ENU = Coodinate.vec_trans(DCM_Body2ENU, Force);
 			for(int j=0; j<3; j++) {
 				Acc_ENU[j] = Acc_ENU[j]/m +g[j];
@@ -268,7 +261,7 @@ public class Output_log {
 			Acc_abs = Math.sqrt(Math.pow(Acc_ENU[0], 2) + Math.pow(Acc_ENU[1], 2) + Math.pow(Acc_ENU[2], 2));
 
 
-			//=========================
+			//出力する値=========================
 			result[0] = t;
 			for(int j=0; j<3; j++) {
 				result[1+j] = Pos_ENU[j];
@@ -305,12 +298,13 @@ public class Output_log {
 			result[42] = Acc_abs;
 			//==========================
 
+
 			try {
 				flightlog.outputLine(result);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			//value とnameの要素数が違った時の例外処理
+			//result とnameの要素数が違った時の例外処理
 
 
 			/*
