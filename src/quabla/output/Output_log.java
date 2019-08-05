@@ -50,7 +50,7 @@ public class Output_log {
 	private Interpolation p_analy,q_analy,r_analy;
 	private Interpolation quat0_analy,quat1_analy,quat2_analy,quat3_analy;
 	private InputParam spec;
-	private String[] name = {"time [s]","x_ENU [m]","y_ENU [m]","z_ENU [m]","Vel_x_ENU [m/s]","Vel_y_ENU [m/s]","Vel_z_ENU [m/s]",
+	private static String[] name = {"time [s]","x_ENU [m]","y_ENU [m]","z_ENU [m]","Vel_x_ENU [m/s]","Vel_y_ENU [m/s]","Vel_z_ENU [m/s]",
 			"p [rad/s]","q [rad/s]","r [rad/s]","quat0","quat1","quat2","quat3","quat_norm","m [kg]","alttitude [m]","downrange [m]",
 			"Vel_air_abs [m/s]","Mach [-]","alpha [deg]","beta[deg]","azimuth [deg]","elevation [deg]","roll [deg]",
 			"Lcg [m]","Lcp [m]","Fst [-]","dynamics_pressure[kPa]","drag [N]","nomal [N]","side [N]","thrust [N]",
@@ -166,7 +166,7 @@ public class Output_log {
 		double Acc_Body[] = new double[3];
 		double Acc_ENU[] = new double[3];
 		double Acc_abs;
-		double[] result = new double[name.length];
+		//double[] result = new double[name.length];
 
 		OutputCsv flightlog = null;
 
@@ -261,42 +261,10 @@ public class Output_log {
 			Acc_abs = Math.sqrt(Math.pow(Acc_ENU[0], 2) + Math.pow(Acc_ENU[1], 2) + Math.pow(Acc_ENU[2], 2));
 
 
-			//出力する値=========================
-			result[0] = t;
-			for(int j=0; j<3; j++) {
-				result[1+j] = Pos_ENU[j];
-				result[4+j] = Vel_ENU[j];
-				result[7+j] = omega_Body[j];
-			}
-			for(int j=0; j<4; j++) {
-				result[10+j] = quat[j];
-			}
-			result[14] = quat_norm;
-			result[15] = m;
-			result[16] = altitude;
-			result[17] = downrange;
-			result[18] = Vel_air_abs;
-			result[19] = Mach;
-			result[20] = Coodinate.rad2deg(alpha);
-			result[21] = Coodinate.rad2deg(beta);
-			for(int j=0; j<3; j++) {
-				result[22+j] = attitude[j];
-			}
-			result[25] = Lcg;
-			result[26] = Lcp;
-			result[27] = Fst;
-			result[28] = dynamics_pressure*Math.pow(10, -3);
-			result[29] = drag;
-			result[30] = nomal;
-			result[31] = side;
-			result[32] = thrust;
-			for(int j=0; j<3; j++) {
-				result[33+j] = Force[j];
-				result[36+j] = Acc_ENU[j];
-				result[39+j] = Acc_Body[j];
-			}
-			result[42] = Acc_abs;
-			//==========================
+			//出力する値
+			double[] result = set_result(t, Pos_ENU, Vel_ENU,omega_Body, quat, quat_norm,m,altitude,downrange,Vel_air_abs,
+					Mach,alpha,beta, attitude,Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust, Force,Acc_ENU,
+					Acc_Body, Acc_abs);
 
 
 			try {
@@ -331,6 +299,9 @@ public class Output_log {
 
 	}
 
+
+
+
 	/**
 	 *
 	 * @param t 時間[s]
@@ -361,6 +332,51 @@ public class Output_log {
 	 * @param Acc_abs 加速度絶対値[m/s2]
 	 * @throws IOException
 	 * */
+
+	private static double[] set_result(double t, double[] Pos_ENU, double[] Vel_ENU, double[] omega_Body, double[] quat,
+			double quat_norm, double m, double altitude, double downrange, double Vel_air_abs,double Mach,
+			double alpha, double beta, double[] attitude, double Lcg,double Lcp,double Fst, double dynamics_pressure,
+			double drag, double nomal, double side, double thrust, double[] Force,double[] Acc_ENU,double[] Acc_Body,
+			double Acc_abs) {
+		double[] result = new double[name.length];
+
+		result[0] = t;
+		for(int j=0; j<3; j++) {
+			result[1+j] = Pos_ENU[j];
+			result[4+j] = Vel_ENU[j];
+			result[7+j] = omega_Body[j];
+		}
+		for(int j=0; j<4; j++) {
+			result[10+j] = quat[j];
+		}
+		result[14] = quat_norm;
+		result[15] = m;
+		result[16] = altitude;
+		result[17] = downrange;
+		result[18] = Vel_air_abs;
+		result[19] = Mach;
+		result[20] = Coodinate.rad2deg(alpha);
+		result[21] = Coodinate.rad2deg(beta);
+		for(int j=0; j<3; j++) {
+			result[22+j] = attitude[j];
+		}
+		result[25] = Lcg;
+		result[26] = Lcp;
+		result[27] = Fst;
+		result[28] = dynamics_pressure*Math.pow(10, -3);
+		result[29] = drag;
+		result[30] = nomal;
+		result[31] = side;
+		result[32] = thrust;
+		for(int j=0; j<3; j++) {
+			result[33+j] = Force[j];
+			result[36+j] = Acc_ENU[j];
+			result[39+j] = Acc_Body[j];
+		}
+		result[42] = Acc_abs;
+
+		return result;
+	}
 
 	/*
 	//別クラスに移行
