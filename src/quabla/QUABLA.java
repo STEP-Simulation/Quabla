@@ -41,6 +41,9 @@ public class QUABLA {
 			make_resultdir(dir_filepath);
 			spec.result_filepath = dir_filepath + "\\";
 
+			System.out.println(dir_filepath);
+
+
 			Multi_solver multi_solver = new Multi_solver(spec);
 			multi_solver.solve_multi();
 			break;
@@ -59,6 +62,7 @@ public class QUABLA {
 		int i = 0;
 		while((result_dir = new File(dir_filepath_)).exists()){
 			dir_filepath_ = dir_filepath_org +"_"+ String.format("%02d", i+1);
+			i ++;
 		}
 		result_dir.mkdir();
 		dir_filepath = dir_filepath_;
