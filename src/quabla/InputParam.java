@@ -125,14 +125,14 @@ public class InputParam {
 	public double speed_min = 1.0; //[m/s]minimun wind speed
 	public double speed_step = 1.0; //[m/s]風速の刻み幅
 	public int speed_num = 8;   //何風速分計算したいか
-	public int angle_num = 16;
+	public int angle_num = 8;
 	 							/*何風向分知りたいか
 	 							 * 基本4の倍数で入力
 	 							 * **/
 	//=========================================
 
 	//simulation================================================================
-	public int Mode = 1;
+	public int Mode = 2;
 	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
 
@@ -142,7 +142,8 @@ public class InputParam {
 	 * */
 	public double dt_output = 0.01;//[s]
 	public String  thrustcurve = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\thrust.csv"; //推力データのアドレス
-	public String result_filepath = "C://Users/zoooi/Documents/STEP/機体班/シュミレーション/";//出力先のファイルパス
+	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\";//出力先のファイルパス
+	public String dir_name = "A";
 	//public String filipath ;
 	//==========================================================================
 
