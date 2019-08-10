@@ -10,30 +10,26 @@ public class Logger {
 	public double[][] omega_Body_log;
 	public double[][] quat_log;
 
-	ArrayList<Double> time_log = new ArrayList<>();
-	ArrayList<Double> X_ENU_log = new ArrayList<>();
-	ArrayList<Double> Y_ENU_log = new ArrayList<>();
-	ArrayList<Double> Z_ENU_log = new ArrayList<>();
-	ArrayList<Double> Vel_x_ENU_log = new ArrayList<>();
-	ArrayList<Double> Vel_y_ENU_log = new ArrayList<>();
-	ArrayList<Double> Vel_z_ENU_log = new ArrayList<>();
-	ArrayList<Double> p_log = new ArrayList<>();
-	ArrayList<Double> q_log = new ArrayList<>();
-	ArrayList<Double> r_log = new ArrayList<>();
-	ArrayList<Double> quat0_log = new ArrayList<>();
-	ArrayList<Double> quat1_log = new ArrayList<>();
-	ArrayList<Double> quat2_log = new ArrayList<>();
-	ArrayList<Double> quat3_log = new ArrayList<>();
+	private ArrayList<Double> time_log = new ArrayList<>();
+	private ArrayList<Double> X_ENU_log = new ArrayList<>();
+	private ArrayList<Double> Y_ENU_log = new ArrayList<>();
+	private ArrayList<Double> Z_ENU_log = new ArrayList<>();
+	private ArrayList<Double> Vel_x_ENU_log = new ArrayList<>();
+	private ArrayList<Double> Vel_y_ENU_log = new ArrayList<>();
+	private ArrayList<Double> Vel_z_ENU_log = new ArrayList<>();
+	private ArrayList<Double> p_log = new ArrayList<>();
+	private ArrayList<Double> q_log = new ArrayList<>();
+	private ArrayList<Double> r_log = new ArrayList<>();
+	private ArrayList<Double> quat0_log = new ArrayList<>();
+	private ArrayList<Double> quat1_log = new ArrayList<>();
+	private ArrayList<Double> quat2_log = new ArrayList<>();
+	private ArrayList<Double> quat3_log = new ArrayList<>();
 
 
 
-	public Logger(int max_step) {
+	public void logger(double time,Variable variable) {
 
-	}
-
-	public void logger(Variable variable) {
-
-		time_log.add(variable.time);
+		time_log.add(time);
 		X_ENU_log.add(variable.Pos_ENU[0]);
 		Y_ENU_log.add(variable.Pos_ENU[1]);
 		Z_ENU_log.add(variable.Pos_ENU[2]);

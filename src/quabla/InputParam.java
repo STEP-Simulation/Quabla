@@ -76,16 +76,16 @@ public class InputParam {
 											 * true : using 2 parachutes
 											 * false : using only a parachute
 											 *  */
-	public double CdS2   = 0.482;   //[m/s] velocity after 2nd para open (falling 1st and 2nd para)
+	public double CdS2      = 0.482;   //[m/s] velocity after 2nd para open (falling 1st and 2nd para)
 	public double alt_para2 = 200.0;  //[m]altitude of 2nd para open
 	//==========================================================================
 
 
 	//launcher==================================================================
-	public double elevation_launcher = 88.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
-	public double azimuth_launcher   = 90.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
-	public double length_Launcher     = 5.0;       //[m]length of launcher
-	public double magnetic_dec       = 0.0;      //[deg] magnetic declination
+	public double elevation_launcher = 87.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
+	public double azimuth_launcher   = 290.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
+	public double length_Launcher    = 5.0;       //[m]length of launcher
+	public double magnetic_dec       = 8.9;      //[deg] magnetic declination
 	//==========================================================================
 
 
@@ -103,13 +103,13 @@ public class InputParam {
 			+ "\\wind_august_noshiro_nominal.csv";
 	public int WindModel   = 1;  // wind model
 
-	public double Cdv      = 4.5;   //coefficient []
+	public double Cdv      = 6.0;   //coefficient []
 									/**
 									 * coefficient [-]
 									 * in case of WindModel = 1
 									 * */
 
-	public double wind_azimuth =  290.0;
+	public double wind_azimuth =  200.0;
 									/** [deg]azimuth of wind
 									 * 0 deg : from west to east
 									 * 270 deg: from north to south
@@ -132,7 +132,8 @@ public class InputParam {
 	//=========================================
 
 	//simulation================================================================
-	public int Mode = 2;
+	public int Mode = 1;
+	public boolean tip_off_exist = false;
 	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
 
@@ -142,9 +143,12 @@ public class InputParam {
 	 * */
 	public double dt_output = 0.01;//[s]
 	public String  thrustcurve = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\thrust.csv"; //推力データのアドレス
+
+	/**計算結果の出力先のファイルパス
+	 * パスは\\で終わるように
+	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\";//出力先のファイルパス
 	public String dir_name = "A";
-	//public String filipath ;
 	//==========================================================================
 
 

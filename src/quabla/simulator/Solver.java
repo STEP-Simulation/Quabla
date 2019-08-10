@@ -55,7 +55,7 @@ public class Solver {
 		double dx[] = new double[19];
 		double quat0[] = new double[4];
 		double altitude ;
-		double distance_Body_roll,distance_lower_lug;
+		double distance_Body_roll,distance_lower_lug,distance_upper_lug;
 		int index = 0;
 		int index_launchclear,index_apogee=0,index_landing_trajectory,index_landing_parachute;
 		double time_launchclear, time_apogee = 0.0,time_landing_trajectory,time_landing_parachute;
@@ -78,6 +78,8 @@ public class Solver {
 		Rocket_param rocket = new Rocket_param(spec);
 		Aero_param aero = new Aero_param(spec);
 		Wind wind = new Wind(spec);
+		Variable X = new Variable();
+		Logger trajectory_log = new Logger();
 
 
 		//initial position
@@ -87,6 +89,18 @@ public class Solver {
 
 		//initial attitude
 		quat0 = Coodinate.euler2quat(azimuth0, elevation0, roll0);
+
+		//set Initial Parameters
+		X.Pos_ENU[0] = (rocket.L - rocket.Lcg_0)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0);
+		X.Pos_ENU[1] = (rocket.L - rocket.Lcg_0)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0);
+		X.Pos_ENU[2] = (rocket.L - rocket.Lcg_0)*Math.sin(Math.abs(elevation0));
+		for(int i=0; i<3; i++) {
+			X.distance_Body[i] = 0.0;
+			X.Vel_ENU[i] = 0.0;
+			X.Vel_Body[i] = 0.0;
+			X.omega_Body[i] = 0.0;
+		}
+		X.quat = quat0 = Coodinate.euler2quat(azimuth0, elevation0, roll0);
 
 
 		//on launcher===============================
@@ -98,10 +112,15 @@ public class Solver {
 		for(;;) {
 			t = index * spec.dt;
 
+			trajectory_log.logger(t, X);
+
+			//積分も関数内で行う?
 			dx = Dynamics.on_luncher(x, t, rocket, env, aero , wind , quat0);
 			for(int j=0; j<12; j++) {
 				x[j] += dx[j] * rocket.dt;
 			}
+
+
 
 			//flight log=========================
 			time_array[index] = t;
@@ -116,7 +135,10 @@ public class Solver {
 
 
 			//launch clear判定
+			//lower lugが抜けたらランチクリア
 			distance_Body_roll = x[3];
+			X.distance_upper_lug = X.distance_Body[0] + (rocket.L - rocket.upper_lug);
+			distance_upper_lug = (rocket.L - rocket.upper_lug) + distance_Body_roll;
 			distance_lower_lug = (rocket.L-rocket.lower_lug) + distance_Body_roll;
 			if(distance_lower_lug >= spec.length_Launcher) {//下部ラグがレールを抜けたときランチクリア
 				time_launchclear = t;

@@ -24,7 +24,7 @@ public class QUABLA {
 			//single condition
 
 			//ディレクトリの作成
-			dir_filepath = spec.result_filepath + "single_" + spec.dir_name;
+			dir_filepath = spec.result_filepath + "Result_single_" + spec.dir_name;
 			make_resultdir(dir_filepath);
 			spec.result_filepath = dir_filepath + "\\";
 
@@ -37,11 +37,11 @@ public class QUABLA {
 			//multiple condition
 
 			//ディレクトリの作成
-			dir_filepath = spec.result_filepath + "multi_" + spec.dir_name;
+			dir_filepath = spec.result_filepath + "Result_multi_" + spec.dir_name;
 			make_resultdir(dir_filepath);
 			spec.result_filepath = dir_filepath + "\\";
 
-			System.out.println(dir_filepath);
+			//System.out.println(dir_filepath);
 
 
 			Multi_solver multi_solver = new Multi_solver(spec);
@@ -64,7 +64,13 @@ public class QUABLA {
 			dir_filepath_ = dir_filepath_org +"_"+ String.format("%02d", i+1);
 			i ++;
 		}
-		result_dir.mkdir();
+
+		if( result_dir.mkdir()) {
+			System.out.println("Make Directory : success");
+		}else {
+			System.out.println("Make Directroy : false");
+		}
+
 		dir_filepath = dir_filepath_;
 
 	}
