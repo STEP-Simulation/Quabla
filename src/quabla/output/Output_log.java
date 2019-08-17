@@ -171,6 +171,7 @@ public class Output_log {
 			quat[3] = quat3_analy.linear_interpolation(t);
 			quat_norm = Math.sqrt(Math.pow(quat[0], 2) + Math.pow(quat[1], 2) + Math.pow(quat[2], 2) + Math.pow(quat[3], 2));
 
+			quat = Coodinate.quat_nomalization(quat);
 			DCM_ENU2Body = Coodinate.quat2DCM_ENU2Body(quat);
 			DCM_Body2ENU = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 
