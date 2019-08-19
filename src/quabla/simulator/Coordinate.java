@@ -1,6 +1,6 @@
 package quabla.simulator;
 
-public class Coodinate {
+public class Coordinate {
 
 	/**
 	 * ----------Caution!!-----------

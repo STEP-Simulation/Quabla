@@ -33,8 +33,8 @@ public class Solver {
 		this.single = single;
 
 		//Initial attitude
-		this.azimuth0 = Coodinate.deg2rad((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec);
-		this.elevation0 = Coodinate.deg2rad( spec.elevation_launcher);
+		this.azimuth0 = Coordinate.deg2rad((-spec.azimuth_launcher + 90.0) + spec.magnetic_dec);
+		this.elevation0 = Coordinate.deg2rad( spec.elevation_launcher);
 		if (elevation0 > 0.0)
 			elevation0 *= -1.0;
 		//this.roll0 = Math.PI;//[rad]
@@ -88,7 +88,7 @@ public class Solver {
 		Z0_ENU = (rocket.L - rocket.Lcg_0)*Math.sin(Math.abs(elevation0));
 
 		//initial attitude
-		quat0 = Coodinate.euler2quat(azimuth0, elevation0, roll0);
+		quat0 = Coordinate.euler2quat(azimuth0, elevation0, roll0);
 
 		//set Initial Parameters
 		X.Pos_ENU[0] = (rocket.L - rocket.Lcg_0)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0);
@@ -100,7 +100,7 @@ public class Solver {
 			X.Vel_Body[i] = 0.0;
 			X.omega_Body[i] = 0.0;
 		}
-		X.quat = quat0 = Coodinate.euler2quat(azimuth0, elevation0, roll0);
+		X.quat = quat0 = Coordinate.euler2quat(azimuth0, elevation0, roll0);
 
 
 		//on launcher===============================

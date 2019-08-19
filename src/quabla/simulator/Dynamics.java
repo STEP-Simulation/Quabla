@@ -23,11 +23,11 @@ public class Dynamics {
 		double q = omega_Body[1];
 		double r = omega_Body[2];
 
-		quat = Coodinate.quat_nomalization(quat);
+		quat = Coordinate.quat_nomalization(quat);
 
 		//Translation coodinate
-		double DCM_ENU2Body[][] = Coodinate.quat2DCM_ENU2Body(quat);
-		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
+		double DCM_ENU2Body[][] = Coordinate.quat2DCM_ENU2Body(quat);
+		double DCM_Body2ENU[][] = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 		//double Vel_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_ENU);
 
 		//wind , Vel_air
@@ -37,7 +37,7 @@ public class Dynamics {
 		for(int i = 0; i<3; i++) {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
 		}
-		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
+		double Vel_air_Body[] = Coordinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
 		double Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 
 		//double u = Vel_air_Body[0];
@@ -94,7 +94,7 @@ public class Dynamics {
 		for(int i=0; i<3; i++) {
 			Force[i] = thrust[i] + F_aero[i] ;
 		}
-		Force = Coodinate.vec_trans(DCM_Body2ENU, Force);
+		Force = Coordinate.vec_trans(DCM_Body2ENU, Force);
 
 		//Accelaration
 		double Acc_ENU[] = new double[3];
@@ -145,8 +145,8 @@ public class Dynamics {
 		}
 
 		//Kinematics Equation
-		double tensor[][] = Coodinate.Omega_tensor(p, q, r);
-		double quatdot[] = Coodinate.vec_trans(tensor, quat);
+		double tensor[][] = Coordinate.Omega_tensor(p, q, r);
+		double quatdot[] = Coordinate.vec_trans(tensor, quat);
 		for(int i=0; i<4;i++) {
 			quatdot[i] *= 0.5;
 		}
@@ -173,10 +173,10 @@ public class Dynamics {
 		double m = rocket.mass(t);
 
 		//Tronsition Coodinate
-		double DCM_ENU2Body[][] = Coodinate.quat2DCM_ENU2Body(quat0);
-		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
+		double DCM_ENU2Body[][] = Coordinate.quat2DCM_ENU2Body(quat0);
+		double DCM_Body2ENU[][] = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 
-		double elevation = Coodinate.deg2rad(Coodinate.DCM2euler(DCM_ENU2Body)[2]);
+		double elevation = Coordinate.deg2rad(Coordinate.DCM2euler(DCM_ENU2Body)[2]);
 		double Z0 = (rocket.L-rocket.Lcg_0)*Math.sin(Math.abs(elevation));
 
 		//Wind, Vel_air
@@ -185,7 +185,7 @@ public class Dynamics {
 		for(int i = 0; i<3; i++) {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
 		}
-		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
+		double Vel_air_Body[] = Coordinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
 		double Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 
 		//Environment
@@ -222,7 +222,7 @@ public class Dynamics {
 
 		//Accelaration
 		double Acc_Body[] = {Force[0] / m + Math.abs(g[2])*Math.sin(elevation) , 0.0 , 0.0};
-		double Acc_ENU[] = Coodinate.vec_trans(DCM_Body2ENU, Acc_Body);
+		double Acc_ENU[] = Coordinate.vec_trans(DCM_Body2ENU, Acc_Body);
 
 		//推力が自重に負けているとき(居座り)
 		if(Acc_ENU[2] <= 0.0 && t<rocket.t_burnout && altitude <= Z0) {
@@ -262,12 +262,12 @@ public class Dynamics {
 		double q = omega_Body[1];
 		double r = omega_Body[2];
 		double[] omegadot = new double[3];
-		quat = Coodinate.quat_nomalization(quat);
+		quat = Coordinate.quat_nomalization(quat);
 
 		//Tronsition coodinate
-		double DCM_ENU2Body[][] = Coodinate.quat2DCM_ENU2Body(quat);
-		double DCM_Body2ENU[][] = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
-		double elevation = Coodinate.deg2rad(Coodinate.DCM2euler(DCM_ENU2Body)[2]);
+		double DCM_ENU2Body[][] = Coordinate.quat2DCM_ENU2Body(quat);
+		double DCM_Body2ENU[][] = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
+		double elevation = Coordinate.deg2rad(Coordinate.DCM2euler(DCM_ENU2Body)[2]);
 
 		//Vel_air
 		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
@@ -275,7 +275,7 @@ public class Dynamics {
 		for(int i = 0; i<3; i++) {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
 		}
-		double Vel_air_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
+		double Vel_air_Body[] = Coordinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
 		double Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 
 		//double u = Vel_air_Body[0];
@@ -328,7 +328,7 @@ public class Dynamics {
 		Acc_Body[1] = 0.0;
 		Acc_Body[2] = 0.0;
 
-		double[] Acc_ENU = Coodinate.vec_trans(DCM_Body2ENU, Acc_Body);
+		double[] Acc_ENU = Coordinate.vec_trans(DCM_Body2ENU, Acc_Body);
 
 		//Center of Gravity, Pressuer
 		double Lcg = rocket.Lcg(t);
@@ -387,8 +387,8 @@ public class Dynamics {
 
 
 		//Kinematic Equation
-		double[][] tensor = Coodinate.Omega_tensor(p, q, r);
-		double[] quatdot = Coodinate.vec_trans(tensor, quat);
+		double[][] tensor = Coordinate.Omega_tensor(p, q, r);
+		double[] quatdot = Coordinate.vec_trans(tensor, quat);
 		for(int i=0; i<4; i++) {
 			quatdot[i] *= 0.5;
 		}

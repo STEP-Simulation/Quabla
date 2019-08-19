@@ -82,7 +82,7 @@ public class Wind {
 		//todo 磁気偏角
 
 		//-をつけて風向からの風になる
-		wind_azimuth_ENU = Coodinate.deg2rad(- direction + 90.0 + magnetic_dec);
+		wind_azimuth_ENU = Coordinate.deg2rad(- direction + 90.0 + magnetic_dec);
 		wind_ENU[0] = - speed * Math.cos(wind_azimuth_ENU);
 		wind_ENU[1] = - speed * Math.sin(wind_azimuth_ENU);
 		wind_ENU[2] = 0.0;

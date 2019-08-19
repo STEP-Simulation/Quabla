@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import quabla.InputParam;
 import quabla.simulator.Aero_param;
-import quabla.simulator.Coodinate;
+import quabla.simulator.Coordinate;
 import quabla.simulator.Environment;
 import quabla.simulator.Rocket_param;
 import quabla.simulator.Wind;
@@ -171,8 +171,8 @@ public class Output_log {
 			quat[3] = quat3_analy.linear_interpolation(t);
 			quat_norm = Math.sqrt(Math.pow(quat[0], 2) + Math.pow(quat[1], 2) + Math.pow(quat[2], 2) + Math.pow(quat[3], 2));
 
-			DCM_ENU2Body = Coodinate.quat2DCM_ENU2Body(quat);
-			DCM_Body2ENU = Coodinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
+			DCM_ENU2Body = Coordinate.quat2DCM_ENU2Body(quat);
+			DCM_Body2ENU = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 
 			m = rocket.mass(t);
 			Lcg = rocket.Lcg(t);
@@ -189,7 +189,7 @@ public class Output_log {
 			wind_ENU = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
 			for(int j=0;j<3;j++)
 				Vel_air_ENU[j] = Vel_ENU[j] - wind_ENU[j];
-			Vel_air_Body = Coodinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
+			Vel_air_Body = Coordinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
 			Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 			if(Vel_air_abs <= 0.0) {
 				alpha = 0.0;
@@ -207,7 +207,7 @@ public class Output_log {
 			Lcp = aero.Lcp(Mach);
 			Fst = (Lcp - Lcg)/rocket.L*100;
 
-			attitude = Coodinate.DCM2euler(DCM_ENU2Body);
+			attitude = Coordinate.DCM2euler(DCM_ENU2Body);
 
 			thrust = rocket.thrust(t);
 			if(thrust<=0.0) {
@@ -221,11 +221,11 @@ public class Output_log {
 			Force[1] = - side;
 			Force[2] = - nomal;
 
-			Acc_ENU = Coodinate.vec_trans(DCM_Body2ENU, Force);
+			Acc_ENU = Coordinate.vec_trans(DCM_Body2ENU, Force);
 			for(int j=0; j<3; j++) {
 				Acc_ENU[j] = Acc_ENU[j]/m +g[j];
 			}
-			Acc_Body = Coodinate.vec_trans(DCM_ENU2Body, Acc_ENU);
+			Acc_Body = Coordinate.vec_trans(DCM_ENU2Body, Acc_ENU);
 			Acc_abs = Math.sqrt(Math.pow(Acc_ENU[0], 2) + Math.pow(Acc_ENU[1], 2) + Math.pow(Acc_ENU[2], 2));
 
 
@@ -313,8 +313,8 @@ public class Output_log {
 		result[17] = downrange;
 		result[18] = Vel_air_abs;
 		result[19] = Mach;
-		result[20] = Coodinate.rad2deg(alpha);
-		result[21] = Coodinate.rad2deg(beta);
+		result[20] = Coordinate.rad2deg(alpha);
+		result[21] = Coordinate.rad2deg(beta);
 		for(int j=0; j<3; j++) {
 			result[22+j] = attitude[j];
 		}
