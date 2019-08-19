@@ -7,38 +7,38 @@ public class InputParam {
 
 	//Length [m]================================================================
 	/**Total Length*/
-	public double l    = 2.406;//[m]
+	public double l    = 1.888;// 2.406;//[m]
 
 	/**Center of gravity @ take-off*/
-	public double lcg0 = 1.487;//[m]
+	public double lcg0 = 1.054;//1.487;//[m]
 
 	/**Center of Gravity @ engine-cut-off*/
-	public double lcgf = 1.430;//[m]
+	public double lcgf = 1.028;//1.430;//[m]
 
 	/**Center of Gravity of Propellant*/
-	public double lcgp = 1.992;  //[m]
+	public double lcgp = 0.560;//1.992;  //[m]
 
 	/**Outer Diameter*/
-	public double d    = 0.120;  //[m]
+	public double d    = 0.116;//0.120;  //[m]
 	/**Upper Launch Lug from Nosecone*/
 
-	public double upper_lug = 0.79;//[m]
+	public double upper_lug = 0.8;//0.79;//[m]
 
 	/**Lower Launch Lug from Nosecone*/
-	public double lower_lug = 2.35;//[m]
+	public double lower_lug = 1.8;//2.35;//[m]
 	//==========================================================================
 
 
 	//Weight [kg]===============================================================
-	public double m0  = 6.514;   //weight @lift-off
-	public double mf  = 5.708;   //weight @ engnine-cut-off
+	public double m0  = 7.243;//6.514;   //weight @lift-off
+	public double mf  = 6.621;//5.708;   //weight @ engnine-cut-off
 	//==========================================================================
 
 
 
 	//moment of inertria [kg m^2]===============================================
-	public double Ij_pitch_0  = 3.47;  //[kg m^2] pitch moment of inertia  @take off
-	public double Ij_pitch_f  = 3.288;  //[kg m^2]pitch moment of inertia @engine cut off
+	public double Ij_pitch_0  = 1.638;//3.47;  //[kg m^2] pitch moment of inertia  @take off
+	public double Ij_pitch_f  = 1.579;//3.288;  //[kg m^2]pitch moment of inertia @engine cut off
 	public double Ij_roll_0  = 0.5 ;   //[kg m^2]roll moment of inertia @lift off
 	public double Ij_roll_f  =0.4 ;   //[kg m^2] roll moment of inertia @ engine cut off
 	//==========================================================================
@@ -52,10 +52,10 @@ public class InputParam {
 	public String Cd_file;
 	public String CNa_file;
 	/**Constant Center of Pressure*/
-	public double Lcp = 1.771 ;//[m]
+	public double Lcp = 1.276;///1.771 ;//[m]
 
 	/**Constant Coefficient of Drag*/
-	public double Cd  = 0.6;    //[-]
+	public double Cd  = 0.45;//0.6;    //[-]
 
 	/**Constant Coefficient of Nomal Force*/
 	public double CNa = 10.0;    //[1/rad]
@@ -70,8 +70,8 @@ public class InputParam {
 
 
 	//Parachute=============================================
-	public double CdS1 = 0.21;     //[m/s] falling velocity of 1st parachute
-	public boolean para2_exist = true;
+	public double CdS1 = 1.1690;     //[m/s] falling velocity of 1st parachute
+	public boolean para2_exist = false;
 											/**
 											 * true : using 2 parachutes
 											 * false : using only a parachute
@@ -82,10 +82,10 @@ public class InputParam {
 
 
 	//launcher==================================================================
-	public double elevation_launcher = 87.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
-	public double azimuth_launcher   = 290.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
+	public double elevation_launcher = 70.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
+	public double azimuth_launcher   = 150.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
 	public double length_Launcher    = 5.0;       //[m]length of launcher
-	public double magnetic_dec       = 8.9;      //[deg] magnetic declination
+	public double magnetic_dec       = 7.53;    //[deg] magnetic declination
 	//==========================================================================
 
 
@@ -109,7 +109,7 @@ public class InputParam {
 									 * in case of WindModel = 1
 									 * */
 
-	public double wind_azimuth =  200.0;
+	public double wind_azimuth =  290.0;
 									/** [deg]azimuth of wind
 									 * 0 deg : from west to east
 									 * 270 deg: from north to south
@@ -124,7 +124,7 @@ public class InputParam {
 	//落下分散を出すときのみ使用
 	public double speed_min = 1.0; //[m/s]minimun wind speed
 	public double speed_step = 1.0; //[m/s]風速の刻み幅
-	public int speed_num = 8;   //何風速分計算したいか
+	public int speed_num = 7;   //何風速分計算したいか
 	public int angle_num = 8;
 	 							/*何風向分知りたいか
 	 							 * 基本4の倍数で入力
@@ -132,7 +132,7 @@ public class InputParam {
 	//=========================================
 
 	//simulation================================================================
-	public int Mode = 1;
+	public int Mode = 2;
 	public boolean tip_off_exist = false;
 	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
@@ -148,7 +148,7 @@ public class InputParam {
 	 * パスは\\で終わるように
 	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\";//出力先のファイルパス
-	public String dir_name = "A";
+	public String dir_name = "FTE";
 	//==========================================================================
 
 
