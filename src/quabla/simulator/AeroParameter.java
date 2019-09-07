@@ -3,16 +3,16 @@ package quabla.simulator;
 import quabla.InputParam;
 import quabla.simulator.numerical_analysis.Interpolation;
 
-public class Aero_param {
+public class AeroParameter {
 
 	private double Lcp_const;
 	private double Cd_const, CNa_const;
 	Interpolation Lcp_analy,Cd_analy,CNa_analy;
-	double Clp,Cmq,Cnr;//インスタンス変数
+	public double Clp,Cmq,Cnr;
 	private boolean Lcp_file_exist,Cd_file_exist,CNa_file_exist;
 
 
-	public Aero_param(InputParam spec){
+	public AeroParameter(InputParam spec){
 
 
 		if(spec.Lcp_file_exist) {
@@ -82,7 +82,7 @@ public class Aero_param {
 		double Lcp;
 
 		if(Lcp_file_exist) {
-			Lcp = Lcp_analy.linear_interpolation(Mach);
+			Lcp = Lcp_analy.linearInterp1column(Mach);
 		}else {
 			Lcp = Lcp_const;
 		}
@@ -95,7 +95,7 @@ public class Aero_param {
 		double Cd;
 
 		if(Cd_file_exist) {
-			Cd = Cd_analy.linear_interpolation(Mach);
+			Cd = Cd_analy.linearInterp1column(Mach);
 		}else {
 			Cd = Cd_const;
 		}
@@ -108,7 +108,7 @@ public class Aero_param {
 		double CNa;
 
 		if(CNa_file_exist) {
-			CNa = CNa_analy.linear_interpolation(Mach);
+			CNa = CNa_analy.linearInterp1column(Mach);
 		}else {
 			CNa = CNa_const;
 		}
