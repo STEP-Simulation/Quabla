@@ -109,7 +109,7 @@ public class InputParam {
 									 * in case of WindModel = 1
 									 * */
 
-	public double wind_azimuth =  290.0;
+	public double wind_azimuth =  -150.0;
 									/** [deg]azimuth of wind
 									 * 0 deg : from west to east
 									 * 270 deg: from north to south
@@ -132,7 +132,7 @@ public class InputParam {
 	//=========================================
 
 	//simulation================================================================
-	public int Mode = 2;
+	public int Mode = 1;
 	public boolean tip_off_exist = false;
 	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
@@ -148,7 +148,7 @@ public class InputParam {
 	 * パスは\\で終わるように
 	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\";//出力先のファイルパス
-	public String dir_name = "FTE";
+	public String dir_name = "A";
 	//==========================================================================
 
 
