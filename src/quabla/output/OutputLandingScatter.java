@@ -4,7 +4,9 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 
-public class Output_wind_map {
+public class OutputLandingScatter {
+
+	//TODO 計算条件の風速値と出力ファイルのラベルの風速値の対応
 
 	/**
 	 * 落下位置をファイルに出力します
