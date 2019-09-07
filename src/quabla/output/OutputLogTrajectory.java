@@ -3,18 +3,19 @@ package quabla.output;
 import java.io.IOException;
 
 import quabla.InputParam;
-import quabla.simulator.Aero_param;
+import quabla.simulator.AeroParameter;
 import quabla.simulator.Coordinate;
-import quabla.simulator.Environment;
-import quabla.simulator.Rocket_param;
+import quabla.simulator.Atmosphere;
+import quabla.simulator.Logger;
+import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 
 //outputLineをOutput_log内で実行する
-public class Output_log {
+public class OutputLogTrajectory {
 
-		/**
+	/**
 	 *出力するもの
 	 *時間,位置x_ENU,位置y_ENU,位置z_ENU,対地速度Vel_x_ENU,対地速度Vel_y_ENU,対地速度Vel_z_ENU,
 	 *角速度p,角速度q,角速度r,質量m,高さalttitude,距離downrange,対気速度Vel_air_abs,マッハ数Mach,迎角alpha,横滑り角beta,
@@ -24,12 +25,14 @@ public class Output_log {
 	 * */
 
 	private double dt;
-	private Interpolation Pos_X_ENU_analy,Pos_Y_ENU_analy,Pos_Z_ENU_analy;
+	private String filename;
+	/*private Interpolation Pos_X_ENU_analy,Pos_Y_ENU_analy,Pos_Z_ENU_analy;
 	private Interpolation Vel_X_ENU_analy,Vel_Y_ENU_analy,Vel_Z_ENU_analy;
 	private Interpolation p_analy,q_analy,r_analy;
-	private Interpolation quat0_analy,quat1_analy,quat2_analy,quat3_analy;
+	private Interpolation quat0_analy,quat1_analy,quat2_analy,quat3_analy;*/
+	private Interpolation pos_ENU_analy,vel_ENU_analy, omega_BODY_analy, quat_analy;
 	private InputParam spec;
-	private static String[] name = {"time [s]","x_ENU [m]","y_ENU [m]","z_ENU [m]","Vel_x_ENU [m/s]","Vel_y_ENU [m/s]","Vel_z_ENU [m/s]",
+	private String[] name = {"time [s]","x_ENU [m]","y_ENU [m]","z_ENU [m]","Vel_x_ENU [m/s]","Vel_y_ENU [m/s]","Vel_z_ENU [m/s]",
 			"p [rad/s]","q [rad/s]","r [rad/s]","quat0","quat1","quat2","quat3","quat_norm","m [kg]","alttitude [m]","downrange [m]",
 			"Vel_air_abs [m/s]","Mach [-]","alpha [deg]","beta[deg]","azimuth [deg]","elevation [deg]","roll [deg]",
 			"Lcg [m]","Lcp [m]","Fst [-]","dynamics_pressure[kPa]","drag [N]","nomal [N]","side [N]","thrust [N]",
@@ -43,103 +46,58 @@ public class Output_log {
 	 * @param 出力先のファイルパス
 	 * @throws IOException 指定されたファイルが存在するが通常ファイルではなくディレクトリである場合、存在せず作成もできない場合、またはなんらかの理由で開くことができない場合
 	 * */
-	public Output_log(InputParam spec,int index_max,double time_array[],double Pos_log[][], double Vel_log[][],double omega_log[][],double quat_log[][]) {
+	public OutputLogTrajectory(String filename, InputParam spec,Logger logdata) {
 
+		this.filename = filename;
 		this.spec = spec;
 		dt = this.spec.dt_output;
-		int length = index_max;
 
-
-
-		double Pos_X_ENU_log[] = new double[length];
-		double Pos_Y_ENU_log[] = new double[length];
-		double Pos_Z_ENU_log[] = new double[length];
-		double Vel_X_ENU_log[] = new double[length];
-		double Vel_Y_ENU_log[] = new double[length];
-		double Vel_Z_ENU_log[] = new double[length];
-		double p_Body_log[] = new double[length];
-		double q_Body_log[] = new double[length];
-		double r_Body_log[] = new double[length];
-		double quat0_log[] = new double[length];
-		double quat1_log[] = new double[length];
-		double quat2_log[] = new double[length];
-		double quat3_log[]= new double[length];
-		for(int i=0; i<length; i++) {
-			Pos_X_ENU_log[i] = Pos_log[i][0];
-			Pos_Y_ENU_log[i] = Pos_log[i][1];
-			Pos_Z_ENU_log[i] = Pos_log[i][2];
-			Vel_X_ENU_log[i] = Vel_log[i][0];
-			Vel_Y_ENU_log[i] = Vel_log[i][1];
-			Vel_Z_ENU_log[i] = Vel_log[i][2];
-			 p_Body_log[i] = omega_log[i][0];
-			 q_Body_log[i] = omega_log[i][1];
-			 r_Body_log[i] = omega_log[i][2];
-			 quat0_log[i] = quat_log[i][0];
-			 quat1_log[i] = quat_log[i][1];
-			 quat2_log[i] = quat_log[i][2];
-			 quat3_log[i] = quat_log[i][3];
-
-		}
-
-		//解析用のインスタンスの作成
-		Pos_X_ENU_analy = new Interpolation(time_array,Pos_X_ENU_log);
-		Pos_Y_ENU_analy = new Interpolation(time_array,Pos_Y_ENU_log);
-		Pos_Z_ENU_analy = new Interpolation(time_array,Pos_Z_ENU_log);
-		Vel_X_ENU_analy = new Interpolation(time_array,Vel_X_ENU_log);
-		Vel_Y_ENU_analy = new Interpolation(time_array,Vel_Y_ENU_log);
-		Vel_Z_ENU_analy = new Interpolation(time_array,Vel_Z_ENU_log);
-		p_analy = new Interpolation(time_array,p_Body_log);
-		q_analy = new Interpolation(time_array,q_Body_log);
-		r_analy = new Interpolation(time_array,r_Body_log);
-		quat0_analy= new Interpolation(time_array,quat0_log);
-		quat1_analy= new Interpolation(time_array,quat1_log);
-		quat2_analy= new Interpolation(time_array,quat2_log);
-		quat3_analy= new Interpolation(time_array,quat3_log);
+		pos_ENU_analy = new Interpolation(logdata.time_array, logdata.pos_ENU_log);
+		vel_ENU_analy = new Interpolation(logdata.time_array, logdata.Vel_ENU_log);
+		omega_BODY_analy = new Interpolation(logdata.time_array, logdata.omega_Body_log);
+		quat_analy = new Interpolation(logdata.time_array, logdata.quat_log);
 
 	}
 
-
-
-	public void run_output_line(double landing_time) {
-		Rocket_param rocket = new Rocket_param(spec);
-		Environment env = new Environment(spec.temperture0);
+// Vector での計算に対応
+	public void runOutputLine(double landingTime) {
+		RocketParameter rocket = new RocketParameter(spec);
+		Atmosphere env = new Atmosphere(spec.temperture0);
 		Wind wind = new Wind(spec);
-		Aero_param aero = new Aero_param(spec);
+		AeroParameter aero = new AeroParameter(spec);
 		double t = 0.0;
-		double Pos_ENU[] = new double[3];
-		double Vel_ENU[] = new double[3];
-		double omega_Body[] = new double[3];
-		double quat[] = new double[4];
+		double[] pos_ENU = new double[3];
+		double[] vel_ENU = new double[3];
+		double[] omega_BODY = new double[3];
+		double[] quat = new double[4];
 		double quat_norm;
-		double DCM_ENU2Body[][] = new double[3][3];
-		double DCM_Body2ENU[][] = new double[3][3];
+		double[][] dcm_ENU2BODY = new double[3][3];
+		double[][] dcm_Body2ENU = new double[3][3];
 		double m;
-		//double p,q,r;
 		double Lcg,Lcp,Fst;
 		double thrust,pressure_thrust;
 		double altitude, downrange;
-		double g[] = new double[3];
+		double[] g = new double[3];
 		double P_air,rho;
-		double P_air0 = env.atomospheric_pressure(0);
-		double wind_ENU[] = new double[3];
-		double Vel_air_Body[] = new double[3];
-		double Vel_air_ENU[] = new double[3];
+		double P_air0 = env.getAtomosphericPressure(0.0);
+		double[] wind_ENU = new double[3];
+		double[] vel_air_BODY = new double[3];
+		double[] vel_air_ENU = new double[3];
 		double Vel_air_abs = 0.0;
 		double alpha,beta;
 		double Mach,dynamics_pressure;
 		double drag,nomal,side;
-		double attitude[] = new double[3];
-		double Force[] = new double[3];
+		double[] attitude = new double[3];
+		double[] force_BODY = new double[3];
 		//double Force_coriolis[]  = new double[3];
-		double Acc_Body[] = new double[3];
-		double Acc_ENU[] = new double[3];
-		double Acc_abs;
-		//double[] result = new double[name.length];
+		double[] acc_BODY = new double[3];
+		double[] acc_ENU = new double[3];
+		double acc_abs;
 
 		OutputCsv flightlog = null;
 
 		try {
-			 flightlog = new OutputCsv(spec.result_filepath+"flightlog_trajectory.csv",name);
+			 flightlog = new OutputCsv(spec.result_filepath+ filename +".csv",name);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -156,49 +114,40 @@ public class Output_log {
 			//入力したlog以外の値の計算
 			t = dt * i;
 
-			Pos_ENU[0] = Pos_X_ENU_analy.linear_interpolation(t);
-			Pos_ENU[1] = Pos_Y_ENU_analy.linear_interpolation(t);
-			Pos_ENU[2] = Pos_Z_ENU_analy.linear_interpolation(t);
-			Vel_ENU[0] = Vel_X_ENU_analy.linear_interpolation(t);
-			Vel_ENU[1] = Vel_Y_ENU_analy.linear_interpolation(t);
-			Vel_ENU[2] = Vel_Z_ENU_analy.linear_interpolation(t);
-			omega_Body[0] = p_analy.linear_interpolation(t);
-			omega_Body[1] = q_analy.linear_interpolation(t);
-			omega_Body[2] = r_analy.linear_interpolation(t);
-			quat[0] = quat0_analy.linear_interpolation(t);
-			quat[1] = quat1_analy.linear_interpolation(t);
-			quat[2] = quat2_analy.linear_interpolation(t);
-			quat[3] = quat3_analy.linear_interpolation(t);
+			pos_ENU = pos_ENU_analy.linearInterpPluralColumns(t);
+			vel_ENU = vel_ENU_analy.linearInterpPluralColumns(t);
+			omega_BODY = omega_BODY_analy.linearInterpPluralColumns(t);
+			quat = Coordinate.nomalizeQuat(quat_analy.linearInterpPluralColumns(t));
 			quat_norm = Math.sqrt(Math.pow(quat[0], 2) + Math.pow(quat[1], 2) + Math.pow(quat[2], 2) + Math.pow(quat[3], 2));
 
-			DCM_ENU2Body = Coordinate.quat2DCM_ENU2Body(quat);
-			DCM_Body2ENU = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
+			dcm_ENU2BODY = Coordinate.getDCM_ENU2BODYfromQuat(quat);
+			dcm_Body2ENU = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(dcm_ENU2BODY);
 
-			m = rocket.mass(t);
+			m = rocket.getMass(t);
 			Lcg = rocket.Lcg(t);
 
-			altitude = Pos_ENU[2];
-			downrange = Math.sqrt(Math.pow(Pos_ENU[0], 2) + Math.pow(Pos_ENU[1], 2));
+			altitude = pos_ENU[2];
+			downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
 
 			g[0] = 0.0;
 			g[1] = 0.0;
-			g[2] = - env.gravity(altitude);
-			P_air = env.atomospheric_pressure(altitude);
-			rho = env.density_air(altitude);
+			g[2] = - env.getGravity(altitude);
+			P_air = env.getAtomosphericPressure(altitude);
+			rho = env.getAirDensity(altitude);
 
-			wind_ENU = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
+			wind_ENU = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 			for(int j=0;j<3;j++)
-				Vel_air_ENU[j] = Vel_ENU[j] - wind_ENU[j];
-			Vel_air_Body = Coordinate.vec_trans(DCM_ENU2Body, Vel_air_ENU);
-			Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
+				vel_air_ENU[j] = vel_ENU[j] - wind_ENU[j];
+			vel_air_BODY = Coordinate.vec_trans(dcm_ENU2BODY, vel_air_ENU);
+			Vel_air_abs = Math.sqrt(Math.pow(vel_air_BODY[0], 2) + Math.pow(vel_air_BODY[1], 2) + Math.pow(vel_air_BODY[2], 2));
 			if(Vel_air_abs <= 0.0) {
 				alpha = 0.0;
 				beta = 0.0;
 			}else {
-				alpha =Math.asin(Vel_air_Body[2]/Vel_air_abs);
-				beta = Math.asin(Vel_air_Body[1]/Vel_air_abs);
+				alpha =Math.asin(vel_air_BODY[2]/Vel_air_abs);
+				beta = Math.asin(vel_air_BODY[1]/Vel_air_abs);
 			}
-			Mach = Vel_air_abs / env.soundspeed(altitude);
+			Mach = Vel_air_abs / env.getSoundSpeed(altitude);
 			dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
 			drag = dynamics_pressure * aero.Cd(Mach) * rocket.S;
 			nomal = dynamics_pressure * aero.CNa(Mach) * rocket.S * alpha;
@@ -207,7 +156,7 @@ public class Output_log {
 			Lcp = aero.Lcp(Mach);
 			Fst = (Lcp - Lcg)/rocket.L*100;
 
-			attitude = Coordinate.DCM2euler(DCM_ENU2Body);
+			attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
 			thrust = rocket.thrust(t);
 			if(thrust<=0.0) {
@@ -217,22 +166,22 @@ public class Output_log {
 				thrust += pressure_thrust;
 			}
 
-			Force[0] = thrust - drag;
-			Force[1] = - side;
-			Force[2] = - nomal;
+			force_BODY[0] = thrust - drag;
+			force_BODY[1] = - side;
+			force_BODY[2] = - nomal;
 
-			Acc_ENU = Coordinate.vec_trans(DCM_Body2ENU, Force);
+			acc_ENU = Coordinate.vec_trans(dcm_Body2ENU, force_BODY);
 			for(int j=0; j<3; j++) {
-				Acc_ENU[j] = Acc_ENU[j]/m +g[j];
+				acc_ENU[j] = acc_ENU[j]/m +g[j];
 			}
-			Acc_Body = Coordinate.vec_trans(DCM_ENU2Body, Acc_ENU);
-			Acc_abs = Math.sqrt(Math.pow(Acc_ENU[0], 2) + Math.pow(Acc_ENU[1], 2) + Math.pow(Acc_ENU[2], 2));
+			acc_BODY = Coordinate.vec_trans(dcm_ENU2BODY, acc_ENU);
+			acc_abs = Math.sqrt(Math.pow(acc_ENU[0], 2) + Math.pow(acc_ENU[1], 2) + Math.pow(acc_ENU[2], 2));
 
 
 			//出力する値
-			double[] result = set_result(t, Pos_ENU, Vel_ENU,omega_Body, quat, quat_norm,m,altitude,downrange,Vel_air_abs,
-					Mach,alpha,beta, attitude,Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust, Force,Acc_ENU,
-					Acc_Body, Acc_abs);
+			double[] result = set_result(t, pos_ENU, vel_ENU,omega_BODY, quat, quat_norm,m,altitude,downrange,Vel_air_abs,
+					Mach,alpha,beta, attitude, Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust, force_BODY,acc_ENU,
+					acc_BODY, acc_abs);
 
 
 			try {
@@ -243,8 +192,7 @@ public class Output_log {
 			//result とnameの要素数が違った時の例外処理
 
 
-
-			if(t >= landing_time) {
+			if(t >= landingTime) {
 				break;
 			}
 		}
@@ -291,7 +239,7 @@ public class Output_log {
 	 * @throws IOException
 	 * */
 
-	private static double[] set_result(double t, double[] Pos_ENU, double[] Vel_ENU, double[] omega_Body, double[] quat,
+	private double[] set_result(double t, double[] Pos_ENU, double[] Vel_ENU, double[] omega_Body, double[] quat,
 			double quat_norm, double m, double altitude, double downrange, double Vel_air_abs,double Mach,
 			double alpha, double beta, double[] attitude, double Lcg,double Lcp,double Fst, double dynamics_pressure,
 			double drag, double nomal, double side, double thrust, double[] Force,double[] Acc_ENU,double[] Acc_Body,
@@ -335,8 +283,6 @@ public class Output_log {
 
 		return result;
 	}
-
-
 
 
 }
