@@ -2,7 +2,7 @@ package quabla;
 
 import java.io.File;
 
-import quabla.simulator.Multi_solver;
+import quabla.simulator.MultiSolver;
 import quabla.simulator.Solver;
 
 public class QUABLA {
@@ -11,11 +11,7 @@ public class QUABLA {
 
 	public static void main(String[] args) {
 
-
-
-		//System.out.println(Simulation);
 		System.out.println("Running Solver...");
-
 
 		InputParam spec = new InputParam();
 		//String dir_filepath;
@@ -27,7 +23,6 @@ public class QUABLA {
 			dir_filepath = spec.result_filepath + "Result_single_" + spec.dir_name;
 			make_resultdir(dir_filepath);
 			spec.result_filepath = dir_filepath + "\\";
-
 
 			Solver solver = new Solver(spec,true);
 			solver.solve_dynamics();
@@ -41,17 +36,12 @@ public class QUABLA {
 			make_resultdir(dir_filepath);
 			spec.result_filepath = dir_filepath + "\\";
 
-			//System.out.println(dir_filepath);
-
-
-			Multi_solver multi_solver = new Multi_solver(spec);
+			MultiSolver multi_solver = new MultiSolver(spec);
 			multi_solver.solve_multi();
 			break;
 		}
 
 		System.out.println("Completed!!");
-
-
 	}
 
 	public static void make_resultdir(String filepath) {
