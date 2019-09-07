@@ -5,9 +5,37 @@ package quabla.simulator;
  * */
 
 public class Dynamics {
-	//private double Mach;
 
-	public static double[] trajectory(double x[], double t, Rocket_param rocket, Environment env,Aero_param aero, Wind wind) {
+
+	/**
+	 * calculate acceleration_ENU, velocity_ENU,
+	 * anguler acceleration_Body, anguler verocity
+	 * */
+
+	//TODO:ポリモーフィズムで実装
+	/*
+	public static DynamicsMinuteChange calculateDynamics(Variable vari, ConstantVariable constant, String flightMode) {
+		DynamicsMinuteChange delta = new DynamicsMinuteChange();
+
+		switch(flightMode) {
+		case "onLauncher":
+			break;
+		case "tipOff":
+			break;
+		case "trajectory":
+			break;
+		case "parachute":
+			break;
+		}
+		return delta;
+	}
+	*/
+
+
+	//public abstract void calculateDynamics(Variable variable, ConstantVariable constant);
+
+
+	public static double[] trajectory(double x[], double t, RocketParameter rocket, Atmosphere env,AeroParameter aero, Wind wind) {
 		double dx[] = new double[13];
 		double h = rocket.dt;
 
@@ -16,22 +44,22 @@ public class Dynamics {
 		double omega_Body[] = {x[6] , x[7] , x[8]};
 		double quat[] = {x[9] , x[10] , x[11] , x[12]};
 
-		double m = rocket.mass(t);
+		double m = rocket.getMass(t);
 		double m_dot = rocket.mdot(t);
 		double altitude = Pos_ENU[2];
 		double p = omega_Body[0];
 		double q = omega_Body[1];
 		double r = omega_Body[2];
 
-		quat = Coordinate.quat_nomalization(quat);
+		quat = Coordinate.nomalizeQuat(quat);
 
 		//Translation coodinate
-		double DCM_ENU2Body[][] = Coordinate.quat2DCM_ENU2Body(quat);
+		double DCM_ENU2Body[][] = Coordinate.getDCM_ENU2BODYfromQuat(quat);
 		double DCM_Body2ENU[][] = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 		//double Vel_Body[] = Coodinate.vec_trans(DCM_ENU2Body, Vel_ENU);
 
 		//wind , Vel_air
-		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
+		double wind_ENU[] = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 		double Vel_air_ENU[] = new double[3];
 
 		for(int i = 0; i<3; i++) {
@@ -55,11 +83,11 @@ public class Dynamics {
 		}
 
 		//Environment
-		double g[] = {0.0 , 0.0 , -env.gravity(altitude)};
-		double P0 = env.atomospheric_pressure(0);
-		double P = env.atomospheric_pressure(altitude);
-		double rho = env.density_air(altitude);
-		double Cs = env.soundspeed(altitude);
+		double g[] = {0.0 , 0.0 , -env.getGravity(altitude)};
+		double P0 = env.getAtomosphericPressure(0);
+		double P = env.getAtomosphericPressure(altitude);
+		double rho = env.getAirDensity(altitude);
+		double Cs = env.getSoundSpeed(altitude);
 		double Mach = Vel_air_abs / Cs;
 		double dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
 
@@ -163,24 +191,24 @@ public class Dynamics {
 		return dx;
 	}
 
-	public static double[] on_luncher(double x[], double t, Rocket_param rocket, Environment env , Aero_param aero, Wind wind , double quat0[]) {
+	public static double[] on_luncher(double x[], double t, RocketParameter rocket, Atmosphere env , AeroParameter aero, Wind wind , double quat0[]) {
 		double dx[] = new double[12];
 		double Pos_ENU[] = {x[0] , x[1] , x[2]};
 		double Vel_ENU[] = {x[6] , x[7] , x[8]};
 		double Vel_Body[] = {x[9] , x[10] , x[11]};
 		double altitude = Pos_ENU[2];
 
-		double m = rocket.mass(t);
+		double m = rocket.getMass(t);
 
 		//Tronsition Coodinate
-		double DCM_ENU2Body[][] = Coordinate.quat2DCM_ENU2Body(quat0);
+		double DCM_ENU2Body[][] = Coordinate.getDCM_ENU2BODYfromQuat(quat0);
 		double DCM_Body2ENU[][] = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
 
-		double elevation = Coordinate.deg2rad(Coordinate.DCM2euler(DCM_ENU2Body)[2]);
+		double elevation = Coordinate.deg2rad(Coordinate.getEulerFromDCM(DCM_ENU2Body)[2]);
 		double Z0 = (rocket.L-rocket.Lcg_0)*Math.sin(Math.abs(elevation));
 
 		//Wind, Vel_air
-		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
+		double wind_ENU[] = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 		double Vel_air_ENU[] = new double[3];
 		for(int i = 0; i<3; i++) {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
@@ -189,11 +217,11 @@ public class Dynamics {
 		double Vel_air_abs = Math.sqrt(Math.pow(Vel_air_Body[0], 2) + Math.pow(Vel_air_Body[1], 2) + Math.pow(Vel_air_Body[2], 2));
 
 		//Environment
-		double g[] = {0.0 , 0.0 , -env.gravity(altitude)};
-		double P0 = env.atomospheric_pressure(0);
-		double P = env.atomospheric_pressure(altitude);
-		double rho = env.density_air(altitude);
-		double Cs = env.soundspeed(altitude);
+		double g[] = {0.0 , 0.0 , -env.getGravity(altitude)};
+		double P0 = env.getAtomosphericPressure(0);
+		double P = env.getAtomosphericPressure(altitude);
+		double rho = env.getAirDensity(altitude);
+		double Cs = env.getSoundSpeed(altitude);
 		double Mach = Vel_air_abs / Cs;
 		double dynamic_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
 
@@ -221,11 +249,14 @@ public class Dynamics {
 		}
 
 		//Accelaration
-		double Acc_Body[] = {Force[0] / m + Math.abs(g[2])*Math.sin(elevation) , 0.0 , 0.0};
+		double[] Acc_Body = new double[3];
+		Acc_Body[0] = Force[0]/m + Math.abs(g[2])*Math.sin(elevation);
+		Acc_Body[1] = 0.0;
+		Acc_Body[2] = 0.0;
 		double Acc_ENU[] = Coordinate.vec_trans(DCM_Body2ENU, Acc_Body);
 
 		//推力が自重に負けているとき(居座り)
-		if(Acc_ENU[2] <= 0.0 && t<rocket.t_burnout && altitude <= Z0) {
+		if(Acc_ENU[2] <= 0.0 && t<rocket.time_Burnout && altitude <= Z0) {
 			for(int i=0; i<3; i++) {
 				Acc_ENU[i] = 0.0;
 			}
@@ -244,7 +275,7 @@ public class Dynamics {
 
 
 	//実装中
-	public static double[] tip_off_dynamics(double[] x, double t, Rocket_param rocket, Environment env,Aero_param aero, Wind wind,double launcher_rail) {
+	public static double[] tip_off_dynamics(double[] x, double t, RocketParameter rocket, Atmosphere env,AeroParameter aero, Wind wind,double launcher_rail) {
 		double dx[] = new double[19];
 		double h = rocket.dt;
 
@@ -256,21 +287,21 @@ public class Dynamics {
 		double omega_Body[] = {x[12], x[13] , x[14]};
 		double quat[] = {x[15] , x[16] , x[17] , x[18]};
 
-		double m = rocket.mass(t);
+		double m = rocket.getMass(t);
 		double m_dot = rocket.mdot(t);
 		double p = omega_Body[0];
 		double q = omega_Body[1];
 		double r = omega_Body[2];
 		double[] omegadot = new double[3];
-		quat = Coordinate.quat_nomalization(quat);
+		quat = Coordinate.nomalizeQuat(quat);
 
 		//Tronsition coodinate
-		double DCM_ENU2Body[][] = Coordinate.quat2DCM_ENU2Body(quat);
+		double DCM_ENU2Body[][] = Coordinate.getDCM_ENU2BODYfromQuat(quat);
 		double DCM_Body2ENU[][] = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(DCM_ENU2Body);
-		double elevation = Coordinate.deg2rad(Coordinate.DCM2euler(DCM_ENU2Body)[2]);
+		double elevation = Coordinate.deg2rad(Coordinate.getEulerFromDCM(DCM_ENU2Body)[2]);
 
 		//Vel_air
-		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
+		double wind_ENU[] = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 		double Vel_air_ENU[] = new double[3];
 		for(int i = 0; i<3; i++) {
 			Vel_air_ENU[i] = Vel_ENU[i] - wind_ENU[i];
@@ -292,11 +323,11 @@ public class Dynamics {
 			beta = Math.asin(v / Vel_air_abs);
 		}
 
-		double g[] = {0.0 , 0.0 , -env.gravity(altitude)};
-		double P0 = env.atomospheric_pressure(0);
-		double P = env.atomospheric_pressure(altitude);
-		double rho = env.density_air(altitude);
-		double Cs = env.soundspeed(altitude);
+		double g[] = {0.0 , 0.0 , -env.getGravity(altitude)};
+		double P0 = env.getAtomosphericPressure(0);
+		double P = env.getAtomosphericPressure(altitude);
+		double rho = env.getAirDensity(altitude);
+		double Cs = env.getSoundSpeed(altitude);
 		double Mach = Vel_air_abs / Cs;
 		double dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
 
@@ -335,8 +366,6 @@ public class Dynamics {
 		double Lcg_p = rocket.Lcg_prop;
 		double Lcp = aero.Lcp(Mach);
 
-		//double distance_upper_lug = (rocket.L - rocket.upper_lug) + distance_Body;
-		//double distance_lower_lug = (rocket.L - rocket.lower_lug) + distance_Body;
 		double pivot_point = rocket.lower_lug;
 
 		//Inertia Moment
@@ -408,20 +437,20 @@ public class Dynamics {
 	}
 
 
-	public static double[] parachute(double x[], double t, Rocket_param rocket, Environment env, Wind wind) {
+	public static double[] parachute(double x[], double t, RocketParameter rocket, Atmosphere env, Wind wind) {
 		double dx[] = new double[4];
-		double m = rocket.mass(t);
+		double m = rocket.getMass(t);
 		double Pos_ENU[] = {x[0] , x[1] , x[2]};
 		double altitude = Pos_ENU[2];
 		double Vel_descent = x[3];
 
 		//Wind , Velocity
-		double wind_ENU[] = Wind.wind_ENU(wind.wind_speed(altitude), wind.wind_direction(altitude));
+		double wind_ENU[] = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 		double Vel_ENU[] = {wind_ENU[0], wind_ENU[1], Vel_descent};
 
 		//Environment
-		double g = env.gravity(altitude);
-		double rho = env.density_air(altitude);
+		double g = env.getGravity(altitude);
+		double rho = env.getAirDensity(altitude);
 
 		double CdS;
 		if(rocket.para2_exist && altitude <= rocket.alt_para2) {
