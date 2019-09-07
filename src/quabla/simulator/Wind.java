@@ -11,13 +11,9 @@ public class Wind {
 	private double wind_speed, Zr, wind_azimuth,Cdv;
 	private static double magnetic_dec;
 
-	//分散の時の風向,風速をどう変えるか
-	//風の情報関連をいつセットするか
-
 	//落下分散の時は,spec.wind_file_exist, spec.wind_speed, spec.wind_azimuthを書き換える
 
 	public Wind(InputParam spec) {
-
 
 		this.Wind_file_exist = spec.Wind_file_exsit;
 		this.wind_speed = spec.wind_speed;
@@ -42,44 +38,69 @@ public class Wind {
 
 	}
 
-	public double wind_speed(double alt) {
+
+	/**
+	 * @param alt [m]
+	 * @return speed [m/s]
+	 * */
+	public double getWindSpeed(double alt) {
 		double speed;
 
 		if(Wind_file_exist) {
-			speed = speed_analy.linear_interpolation(alt);
+			speed = speed_analy.linearInterp1column(alt);
 		}else {//べき法則
-			speed = power_law(alt, wind_speed, Zr, Cdv);
+			speed = getWindSpeedWithPowerLaw(alt, wind_speed, Zr, Cdv);
 		}
 
 		return speed;
 	}
 
-	public double wind_direction(double alt) {
+
+	/**
+	 * @param alt [m]
+	 * @return direction [rad]
+	 * */
+	public double getWindDirection(double alt) {
 		double direction;
 
 		if(Wind_file_exist) {
-			direction = direction_analy.linear_interpolation(alt);
+			direction = direction_analy.linearInterp1column(alt);
 		}else {//べき法則
 			direction = wind_azimuth;
 		}
 
-
-		//return Coodinate.deg2rad(direction);//radで返す
 		return direction;
 	}
 
 
-	public static double power_law(double altitude, double ref_wind_speed, double ref_altitude, double wind_pow_exp) {
-		double speed;
-		speed = ref_wind_speed * Math.pow(altitude/ref_altitude , 1.0/wind_pow_exp);
-		return speed;
+	/**
+	 * @param altitude [m]
+	 * @param ref_wind_speed [m/s]
+	 * @param ref_altitude [m]
+	 * @param wind_pow_exp [-]
+	 * @return speed [m/s]
+	 * */
+	public static double getWindSpeedWithPowerLaw(double altitude, double ref_wind_speed, double ref_altitude, double wind_pow_exp) {
+		double windSpeed;
+		if(altitude <= 0.0) {
+			windSpeed = 0.0;
+		}else {
+			windSpeed = ref_wind_speed * Math.pow(altitude/ref_altitude , 1.0/wind_pow_exp);
+		}
+
+		return windSpeed;
 	}
 
+
+	/**
+	 * @param speed [m/s]
+	 * @param direction [deg]
+	 * @return wind_ENU
+	 * */
 	public static double[] wind_ENU(double speed, double direction) {
 		//wind_azimuth [deg] 磁北から時計回りを正
 		double wind_ENU[] = new double[3];
 		double wind_azimuth_ENU;//[rad] 磁東から反時計回りを正
-		//todo 磁気偏角
 
 		//-をつけて風向からの風になる
 		wind_azimuth_ENU = Coordinate.deg2rad(- direction + 90.0 + magnetic_dec);
