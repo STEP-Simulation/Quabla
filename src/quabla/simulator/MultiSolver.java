@@ -3,14 +3,14 @@ package quabla.simulator;
 import java.io.IOException;
 
 import quabla.InputParam;
-import quabla.output.Output_wind_map;
+import quabla.output.OutputLandingScatter;
 
-public class Multi_solver {
+public class MultiSolver {
 	InputParam spec;
 	double speed_min,speed_step;
 	int speed_num,angle_num;
 
-	public Multi_solver(InputParam spec) {
+	public MultiSolver(InputParam spec) {
 		this.spec = spec;
 
 		this.spec.Wind_file_exsit = false;//分散の時は強制的にべき法則
@@ -48,14 +48,14 @@ public class Multi_solver {
 			}
 		}
 
-		Output_wind_map trajectory = new Output_wind_map();
+		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
 			trajectory.output(spec.result_filepath + "trajectory"+spec.elevation_launcher+"[deg].csv",wind_map_trajectory);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		Output_wind_map parachute = new Output_wind_map();
+		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
 			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",wind_map_parachute);
 		} catch (IOException e) {
