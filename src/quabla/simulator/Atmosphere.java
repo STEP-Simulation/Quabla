@@ -1,6 +1,6 @@
 package quabla.simulator;
 
-public class Environment {
+public class Atmosphere {
 
 	private double temperture0;
 	private double Re = 6378.137 * Math.pow(10, 3);//地球の半径
@@ -11,55 +11,55 @@ public class Environment {
 	 * **/
 
 
-	public Environment(double temperture0){
+	public Atmosphere(double temperture0){
 		this.temperture0 = temperture0;
 	}
 
-	private double geopotential_altitude(double altitude) {
+	private double getGeopotentialAltitude(double altitude) {
 		return Re * altitude / (Re + altitude);
 	}
 
 
-	public double density_air(double altitude) {
+	public double getAirDensity(double altitude) {
 		double density;//[kg/m^3] air density
-		double temperture = temperture(altitude) + 273.15;//[K]
-		double pressure = atomospheric_pressure(altitude);
+		double temperture = getTemperture(altitude) + 273.15;//[K]
+		double pressure = getAtomosphericPressure(altitude);
 
 		density = 0.0034837 * pressure / temperture;
 
 		return density;
 	}
 
-	public double atomospheric_pressure(double altitude) {
+	public double getAtomosphericPressure(double altitude) {
 		double pressure;//[Pa] atomospheric pressure
 		double pressure0 = 101325;//[Pa] atomospheric pressure at 0 m
 		double gamma = -5.256;
 
-		pressure = pressure0 * Math.pow(288.15 / (273.15 + temperture(altitude)), gamma);
+		pressure = pressure0 * Math.pow(288.15 / (273.15 + getTemperture(altitude)), gamma);
 
 		return pressure ;
 	}
 
-	public double temperture(double altitude) {
+	public double getTemperture(double altitude) {
 		double temperture ;
 
-		double geo_alt = geopotential_altitude(altitude);
+		double geo_alt = getGeopotentialAltitude(altitude);
 
 		temperture = temperture0 - 0.0065 * geo_alt;
 
 		return temperture;
 	}
 
-	public double soundspeed(double altitude ) {
+	public double getSoundSpeed(double altitude ) {
 		double Cs; //[m/s] sound speed
 
-		Cs = 20.0468 * Math.sqrt(temperture(altitude) + 237.15);
+		Cs = 20.0468 * Math.sqrt(getTemperture(altitude) + 237.15);
 
 
 		return Cs;
 	}
 
-	public double gravity(double altitude) {
+	public double getGravity(double altitude) {
 		double gravity;
 		double g0 = 9.80665;
 
