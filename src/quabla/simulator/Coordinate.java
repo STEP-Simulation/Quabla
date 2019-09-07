@@ -1,47 +1,51 @@
 package quabla.simulator;
 
+/*
+ * ----------Caution!!-----------
+ * ----↓define quaternion ↓----
+ * q = q0*1 + q1*i + q2*j + q3*k
+ * ----↑define quaternion ↑----
+ * */
 public class Coordinate {
 
-	/**
-	 * ----------Caution!!-----------
-	 * ----↓define quaternion ↓----
-	 * q = q0*1 + q1*i + q2*j + q3*k
-	 * ----↑define quaternion ↑----
-	 * */
 
-	public static double[][] quat2DCM_ENU2Body(double quat[]) {
-		double DCM_ENU2Body[][] = new double[3][3];
+	/**
+	 * @param quat
+	 * @return dcm_ENU2BODY
+	 * */
+	public static double[][] getDCM_ENU2BODYfromQuat(double quat[]) {
+		double dcm_ENU2BODY[][] = new double[3][3];
 		double q0,q1,q2,q3;
 		q0 = quat[0];
 		q1 = quat[1];
 		q2 = quat[2];
 		q3 = quat[3];
 
-		DCM_ENU2Body[0][0] = q0*q0 + q1*q1 - q2*q2 - q3*q3 ;
-		DCM_ENU2Body[0][1] = 2*(q1*q2 + q0*q3);
-		DCM_ENU2Body[0][2] = 2*(q1*q3 - q0*q2);
-		DCM_ENU2Body[1][0] = 2*(q1*q2 - q0*q3);
-		DCM_ENU2Body[1][1] = q0*q0 - q1*q1 + q2*q2 - q3*q3 ;
-		DCM_ENU2Body[1][2] = 2*(q2*q3 + q0*q1);
-		DCM_ENU2Body[2][0] = 2*(q1*q3 + q0*q2);
-		DCM_ENU2Body[2][1] = 2*(q2*q3 - q0*q1);
-		DCM_ENU2Body[2][2] = q0*q0 - q1*q1 - q2*q2 + q3*q3 ;
+		dcm_ENU2BODY[0][0] = q0*q0 + q1*q1 - q2*q2 - q3*q3 ;
+		dcm_ENU2BODY[0][1] = 2*(q1*q2 + q0*q3);
+		dcm_ENU2BODY[0][2] = 2*(q1*q3 - q0*q2);
+		dcm_ENU2BODY[1][0] = 2*(q1*q2 - q0*q3);
+		dcm_ENU2BODY[1][1] = q0*q0 - q1*q1 + q2*q2 - q3*q3 ;
+		dcm_ENU2BODY[1][2] = 2*(q2*q3 + q0*q1);
+		dcm_ENU2BODY[2][0] = 2*(q1*q3 + q0*q2);
+		dcm_ENU2BODY[2][1] = 2*(q2*q3 - q0*q1);
+		dcm_ENU2BODY[2][2] = q0*q0 - q1*q1 - q2*q2 + q3*q3 ;
 
-		return DCM_ENU2Body;
+		return dcm_ENU2BODY;
 	}
 
 
 
-	public static double[] quat_nomalization(double quat[]) {
+	public static double[] nomalizeQuat(double quat[]) {
 		double norm;
-		double quat_nomalized[] = new double[4];
+		double quatNomalized[] = new double[4];
 
 		norm = Math.sqrt(quat[0]*quat[0] + quat[1]*quat[1] + quat[2]*quat[2] + quat[3]*quat[3]) ;
 		for(int i = 0; i<4; i++) {
-			quat_nomalized[i] = quat[i] / norm;
+			quatNomalized[i] = quat[i] / norm;
 		}
 
-		return quat_nomalized;
+		return quatNomalized;
 	}
 
 
@@ -74,29 +78,36 @@ public class Coordinate {
 	}
 
 
-
-
-	public static double[][] DCM_ENU2Body2DCM_Body2_ENU(double DCM_ENU2Body[][]){
-		double DCM_Body2ENU[][] = new double[3][3];
+	/**
+	 * @param dcm_ENU2BODY
+	 * @return dcm_BODY2ENU
+	 * */
+	public static double[][] DCM_ENU2Body2DCM_Body2_ENU(double dcm_ENU2BODY[][]){
+		double dcm_BODY2ENU[][] = new double[3][3];
 
 		for(int i = 0 ; i<3 ; i++) {
 			for(int j = 0 ; j<3 ; j++) {
-				DCM_Body2ENU[i][j] = DCM_ENU2Body[j][i] ;
+				dcm_BODY2ENU[i][j] = dcm_ENU2BODY[j][i] ;
 			}
 		}
 
-		return DCM_Body2ENU;
+		return dcm_BODY2ENU;
 	}
 
 
-
-	public static double[] euler2quat(double azimuth , double elevation , double roll) {
+	/**
+	 * @param azimuth [deg]
+	 * @param elevation [deg]
+	 * @param roll [deg]
+	 * @return quat
+	 * */
+	public static double[] getQuatFromEuler(double azimuth , double elevation , double roll) {
 		double DCM[][] = new double[3][3];
 		double quat[] = new double[4];
 		double quat_max = 0.0;
 		int count = 0;
 
-		DCM = euler2DCM_ENU2Body(azimuth , elevation , roll);
+		DCM = getDCM_ENU2BODYfromEuler(azimuth , elevation , roll);
 		quat[0] = 0.5*Math.sqrt(1 + DCM[0][0] + DCM[1][1] + DCM[2][2]);
 		quat[1] = 0.5*Math.sqrt(1 + DCM[0][0] - DCM[1][1] - DCM[2][2]);
 		quat[2] = 0.5*Math.sqrt(1 - DCM[0][0] + DCM[1][1] - DCM[2][2]);
@@ -141,34 +152,41 @@ public class Coordinate {
 	}
 
 
+	/**
+	 * @param azimuth [rad]
+	 * @param elevation [rad]
+	 * @param roll [rad]
+	 * @return dcm_ENU2BODY
+	 * */
+	public static double[][] getDCM_ENU2BODYfromEuler(double azimuth, double elevation , double roll){
+		double dcm[][] = new double[3][3];
+		double dcm_ENU2BODY[][] = new double[3][3];
 
-
-	public static double[][] euler2DCM_ENU2Body(double azimuth, double elevation , double roll){
-		double DCM[][] = new double[3][3];
-		double DCM_ENU2Body[][] = new double[3][3];
-
-		DCM[0][0] = Math.cos(azimuth)*Math.cos(elevation);
-		DCM[0][1] = Math.sin(azimuth)*Math.cos(elevation);
-		DCM[0][2] = - Math.sin(elevation);
-		DCM[1][0] = Math.cos(azimuth)*Math.sin(elevation)*Math.sin(roll) - Math.sin(azimuth)*Math.cos(roll);
-		DCM[1][1] = Math.sin(azimuth)*Math.sin(elevation)*Math.sin(roll) + Math.cos(azimuth)*Math.cos(roll);
-		DCM[1][2] = Math.cos(elevation)*Math.sin(roll);
-		DCM[2][0] = Math.cos(azimuth)*Math.sin(elevation)*Math.cos(roll) + Math.sin(azimuth)*Math.sin(roll);
-		DCM[2][1] = Math.sin(azimuth)*Math.sin(elevation)*Math.cos(roll) - Math.cos(azimuth)*Math.sin(roll);
-		DCM[2][2] = Math.cos(elevation)*Math.cos(roll);
+		dcm[0][0] = Math.cos(azimuth)*Math.cos(elevation);
+		dcm[0][1] = Math.sin(azimuth)*Math.cos(elevation);
+		dcm[0][2] = - Math.sin(elevation);
+		dcm[1][0] = Math.cos(azimuth)*Math.sin(elevation)*Math.sin(roll) - Math.sin(azimuth)*Math.cos(roll);
+		dcm[1][1] = Math.sin(azimuth)*Math.sin(elevation)*Math.sin(roll) + Math.cos(azimuth)*Math.cos(roll);
+		dcm[1][2] = Math.cos(elevation)*Math.sin(roll);
+		dcm[2][0] = Math.cos(azimuth)*Math.sin(elevation)*Math.cos(roll) + Math.sin(azimuth)*Math.sin(roll);
+		dcm[2][1] = Math.sin(azimuth)*Math.sin(elevation)*Math.cos(roll) - Math.cos(azimuth)*Math.sin(roll);
+		dcm[2][2] = Math.cos(elevation)*Math.cos(roll);
 
 		for(int i = 0 ; i<3 ; i++) {
 			for(int j = 0 ; j<3 ; j++) {
-				DCM_ENU2Body[i][j] = DCM[i][j];
+				dcm_ENU2BODY[i][j] = dcm[i][j];
 			}
 		}
 
-		return DCM_ENU2Body;
+		return dcm_ENU2BODY;
 	}
 
 
-
-	public static double[] DCM2euler(double DCM[][]) {
+	/**
+	 * @param DCM
+	 * @return euler [deg]
+	 * */
+	public static double[] getEulerFromDCM(double DCM[][]) {
 		double azimuth , elevation , roll;//[rad]
 		double euler[] = new double[3];//euler angle
 
@@ -185,24 +203,18 @@ public class Coordinate {
 		}
 
 		return euler; //[deg]で返す
-
 	}
+
 
 	public static double rad2deg(double radian) {
-		double degree;
-
-		degree = radian * 180.0 / Math.PI;
-
-		return degree;
+		return radian * 180.0 / Math.PI;
 	}
+
 
 	public static double deg2rad(double degree) {
-		double radian;
-
-		radian = degree * Math.PI / 180.0;
-
-		return radian;
+		return degree * Math.PI / 180.0;
 	}
+
 
 	public static double[] vec_trans(double Mat[][], double vec[]) {
 		int length = vec.length;
