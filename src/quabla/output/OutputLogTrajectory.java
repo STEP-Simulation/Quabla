@@ -4,13 +4,12 @@ import java.io.IOException;
 
 import quabla.InputParam;
 import quabla.simulator.AeroParameter;
-import quabla.simulator.Coordinate;
 import quabla.simulator.Atmosphere;
+import quabla.simulator.Coordinate;
 import quabla.simulator.Logger;
 import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.Interpolation;
-
 
 //outputLineをOutput_log内で実行する
 public class OutputLogTrajectory {
@@ -26,19 +25,15 @@ public class OutputLogTrajectory {
 
 	private double dt;
 	private String filename;
-	/*private Interpolation Pos_X_ENU_analy,Pos_Y_ENU_analy,Pos_Z_ENU_analy;
-	private Interpolation Vel_X_ENU_analy,Vel_Y_ENU_analy,Vel_Z_ENU_analy;
-	private Interpolation p_analy,q_analy,r_analy;
-	private Interpolation quat0_analy,quat1_analy,quat2_analy,quat3_analy;*/
-	private Interpolation pos_ENU_analy,vel_ENU_analy, omega_BODY_analy, quat_analy;
+	private Interpolation pos_ENU_analy, vel_ENU_analy, omega_BODY_analy, quat_analy;
 	private InputParam spec;
-	private String[] name = {"time [s]","x_ENU [m]","y_ENU [m]","z_ENU [m]","Vel_x_ENU [m/s]","Vel_y_ENU [m/s]","Vel_z_ENU [m/s]",
-			"p [rad/s]","q [rad/s]","r [rad/s]","quat0","quat1","quat2","quat3","quat_norm","m [kg]","alttitude [m]","downrange [m]",
-			"Vel_air_abs [m/s]","Mach [-]","alpha [deg]","beta[deg]","azimuth [deg]","elevation [deg]","roll [deg]",
-			"Lcg [m]","Lcp [m]","Fst [-]","dynamics_pressure[kPa]","drag [N]","nomal [N]","side [N]","thrust [N]",
-			"Force_x_Body[N]","Force_y_Body[N]","Force_z_Body[N]","Acc_x_ENU[m/s2]","Acc_y_ENU[m/s2]","Acc_z_ENU[m/s2]",
-			"Acc_x_Body [m/s2]","Acc_y_Body [m/s2]","Acc_z_Body [m/s2]","Acc_abs [m/s2]"};
-
+	private final String[] name = { "time [s]", "x_ENU [m]", "y_ENU [m]", "z_ENU [m]", "Vel_x_ENU [m/s]",
+			"Vel_y_ENU [m/s]", "Vel_z_ENU [m/s]", "p [rad/s]", "q [rad/s]", "r [rad/s]", "quat0", "quat1", "quat2",
+			"quat3", "quat_norm", "m [kg]", "alttitude [m]", "downrange [m]", "Vel_air_abs [m/s]", "Mach [-]",
+			"alpha [deg]", "beta[deg]", "azimuth [deg]", "elevation [deg]", "roll [deg]", "Lcg [m]", "Lcp [m]",
+			"Fst [-]", "dynamics_pressure[kPa]", "drag [N]", "nomal [N]", "side [N]", "thrust [N]", "Force_x_Body[N]",
+			"Force_y_Body[N]", "Force_z_Body[N]", "Acc_x_ENU[m/s2]", "Acc_y_ENU[m/s2]", "Acc_z_ENU[m/s2]",
+			"Acc_x_Body [m/s2]", "Acc_y_Body [m/s2]", "Acc_z_Body [m/s2]", "Acc_abs [m/s2]" };
 
 	/**
 	 * ファイル出力するクラスのコンストラクタ
@@ -46,23 +41,23 @@ public class OutputLogTrajectory {
 	 * @param 出力先のファイルパス
 	 * @throws IOException 指定されたファイルが存在するが通常ファイルではなくディレクトリである場合、存在せず作成もできない場合、またはなんらかの理由で開くことができない場合
 	 * */
-	public OutputLogTrajectory(String filename, InputParam spec,Logger logdata) {
+	public OutputLogTrajectory(String filename, InputParam spec, Logger logdata) {
 
 		this.filename = filename;
 		this.spec = spec;
 		dt = this.spec.dt_output;
 
 		pos_ENU_analy = new Interpolation(logdata.time_array, logdata.pos_ENU_log);
-		vel_ENU_analy = new Interpolation(logdata.time_array, logdata.Vel_ENU_log);
-		omega_BODY_analy = new Interpolation(logdata.time_array, logdata.omega_Body_log);
+		vel_ENU_analy = new Interpolation(logdata.time_array, logdata.vel_ENU_log);
+		omega_BODY_analy = new Interpolation(logdata.time_array, logdata.omega_BODY_log);
 		quat_analy = new Interpolation(logdata.time_array, logdata.quat_log);
 
 	}
 
-// Vector での計算に対応
-	public void runOutputLine(double landingTime) {
+	// Vector での計算に対応
+	public void runOutputLine(double time_landing) {
 		RocketParameter rocket = new RocketParameter(spec);
-		Atmosphere env = new Atmosphere(spec.temperture0);
+		Atmosphere atm = new Atmosphere(spec.temperture0);
 		Wind wind = new Wind(spec);
 		AeroParameter aero = new AeroParameter(spec);
 		double t = 0.0;
@@ -74,19 +69,19 @@ public class OutputLogTrajectory {
 		double[][] dcm_ENU2BODY = new double[3][3];
 		double[][] dcm_Body2ENU = new double[3][3];
 		double m;
-		double Lcg,Lcp,Fst;
-		double thrust,pressure_thrust;
+		double Lcg, Lcp, Fst;
+		double thrust, pressure_thrust;
 		double altitude, downrange;
 		double[] g = new double[3];
-		double P_air,rho;
-		double P_air0 = env.getAtomosphericPressure(0.0);
+		double P_air, rho;
+		double P_air0 = atm.getAtomosphericPressure(0.0);
 		double[] wind_ENU = new double[3];
 		double[] vel_air_BODY = new double[3];
 		double[] vel_air_ENU = new double[3];
 		double Vel_air_abs = 0.0;
-		double alpha,beta;
-		double Mach,dynamics_pressure;
-		double drag,nomal,side;
+		double alpha, beta;
+		double Mach, dynamics_pressure;
+		double drag, nomal, side;
 		double[] attitude = new double[3];
 		double[] force_BODY = new double[3];
 		//double Force_coriolis[]  = new double[3];
@@ -97,7 +92,7 @@ public class OutputLogTrajectory {
 		OutputCsv flightlog = null;
 
 		try {
-			 flightlog = new OutputCsv(spec.result_filepath+ filename +".csv",name);
+			flightlog = new OutputCsv(spec.result_filepath + filename + ".csv", name);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -108,8 +103,7 @@ public class OutputLogTrajectory {
 			throw new RuntimeException(e);
 		}
 
-
-		for(int i=0; ; i++) {
+		for (int i = 0;; i++) {
 
 			//入力したlog以外の値の計算
 			t = dt * i;
@@ -131,58 +125,60 @@ public class OutputLogTrajectory {
 
 			g[0] = 0.0;
 			g[1] = 0.0;
-			g[2] = - env.getGravity(altitude);
-			P_air = env.getAtomosphericPressure(altitude);
-			rho = env.getAirDensity(altitude);
+			g[2] = -atm.getGravity(altitude);
+			P_air = atm.getAtomosphericPressure(altitude);
+			rho = atm.getAirDensity(altitude);
 
 			wind_ENU = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
-			for(int j=0;j<3;j++)
+			for (int j = 0; j < 3; j++) {
 				vel_air_ENU[j] = vel_ENU[j] - wind_ENU[j];
+				}
 			vel_air_BODY = Coordinate.vec_trans(dcm_ENU2BODY, vel_air_ENU);
-			Vel_air_abs = Math.sqrt(Math.pow(vel_air_BODY[0], 2) + Math.pow(vel_air_BODY[1], 2) + Math.pow(vel_air_BODY[2], 2));
-			if(Vel_air_abs <= 0.0) {
+			Vel_air_abs = Math
+					.sqrt(Math.pow(vel_air_BODY[0], 2) + Math.pow(vel_air_BODY[1], 2) + Math.pow(vel_air_BODY[2], 2));
+			if (Vel_air_abs <= 0.0) {
 				alpha = 0.0;
 				beta = 0.0;
-			}else {
-				alpha =Math.asin(vel_air_BODY[2]/Vel_air_abs);
-				beta = Math.asin(vel_air_BODY[1]/Vel_air_abs);
+			} else {
+				alpha = Math.asin(vel_air_BODY[2] / Vel_air_abs);
+				beta = Math.asin(vel_air_BODY[1] / Vel_air_abs);
 			}
-			Mach = Vel_air_abs / env.getSoundSpeed(altitude);
+			Mach = Vel_air_abs / atm.getSoundSpeed(altitude);
 			dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
 			drag = dynamics_pressure * aero.Cd(Mach) * rocket.S;
 			nomal = dynamics_pressure * aero.CNa(Mach) * rocket.S * alpha;
 			side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
 
 			Lcp = aero.Lcp(Mach);
-			Fst = (Lcp - Lcg)/rocket.L*100;
+			Fst = (Lcp - Lcg) / rocket.L * 100;
 
 			attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
 			thrust = rocket.thrust(t);
-			if(thrust<=0.0) {
+			if (thrust <= 0.0) {
 				thrust = 0.0;
-			}else {
-				pressure_thrust = (P_air0 - P_air)* rocket.Ae;
+			} else {
+				pressure_thrust = (P_air0 - P_air) * rocket.Ae;
 				thrust += pressure_thrust;
 			}
 
 			force_BODY[0] = thrust - drag;
-			force_BODY[1] = - side;
-			force_BODY[2] = - nomal;
+			force_BODY[1] = -side;
+			force_BODY[2] = -nomal;
 
 			acc_ENU = Coordinate.vec_trans(dcm_Body2ENU, force_BODY);
-			for(int j=0; j<3; j++) {
-				acc_ENU[j] = acc_ENU[j]/m +g[j];
+			for (int j = 0; j < 3; j++) {
+				acc_ENU[j] = acc_ENU[j] / m + g[j];
 			}
 			acc_BODY = Coordinate.vec_trans(dcm_ENU2BODY, acc_ENU);
 			acc_abs = Math.sqrt(Math.pow(acc_ENU[0], 2) + Math.pow(acc_ENU[1], 2) + Math.pow(acc_ENU[2], 2));
 
-
 			//出力する値
-			double[] result = set_result(t, pos_ENU, vel_ENU,omega_BODY, quat, quat_norm,m,altitude,downrange,Vel_air_abs,
-					Mach,alpha,beta, attitude, Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust, force_BODY,acc_ENU,
+			double[] result = set_result(t, pos_ENU, vel_ENU, omega_BODY, quat, quat_norm, m, altitude, downrange,
+					Vel_air_abs,
+					Mach, alpha, beta, attitude, Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust,
+					force_BODY, acc_ENU,
 					acc_BODY, acc_abs);
-
 
 			try {
 				flightlog.outputLine(result);
@@ -191,8 +187,7 @@ public class OutputLogTrajectory {
 			}
 			//result とnameの要素数が違った時の例外処理
 
-
-			if(t >= landingTime) {
+			if (t >= time_landing) {
 				break;
 			}
 		}
@@ -205,21 +200,18 @@ public class OutputLogTrajectory {
 
 	}
 
-
-
-
 	/**
 	 *
 	 * @param t 時間[s]
-	 * @param Pos_ENU 位置[m]
-	 * @param Vel_ENU 対地速度[m/s]
-	 * @param omega_Body 角速度[rad/s](ロール,ピッチ,ヨー)
+	 * @param pos_ENU 位置[m]
+	 * @param vel_ENU 対地速度[m/s]
+	 * @param omega_BODY 角速度[rad/s](ロール,ピッチ,ヨー)
 	 * @param quat クォータニオン
 	 * @param quat_norm クォータニオンノルム
 	 * @param m 質量[kg]
 	 * @param altitude 高さ[m]
 	 * @param downrange 距離[m]
-	 * @param Vel_air_abs 対気速度[m/s]
+	 * @param vel_air_abs 対気速度[m/s]
 	 * @param Mach マッハ数[-]
 	 * @param alpha 迎角[deg]
 	 * @param beta 横滑り角[deg]
@@ -232,57 +224,57 @@ public class OutputLogTrajectory {
 	 * @param nomal 法線力[N]
 	 * @param side 横力[N]
 	 * @param thrust 推力[N]
-	 * @param Force 力[N]
-	 * @param Acc_ENU 対地加速度[m/s2]
-	 * @param Acc_Body 機体加速度[m/s2]
-	 * @param Acc_abs 加速度絶対値[m/s2]
+	 * @param force_BODY 力[N]
+	 * @param acc_ENU 対地加速度[m/s2]
+	 * @param acc_BODY 機体加速度[m/s2]
+	 * @param acc_abs 加速度絶対値[m/s2]
 	 * @throws IOException
 	 * */
 
-	private double[] set_result(double t, double[] Pos_ENU, double[] Vel_ENU, double[] omega_Body, double[] quat,
-			double quat_norm, double m, double altitude, double downrange, double Vel_air_abs,double Mach,
-			double alpha, double beta, double[] attitude, double Lcg,double Lcp,double Fst, double dynamics_pressure,
-			double drag, double nomal, double side, double thrust, double[] Force,double[] Acc_ENU,double[] Acc_Body,
-			double Acc_abs) {
+	private double[] set_result(double t, double[] pos_ENU, double[] vel_ENU, double[] omega_BODY, double[] quat,
+			double quat_norm, double m, double altitude, double downrange, double vel_air_abs, double Mach,
+			double alpha, double beta, double[] attitude, double Lcg, double Lcp, double Fst, double dynamics_pressure,
+			double drag, double nomal, double side, double thrust, double[] force_BODY, double[] acc_ENU,
+			double[] acc_BODY,
+			double acc_abs) {
 		double[] result = new double[name.length];
 
 		result[0] = t;
-		for(int j=0; j<3; j++) {
-			result[1+j] = Pos_ENU[j];
-			result[4+j] = Vel_ENU[j];
-			result[7+j] = omega_Body[j];
+		for (int j = 0; j < 3; j++) {
+			result[1 + j] = pos_ENU[j];
+			result[4 + j] = vel_ENU[j];
+			result[7 + j] = omega_BODY[j];
 		}
-		for(int j=0; j<4; j++) {
-			result[10+j] = quat[j];
+		for (int j = 0; j < 4; j++) {
+			result[10 + j] = quat[j];
 		}
 		result[14] = quat_norm;
 		result[15] = m;
 		result[16] = altitude;
 		result[17] = downrange;
-		result[18] = Vel_air_abs;
+		result[18] = vel_air_abs;
 		result[19] = Mach;
 		result[20] = Coordinate.rad2deg(alpha);
 		result[21] = Coordinate.rad2deg(beta);
-		for(int j=0; j<3; j++) {
-			result[22+j] = attitude[j];
+		for (int j = 0; j < 3; j++) {
+			result[22 + j] = attitude[j];
 		}
 		result[25] = Lcg;
 		result[26] = Lcp;
 		result[27] = Fst;
-		result[28] = dynamics_pressure*Math.pow(10, -3);
+		result[28] = dynamics_pressure * Math.pow(10, -3);
 		result[29] = drag;
 		result[30] = nomal;
 		result[31] = side;
 		result[32] = thrust;
-		for(int j=0; j<3; j++) {
-			result[33+j] = Force[j];
-			result[36+j] = Acc_ENU[j];
-			result[39+j] = Acc_Body[j];
+		for (int j = 0; j < 3; j++) {
+			result[33 + j] = force_BODY[j];
+			result[36 + j] = acc_ENU[j];
+			result[39 + j] = acc_BODY[j];
 		}
-		result[42] = Acc_abs;
+		result[42] = acc_abs;
 
 		return result;
 	}
-
 
 }

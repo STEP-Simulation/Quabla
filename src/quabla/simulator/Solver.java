@@ -14,8 +14,8 @@ public class Solver {
 
 	InputParam spec;
 	boolean single;
-	double Pos_ENU_landing_trajectory[] = new double[2];
-	double Pos_ENU_landing_parachute[] = new double[2];
+	double[] pos_ENU_landing_trajectory = new double[2];
+	double[] pos_ENU_landing_parachute = new double[2];
 
 	public Solver(InputParam spec, boolean single) {
 		this.spec = spec;
@@ -27,7 +27,7 @@ public class Solver {
 		int index = 0;
 		int index_launchclear,index_apogee=0,index_LandingTrajectory,index_LandingParachute;
 		double time_LaunchClear, time_apogee = 0.0,time_LandingTrajectory,time_LandingParachute;
-		double Vel_LaunchClear, alt_apogee=0.0;
+		double vel_LaunchClear, alt_apogee=0.0;
 		double time = 0.0;
 		final double h = spec.dt;
 
@@ -62,16 +62,17 @@ public class Solver {
 			time = index * h;
 
 			trajectoryLog.logVariable(index, variableTrajectory);
-			variableTrajectory.renewVariable(time + h, ODEsolver.runRK4(variableTrajectory, dynOnLauncher));
+			variableTrajectory.renewVariable((index + 1) * h, ODEsolver.runRK4(variableTrajectory, dynOnLauncher));
 
 			if(eventJudgement.judgeLaunchClear(variableTrajectory)) {
 				//TODO イベント値の記録用のクラスを作る
 				time_LaunchClear = variableTrajectory.getTime();
 				index_launchclear = index;
-				Vel_LaunchClear = variableTrajectory.getVel_ENU().norm();
+				vel_LaunchClear = variableTrajectory.getVel_ENU().norm();
 				break;
 			}
 			index ++;
+			//TODO 積分の実行タイミングの再考
 		}
 
 
@@ -80,7 +81,7 @@ public class Solver {
 			time = index * h;
 
 			trajectoryLog.logVariable(index, variableTrajectory);
-			variableTrajectory.renewVariable(time + h, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
+			variableTrajectory.renewVariable((index + 1) * h, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
 
 			if(eventJudgement.judgeApogee(variableTrajectory)) {
 				index_apogee = index;
@@ -95,8 +96,7 @@ public class Solver {
 			}
 			index ++;
 		}
-
-		System.arraycopy(trajectoryLog.getPos_ENU(index_LandingTrajectory).getValue(), 0, Pos_ENU_landing_trajectory, 0, 2);
+		System.arraycopy(trajectoryLog.getPos_ENU(index_LandingTrajectory).getValue(), 0, pos_ENU_landing_trajectory, 0, 2);
 
 
 		parachuteLog.copyLog(index_apogee, trajectoryLog);
@@ -113,7 +113,7 @@ public class Solver {
 			time = index * h;
 
 			parachuteLog.logVariable(index, variableParachute);
-			variableParachute.renewVariable(time + h, ODEsolver.runRK4(variableParachute, dynParachute));
+			variableParachute.renewVariable((index + 1) * h, ODEsolver.runRK4(variableParachute, dynParachute));
 
 			if(eventJudgement.judgeLanding(variableParachute)) {
 				time_LandingParachute = variableParachute.getTime();
@@ -122,8 +122,7 @@ public class Solver {
 			}
 			index ++;
 		}
-
-		System.arraycopy(parachuteLog.getPos_ENU(index_LandingParachute).getValue(), 0, Pos_ENU_landing_parachute, 0, 2);
+		System.arraycopy(parachuteLog.getPos_ENU(index_LandingParachute).getValue(), 0, pos_ENU_landing_parachute, 0, 2);
 
 
 		//結果の出力
@@ -135,10 +134,9 @@ public class Solver {
 			OutputLogParachute outputLogParachute = new OutputLogParachute("flightlog_parachute", spec, parachuteLog, index_apogee);
 
 			System.out.println("----- Result -----");
-			System.out.println("Vel_launchclear = "+ Vel_LaunchClear+"[m/s]");
+			System.out.println("Vel_launchclear = "+ vel_LaunchClear+"[m/s]");
 			System.out.println("time_launchclear = "+time_LaunchClear+"[s]");
-			System.out.println("trajectory landing:"+Pos_ENU_landing_trajectory[0]
-					+","+Pos_ENU_landing_trajectory[1]);
+			System.out.println("trajectory landing:"+pos_ENU_landing_trajectory[0]+","+pos_ENU_landing_trajectory[1]);
 			System.out.println("max alttitude = "+alt_apogee);
 			System.out.println("t_apogee = " + time_apogee + "[s]");
 			System.out.println("time landing parachute = " + time_LandingParachute + "[s]");

@@ -8,8 +8,8 @@ public class Logger {
 
 	public double[] time_array;
 	public double[][] pos_ENU_log;
-	public double[][] Vel_ENU_log;
-	public double[][] omega_Body_log;
+	public double[][] vel_ENU_log;
+	public double[][] omega_BODY_log;
 	public double[][] quat_log;
 
 	//private ArrayList<Variable> variableLog = new ArrayList<>();
@@ -35,15 +35,15 @@ public class Logger {
 
 		time_array = new double[length];
 		pos_ENU_log = new double[length][3];
-		Vel_ENU_log = new double[length][3];
-		omega_Body_log = new double[length][3];
+		vel_ENU_log = new double[length][3];
+		omega_BODY_log = new double[length][3];
 		quat_log = new double[length][4];
 
 		for(int i=0; i<length; i++) {
 			time_array[i] = timeLog.get(i);
 			System.arraycopy(pos_ENULog.get(i).getValue(), 0, pos_ENU_log[i], 0, 3);
-			System.arraycopy(vel_ENULog.get(i).getValue(), 0, Vel_ENU_log[i], 0, 3);
-			System.arraycopy(omega_BODYLog.get(i).getValue(), 0, omega_Body_log[i], 0, 3);
+			System.arraycopy(vel_ENULog.get(i).getValue(), 0, vel_ENU_log[i], 0, 3);
+			System.arraycopy(omega_BODYLog.get(i).getValue(), 0, omega_BODY_log[i], 0, 3);
 			System.arraycopy(quatLog.get(i).getValue(), 0, quat_log[i], 0, 4);
 		}
 	}

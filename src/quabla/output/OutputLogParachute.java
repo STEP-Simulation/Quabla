@@ -21,11 +21,11 @@ public class OutputLogParachute {
 		this.spec = spec;
 		dt = spec.dt_output;
 		pos_ENU_analy = new Interpolation(logdata.time_array, logdata.pos_ENU_log);
-		vel_ENU_analy = new Interpolation(logdata.time_array, logdata.Vel_ENU_log);
+		vel_ENU_analy = new Interpolation(logdata.time_array, logdata.vel_ENU_log);
 	}
 
 
-	public void runOutputLine(double timeLanding,double timeApogee) {
+	public void runOutputLine(double time_landing,double time_apogee) {
 
 		Wind wind = new Wind(spec);
 		double time;
@@ -59,7 +59,7 @@ public class OutputLogParachute {
 
 			wind_ENU = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 
-			if(time >= timeApogee) {
+			if(time >= time_apogee) {
 				vel_ENU[0] = wind_ENU[0];
 				vel_ENU[1] = wind_ENU[1];
 			}
@@ -74,7 +74,7 @@ public class OutputLogParachute {
 			}
 			//result とnameの要素数が違った時の例外処理
 
-			if(time >= timeLanding) {
+			if(time >= time_landing) {
 				break;
 			}
 		}

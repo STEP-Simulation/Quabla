@@ -5,7 +5,7 @@ import quabla.simulator.numerical_analysis.Interpolation;
 
 public class Wind {
 
-	double wind_data[][] ;
+	double[][] wind_data;
 	Interpolation speed_analy, direction_analy;
 	boolean Wind_file_exist;
 	private double wind_speed, Zr, wind_azimuth,Cdv;
@@ -24,9 +24,9 @@ public class Wind {
 
 		if(spec.Wind_file_exsit) {
 			wind_data = GetCsv.get3ColumnArray(spec.wind_file);
-			double alt_array[] = new double[wind_data.length];
-			double speed_array[] = new double[wind_data.length];
-			double direction_array[] = new double[wind_data.length];
+			double[] alt_array = new double[wind_data.length];
+			double[] speed_array = new double[wind_data.length];
+			double[] direction_array = new double[wind_data.length];
 			for(int i = 0; i < wind_data.length ; i++) {
 				alt_array[i] = wind_data[i][0];
 				speed_array[i] = wind_data[i][1];
@@ -74,18 +74,18 @@ public class Wind {
 
 
 	/**
-	 * @param altitude [m]
+	 * @param alt [m]
 	 * @param ref_wind_speed [m/s]
-	 * @param ref_altitude [m]
+	 * @param ref_alt [m]
 	 * @param wind_pow_exp [-]
 	 * @return speed [m/s]
 	 * */
-	public static double getWindSpeedWithPowerLaw(double altitude, double ref_wind_speed, double ref_altitude, double wind_pow_exp) {
+	public static double getWindSpeedWithPowerLaw(double alt, double ref_wind_speed, double ref_alt, double wind_pow_exp) {
 		double windSpeed;
-		if(altitude <= 0.0) {
+		if(alt <= 0.0) {
 			windSpeed = 0.0;
 		}else {
-			windSpeed = ref_wind_speed * Math.pow(altitude/ref_altitude , 1.0/wind_pow_exp);
+			windSpeed = ref_wind_speed * Math.pow(alt/ref_alt , 1.0/wind_pow_exp);
 		}
 
 		return windSpeed;
@@ -99,7 +99,7 @@ public class Wind {
 	 * */
 	public static double[] wind_ENU(double speed, double direction) {
 		//wind_azimuth [deg] 磁北から時計回りを正
-		double wind_ENU[] = new double[3];
+		double[] wind_ENU = new double[3];
 		double wind_azimuth_ENU;//[rad] 磁東から反時計回りを正
 
 		//-をつけて風向からの風になる

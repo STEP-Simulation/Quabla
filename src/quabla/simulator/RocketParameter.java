@@ -21,7 +21,7 @@ public class RocketParameter {
 	public boolean para2_exist;
 	public double alt_para2;
 	public double dt;
-	double thrust_data[][];
+	double[][] thrust_data;
 	Interpolation thrust_analy;
 	public double time_Burnout;
 	double launcher_rail;
@@ -43,7 +43,6 @@ public class RocketParameter {
 		this.de = Math.sqrt(Ae * 4 / Math.PI);
 		/////////////////////////////////////////////////////////////////
 
-
 		///// Center of Gravity /////////////////////////////////////////
 		this.Lcg_0 = spec.lcg0;
 		this.Lcg_f = spec.lcgf;
@@ -56,7 +55,6 @@ public class RocketParameter {
 		this.mp0 = m0 - mf;
 		/////////////////////////////////////////////////////////////////
 
-
 		///// Moment of Inertia /////////////////////////////////////////
 		this.Ij_pitch_0 = spec.Ij_pitch_0;
 		this.Ij_pitch_f = spec.Ij_pitch_f;
@@ -65,7 +63,6 @@ public class RocketParameter {
 		this.Ij_prop_pitch_0 = Ij_pitch_0 - Ij_pitch_f;
 		this.Ij_prop_roll_0 = Ij_roll_0 - Ij_roll_f;
 		/////////////////////////////////////////////////////////////////
-
 
 		//// Parachute //////////////////////////////////////////////////
 		this.CdS1 = spec.CdS1;
@@ -79,13 +76,12 @@ public class RocketParameter {
 		}
 		/////////////////////////////////////////////////////////////////
 
-
 		this.dt = spec.dt;
 
 		//// Thrust /////////////////////////////////////////////////////
 		this.thrust_data = GetCsv.get2ColumnArray(spec.thrustcurve);
-		double time_array[] = new double[thrust_data.length];
-		double thrust_array[] = new double[thrust_data.length];
+		double[] time_array = new double[thrust_data.length];
+		double[] thrust_array = new double[thrust_data.length];
 		for(int i = 0; i < thrust_data.length ; i++) {
 			time_array[i] = thrust_data[i][0];
 			thrust_array[i] = thrust_data[i][1];
@@ -111,7 +107,7 @@ public class RocketParameter {
 	}
 
 	public double[] Ij_dot(double t) {
-		double Ij_dot[] = new double[3];
+		double[] Ij_dot = new double[3];
 
 		if(t < time_Burnout) {
 			Ij_dot[0] = (Ij_roll_f - Ij_roll_0) / time_Burnout;
