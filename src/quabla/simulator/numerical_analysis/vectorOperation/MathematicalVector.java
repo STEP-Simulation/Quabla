@@ -79,6 +79,7 @@ public class MathematicalVector {
 	 * Makes outer product of vector
 	 * */
 	public MathematicalVector cross(MathematicalVector vector) {
+		// TODO length=3以外での例外処理
 		double[] vector2 = new double[length];
 		double[] vector_double = vector.getValue();
 

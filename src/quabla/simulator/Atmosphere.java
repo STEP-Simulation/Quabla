@@ -1,14 +1,16 @@
 package quabla.simulator;
 
+/**
+ * Atmospere offers values about atmospher.
+ *
+ * <p> Atmosphere copes with geopotential altitude under 11 km.
+ *
+ * <p> Atmosphere is based of U.S. standard atmosphere 1976.
+ * */
 public class Atmosphere {
 
 	private double temperture0;
-	private final double Re = 6378.137 * Math.pow(10, 3);//地球の半径
-
-	/*
-	 * U.S. standard atomosuphere,1976
-	 * ジオポテンシャル高度11 kmまで対応
-	 * **/
+	private final double Re = 6378.137 * Math.pow(10, 3); // 地球の半径
 
 
 	public Atmosphere(double temperture0){

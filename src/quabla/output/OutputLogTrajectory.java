@@ -2,7 +2,7 @@ package quabla.output;
 
 import java.io.IOException;
 
-import quabla.InputParam;
+import quabla.parameter.InputParam;
 import quabla.simulator.AeroParameter;
 import quabla.simulator.Atmosphere;
 import quabla.simulator.Coordinate;
@@ -78,7 +78,7 @@ public class OutputLogTrajectory {
 		double[] wind_ENU = new double[3];
 		double[] vel_air_BODY = new double[3];
 		double[] vel_air_ENU = new double[3];
-		double Vel_air_abs = 0.0;
+		double vel_air_abs = 0.0;
 		double alpha, beta;
 		double Mach, dynamics_pressure;
 		double drag, nomal, side;
@@ -115,10 +115,10 @@ public class OutputLogTrajectory {
 			quat_norm = Math.sqrt(Math.pow(quat[0], 2) + Math.pow(quat[1], 2) + Math.pow(quat[2], 2) + Math.pow(quat[3], 2));
 
 			dcm_ENU2BODY = Coordinate.getDCM_ENU2BODYfromQuat(quat);
-			dcm_Body2ENU = Coordinate.DCM_ENU2Body2DCM_Body2_ENU(dcm_ENU2BODY);
+			dcm_Body2ENU = Coordinate.getDCM_BODY2ENUFromDCM_ENU2BODY(dcm_ENU2BODY);
 
 			m = rocket.getMass(t);
-			Lcg = rocket.Lcg(t);
+			Lcg = rocket.getLcg(t);
 
 			altitude = pos_ENU[2];
 			downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
@@ -134,23 +134,23 @@ public class OutputLogTrajectory {
 				vel_air_ENU[j] = vel_ENU[j] - wind_ENU[j];
 				}
 			vel_air_BODY = Coordinate.vec_trans(dcm_ENU2BODY, vel_air_ENU);
-			Vel_air_abs = Math
+			vel_air_abs = Math
 					.sqrt(Math.pow(vel_air_BODY[0], 2) + Math.pow(vel_air_BODY[1], 2) + Math.pow(vel_air_BODY[2], 2));
-			if (Vel_air_abs <= 0.0) {
+			if (vel_air_abs <= 0.0) {
 				alpha = 0.0;
 				beta = 0.0;
 			} else {
-				alpha = Math.asin(vel_air_BODY[2] / Vel_air_abs);
-				beta = Math.asin(vel_air_BODY[1] / Vel_air_abs);
+				alpha = Math.asin(vel_air_BODY[2] / vel_air_abs);
+				beta = Math.asin(vel_air_BODY[1] / vel_air_abs);
 			}
-			Mach = Vel_air_abs / atm.getSoundSpeed(altitude);
-			dynamics_pressure = 0.5 * rho * Math.pow(Vel_air_abs, 2);
+			Mach = vel_air_abs / atm.getSoundSpeed(altitude);
+			dynamics_pressure = 0.5 * rho * Math.pow(vel_air_abs, 2);
 			drag = dynamics_pressure * aero.Cd(Mach) * rocket.S;
 			nomal = dynamics_pressure * aero.CNa(Mach) * rocket.S * alpha;
 			side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
 
 			Lcp = aero.Lcp(Mach);
-			Fst = (Lcp - Lcg) / rocket.L * 100;
+			Fst = (Lcp - Lcg) / rocket.l * 100;
 
 			attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
@@ -174,8 +174,8 @@ public class OutputLogTrajectory {
 			acc_abs = Math.sqrt(Math.pow(acc_ENU[0], 2) + Math.pow(acc_ENU[1], 2) + Math.pow(acc_ENU[2], 2));
 
 			//出力する値
-			double[] result = set_result(t, pos_ENU, vel_ENU, omega_BODY, quat, quat_norm, m, altitude, downrange,
-					Vel_air_abs,
+			double[] result = setResult(t, pos_ENU, vel_ENU, omega_BODY, quat, quat_norm, m, altitude, downrange,
+					vel_air_abs,
 					Mach, alpha, beta, attitude, Lcg, Lcp, Fst, dynamics_pressure, drag, nomal, side, thrust,
 					force_BODY, acc_ENU,
 					acc_BODY, acc_abs);
@@ -228,10 +228,8 @@ public class OutputLogTrajectory {
 	 * @param acc_ENU 対地加速度[m/s2]
 	 * @param acc_BODY 機体加速度[m/s2]
 	 * @param acc_abs 加速度絶対値[m/s2]
-	 * @throws IOException
 	 * */
-
-	private double[] set_result(double t, double[] pos_ENU, double[] vel_ENU, double[] omega_BODY, double[] quat,
+	private double[] setResult(double t, double[] pos_ENU, double[] vel_ENU, double[] omega_BODY, double[] quat,
 			double quat_norm, double m, double altitude, double downrange, double vel_air_abs, double Mach,
 			double alpha, double beta, double[] attitude, double Lcg, double Lcp, double Fst, double dynamics_pressure,
 			double drag, double nomal, double side, double thrust, double[] force_BODY, double[] acc_ENU,

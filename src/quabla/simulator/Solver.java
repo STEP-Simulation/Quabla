@@ -1,8 +1,8 @@
 package quabla.simulator;
 
-import quabla.InputParam;
 import quabla.output.OutputLogParachute;
 import quabla.output.OutputLogTrajectory;
+import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
@@ -27,7 +27,7 @@ public class Solver {
 		int index = 0;
 		int index_launchclear,index_apogee=0,index_LandingTrajectory,index_LandingParachute;
 		double time_LaunchClear, time_apogee = 0.0,time_LandingTrajectory,time_LandingParachute;
-		double vel_LaunchClear, alt_apogee=0.0;
+		double vel_LaunchClear, alt_apogee = 0.0;
 		double time = 0.0;
 		final double h = spec.dt;
 
@@ -46,7 +46,6 @@ public class Solver {
 		// Logger
 		Logger trajectoryLog = new Logger();
 		Logger parachuteLog = new Logger();
-		//variable以外のdynamicsの変数を変数constantに格納
 
 		// ODE solver
 		ODEsolverWithRK4 ODEsolver = new ODEsolverWithRK4(constant);
@@ -55,14 +54,17 @@ public class Solver {
 
 		// Initial Variable
 		variableTrajectory.setInitialVariable();
+		trajectoryLog.logVariable(variableTrajectory);
 
 
-		// on Launcher
+		////////// on Launcher //////////
 		for(;;) {
+			index ++;
 			time = index * h;
-
-			trajectoryLog.logVariable(index, variableTrajectory);
-			variableTrajectory.renewVariable((index + 1) * h, ODEsolver.runRK4(variableTrajectory, dynOnLauncher));
+			// solve ODE
+			variableTrajectory.renewVariable(time, ODEsolver.runRK4(variableTrajectory, dynOnLauncher));
+			// store flightlog
+			trajectoryLog.logVariable(variableTrajectory);
 
 			if(eventJudgement.judgeLaunchClear(variableTrajectory)) {
 				//TODO イベント値の記録用のクラスを作る
@@ -71,17 +73,15 @@ public class Solver {
 				vel_LaunchClear = variableTrajectory.getVel_ENU().norm();
 				break;
 			}
-			index ++;
-			//TODO 積分の実行タイミングの再考
 		}
 
 
-		// Trajectory
+		////////// Trajectory //////////
 		for(;;) {
+			index ++;
 			time = index * h;
-
-			trajectoryLog.logVariable(index, variableTrajectory);
-			variableTrajectory.renewVariable((index + 1) * h, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
+			variableTrajectory.renewVariable(time, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
+			trajectoryLog.logVariable(variableTrajectory);
 
 			if(eventJudgement.judgeApogee(variableTrajectory)) {
 				index_apogee = index;
@@ -94,7 +94,6 @@ public class Solver {
 				time_LandingTrajectory = variableTrajectory.getTime();
 				break;
 			}
-			index ++;
 		}
 		System.arraycopy(trajectoryLog.getPos_ENU(index_LandingTrajectory).getValue(), 0, pos_ENU_landing_trajectory, 0, 2);
 
@@ -107,20 +106,19 @@ public class Solver {
 		variableParachute.setOmega_Body(new MathematicalVector(0.0, 0.0, 0.0));
 		variableParachute.setQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));
 
-		index = index_apogee;//indexの更新
-		// Parachute
+		index = index_apogee; //indexの更新
+		////////// Parachute //////////
 		for( ; ; ) {
+			index ++;
 			time = index * h;
-
-			parachuteLog.logVariable(index, variableParachute);
-			variableParachute.renewVariable((index + 1) * h, ODEsolver.runRK4(variableParachute, dynParachute));
+			variableParachute.renewVariable(time, ODEsolver.runRK4(variableParachute, dynParachute));
+			parachuteLog.logVariable(variableParachute);
 
 			if(eventJudgement.judgeLanding(variableParachute)) {
 				time_LandingParachute = variableParachute.getTime();
 				index_LandingParachute = index;
 				break;
 			}
-			index ++;
 		}
 		System.arraycopy(parachuteLog.getPos_ENU(index_LandingParachute).getValue(), 0, pos_ENU_landing_parachute, 0, 2);
 

@@ -82,7 +82,7 @@ public class Coordinate {
 	 * @param dcm_ENU2BODY
 	 * @return dcm_BODY2ENU
 	 * */
-	public static double[][] DCM_ENU2Body2DCM_Body2_ENU(double dcm_ENU2BODY[][]){
+	public static double[][] getDCM_BODY2ENUFromDCM_ENU2BODY(double dcm_ENU2BODY[][]){
 		double dcm_BODY2ENU[][] = new double[3][3];
 
 		for(int i = 0 ; i<3 ; i++) {
@@ -101,7 +101,7 @@ public class Coordinate {
 	 * @param roll [deg]
 	 * @return quat
 	 * */
-	public static double[] getQuatFromEuler(double azimuth , double elevation , double roll) {
+	public static double[] getQuatFromEuler(double azimuth, double elevation, double roll) {
 		double DCM[][] = new double[3][3];
 		double quat[] = new double[4];
 		double quat_max = 0.0;

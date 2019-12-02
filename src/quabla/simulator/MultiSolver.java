@@ -2,8 +2,8 @@ package quabla.simulator;
 
 import java.io.IOException;
 
-import quabla.InputParam;
 import quabla.output.OutputLandingScatter;
+import quabla.parameter.InputParam;
 
 public class MultiSolver {
 	InputParam spec;

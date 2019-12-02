@@ -2,6 +2,7 @@ package quabla;
 
 import java.io.File;
 
+import quabla.parameter.InputParam;
 import quabla.simulator.MultiSolver;
 import quabla.simulator.Solver;
 

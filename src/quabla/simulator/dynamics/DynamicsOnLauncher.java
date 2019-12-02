@@ -41,7 +41,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		MathematicalMatrix dcm_BODY2ENU = dcm_ENU2BODY.transpose();
 
 		double elevation = Coordinate.deg2rad(Coordinate.getEulerFromDCM(dcm_ENU2BODY.getDouble())[2]);
-		double Z0 = (rocket.L - rocket.Lcg_0)*Math.sin(Math.abs(elevation));
+		double Z0 = (rocket.l - rocket.lcgBef)*Math.sin(Math.abs(elevation));
 
 		//Wind, Vel_air
 		MathematicalVector wind_ENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
@@ -80,7 +80,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		MathematicalVector acc_ENU = dcm_BODY2ENU.dot(acc_BDOY);
 
 		//推力が自重に負けているとき(居座り)
-		if(acc_ENU.getValue()[2] <= 0.0 && t < rocket.time_Burnout && altitude <= Z0) {
+		if(acc_ENU.getValue()[2] <= 0.0 && t < rocket.timeBurnout && altitude <= Z0) {
 			acc_ENU = new MathematicalVector(0.0, 0.0, 0.0);
 		}
 

@@ -5,6 +5,38 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.StringJoiner;
 
+/**
+ * <pre>
+ * OutputCsv outputlog = new null;
+ * try{
+ * 	outputlog = new OutputCsv(filepath, name);
+ * } catch (IOException) {
+ * 	throw new RuntimeException(e);
+ * }
+ *
+ * try{
+ * 	outputlog.outputFirstLine();
+ * } catch (IOException e){
+ * 	throw new RuntimeException(e);
+ * }
+ * for(int i = 0; ;i++){
+ * 	double[] result = new double[3];
+ * 	result = pos_ENU;
+ *
+ * 	try{
+ * 		outputlog.outputLine(result);
+ * 	} catch (IOException e) {
+ * 		throw new RuntimeException(e);
+ * 	}
+ * }
+ * try{
+ * 	outputlog.close();
+ * } catch(IOException e) {
+ * 	throw new RuntimeException(e);
+ * }
+ * </pre>
+ *
+ * */
 public class OutputCsv {
 
 	private BufferedWriter writer;
@@ -16,6 +48,7 @@ public class OutputCsv {
 	/**
 	 * ファイル出力するクラスのコンストラクタ
 	 * @param 出力先のファイルパス
+	 * @param name array of names of variable
 	 * @throws IOException 指定されたファイルが存在するが通常ファイルではなくディレクトリである場合、存在せず作成もできない場合、またはなんらかの理由で開くことができない場合
 	 * */
 	public OutputCsv(String filepath,String[] name) throws IOException {
@@ -34,10 +67,11 @@ public class OutputCsv {
 	}
 
 
-	//配列で受け取る
+	/**
+	 * @param result array of data for output
+	 * @throws IOException
+	 * */
 	public void outputLine(double[] result) throws IOException {
-
-
 		//出力したい文字列に整形
 		StringJoiner stj = new StringJoiner(",");
 		for(int i=0; i<result.length; i++) {
@@ -51,7 +85,6 @@ public class OutputCsv {
 		//改行
 		writer.newLine();
 	}
-
 
 	//firstlineの生成
 	public void make_firstline(String[] name) {
@@ -71,7 +104,7 @@ public class OutputCsv {
 	 * @throws IOException
 	 * */
 	public void close() throws IOException {
-		this.writer.close();
+		writer.close();
 	}
 
 

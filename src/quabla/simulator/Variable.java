@@ -1,16 +1,20 @@
 package quabla.simulator;
 
-import quabla.InputParam;
+import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.DynamicsMinuteChange;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-//TODO 変数のカプセル化
-public class Variable implements Cloneable {
+/**
+ * Variable stores variables of rocket when it flights.
+ *
+ * <p> When you set initial variables, use {@link #setInitialVariable()}.
+ * You are not able to set initial variables at making instance of Variable
+ * */
+public class Variable {
 
 	private RocketParameter rocket;
 	private InputParam spec;
-
 
 	private double time;
 
@@ -41,9 +45,9 @@ public class Variable implements Cloneable {
 		roll0 = Math.PI;
 
 		//Initial Position_ENU
-		pos_ENU = new MathematicalVector((rocket.L - rocket.Lcg_0)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
-				(rocket.L - rocket.Lcg_0)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0),
-				(rocket.L - rocket.Lcg_0)*Math.sin(Math.abs(elevation0)));
+		pos_ENU = new MathematicalVector((rocket.l - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
+				(rocket.l - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0),
+				(rocket.l - rocket.lcgBef)*Math.sin(Math.abs(elevation0)));
 
 		//Initial Attitude with Quaternion
 		quat0 = Coordinate.getQuatFromEuler(azimuth0, elevation0, roll0);
@@ -126,13 +130,13 @@ public class Variable implements Cloneable {
 	}
 
 	public double getDistanceUpperLug() {
-		double upperLugFromCG = rocket.Lcg(time) - rocket.upper_lug;
+		double upperLugFromCG = rocket.getLcg(time) - rocket.upperLug;
 
 		return getDistanceBody().add(new MathematicalVector(upperLugFromCG, 0.0, 0.0)).getValue()[0];
 	}
 
 	public double getDistanceLowerLug() {
-		double lowerLugFromCG = rocket.Lcg(time) - rocket.lower_lug;
+		double lowerLugFromCG = rocket.getLcg(time) - rocket.lowerLug;
 
 		return getDistanceBody().add(new MathematicalVector(lowerLugFromCG, 0.0, 0.0)).getValue()[0];
 	}

@@ -3,8 +3,9 @@ package quabla.simulator.dynamics;
 import quabla.simulator.Variable;
 
 /**
- * 子クラスは,
- * DynamicsTrajectory, DynamicsOnLauncher, DynamicsTipOff, DynamicsParachute
+ * AbstractDynamics is an abstract class of {@link quabla.simulator.dynamics.DynamicsTrajectory},
+ * {@link quabla.simulator.dynamics.DynamicsOnLauncher}, {@link quabla.simulator.dynamics.DynamicsParachute},
+ * {@link quabla.simulator.dynamics.DynamicsTipOff} .
  * */
 public abstract class AbstractDynamics {
 

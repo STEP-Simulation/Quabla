@@ -2,7 +2,7 @@ package quabla.output;
 
 import java.io.IOException;
 
-import quabla.InputParam;
+import quabla.parameter.InputParam;
 import quabla.simulator.Logger;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.Interpolation;

@@ -1,11 +1,10 @@
 package quabla.simulator;
 
-import quabla.InputParam;
+import quabla.parameter.InputParam;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 public class Wind {
 
-	double[][] wind_data;
 	Interpolation speed_analy, direction_analy;
 	boolean Wind_file_exist;
 	private double wind_speed, Zr, wind_azimuth,Cdv;
@@ -23,7 +22,7 @@ public class Wind {
 		magnetic_dec = spec.magnetic_dec;
 
 		if(spec.Wind_file_exsit) {
-			wind_data = GetCsv.get3ColumnArray(spec.wind_file);
+			double[][] wind_data = GetCsv.get3ColumnArray(spec.wind_file);
 			double[] alt_array = new double[wind_data.length];
 			double[] speed_array = new double[wind_data.length];
 			double[] direction_array = new double[wind_data.length];
@@ -74,7 +73,7 @@ public class Wind {
 
 
 	/**
-	 * @param alt [m]
+	 * @param alt [m] if alt if below 0[m], wind speed is 0[m/s]
 	 * @param ref_wind_speed [m/s]
 	 * @param ref_alt [m]
 	 * @param wind_pow_exp [-]

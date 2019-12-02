@@ -20,7 +20,7 @@ public class Logger {
 	private ArrayList<MathematicalVector> quatLog = new ArrayList<>();
 
 
-	public void logVariable(int index, Variable variable) {
+	public void logVariable(Variable variable) {
 
 		//variableLog.add(index, variable);
 		timeLog.add(variable.getTime());

@@ -11,7 +11,7 @@ public class FlightEventJudgement {
 	public boolean judgeTipOff(Variable variable) {
 		boolean judge;
 
-		if(variable.getDistanceUpperLug() >= rocket.launcher_rail) {
+		if(variable.getDistanceUpperLug() >= rocket.lengthLauncherRail) {
 			judge = true;
 		}else {
 			judge = false;
@@ -23,19 +23,18 @@ public class FlightEventJudgement {
 	public boolean judgeLaunchClear(Variable  variable) {
 		boolean judge;
 
-		if(variable.getDistanceLowerLug() >= rocket.launcher_rail) {
+		if(variable.getDistanceLowerLug() >= rocket.lengthLauncherRail) {
 			judge = true;
 		}else {
 			judge = false;
 		}
-
 		return judge;
 	}
 
 	public boolean judgeApogee(Variable variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.time_Burnout) && (variable.getVelDescet() >= 0.0)) {
+		if((variable.getTime() >= rocket.timeBurnout) && (variable.getVelDescet() >= 0.0)) {
 			judge = true;
 		}else {
 			judge = false;
@@ -46,7 +45,7 @@ public class FlightEventJudgement {
 	public boolean judgeLanding(Variable variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.time_Burnout) && (variable.getAltitude() <= 0.0)) {
+		if((variable.getTime() >= rocket.timeBurnout) && (variable.getAltitude() <= 0.0)) {
 			judge = true;
 		}else {
 			judge = false;

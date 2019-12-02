@@ -1,16 +1,18 @@
 package quabla.simulator.dynamics;
 
 import quabla.simulator.AeroParameter;
+import quabla.simulator.Atmosphere;
 import quabla.simulator.ConstantVariable;
 import quabla.simulator.Coordinate;
-import quabla.simulator.Atmosphere;
 import quabla.simulator.RocketParameter;
 import quabla.simulator.Variable;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-//TODO constantはインスタンス化の時に入力
+/**
+ * DynamicsTrajectory is an extension of {@link quabla.simulator.dynamics.AbstractDynamics}.
+ * */
 public class DynamicsTrajectory extends AbstractDynamics {
 
 	private RocketParameter rocket;
@@ -94,8 +96,8 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		MathematicalVector acc_ENU = force_ENU.multiply(1/m).add(g);
 
 		//Center of Gravity , Pressure
-		double Lcg = rocket.Lcg(t);
-		double Lcg_p = rocket.Lcg_prop;
+		double Lcg = rocket.getLcg(t);
+		double Lcg_p = rocket.lcgPropBef;
 		double Lcp = aero.Lcp(Mach);
 
 		//Inretia Moment
@@ -111,13 +113,13 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		//Aero Dumping Moment
 		MathematicalVector moment_aeroDumping = new MathematicalVector(dynamics_pressure * aero.Clp * rocket.S * (0.5*Math.pow(rocket.d, 2)/vel_airAbs) * p,
-				dynamics_pressure * aero.Cmq * rocket.S *(0.5*Math.pow(rocket.L, 2)/vel_airAbs) * q,
-				dynamics_pressure * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/vel_airAbs) * r);
+				dynamics_pressure * aero.Cmq * rocket.S *(0.5*Math.pow(rocket.l, 2)/vel_airAbs) * q,
+				dynamics_pressure * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.l, 2)/vel_airAbs) * r);
 
 		//Jet Dumping Moment
-		MathematicalVector moment_jetDumping = new MathematicalVector((-Ij_dot[0] + m_dot * 0.5 * (0.25*Math.pow(rocket.de, 2))) * p,
-				(-Ij_dot[1] + m_dot * (Math.pow(Lcg-Lcg_p, 2) - Math.pow(rocket.L-Lcg_p, 2))) * q,
-				(-Ij_dot[2] + m_dot * (Math.pow(Lcg-Lcg_p, 2) - Math.pow(rocket.L-Lcg_p, 2))) * r);
+		MathematicalVector moment_jetDumping = new MathematicalVector((-Ij_dot[0] - m_dot * 0.5 * (0.25*Math.pow(rocket.de, 2))) * p,
+				(-Ij_dot[1] - m_dot * (Math.pow(Lcg-Lcg_p, 2) - Math.pow(rocket.l-Lcg_p, 2))) * q,
+				(-Ij_dot[2] - m_dot * (Math.pow(Lcg-Lcg_p, 2) - Math.pow(rocket.l-Lcg_p, 2))) * r);
 
 		MathematicalVector moment_gyro = new MathematicalVector((Ij[1] - Ij[2])*q*r,
 				(Ij[2] - Ij[0])*p*r,
