@@ -63,7 +63,7 @@ public class InputParam {
 	public double CNa = 10.0;    //[1/rad]
 
 	/**Coefficient of Aero Dumping Moment in Pitch and Yaw*/
-	public double Cmq = -3.00;   //[1/rad]
+	public double Cmq = -2.17;   //[1/rad]
 
 	/**Coefficient of Aero Dumping Moment in Roll*/
 	public double Clp = -0.050;   //[1/rad]
