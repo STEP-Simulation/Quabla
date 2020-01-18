@@ -16,10 +16,12 @@ public class Solver {
 	boolean single;
 	double[] pos_ENU_landing_trajectory = new double[2];
 	double[] pos_ENU_landing_parachute = new double[2];
+	//TODO 結果保存用のクラス作成
 
 	public Solver(InputParam spec, boolean single) {
 		this.spec = spec;
 		this.single = single;
+		//TODO singleをなくして,取得用の関数を作る
 	}
 
 
@@ -145,6 +147,10 @@ public class Solver {
 			outputLogTrajectory.runOutputLine(time_LandingTrajectory);
 			outputLogParachute.runOutputLine(time_LandingParachute, time_apogee);
 		}
+	}
+
+	public void getResult() {
+
 	}
 
 }

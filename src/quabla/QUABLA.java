@@ -59,7 +59,7 @@ public class QUABLA {
 		if( result_dir.mkdir()) {
 			System.out.println("Make Directory : success");
 		}else {
-			System.out.println("Make Directroy : false");
+			System.out.println("Make Directroy : false");//TODO ディレクトリ作成失敗の時の例外処理
 		}
 
 		dir_filepath = dir_filepath_;

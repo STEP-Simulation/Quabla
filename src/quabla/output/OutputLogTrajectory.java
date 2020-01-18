@@ -84,7 +84,6 @@ public class OutputLogTrajectory {
 		double drag, nomal, side;
 		double[] attitude = new double[3];
 		double[] force_BODY = new double[3];
-		//double Force_coriolis[]  = new double[3];
 		double[] acc_BODY = new double[3];
 		double[] acc_ENU = new double[3];
 		double acc_abs;
