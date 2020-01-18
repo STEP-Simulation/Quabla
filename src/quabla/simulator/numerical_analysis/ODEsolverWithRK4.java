@@ -34,10 +34,26 @@ public class ODEsolverWithRK4 {
 		k4 = dyn.calculateDynamics(variable2);
 
 		DynamicsMinuteChange delta = new DynamicsMinuteChange();
-		delta.deltaPos_ENU = k1.deltaPos_ENU.add(k2.deltaPos_ENU.multiply(2.0)).add(k3.deltaPos_ENU.multiply(2.0)).add(k4.deltaPos_ENU).multiply(h / 6.0);
-		delta.deltaVel_ENU = k1.deltaVel_ENU.add(k2.deltaVel_ENU.multiply(2.0)).add(k3.deltaVel_ENU.multiply(2.0)).add(k4.deltaVel_ENU).multiply(h / 6.0);
-		delta.deltaOmega_Body = k1.deltaOmega_Body.add(k2.deltaOmega_Body.multiply(2.0)).add(k3.deltaOmega_Body.multiply(2.0)).add(k4.deltaOmega_Body).multiply(h / 6.0);
-		delta.deltaQuat = k1.deltaQuat.add(k2.deltaQuat.multiply(2.0)).add(k3.deltaQuat.multiply(2.0)).add(k4.deltaQuat).multiply(h / 6.0);
+		delta.deltaPos_ENU =
+				k1.deltaPos_ENU
+				.add(k2.deltaPos_ENU.multiply(2.0))
+				.add(k3.deltaPos_ENU.multiply(2.0))
+				.add(k4.deltaPos_ENU).multiply(h / 6.0);
+		delta.deltaVel_ENU =
+				k1.deltaVel_ENU
+				.add(k2.deltaVel_ENU.multiply(2.0))
+				.add(k3.deltaVel_ENU.multiply(2.0))
+				.add(k4.deltaVel_ENU).multiply(h / 6.0);
+		delta.deltaOmega_Body =
+				k1.deltaOmega_Body
+				.add(k2.deltaOmega_Body.multiply(2.0))
+				.add(k3.deltaOmega_Body.multiply(2.0))
+				.add(k4.deltaOmega_Body).multiply(h / 6.0);
+		delta.deltaQuat =
+				k1.deltaQuat
+				.add(k2.deltaQuat.multiply(2.0))
+				.add(k3.deltaQuat.multiply(2.0))
+				.add(k4.deltaQuat).multiply(h / 6.0);
 
 		return delta;
 	}
