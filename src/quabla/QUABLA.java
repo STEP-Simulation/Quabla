@@ -20,13 +20,19 @@ public class QUABLA {
 		case 1:
 			//single condition
 
+			//TODO single solver用のクラスの作成
+
 			//ディレクトリの作成
 			dir_filepath = spec.result_filepath + "Result_single_" + spec.dir_name;
 			make_resultdir(dir_filepath);
 			spec.result_filepath = dir_filepath + "\\";
 
-			Solver solver = new Solver(spec,true);
+			Solver solver = new Solver(spec);
 			solver.solve_dynamics();
+
+			//solver.makeResult();
+			solver.makeResult_();
+			solver.outputResultTxt();
 			break;
 
 		case 2:
@@ -38,7 +44,7 @@ public class QUABLA {
 			spec.result_filepath = dir_filepath + "\\";
 
 			MultiSolver multi_solver = new MultiSolver(spec);
-			multi_solver.solve_multi();
+			multi_solver.solveMulti();
 			break;
 		}
 
