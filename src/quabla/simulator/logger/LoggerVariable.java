@@ -1,37 +1,40 @@
-package quabla.simulator;
+package quabla.simulator.logger;
 
 import java.util.ArrayList;
 
+import quabla.simulator.Variable;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-public class Logger {
+public class LoggerVariable {
 
-	public double[] time_array;
-	public double[][] pos_ENU_log;
-	public double[][] vel_ENU_log;
-	public double[][] omega_BODY_log;
-	public double[][] quat_log;
+	private double[] time_array;
+	private double[][] pos_ENU_log;
+	private double[][] vel_ENU_log;
+	private double[][] omega_BODY_log;
+	private double[][] quat_log;
+
+	private int length;
 
 	//private ArrayList<Variable> variableLog = new ArrayList<>();
-	private ArrayList<Double> timeLog = new ArrayList<>();
-	private ArrayList<MathematicalVector> pos_ENULog = new ArrayList<>();
-	private ArrayList<MathematicalVector> vel_ENULog = new ArrayList<>();
-	private ArrayList<MathematicalVector> omega_BODYLog = new ArrayList<>();
-	private ArrayList<MathematicalVector> quatLog = new ArrayList<>();
+	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
+	private ArrayList<MathematicalVector> pos_ENULogArrayList = new ArrayList<>();
+	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
+	private ArrayList<MathematicalVector> omegaBODYlogArraylist = new ArrayList<>();
+	private ArrayList<MathematicalVector> quatLogArrayList = new ArrayList<>();
 
 
 	public void logVariable(Variable variable) {
 
 		//variableLog.add(index, variable);
-		timeLog.add(variable.getTime());
-		pos_ENULog.add(variable.getPos_ENU());
-		vel_ENULog.add(variable.getVel_ENU());
-		omega_BODYLog.add(variable.getOmega_Body());
-		quatLog.add(variable.getQuat());
+		timeLogArrayList.add(variable.getTime());
+		pos_ENULogArrayList.add(variable.getPos_ENU());
+		velENUlogArrayList.add(variable.getVel_ENU());
+		omegaBODYlogArraylist.add(variable.getOmega_Body());
+		quatLogArrayList.add(variable.getQuat());
 	}
 
-	public void setArray() {
-		int length = timeLog.size();
+	public void makeArray() {
+		length = timeLogArrayList.size();
 
 		time_array = new double[length];
 		pos_ENU_log = new double[length][3];
@@ -39,43 +42,98 @@ public class Logger {
 		omega_BODY_log = new double[length][3];
 		quat_log = new double[length][4];
 
+		//この関数呼び出し時に,他の対気速度などの変数も計算すればよいのでは？
+		//TrajectoryとParachuteで記録する変数を変えるにはどうすればいいか
+
 		for(int i=0; i<length; i++) {
-			time_array[i] = timeLog.get(i);
-			System.arraycopy(pos_ENULog.get(i).getValue(), 0, pos_ENU_log[i], 0, 3);
-			System.arraycopy(vel_ENULog.get(i).getValue(), 0, vel_ENU_log[i], 0, 3);
-			System.arraycopy(omega_BODYLog.get(i).getValue(), 0, omega_BODY_log[i], 0, 3);
-			System.arraycopy(quatLog.get(i).getValue(), 0, quat_log[i], 0, 4);
+			time_array[i] = timeLogArrayList.get(i);
+			System.arraycopy(pos_ENULogArrayList.get(i).getValue(), 0, pos_ENU_log[i], 0, 3);
+			System.arraycopy(velENUlogArrayList.get(i).getValue(), 0, vel_ENU_log[i], 0, 3);
+			System.arraycopy(omegaBODYlogArraylist.get(i).getValue(), 0, omega_BODY_log[i], 0, 3);
+			System.arraycopy(quatLogArrayList.get(i).getValue(), 0, quat_log[i], 0, 4);
 		}
 	}
 
-	public double getTime(int index) {
-		return timeLog.get(index);
+	public int getArrayLength() {
+		return length;
 	}
 
-	public MathematicalVector getPos_ENU(int index) {
-		return pos_ENULog.get(index);
+	private double getTimeArrayList(int index) {
+		return timeLogArrayList.get(index);
 	}
 
-	public MathematicalVector getVel_ENU(int index) {
-		return vel_ENULog.get(index);
+	private MathematicalVector getPos_ENU(int index) {
+		return pos_ENULogArrayList.get(index);
+	}
+
+	private MathematicalVector getVel_ENU(int index) {
+		return velENUlogArrayList.get(index);
 	}
 
 	public MathematicalVector getOmega_BODY(int index) {
-		return omega_BODYLog.get(index);
+		return omegaBODYlogArraylist.get(index);
 	}
 
-	public MathematicalVector getQuat(int index) {
-		return quatLog.get(index);
+	private MathematicalVector getQuat(int index) {
+		return quatLogArrayList.get(index);
 	}
 
-	public void copyLog(int index_limit,Logger logdata) {
+	public double getTime(int index) {
+		return time_array[index];
+	}
+
+	public double[] getPosENUlog(int index) {
+		return pos_ENU_log[index];
+	}
+
+	public double[] getVelENUlog(int index) {
+		return vel_ENU_log[index];
+	}
+
+	public double[] getOmegaBODYlog(int index) {
+		return omega_BODY_log[index];
+	}
+
+	public double[] getQuatLog(int index) {
+		return quat_log[index];
+	}
+
+	public double[] getTimeArray() {
+		return time_array;
+	}
+
+	public double[][] getPosENUArray(){
+		return pos_ENU_log;
+	}
+
+	public double[][] getVelENUArray(){
+		return vel_ENU_log;
+	}
+
+	public double[][] getOmegaBODYArray(){
+		return omega_BODY_log;
+	}
+
+	public double[][] getQuatArray(){
+		return quat_log;
+	}
+
+	public void dumpArrayList() {
+		timeLogArrayList = null;
+		pos_ENULogArrayList = null;
+		velENUlogArrayList = null;
+		omegaBODYlogArraylist = null;
+		quatLogArrayList = null;
+	}
+
+	public void copyLog(int index_limit,LoggerVariable logdata) {
 
 		for(int i=0; i <= index_limit; i++) {
-			timeLog.add(logdata.getTime(i));
-			pos_ENULog.add(logdata.getPos_ENU(i));
-			vel_ENULog.add(logdata.getVel_ENU(i));
-			omega_BODYLog.add(logdata.getOmega_BODY(i));
-			quatLog.add(logdata.getQuat(i));
+			timeLogArrayList.add(logdata.getTimeArrayList(i));
+			pos_ENULogArrayList.add(logdata.getPos_ENU(i));
+			velENUlogArrayList.add(logdata.getVel_ENU(i));
+			omegaBODYlogArraylist.add(logdata.getOmega_BODY(i));
+			quatLogArrayList.add(logdata.getQuat(i));
 		}
 	}
 
