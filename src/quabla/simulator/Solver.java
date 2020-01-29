@@ -1,33 +1,58 @@
 package quabla.simulator;
 
+import java.io.IOException;
+
+import quabla.output.OutputFlightlogParachute;
+import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputLogParachute;
 import quabla.output.OutputLogTrajectory;
+import quabla.output.OutputTxt;
 import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
 import quabla.simulator.dynamics.DynamicsTrajectory;
+import quabla.simulator.logger.LoggerVariable;
+import quabla.simulator.logger.ivent_value.IventValueSingle;
+import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
+import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
 import quabla.simulator.numerical_analysis.ODEsolverWithRK4;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
 public class Solver {
 
 	InputParam spec;
-	boolean single;
+
 	double[] pos_ENU_landing_trajectory = new double[2];
 	double[] pos_ENU_landing_parachute = new double[2];
+
+	private double velLaunchClear;
+	private double timeLaunchClear;
+	private double timeApogee;
+	private double altitudeApogee;
+	private double timeLandingTrajectory;
+	private double timeLandingParachute;
+
+	private int indexApogee;
 	//TODO 結果保存用のクラス作成
 
-	public Solver(InputParam spec, boolean single) {
+	private IventValueSingle iventValue;
+
+	private LoggerVariable trajectoryLog, parachuteLog;
+	private LoggerOtherVariableTrajectory lovt;
+	private LoggerOtherVariableParachute lovp;
+
+	public Solver(InputParam spec) {
 		this.spec = spec;
-		this.single = single;
-		//TODO singleをなくして,取得用の関数を作る
+
+		trajectoryLog = new LoggerVariable();
+		parachuteLog = new LoggerVariable();
 	}
 
 
 	public void solve_dynamics() {
 		int index = 0;
-		int index_launchclear,index_apogee=0,index_LandingTrajectory,index_LandingParachute;
+		int indexLaunchClear,index_apogee=0,indexLandingTrajectory,indexLandingParachute;
 		double time_LaunchClear, time_apogee = 0.0,time_LandingTrajectory,time_LandingParachute;
 		double vel_LaunchClear, alt_apogee = 0.0;
 		double time = 0.0;
@@ -44,10 +69,6 @@ public class Solver {
 		AbstractDynamics dynTrajectory = new DynamicsTrajectory(constant);
 		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(constant);
 		AbstractDynamics dynParachute = new DynamicsParachute(constant);
-
-		// Logger
-		Logger trajectoryLog = new Logger();
-		Logger parachuteLog = new Logger();
 
 		// ODE solver
 		ODEsolverWithRK4 ODEsolver = new ODEsolverWithRK4(constant);
@@ -71,7 +92,7 @@ public class Solver {
 			if(eventJudgement.judgeLaunchClear(variableTrajectory)) {
 				//TODO イベント値の記録用のクラスを作る
 				time_LaunchClear = variableTrajectory.getTime();
-				index_launchclear = index;
+				indexLaunchClear = index;
 				vel_LaunchClear = variableTrajectory.getVel_ENU().norm();
 				break;
 			}
@@ -92,19 +113,37 @@ public class Solver {
 			}
 
 			if(eventJudgement.judgeLanding(variableTrajectory)) {
-				index_LandingTrajectory = index;
+				indexLandingTrajectory = index;
 				time_LandingTrajectory = variableTrajectory.getTime();
 				break;
 			}
 		}
-		System.arraycopy(trajectoryLog.getPos_ENU(index_LandingTrajectory).getValue(), 0, pos_ENU_landing_trajectory, 0, 2);
+		trajectoryLog.makeArray();
 
+		lovt = new LoggerOtherVariableTrajectory(spec, trajectoryLog);
+
+		iventValue = new IventValueSingle(trajectoryLog, lovt);
+
+		iventValue.setIndexLaunchClear(indexLaunchClear);
+		iventValue.setIndexLandingTrajectory(indexLandingTrajectory);
+
+		iventValue.calculateLaunchClear();
+		iventValue.calculateMachMax();
+		iventValue.calculateAtVelAirMax();
+		iventValue.calculateAtMaxQ();
+		iventValue.calculateAtApogee();
+		iventValue.calculateLandingTrajectory();
+
+		System.arraycopy(trajectoryLog.getPosENUlog(indexLandingTrajectory), 0, pos_ENU_landing_trajectory, 0, 2);
 
 		parachuteLog.copyLog(index_apogee, trajectoryLog);
 		Variable variableParachute = new Variable(spec,rocket);
 		//頂点時のvariableを渡す
-		variableParachute.setPos_ENU(trajectoryLog.getPos_ENU(index_apogee));;
-		variableParachute.setVel_ENU(trajectoryLog.getVel_ENU(index_apogee));
+		//variableParachute.setPos_ENU(trajectoryLog.getPos_ENU(index_apogee));
+		variableParachute.setPos_ENU(new MathematicalVector(trajectoryLog.getPosENUlog(index_apogee)));
+		//variableParachute.setVel_ENU(trajectoryLog.getVel_ENU(index_apogee));
+		variableParachute.setVel_ENU(new MathematicalVector(trajectoryLog.getVelENUlog(index_apogee)));
+		//variableParachute.setOmega_Body(new MathematicalVector(0.0, 0.0, 0.0));
 		variableParachute.setOmega_Body(new MathematicalVector(0.0, 0.0, 0.0));
 		variableParachute.setQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));
 
@@ -118,39 +157,104 @@ public class Solver {
 
 			if(eventJudgement.judgeLanding(variableParachute)) {
 				time_LandingParachute = variableParachute.getTime();
-				index_LandingParachute = index;
+				indexLandingParachute = index;
 				break;
 			}
 		}
-		System.arraycopy(parachuteLog.getPos_ENU(index_LandingParachute).getValue(), 0, pos_ENU_landing_parachute, 0, 2);
+		parachuteLog.makeArray();
+		System.arraycopy(parachuteLog.getPosENUlog(indexLandingParachute), 0, pos_ENU_landing_parachute, 0, 2);
 
+		lovp = new LoggerOtherVariableParachute(spec, parachuteLog);
 
-		//結果の出力
-		if(single) {
-			trajectoryLog.setArray();
-			parachuteLog.setArray();
+		iventValue.setLoggerVariableParachute(parachuteLog, lovp);
+		iventValue.setIndexLandingParachute(indexLandingParachute);
+		iventValue.calculateLandingParachute();
 
-			OutputLogTrajectory outputLogTrajectory = new OutputLogTrajectory("flightlog_trajectory", spec, trajectoryLog);
-			OutputLogParachute outputLogParachute = new OutputLogParachute("flightlog_parachute", spec, parachuteLog, index_apogee);
+		trajectoryLog.dumpArrayList();
+		parachuteLog.dumpArrayList();
 
-			System.out.println("----- Result -----");
-			System.out.println("Vel_launchclear = "+ vel_LaunchClear+"[m/s]");
-			System.out.println("time_launchclear = "+time_LaunchClear+"[s]");
-			System.out.println("trajectory landing:"+pos_ENU_landing_trajectory[0]+","+pos_ENU_landing_trajectory[1]);
-			System.out.println("max alttitude = "+alt_apogee);
-			System.out.println("t_apogee = " + time_apogee + "[s]");
-			System.out.println("time landing parachute = " + time_LandingParachute + "[s]");
-			System.out.println("------------------");
-			//TODO .txtで出力を行う
-			//TODO マッハ数、動圧、Max-Qの時間を出力できるようにする
+		velLaunchClear = vel_LaunchClear;
+		timeLaunchClear = time_LaunchClear;
+		indexApogee = index_apogee;
+		altitudeApogee = alt_apogee;
+		timeApogee = time_apogee;
+		timeLandingTrajectory = time_LandingTrajectory;
+		timeLandingParachute = time_LandingParachute;
+	}
 
-			outputLogTrajectory.runOutputLine(time_LandingTrajectory);
-			outputLogParachute.runOutputLine(time_LandingParachute, time_apogee);
+	public IventValueSingle getIventValueSingle() {
+		return iventValue;
+	}
+
+	public void makeResult() {
+
+		OutputLogTrajectory olt = new OutputLogTrajectory("flightlog_trajectory", spec, trajectoryLog);
+		OutputLogParachute olp = new OutputLogParachute("flightlog_parachute", spec, parachuteLog, indexApogee);
+
+		olt.runOutputLine(timeLandingTrajectory);
+		olp.runOutputLine(timeLandingParachute, timeApogee);
+	}
+
+	public void makeResult_() {
+
+		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory("flightlog_trajectory", spec, trajectoryLog, lovt);
+		OutputFlightlogParachute ofp = new OutputFlightlogParachute("flightlog_parachute", spec, parachuteLog, lovp);
+		oft.runOutputLine();
+		//ofp.runOutputLine();
+	}
+
+	public void outputResultTxt() {
+		OutputTxt resultTxt = null;
+
+		try {
+			resultTxt = new OutputTxt(spec.result_filepath + "result.txt");
+		}catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		try {
+
+			resultTxt.outputLine(String.format("Launch Clear Time : %.3f [sec]", iventValue.getTimeLaunchClear()));
+			resultTxt.outputLine(String.format("Launch Clear Velocity : %.3f [m/s]", iventValue.getVelLaunchClear()));
+			resultTxt.outputLine(String.format("Launch Clear Accelaration : %.3f [m/s2]", iventValue.getAccLaunchClear()));
+
+			resultTxt.outputLine(String.format("Apogee Time : %.3f [sec]", iventValue.getTimeApogee()));
+			resultTxt.outputLine(String.format("Apogee Altitude : %.3f [km]", iventValue.getAltApogee()));
+			resultTxt.outputLine(String.format("Apogee Downrange : %.3f [km]", iventValue.getDownrangeApogee()));
+			resultTxt.outputLine(String.format("Apogee Air Speed : %.3f [m/s]", iventValue.getVelAirApogee()));
+
+			resultTxt.outputLine(String.format("Max Air Speed Time : %.3f [sec]", iventValue.getTimeMaxVelAir()));
+			resultTxt.outputLine(String.format("Max Air Speed : %.3f [m/s]", iventValue.getVelAirMax()));
+			resultTxt.outputLine(String.format("Max Air Speed Altitude : %.3f [km]", iventValue.getAltitudeMaxVelAir()));
+
+			resultTxt.outputLine(String.format("Max-Q Time : %.3f [sec]", iventValue.getTimeMaxQ()));
+			resultTxt.outputLine(String.format("Max-Q Dynamics Pressure : %.3f [kPa]", iventValue.getDynamicsPressureMax()));
+			resultTxt.outputLine(String.format("Max-Q Altitude : %.3f [km]", iventValue.getAltitudeMaxQ()));
+
+			resultTxt.outputLine(String.format("Max Mach Time : %.3f [sec]", iventValue.getTimeMaxMach()));
+			resultTxt.outputLine(String.format("Max Mach : %.3f [-]", iventValue.getMachMax()));
+			resultTxt.outputLine(String.format("Max Mach Altitude : %.3f [km]", iventValue.getAltitudeMaxMach()));
+
+			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", iventValue.getTimeLandingTrajectory()));
+			resultTxt.outputLine(String.format("Landing Trajectory Downrange %.3f [km]", iventValue.getDownrangeLandingTrajectory()));
+
+			resultTxt.outputLine(String.format("Landing Parachute Time %.3f [sec]", iventValue.getTimeLandingParachute()));
+			resultTxt.outputLine(String.format("Landing Parachute Downrange %.3f [km]", iventValue.getDownrangeLandingParachute()));
+
+		}catch(IOException e) {
+			throw new RuntimeException(e) ;
+		}
+
+		try {
+			resultTxt.close();
+		}catch(IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 
-	public void getResult() {
-
+	public void dump() {
+		lovt.dumpLog();
+		lovp.dumpLog();
 	}
 
 }
