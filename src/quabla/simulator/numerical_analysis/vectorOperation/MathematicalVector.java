@@ -5,6 +5,8 @@ public class MathematicalVector {
 	private double[] vector;
 	private int length;
 
+	//TODO 子クラスに3dVectorとかQuaternion作りたいなぁ
+
 	public MathematicalVector(double[] vector) {
 		length = vector.length;
 		this.vector = new double[length];
@@ -28,6 +30,24 @@ public class MathematicalVector {
 		vector[1] = x;
 		vector[2] = y;
 		vector[3] = z;
+	}
+
+	public void set(MathematicalVector vector2) {
+		for(int i = 0; i < length; i++) {
+			vector[i] = vector2.getValue()[i];
+		}
+	}
+
+	public void set(double[] vector2) {
+		for(int i = 0; i < length; i++) {
+			vector[i]  = vector2[i];
+		}
+	}
+
+	public void set(double x, double y, double z) {
+		vector[0] = x;
+		vector[1] = y;
+		vector[2] = z;
 	}
 
 	public MathematicalVector multiply(double a) {
