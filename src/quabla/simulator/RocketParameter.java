@@ -199,7 +199,7 @@ public class RocketParameter {
 
 		// 中空円筒の慣性モーメント
 		// Iyy = m * ((din^2 + dout^2) / 16 + Lf / 12)
-		double IjFuelPitch = massFuel * ((Math.pow(dFuelOut, 2) + Math.pow(dFuelIn, 2)) / 16.0 + lFuel / 12.0); //fuelの重心回りの慣性モーメント
+		double IjFuelPitch = massFuel * ((Math.pow(dFuelOut, 2) + Math.pow(dFuelIn, 2)) / 16.0 + Math.pow(lFuel, 2) / 12.0); //fuelの重心回りの慣性モーメント
 		IjFuelPitch += massFuel * Math.pow(lcgFuel - lcg, 2); // parallel axis thorem
 
 		// oxidizer
