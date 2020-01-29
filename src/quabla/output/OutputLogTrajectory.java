@@ -6,9 +6,9 @@ import quabla.parameter.InputParam;
 import quabla.simulator.AeroParameter;
 import quabla.simulator.Atmosphere;
 import quabla.simulator.Coordinate;
-import quabla.simulator.Logger;
 import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
+import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 //outputLineをOutput_log内で実行する
@@ -41,20 +41,19 @@ public class OutputLogTrajectory {
 	 * @param 出力先のファイルパス
 	 * @throws IOException 指定されたファイルが存在するが通常ファイルではなくディレクトリである場合、存在せず作成もできない場合、またはなんらかの理由で開くことができない場合
 	 * */
-	public OutputLogTrajectory(String filename, InputParam spec, Logger logdata) {
+	public OutputLogTrajectory(String filename, InputParam spec, LoggerVariable logdata) {
 
 		this.filename = filename;
 		this.spec = spec;
 		dt = this.spec.dt_output;
 
-		pos_ENU_analy = new Interpolation(logdata.time_array, logdata.pos_ENU_log);
-		vel_ENU_analy = new Interpolation(logdata.time_array, logdata.vel_ENU_log);
-		omega_BODY_analy = new Interpolation(logdata.time_array, logdata.omega_BODY_log);
-		quat_analy = new Interpolation(logdata.time_array, logdata.quat_log);
+		pos_ENU_analy = new Interpolation(logdata.getTimeArray(), logdata.getPosENUArray());
+		vel_ENU_analy = new Interpolation(logdata.getTimeArray(), logdata.getVelENUArray());
+		omega_BODY_analy = new Interpolation(logdata.getTimeArray(), logdata.getOmegaBODYArray());
+		quat_analy = new Interpolation(logdata.getTimeArray(), logdata.getQuatArray());
 
 	}
 
-	// Vector での計算に対応
 	public void runOutputLine(double time_landing) {
 		RocketParameter rocket = new RocketParameter(spec);
 		Atmosphere atm = new Atmosphere(spec.temperture0);

@@ -3,8 +3,8 @@ package quabla.output;
 import java.io.IOException;
 
 import quabla.parameter.InputParam;
-import quabla.simulator.Logger;
 import quabla.simulator.Wind;
+import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 public class OutputLogParachute {
@@ -16,12 +16,12 @@ public class OutputLogParachute {
 	private String[] name = {"time [s]", "x_ENU [m]", "y_ENU [m]", "z_ENU [m]",
 			"vel_x_ENU [m/s]", "vel_y_ENU [m/s]", "vel_z_ENU [m/s]", "altitude [m]", "downrange [m]"};
 
-	public OutputLogParachute(String filename, InputParam spec, Logger logdata, int indexApogee){
+	public OutputLogParachute(String filename, InputParam spec, LoggerVariable logdata, int indexApogee){
 		this.filename = filename;
 		this.spec = spec;
 		dt = spec.dt_output;
-		pos_ENU_analy = new Interpolation(logdata.time_array, logdata.pos_ENU_log);
-		vel_ENU_analy = new Interpolation(logdata.time_array, logdata.vel_ENU_log);
+		pos_ENU_analy = new Interpolation(logdata.getTimeArray(), logdata.getPosENUArray());
+		vel_ENU_analy = new Interpolation(logdata.getTimeArray(), logdata.getVelENUArray());
 	}
 
 
@@ -72,7 +72,7 @@ public class OutputLogParachute {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-			//result とnameの要素数が違った時の例外処理
+			//resultとnameの要素数が違った時の例外処理
 
 			if(time >= time_landing) {
 				break;
