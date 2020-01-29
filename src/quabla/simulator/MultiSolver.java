@@ -4,11 +4,16 @@ import java.io.IOException;
 
 import quabla.output.OutputLandingScatter;
 import quabla.parameter.InputParam;
+import quabla.simulator.logger.ivent_value.IventValueMulti;
 
 public class MultiSolver {
 	InputParam spec;
 	double speed_min,speed_step;
 	int speed_num,angle_num;
+	//private double[][] velLaunchClearArray, altApogeeArray;
+	private double[] speedArray, azimuthArray;
+
+	private IventValueMulti ivm;
 
 	public MultiSolver(InputParam spec) {
 		this.spec = spec;
@@ -20,32 +25,43 @@ public class MultiSolver {
 		this.speed_num = spec.speed_num;
 		this.angle_num = spec.angle_num;
 
-	}
+		speedArray = new double[speed_num];
+		azimuthArray = new double[angle_num + 1];
 
-	public void solve_multi() {
-		double[][] wind_map_trajectory = new double[2*speed_num][angle_num+1];
-		double[][] wind_map_parachute = new double[2*speed_num][angle_num+1];
-		//row:風速, column:風向
-
-		double[] speed_array = new double[speed_num];
-		double[] azimuth_array = new double[angle_num + 1];
 		for(int i = 0; i < speed_num; i++) {
-			speed_array[i] = speed_min + i * speed_step;
+			speedArray[i] = speed_min + i * speed_step;
 		}
 		for(int i = 0; i <= angle_num; i++) {
-			azimuth_array[i] = 360.0 * i / angle_num;
+			azimuthArray[i] = 360.0 * i / angle_num;
 		}
 
+		ivm = new IventValueMulti(speedArray, azimuthArray);
+
+
+
+	}
+
+	public void solveMulti() {
+		double[][] wind_map_trajectory = new double[2*speed_num][angle_num+1];
+		double[][] wind_map_parachute = new double[2*speed_num][angle_num+1];
+
+
+		//row:風速, column:風向
+
+
 		int i = 0;
-		for(double speed: speed_array) {
+		for(double speed: speedArray) {
 			spec.wind_speed = speed;
 			int j = 0;
-			for(double azimuth: azimuth_array) {
+			for(double azimuth: azimuthArray) {
 				spec.wind_azimuth = azimuth;
 
 				//solverのインスタンスの生成
-				Solver single_solver = new Solver(spec,false);//Multi_solverでは各フライトでのlogは保存しない
+				Solver single_solver = new Solver(spec);//Multi_solverでは各フライトでのlogは保存しない
 				single_solver.solve_dynamics();
+
+				ivm.setResultArray(i, j, single_solver.getIventValueSingle());
+				single_solver.dump();
 
 				//trajectory,parachuteでの落下地点を取得
 				double[] pos_ENU_landing_trajectory = single_solver.pos_ENU_landing_trajectory;
@@ -60,21 +76,22 @@ public class MultiSolver {
 			i++;
 		}
 
+		//ivm.computeMinVelLaunchClear();
+		//ivm.computeMaxAltAopgee();
+		ivm.outputResultTxt(spec.result_filepath);
+
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
-			trajectory.output(spec.result_filepath + "trajectory"+spec.elevation_launcher+"[deg].csv",wind_map_trajectory, speed_array);
+			trajectory.output(spec.result_filepath + "trajectory"+spec.elevation_launcher+"[deg].csv",wind_map_trajectory, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
-			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",wind_map_parachute, speed_array);
+			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",wind_map_parachute, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-
 	}
-
 }
