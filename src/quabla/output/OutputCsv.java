@@ -47,13 +47,13 @@ public class OutputCsv {
 
 	/**
 	 * ファイル出力するクラスのコンストラクタ
-	 * @param 出力先のファイルパス
+	 * @param filepath 出力先のファイルパス
 	 * @param name array of names of variable
 	 * @throws IOException 指定されたファイルが存在するが通常ファイルではなくディレクトリである場合、存在せず作成もできない場合、またはなんらかの理由で開くことができない場合
 	 * */
 	public OutputCsv(String filepath,String[] name) throws IOException {
 		writer = new BufferedWriter(new FileWriter(filepath));
-		make_firstline(name);
+		makeFirstline(name);
 	}
 
 
@@ -86,8 +86,9 @@ public class OutputCsv {
 		writer.newLine();
 	}
 
+
 	//firstlineの生成
-	public void make_firstline(String[] name) {
+	public void makeFirstline(String[] name) {
 		StringJoiner stj = new StringJoiner(",");
 
 		for(int i=0; i<name.length; i++) {
@@ -106,6 +107,6 @@ public class OutputCsv {
 	public void close() throws IOException {
 		writer.close();
 	}
-
+	//TODO カプセル化
 
 }
