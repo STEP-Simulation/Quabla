@@ -79,7 +79,7 @@ public class Wind {
 	 * @param wind_pow_exp [-]
 	 * @return speed [m/s]
 	 * */
-	public static double getWindSpeedWithPowerLaw(double alt, double ref_wind_speed, double ref_alt, double wind_pow_exp) {
+	private static double getWindSpeedWithPowerLaw(double alt, double ref_wind_speed, double ref_alt, double wind_pow_exp) {
 		double windSpeed;
 		if(alt <= 0.0) {
 			windSpeed = 0.0;

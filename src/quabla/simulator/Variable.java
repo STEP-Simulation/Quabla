@@ -32,7 +32,7 @@ public class Variable {
 		this.rocket = rocket;
 	}
 
-	public void setInitialVariable() {
+	public void setInitialVariable() {//初期パラメータの取得
 		time = 0.0;
 
 		//Initial Euler Angle
