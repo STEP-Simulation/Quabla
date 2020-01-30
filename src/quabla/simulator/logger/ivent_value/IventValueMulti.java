@@ -70,150 +70,59 @@ public class IventValueMulti {
 	}
 
 	public void computeMinVelLaunchClear() {
-		int[] minColumnArray = new int[row];
-		double[] minVelLaunchClearArray = new double[row];
-
-		for(int i = 0; i < row; i++) {
-			ArrayAnalysis aa = new ArrayAnalysis(velLaunchClearArray[i]);
-			aa.calculateMinimumValue();
-			minColumnArray[i] = aa.getIndexMinimumValue();
-			minVelLaunchClearArray[i] = aa.getMinValue();
-		}
-
-		ArrayAnalysis aa = new ArrayAnalysis(minVelLaunchClearArray);
-		aa.calculateMinimumValue();
-		velLaunchClearMin = aa.getMinValue();
-		int minRow = aa.getIndexMinimumValue();
-		int minColumn = minColumnArray[minRow];
-
-		speedVelLCmin = speedArray[minRow];
-		azimuthVelLCmin = azimuthArray[minColumn];
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMin(velLaunchClearArray);
+		velLaunchClearMin = iva.getMinValue();
+		speedVelLCmin = speedArray[iva.getMinRow()];
+		azimuthVelLCmin = azimuthArray[iva.getMinColumn()];
 	}
 
 	public void computeMaxAltAopgee() {
-		int[] maxColumnArray = new int[row];
-		double[] maxAltApogeeArray = new double[row];
-
-		for(int i = 0; i < row; i++) {
-			ArrayAnalysis aa = new ArrayAnalysis(altApogeeArray[i]);
-			aa.calculateMaxValue();
-			maxColumnArray[i] = aa.getIndexMaxValue();
-			maxAltApogeeArray[i] = aa.getMaxValue();
-		}
-
-		ArrayAnalysis aa = new ArrayAnalysis(maxAltApogeeArray);
-		aa.calculateMaxValue();
-		altMax = aa.getMaxValue();
-		int maxRow = aa.getIndexMaxValue();
-		int maxColumn = maxColumnArray[maxRow];
-
-		speedMaxAlt = speedArray[maxRow];
-		azimuthMaxAlt = azimuthArray[maxColumn];
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMax(altApogeeArray);
+		altMax = iva.getMaxValue();
+		speedMaxAlt = speedArray[iva.getMaxRow()];
+		azimuthMaxAlt = azimuthArray[iva.getMaxColumn()];
 	}
 
 	public void computeMaxVelAirSpeed() {
-		int[] maxColumnArray = new int[row];
-		double[] maxVelAirMaxArray = new double[row];
-
-		for(int i = 0; i < row; i++) {
-			ArrayAnalysis aa = new ArrayAnalysis(velAirMaxArray[i]);
-			aa.calculateMaxValue();
-			maxColumnArray[i] = aa.getIndexMaxValue();
-			maxVelAirMaxArray[i] = aa.getMaxValue();
-		}
-
-		ArrayAnalysis aa = new ArrayAnalysis(maxVelAirMaxArray);
-		aa.calculateMaxValue();
-		velAirMax = aa.getMaxValue();
-		int maxRow = aa.getIndexMaxValue();
-		int maxColumn = maxColumnArray[maxRow];
-
-		speedMaxVelAir = speedArray[maxRow];
-		azimuthMaxVelAir = azimuthArray[maxColumn];
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMax(velAirMaxArray);
+		velAirMax = iva.getMaxValue();
+		speedMaxVelAir = speedArray[iva.getMaxRow()];
+		azimuthMaxVelAir = azimuthArray[iva.getMaxColumn()];
 	}
 
 	public void computeMaxMach() {
-		int[] maxColumnArray = new int[row];
-		double[] maxMachMaxArray = new double[row];
-
-		for(int i = 0; i < row; i++) {
-			ArrayAnalysis aa = new ArrayAnalysis(machMaxArray[i]);
-			aa.calculateMaxValue();
-			maxColumnArray[i] = aa.getIndexMaxValue();
-			maxMachMaxArray[i] = aa.getMaxValue();
-		}
-
-		ArrayAnalysis aa = new ArrayAnalysis(maxMachMaxArray);
-		aa.calculateMaxValue();
-		machMax = aa.getMaxValue();
-		int maxRow = aa.getIndexMaxValue();
-		int maxColumn = maxColumnArray[maxRow];
-
-		speedMaxMach = speedArray[maxRow];
-		azimuthMaxMach = azimuthArray[maxColumn];
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMax(machMaxArray);
+		machMax = iva.getMaxValue();
+		speedMaxMach = speedArray[iva.getMaxRow()];
+		azimuthMaxMach = azimuthArray[iva.getMaxColumn()];
 	}
 
 	public void computeMaxTimeApogee(){
-		int[] maxColumnArray = new int[row];
-		double[] maxTimeApogeeArray = new double[row];
-
-		for(int i = 0; i < row; i++) {
-			ArrayAnalysis aa = new ArrayAnalysis(timeApogeeArray[i]);
-			aa.calculateMaxValue();
-			maxColumnArray[i] = aa.getIndexMaxValue();
-			maxTimeApogeeArray[i] = aa.getMaxValue();
-		}
-
-		ArrayAnalysis aa = new ArrayAnalysis(maxTimeApogeeArray);
-		aa.calculateMaxValue();
-		timeApogeeMax = aa.getMaxValue();
-		int maxRow = aa.getIndexMaxValue();
-		int maxColumn = maxColumnArray[maxRow];
-
-		speedMaxTimeApogee = speedArray[maxRow];
-		azimuthMaxTimeApogee = azimuthArray[maxColumn];
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMax(timeApogeeArray);
+		timeApogeeMax = iva.getMaxValue();
+		speedMaxTimeApogee = speedArray[iva.getMaxRow()];
+		azimuthMaxTimeApogee = azimuthArray[iva.getMaxColumn()];
 	}
 
 	public void computeMaxTimeLandingTrajectory(){
-		int[] maxColumnArray = new int[row];
-		double[] maxTimeLandingTrajectoryArray = new double[row];
-
-		for(int i = 0; i < row; i++) {
-			ArrayAnalysis aa = new ArrayAnalysis(timeLandingTrajectoryArray[i]);
-			aa.calculateMaxValue();
-			maxColumnArray[i] = aa.getIndexMaxValue();
-			maxTimeLandingTrajectoryArray[i] = aa.getMaxValue();
-		}
-
-		ArrayAnalysis aa = new ArrayAnalysis(maxTimeLandingTrajectoryArray);
-		aa.calculateMaxValue();
-		timeLandingTrajectoryMax = aa.getMaxValue();
-		int maxRow = aa.getIndexMaxValue();
-		int maxColumn = maxColumnArray[maxRow];
-
-		speedMaxTimeLandingTrajectory = speedArray[maxRow];
-		azimuthMaxTimeLandingTrajectory = azimuthArray[maxColumn];
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMax(timeLandingTrajectoryArray);
+		timeLandingTrajectoryMax = iva.getMaxValue();
+		speedMaxTimeLandingTrajectory = speedArray[iva.getMaxRow()];
+		azimuthMaxTimeLandingTrajectory = azimuthArray[iva.getMaxColumn()];
 	}
 
 	public void computeMaxTimeLandingParachute(){
-		int[] maxColumnArray = new int[row];
-		double[] maxTimeLandingParachuteArray = new double[row];
-
-		for(int i = 0; i < row; i++) {
-			ArrayAnalysis aa = new ArrayAnalysis(timeLandingParachuteArray[i]);
-			aa.calculateMaxValue();
-			maxColumnArray[i] = aa.getIndexMaxValue();
-			maxTimeLandingParachuteArray[i] = aa.getMaxValue();
-		}
-
-		ArrayAnalysis aa = new ArrayAnalysis(maxTimeLandingParachuteArray);
-		aa.calculateMaxValue();
-		timeLandingParachuteMax = aa.getMaxValue();
-		int maxRow = aa.getIndexMaxValue();
-		int maxColumn = maxColumnArray[maxRow];
-
-		speedMaxTimeLandingParachute = speedArray[maxRow];
-		azimuthMaxTimeLandingParachute = azimuthArray[maxColumn];
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMax(timeLandingParachuteArray);
+		timeLandingParachuteMax = iva.getMaxValue();
+		speedMaxTimeLandingParachute = speedArray[iva.getMaxRow()];
+		azimuthMaxTimeLandingParachute = azimuthArray[iva.getMaxColumn()];
 	}
 
 	public void outputResultTxt(String filepath) {
@@ -251,5 +160,83 @@ public class IventValueMulti {
 			throw new RuntimeException(e);
 		}
 
+	}
+}
+
+class IventValueArrange{
+	private int row;
+	private double[] dataArray;
+
+	private double speedMax, azimuthMax;
+	private double speedMin, azimuthMin;
+
+	private double maxValue, minValue;
+
+	private int
+	maxRow, maxCol,
+	minRow, minCol;
+
+	IventValueArrange(int row){
+		this.row = row;
+	}
+
+	public void computeMax(double[][] dataArray) {
+		int[] maxColumnArray = new int[row];
+		double[] maxValueArray = new double[row];
+
+		for(int i = 0; i < row; i++) {//まず各行ごと(風速ごと)の値を比較する
+			ArrayAnalysis aa = new ArrayAnalysis(dataArray[i]);
+			aa.calculateMaxValue();
+			maxColumnArray[i] = aa.getIndexMaxValue();
+			maxValueArray[i] = aa.getMaxValue();//各風速において最大値をとった列(風向)を配列に格納
+		}
+
+		ArrayAnalysis aa = new ArrayAnalysis(maxValueArray);//各風速の最大値を比較
+		aa.calculateMaxValue();
+		maxValue = aa.getMaxValue();//すべての条件の中での最大値
+		maxRow = aa.getIndexMaxValue();//最大値をとった行(風速)
+		maxCol = maxColumnArray[maxRow];//最大値をとった時の行(風速)の中での最大値をとった列(風向)
+	}
+
+	public double getMaxValue() {
+		return maxValue;
+	}
+
+	public int getMaxRow() {
+		return maxRow;
+	}
+
+	public int getMaxColumn() {
+		return maxCol;
+	}
+
+	public void computeMin(double[][] dataArray) {
+		int[] minColumnArray = new int[row];
+		double[] minValueArray = new double[row];
+
+		for(int i = 0; i < row; i++) {
+			ArrayAnalysis aa = new ArrayAnalysis(dataArray[i]);
+			aa.calculateMinimumValue();;
+			minColumnArray[i] = aa.getIndexMinimumValue();
+			minValueArray[i] = aa.getMinValue();
+		}
+
+		ArrayAnalysis aa = new ArrayAnalysis(minValueArray);
+		aa.calculateMinimumValue();
+		minValue = aa.getMinValue();
+		minRow = aa.getIndexMinimumValue();
+		minCol = minColumnArray[minRow];
+	}
+
+	public double getMinValue() {
+		return minValue;
+	}
+
+	public int getMinRow() {
+		return minRow;
+	}
+
+	public int getMinColumn() {
+		return minCol;
 	}
 }
