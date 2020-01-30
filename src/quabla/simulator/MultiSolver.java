@@ -73,11 +73,10 @@ public class MultiSolver {
 				wind_map_parachute[2*i+1][j] = pos_ENU_landing_parachute[1];
 				j++;
 			}
+			displayProcess(i);
 			i++;
 		}
 
-		//ivm.computeMinVelLaunchClear();
-		//ivm.computeMaxAltAopgee();
 		ivm.outputResultTxt(spec.result_filepath);
 
 		OutputLandingScatter trajectory = new OutputLandingScatter();
@@ -93,5 +92,18 @@ public class MultiSolver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void displayProcess(int numSpeed) {
+		String process = "";
+		speed_num = 7;
+		for(int i = 0; i < speed_num; i++) {
+			if(i <= numSpeed) {
+				process += "█";
+			}else {
+				process += " ";
+			}
+		}
+		System.out.println("|" + process + "|" + String.format("%d", (numSpeed + 1) * 100 / speed_num) + "%");
 	}
 }
