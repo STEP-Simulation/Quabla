@@ -2,6 +2,7 @@ package quabla.simulator.logger.ivent_value;
 
 import java.io.IOException;
 
+import quabla.output.OutputCsv;
 import quabla.output.OutputTxt;
 import quabla.simulator.numerical_analysis.ArrayAnalysis;
 
@@ -39,6 +40,8 @@ public class IventValueMulti {
 			timeLandingTrajectoryArray,
 			timeLandingParachuteArray;
 
+	private double[][][] posENUlandingTrajectory, posENUlandingParachute;
+
 	public IventValueMulti(double[] speedArray, double[] azimuthArray) {
 		row = speedArray.length;
 		column = azimuthArray.length;
@@ -57,6 +60,8 @@ public class IventValueMulti {
 		timeApogeeArray = new double[row][column];
 		timeLandingTrajectoryArray = new double[row][column];
 		timeLandingParachuteArray = new double[row][column];
+		posENUlandingTrajectory = new double[row][column][2];
+		posENUlandingParachute = new double[row][column][2];
 	}
 
 	public void setResultArray(int i, int j, IventValueSingle ivs) {
@@ -67,6 +72,8 @@ public class IventValueMulti {
 		timeApogeeArray[i][j] = ivs.getTimeApogee();
 		timeLandingTrajectoryArray[i][j] = ivs.getTimeLandingTrajectory();
 		timeLandingParachuteArray[i][j] = ivs.getTimeLandingParachute();
+		System.arraycopy(ivs.getPosENUlandingTrajectory(), 0, posENUlandingTrajectory[i][j], 0, 2);
+		System.arraycopy(ivs.getPosENUlandingParachute(), 0, posENUlandingParachute[i][j], 0, 2);
 	}
 
 	public void computeMinVelLaunchClear() {
@@ -161,14 +168,28 @@ public class IventValueMulti {
 		}
 
 	}
+
+	public void outputCsv(String filepath) {
+		OutputCsvMulti ocAltApogee = new OutputCsvMulti(filepath + "altApogee.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmVelLaunchClear = new OutputCsvMulti(filepath + "velLaunchClear.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmVelAirMax = new OutputCsvMulti(filepath + "velAirMax.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmMachMax = new OutputCsvMulti(filepath + "machMax.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmTimeApogee = new OutputCsvMulti(filepath + "timeApogee.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmTimeLandingTrajectory = new OutputCsvMulti(filepath + "timeLandingTrajectory.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmTimeLandingParachute = new OutputCsvMulti(filepath + "timeLandingParachute.csv", speedArray, azimuthArray);
+
+		ocAltApogee.runOutputLine(altApogeeArray);
+		ocmVelLaunchClear.runOutputLine(velLaunchClearArray);
+		ocmVelAirMax.runOutputLine(velAirMaxArray);
+		ocmMachMax.runOutputLine(machMaxArray);
+		ocmTimeApogee.runOutputLine(timeApogeeArray);
+		ocmTimeLandingTrajectory.runOutputLine(timeLandingTrajectoryArray);
+		ocmTimeLandingParachute.runOutputLine(timeLandingParachuteArray);
+	}
 }
 
 class IventValueArrange{
 	private int row;
-	private double[] dataArray;
-
-	private double speedMax, azimuthMax;
-	private double speedMin, azimuthMin;
 
 	private double maxValue, minValue;
 
@@ -238,5 +259,61 @@ class IventValueArrange{
 
 	public int getMinColumn() {
 		return minCol;
+	}
+}
+
+class OutputCsvMulti{
+
+	private String filepath;
+	private double[] speedArray;
+	private double[] azimuthArray;
+	private String[] nameList;
+
+	public OutputCsvMulti(String filepath, double[] speedArray, double[] azimuthArray) {
+		this.filepath = filepath;
+
+		this.nameList = new String[azimuthArray.length];
+		this.speedArray = new double[speedArray.length];
+		this.azimuthArray = new double[azimuthArray.length - 1];//360degの時の値は保存しない
+		System.arraycopy(azimuthArray, 0, this.azimuthArray, 0, azimuthArray.length - 1);
+		System.arraycopy(speedArray, 0, this.speedArray, 0, speedArray.length);
+		nameList[0] = " ";
+		for(int i = 0; i < this.azimuthArray.length; i++) {
+			nameList[i + 1] = String.valueOf(azimuthArray[i]);
+		}
+	}
+
+	public void runOutputLine(double[][] dataArray) {
+		OutputCsv oc = null;
+
+		int row = dataArray.length;
+		int col = dataArray[0].length;
+		try {
+			oc = new OutputCsv(filepath, nameList);
+		}catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		try {
+			oc.outputFirstLine();
+		}catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		for(int i = 0; i < row; i++	) {
+			double[] result = new double[col];
+			result[0] = speedArray[i];
+			System.arraycopy(dataArray[i], 0, result, 1, col - 1);
+			try {
+				oc.outputLine(result);
+			}catch(IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+		try {
+			oc.close();
+		}catch(IOException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

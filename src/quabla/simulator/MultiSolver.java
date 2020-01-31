@@ -10,7 +10,6 @@ public class MultiSolver {
 	InputParam spec;
 	double speed_min,speed_step;
 	int speed_num,angle_num;
-	//private double[][] velLaunchClearArray, altApogeeArray;
 	private double[] speedArray, azimuthArray;
 
 	private IventValueMulti ivm;
@@ -78,6 +77,7 @@ public class MultiSolver {
 		}
 
 		ivm.outputResultTxt(spec.result_filepath);
+		ivm.outputCsv(spec.result_filepath);
 
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
@@ -96,14 +96,14 @@ public class MultiSolver {
 
 	private void displayProcess(int numSpeed) {
 		String process = "";
-		speed_num = 7;
-		for(int i = 0; i < speed_num; i++) {
-			if(i <= numSpeed) {
+		double processDouble = (double)(numSpeed + 1) / (double)speed_num ;
+		for(int i = 0; i < 10; i++) {
+			if(i < (int)(processDouble * 10)) {
 				process += "█";
 			}else {
 				process += " ";
 			}
 		}
-		System.out.println("|" + process + "|" + String.format("%d", (numSpeed + 1) * 100 / speed_num) + "%");
+		System.out.println("|" + process + "|" + String.format("%d", (int)(processDouble * 100)) + "%");
 	}
 }
