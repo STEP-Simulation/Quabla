@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import quabla.output.OutputFlightlogParachute;
 import quabla.output.OutputFlightlogTrajectory;
-import quabla.output.OutputLogParachute;
-import quabla.output.OutputLogTrajectory;
 import quabla.output.OutputTxt;
 import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
@@ -26,12 +24,14 @@ public class Solver {
 	double[] pos_ENU_landing_trajectory = new double[2];
 	double[] pos_ENU_landing_parachute = new double[2];
 
+	/*
 	private double velLaunchClear;
 	private double timeLaunchClear;
 	private double timeApogee;
 	private double altitudeApogee;
 	private double timeLandingTrajectory;
 	private double timeLandingParachute;
+	*/
 
 	private int indexApogee;
 	//TODO 結果保存用のクラス作成
@@ -52,9 +52,7 @@ public class Solver {
 
 	public void solve_dynamics() {
 		int index = 0;
-		int indexLaunchClear,index_apogee=0,indexLandingTrajectory,indexLandingParachute;
-		double time_LaunchClear, time_apogee = 0.0,time_LandingTrajectory,time_LandingParachute;
-		double vel_LaunchClear, alt_apogee = 0.0;
+		int indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute;
 		double time = 0.0;
 		final double h = spec.dt;
 
@@ -90,10 +88,7 @@ public class Solver {
 			trajectoryLog.logVariable(variableTrajectory);
 
 			if(eventJudgement.judgeLaunchClear(variableTrajectory)) {
-				//TODO イベント値の記録用のクラスを作る
-				time_LaunchClear = variableTrajectory.getTime();
 				indexLaunchClear = index;
-				vel_LaunchClear = variableTrajectory.getVel_ENU().norm();
 				break;
 			}
 		}
@@ -106,15 +101,8 @@ public class Solver {
 			variableTrajectory.renewVariable(time, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
 			trajectoryLog.logVariable(variableTrajectory);
 
-			if(eventJudgement.judgeApogee(variableTrajectory)) {
-				index_apogee = index;
-				alt_apogee = variableTrajectory.getAltitude();
-				time_apogee = variableTrajectory.getTime();
-			}
-
 			if(eventJudgement.judgeLanding(variableTrajectory)) {
 				indexLandingTrajectory = index;
-				time_LandingTrajectory = variableTrajectory.getTime();
 				break;
 			}
 		}
@@ -136,18 +124,18 @@ public class Solver {
 
 		System.arraycopy(trajectoryLog.getPosENUlog(indexLandingTrajectory), 0, pos_ENU_landing_trajectory, 0, 2);
 
-		parachuteLog.copyLog(index_apogee, trajectoryLog);
-		Variable variableParachute = new Variable(spec,rocket);
+		indexApogee = iventValue.getIndexApogee();
+		parachuteLog.copyLog(indexApogee, trajectoryLog);
+		trajectoryLog.dumpArrayList();
+
 		//頂点時のvariableを渡す
-		//variableParachute.setPos_ENU(trajectoryLog.getPos_ENU(index_apogee));
-		variableParachute.setPos_ENU(new MathematicalVector(trajectoryLog.getPosENUlog(index_apogee)));
-		//variableParachute.setVel_ENU(trajectoryLog.getVel_ENU(index_apogee));
-		variableParachute.setVel_ENU(new MathematicalVector(trajectoryLog.getVelENUlog(index_apogee)));
-		//variableParachute.setOmega_Body(new MathematicalVector(0.0, 0.0, 0.0));
+		Variable variableParachute = new Variable(spec,rocket);
+		variableParachute.setPos_ENU(new MathematicalVector(trajectoryLog.getPosENUlog(indexApogee)));
+		variableParachute.setVel_ENU(new MathematicalVector(trajectoryLog.getVelENUlog(indexApogee)));
 		variableParachute.setOmega_Body(new MathematicalVector(0.0, 0.0, 0.0));
 		variableParachute.setQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));
 
-		index = index_apogee; //indexの更新
+		index = indexApogee; //indexの更新
 		////////// Parachute //////////
 		for( ; ; ) {
 			index ++;
@@ -156,12 +144,12 @@ public class Solver {
 			parachuteLog.logVariable(variableParachute);
 
 			if(eventJudgement.judgeLanding(variableParachute)) {
-				time_LandingParachute = variableParachute.getTime();
 				indexLandingParachute = index;
 				break;
 			}
 		}
 		parachuteLog.makeArray();
+		parachuteLog.dumpArrayList();
 		System.arraycopy(parachuteLog.getPosENUlog(indexLandingParachute), 0, pos_ENU_landing_parachute, 0, 2);
 
 		lovp = new LoggerOtherVariableParachute(spec, parachuteLog);
@@ -170,30 +158,20 @@ public class Solver {
 		iventValue.setIndexLandingParachute(indexLandingParachute);
 		iventValue.calculateLandingParachute();
 
-		trajectoryLog.dumpArrayList();
-		parachuteLog.dumpArrayList();
-
-		velLaunchClear = vel_LaunchClear;
-		timeLaunchClear = time_LaunchClear;
-		indexApogee = index_apogee;
-		altitudeApogee = alt_apogee;
-		timeApogee = time_apogee;
-		timeLandingTrajectory = time_LandingTrajectory;
-		timeLandingParachute = time_LandingParachute;
 	}
 
 	public IventValueSingle getIventValueSingle() {
 		return iventValue;
 	}
 
-	public void makeResult() {
+/*	public void makeResult() {
 
 		OutputLogTrajectory olt = new OutputLogTrajectory("flightlog_trajectory", spec, trajectoryLog);
 		OutputLogParachute olp = new OutputLogParachute("flightlog_parachute", spec, parachuteLog, indexApogee);
 
 		olt.runOutputLine(timeLandingTrajectory);
 		olp.runOutputLine(timeLandingParachute, timeApogee);
-	}
+	}*/
 
 	public void makeResult_() {
 
