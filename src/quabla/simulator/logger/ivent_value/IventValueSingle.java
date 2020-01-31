@@ -47,81 +47,6 @@ public class IventValueSingle {
 		this.indexLandingParachute = indexLandingParachute;
 	}
 
-/*
-	public void setMaxAltitude(double altApogee) {
-		this.altApogee = altApogee;
-	}
-*/
-	/*public void setAltitudeMaxQ(double altMaxQ) {
-		this.altMaxQ = altMaxQ;
-	}*/
-
-	/*public void setVelLaunchClear(double velLaunchClear) {
-		this.velLaunchClear = velLaunchClear;
-	}*/
-
-	/*public void setTimeLaunchClear(double timeLaunchClear) {
-		this.timeLaunchClear = timeLaunchClear;
-	}*/
-
-	/*public void setTimeMaxQ(double timeMaxQ) {
-		this.timeMaxQ = timeMaxQ;
-	}*/
-/*
-	public void setTimeMaxVelAir(double timeMaxVelAir) {
-		this.timeMaxVelAir = timeMaxVelAir;
-	}*/
-
-	/*public void setTimeMaxMach(double timeMaxMach) {
-		this.timeMaxMach = timeMaxMach;
-	}*/
-/*
-	public void setTimeApogee(double timeApogee) {
-		this.timeApogee = timeApogee;
-	}
-*/
-	/*
-	public void setTimeLandingTrajectory(double timeLandingTrajectory) {
-		this.timeLandingTrajectory = timeLandingTrajectory;
-	}
-
-	public void setTimeLandingParachute(double timeLandingParachute) {
-		this.timeLandingParachute = timeLandingParachute;
-	}
-*/
-/*	public void setAccLaunchClear(double accLaunchClear) {
-		this.accLaunchClear = accLaunchClear;
-	}*/
-
-/*	public void setDynamicsPressureMax(double dynamicsPressureMax) {
-		this.dynamicsPressureMax = dynamicsPressureMax;
-	}*/
-/*
-	public void setVelAirMax(double velAirMax) {
-		this.velAirMax = velAirMax;
-	}*/
-/*
-	public void setVelAirApogee(double velAirApogee) {
-		this.velAirApogee = velAirApogee;
-	}
-*/
-	/*public void setMachMax(double machMax) {
-		this.machMax = machMax;
-	}*/
-/*
-	public void setDownrangeApogee(double downrangeApogee) {
-		this.downrangeApogee = downrangeApogee;
-	}
-*/
-	/*
-	public void setDownrangeLandingTrajectory(double downrangeLandingTrajectory) {
-		this.downrangeLandingTrajectory = downrangeLandingTrajectory;
-	}
-
-	public void setDownrangeLandingParachute(double downrangeLandingParachute) {
-		this.downrangeLandingParachute = downrangeLandingParachute;
-	}*/
-
 	public void calculateLaunchClear() {
 		timeLaunchClear = lvt.getTime(indexLaunchClear);
 		accLaunchClear = lovt.getAccAbsLog(indexLaunchClear);
@@ -179,6 +104,15 @@ public class IventValueSingle {
 		timeLandingParachute = lvp.getTime(indexLandingParachute);
 		System.arraycopy(lvp.getPosENUlog(indexLandingParachute), 0, posENUlandingParachute, 0, 2);
 		downrangeLandingParachute = lovp.getDownrangeLog(indexLandingParachute);
+	}
+
+	public void calculate() {
+		calculateLaunchClear();
+		calculateMachMax();
+		calculateAtVelAirMax();
+		calculateAtMaxQ();
+		calculateAtApogee();
+		calculateLandingTrajectory();
 	}
 
 	// Launch Clear
