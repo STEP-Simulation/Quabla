@@ -58,6 +58,8 @@ public class OutputFlightlogTrajectory {
 	private LoggerVariable lv;
 	private LoggerOtherVariableTrajectory lov;
 
+	private final double TIME_STEP_OUTPUT = 0.01;
+
 	private final String[] nameList = {
 			"time [sec]",
 			"pos_east [m]",
@@ -138,13 +140,11 @@ public class OutputFlightlogTrajectory {
 		for(int i = 0; i < length; i++) {
 			double[] result = new double[nameList.length];
 
-			//System.arraycopy(result, 0, lv.time_array, 0, 1);
 			result[0] = lv.getTime(i);
 			System.arraycopy(lv.getPosENUlog(i), 0, result, 1, 3);
 			System.arraycopy(lv.getVelENUlog(i), 0, result, 4, 3);
 			System.arraycopy(lv.getOmegaBODYlog(i), 0, result, 7, 3);
 			System.arraycopy(lv.getQuatLog(i), 0, result, 10, 4);
-			//System.arraycopy(result, 14, lov.getMassLog(i), 0, 1);
 			result[14] = lov.getMassLog(i);
 			result[15] = lov.getLcgLog(i);
 			result[16] = lov.getLcpLog(i);
@@ -152,16 +152,8 @@ public class OutputFlightlogTrajectory {
 			result[18] = lov.getIjPitchLog(i);
 			result[19] = lov.getAltitudeLog(i);
 			result[20] = lov.getDownrangeLog(i);
-
-			//System.arraycopy(result, 15, lov.getLcgLog(i), 0, 1);
-			//System.arraycopy(result, 16, lov.getLcpLog(i), 0, 1);
-			//System.arraycopy(result, 17, lov.getIjRollLog(i), 0, 1);
-			//System.arraycopy(result, 18, lov.getIjPitchLog(i), 0, 1);
-			//System.arraycopy(result, 19, lov.getAltitudeLog(i), 0, 1);
-			//System.arraycopy(result, 20, lov.getDownrangeLog(i), 0, 1);
 			System.arraycopy(lov.getVelAirENUlog(i), 0, result, 21, 3);
 			System.arraycopy(lov.getVelAirBODYlog(i), 0, result, 24, 3);
-
 			result[27] = lov.getVelAirAbsLog(i);
 			result[28] = lov.getAlphaLog(i);
 			result[29] = lov.getBetaLog(i);
@@ -172,21 +164,9 @@ public class OutputFlightlogTrajectory {
 			result[34] = lov.getNormalLog(i);
 			result[35] = lov.getSideLog(i);
 			result[36] = lov.getThrustLog(i);
-
-			//System.arraycopy(result, 27, lov.getVelAirAbsLog(i), 0, 1);
-			//System.arraycopy(result, 28, lov.getAlphaLog(i), 0, 1);
-			//System.arraycopy(result, 29, lov.getBetaLog(i), 0, 1);
-			//System.arraycopy(result, 30, lov.getMachLog(i), 0, 1);
-			//System.arraycopy(result, 31, lov.getDynamicsPressureLog(i), 0, 1);
-			//System.arraycopy(result, 32, lov.getFstLog(i), 0, 1);
-			//System.arraycopy(result, 33, lov.getDragLog(i), 0, 1);
-			//System.arraycopy(result, 34, lov.getNormalLog(i), 0, 1);
-			//System.arraycopy(result, 35, lov.getSideLog(i), 0, 1);
-			//System.arraycopy(result, 36, lov.getThrustLog(i), 0, 1);
 			System.arraycopy(lov.getForceBODYlog(i), 0, result, 37, 3);
 			System.arraycopy(lov.getAccENUlog(i), 0, result, 40, 3);
 			System.arraycopy(lov.getAccBODYlog(i), 0, result, 43, 3);
-			//System.arraycopy(result, 46, lov.getAccAbsLog(i), 0, 1);
 			result[46] = lov.getAccAbsLog(i);
 
 			try {

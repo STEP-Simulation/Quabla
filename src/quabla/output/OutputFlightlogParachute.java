@@ -5,6 +5,7 @@ import java.io.IOException;
 import quabla.parameter.InputParam;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
+import quabla.simulator.numerical_analysis.Interpolation;
 
 public class OutputFlightlogParachute {
 
@@ -12,6 +13,8 @@ public class OutputFlightlogParachute {
 	private InputParam spec;
 	private LoggerVariable lv;
 	private LoggerOtherVariableParachute lov;
+
+	private final double TIME_STEP_OUTPUT = 0.01;
 
 	private final String[] nameList = {
 			"time [sec]",
@@ -29,6 +32,15 @@ public class OutputFlightlogParachute {
 			"vel_air_abs [m/s]"
 	};
 
+	private Interpolation
+	timeAnaly,
+	posENUanaly,
+	velENUAnaly,
+	altitudeAnaly,
+	downrangeAnaly,
+	velAirENU,
+	velAirAbs;
+
 	/**
 	 * @param filename 出力するcsvのfile名
 	 * @throws IOException
@@ -38,6 +50,10 @@ public class OutputFlightlogParachute {
 		this.spec = spec;
 		this.lv = lv;
 		this.lov = lov;
+	}
+
+	private void readyInterpolation() {
+
 	}
 
 	public void runOutputLine() {
