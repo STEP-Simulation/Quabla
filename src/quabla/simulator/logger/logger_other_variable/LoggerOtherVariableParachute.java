@@ -62,6 +62,26 @@ public class LoggerOtherVariableParachute{
 		return velAirAbsLog[index];
 	}
 
+	public double[][] getWindENUarray(){
+		return windENUlog;
+	}
+
+	public double[][] getVelAirENUArray(){
+		return velAirENUlog;
+	}
+
+	public double[] getVelAirAbsArray() {
+		return velAirAbsLog;
+	}
+
+	public double[] getAltitudeArray() {
+		return altitudeLog;
+	}
+
+	public double[] getDownrangeArray(){
+		return downrangeLog;
+	}
+
 	public void dumpLog() {
 		altitudeLog = null;
 		downrangeLog = null;

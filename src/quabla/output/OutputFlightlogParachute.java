@@ -4,15 +4,11 @@ import java.io.IOException;
 
 import quabla.parameter.InputParam;
 import quabla.simulator.logger.LoggerVariable;
+import quabla.simulator.logger.ivent_value.IventValueSingle;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 public class OutputFlightlogParachute {
-
-	private String filename;
-	private InputParam spec;
-	private LoggerVariable lv;
-	private LoggerOtherVariableParachute lov;
 
 	private final double TIME_STEP_OUTPUT = 0.01;
 
@@ -33,33 +29,38 @@ public class OutputFlightlogParachute {
 	};
 
 	private Interpolation
-	timeAnaly,
 	posENUanaly,
-	velENUAnaly,
+	velENUanaly,
+	windENUanaly,
 	altitudeAnaly,
 	downrangeAnaly,
-	velAirENU,
-	velAirAbs;
+	velAirENUanaly,
+	velAirAbsAnaly;
+
+	private double timeApogee, timeLandingParachute;
 
 	/**
 	 * @param filename 出力するcsvのfile名
 	 * @throws IOException
 	 * */
-	public OutputFlightlogParachute(String filename, InputParam spec, LoggerVariable lv, LoggerOtherVariableParachute lov) {
-		this.filename = filename;
-		this.spec = spec;
-		this.lv = lv;
-		this.lov = lov;
+	public OutputFlightlogParachute(InputParam spec, LoggerVariable lv, LoggerOtherVariableParachute lov, IventValueSingle ivs) {
+
+		timeApogee = ivs.getTimeApogee();
+		timeLandingParachute = ivs.getTimeLandingParachute();
+
+		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
+		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
+		windENUanaly = new Interpolation(lv.getTimeArray(), lov.getWindENUarray());
+		altitudeAnaly = new Interpolation(lv.getTimeArray(), lov.getAltitudeArray());
+		downrangeAnaly = new Interpolation(lv.getTimeArray(), lov.getDownrangeArray());
+		velAirENUanaly = new Interpolation(lv.getTimeArray(), lov.getVelAirENUArray());
+		velAirAbsAnaly = new Interpolation(lv.getTimeArray(), lov.getVelAirAbsArray());
 	}
 
-	private void readyInterpolation() {
-
-	}
-
-	public void runOutputLine() {
-		OutputCsv  flightlog = null;
+	public void runOutputLine(String filepath) {
+		OutputCsv flightlog = null;
 		try {
-			flightlog = new OutputCsv(spec.result_filepath + filename + ".csv", nameList);
+			flightlog = new OutputCsv(filepath, nameList);
 		}catch(IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -70,37 +71,43 @@ public class OutputFlightlogParachute {
 			throw new RuntimeException(e);
 		}
 
-		int length  = lv.getArrayLength();
-		for(int i = 0; i < length; i++) {
-			double[] result = new double[length];
+		double time;
 
-			result[0] = lv.getTime(i);
-			System.arraycopy(lv.getPosENUlog(i), 0, result, 1, 3);
+		for(int i = 0; ; i++) {
+			time = i * TIME_STEP_OUTPUT;
 
-			if(lv.getVelENUlog(i)[2] <= 0.0) {
-				System.arraycopy(lov.getWindENUlog(i), 0, result, 4, 2);
-				result[6] = lv.getVelENUlog(i)[2];
-			}else {//開傘前
-				System.arraycopy(lv.getVelENUlog(i), 0, result, 4, 3);
+			double[] result = new double[13];
+
+			result[0] = time;
+			System.arraycopy(posENUanaly.linearInterpPluralColumns(time), 0, result, 1, 3);
+			if(time <= timeApogee) {
+				System.arraycopy(velENUanaly.linearInterpPluralColumns(time), 0, result, 4, 3);
+			}else {
+				System.arraycopy(windENUanaly.linearInterpPluralColumns(time), 0, result, 4, 2);
+				result[6] = velENUanaly.linearInterpPluralColumns(time)[2];
 			}
-
-			result[7] = lov.getAltitudeLog(i);
-			result[8] = lov.getDownrangeLog(i);
-			System.arraycopy(lov.getVelAirENUlog(i), 0, result, 9, 3);
-			result[12] = lov.getVelAirAbsLog(i);
+			result[7] = altitudeAnaly.linearInterp1column(time);
+			result[8] = downrangeAnaly.linearInterp1column(time);
+			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 9, 3);
+			result[12] = velAirAbsAnaly.linearInterp1column(time);
 
 			try {
 				flightlog.outputLine(result);
-			}catch(IOException e) {
+			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
-		}
 
+			if(time >= timeLandingParachute) {
+				break;
+			}
+
+		}
 		try {
 			flightlog.close();
-		}catch(IOException e) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+
 	}
 
 }

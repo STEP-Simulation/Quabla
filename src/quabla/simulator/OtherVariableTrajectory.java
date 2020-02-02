@@ -42,6 +42,7 @@ public class OtherVariableTrajectory {
 	private Wind wind;
 	private AeroParameter aero;
 
+	private double[] attitude;
 	private double mass;
 	private double lcg;
 	private double lcp;
@@ -78,6 +79,8 @@ public class OtherVariableTrajectory {
 
 		double[][] dcm_ENU2BODY = Coordinate.getDCM_ENU2BODYfromQuat(quat);
 		double[][] dcm_BODY2ENU = Coordinate.getDCM_BODY2ENUFromDCM_ENU2BODY(dcm_ENU2BODY);
+
+		attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
 		mass = rocket.getMass(time);
 		IjRoll = rocket.Ij_roll(time);
@@ -138,6 +141,10 @@ public class OtherVariableTrajectory {
 		}
 		accBODY = Coordinate.vec_trans(dcm_ENU2BODY, accENU);
 		accAbs = Math.sqrt(Math.pow(accENU[0], 2) + Math.pow(accENU[1], 2) + Math.pow(accENU[2], 2));
+	}
+
+	public double[] getAttitude() {
+		return attitude;
 	}
 
 	public double getMass() {
@@ -230,5 +237,9 @@ public class OtherVariableTrajectory {
 
 	public double getAccAbs() {
 		return accAbs;
+	}
+
+	public double getPair() {
+		return P_air;
 	}
 }

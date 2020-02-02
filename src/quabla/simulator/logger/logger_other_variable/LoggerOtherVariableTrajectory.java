@@ -12,6 +12,7 @@ public class LoggerOtherVariableTrajectory {
 
 	private LoggerVariable logdata;
 
+	private double[][] attitudeLog;
 	private double[] massLog;
 	private double[] lcgLog;
 	private double[] lcpLog;
@@ -35,6 +36,7 @@ public class LoggerOtherVariableTrajectory {
 	private double[][] accENUlog;
 	private double[][] accBODYlog;
 	private double[] accAbsLog;
+	private double[] pAirLog;
 
 	public LoggerOtherVariableTrajectory(InputParam spec, LoggerVariable logdata) {
 		ovt = new OtherVariableTrajectory(spec);
@@ -42,6 +44,7 @@ public class LoggerOtherVariableTrajectory {
 		this.logdata = logdata;
 
 		length = logdata.getArrayLength();
+		attitudeLog = new double[length][3];
 		massLog = new double[length];
 		lcgLog = new double[length];
 		lcpLog = new double[length];
@@ -65,6 +68,7 @@ public class LoggerOtherVariableTrajectory {
 		accENUlog = new double[length][3];
 		accBODYlog = new double[length][3];
 		accAbsLog = new double[length];
+		pAirLog = new double[length];
 
 		setOtherVariableLog();
 	}
@@ -74,6 +78,7 @@ public class LoggerOtherVariableTrajectory {
 		for(int i = 0; i < length; i++) {
 			ovt.setOtherVariable(logdata.getTime(i), logdata.getPosENUlog(i), logdata.getVelENUlog(i), logdata.getQuatLog(i));
 
+			System.arraycopy(ovt.getAttitude(), 0, attitudeLog[i], 0, 3);
 			massLog[i] = ovt.getMass();
 			lcgLog[i] = ovt.getLcg();
 			lcpLog[i] = ovt.getLcp();
@@ -97,9 +102,12 @@ public class LoggerOtherVariableTrajectory {
 			System.arraycopy(ovt.getAccENU(), 0, accENUlog[i], 0, 3);
 			System.arraycopy(ovt.getAccBODY(), 0, accBODYlog[i], 0, 3);
 			accAbsLog[i] = ovt.getAccAbs();
+			pAirLog[i] = ovt.getPair();
 		}
 
 	}
+
+
 
 	public double getMassLog(int index) {
 		return massLog[index];
@@ -193,12 +201,62 @@ public class LoggerOtherVariableTrajectory {
 		return accAbsLog[index];
 	}
 
+	public double getPairLog(int index) {
+		return pAirLog[index];
+	}
+
+	// get Array
+
+	public double[][] getAttitudeLogArray(){
+		return attitudeLog;
+	}
+
+	public double[] getMassLogArray() {
+		return massLog;
+	}
+
+	public double[] getLcgLogArray() {
+		return lcgLog;
+	}
+
+	public double[] getLcpLogArray() {
+		return lcpLog;
+	}
+
+	public double[] getIjRollLogArray() {
+		return IjRollLog;
+	}
+
+	public double[] getIjPitchLogArray	() {
+		return IjPitchLog;
+	}
+
 	public double[] getAltitudeLogArray() {
 		return altitudeLog;
 	}
 
+	public double[] getDownrangeLogArray() {
+		return downrangeLog;
+	}
+
+	public double[][] getVelAirENUlogArray(){
+		return velAirENUlog;
+	}
+
+	public double[][] getVelAirBODYlogArray(){
+		return velAirBODYlog;
+	}
+
 	public double[] getVelAirAbsLogArray() {
 		return velAirAbsLog;
+	}
+
+	public double[] getAlphaLogArray() {
+		return alphaLog;
+	}
+
+	public double[] getBetaLogArray() {
+		return betaLog;
 	}
 
 	public double[] getDynamicsPressureLogArray() {
@@ -208,6 +266,47 @@ public class LoggerOtherVariableTrajectory {
 	public double[] getMachLogArray() {
 		return machLog;
 	}
+
+	public double[] getFstLogArray() {
+		return fstLog;
+	}
+
+	public double[] getDragLogArray() {
+		return dragLog;
+	}
+
+	public double[] getNormalLogArray(){
+		return normalLog;
+	}
+
+	public double[] getSideLogArray() {
+		return sideLog;
+	}
+
+	public double[] getThrustLogArray() {
+		return thrustLog;
+	}
+
+	public double[][] getForceBODYlogArray(){
+		return forceBODYlog;
+	}
+
+	public double[][] getAccENUlogArray(){
+		return accENUlog;
+	}
+
+	public double[][] getAccBODYlogArray(){
+		return accBODYlog;
+	}
+
+	public double[] getAccAbsLogArray() {
+		return accAbsLog;
+	}
+
+	public double[] getPairLogArray() {
+		return pAirLog;
+	}
+
 
 	public void dumpLog() {
 		massLog = null;
