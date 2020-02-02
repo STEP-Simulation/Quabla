@@ -42,6 +42,8 @@ public class Solver {
 	private LoggerOtherVariableTrajectory lovt;
 	private LoggerOtherVariableParachute lovp;
 
+	boolean flag;
+
 	public Solver(InputParam spec) {
 		this.spec = spec;
 
@@ -52,7 +54,7 @@ public class Solver {
 
 	public void solve_dynamics() {
 		int index = 0;
-		int indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute;
+		int indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
 		double time = 0.0;
 		final double h = spec.dt;
 
@@ -143,6 +145,16 @@ public class Solver {
 			variableParachute.renewVariable(time, ODEsolver.runRK4(variableParachute, dynParachute));
 			parachuteLog.logVariable(variableParachute);
 
+/*		if(eventJudgement.judge2ndPara(variableParachute)) {
+				index2ndPara = index;
+			}*/
+
+			flag = eventJudgement.judge2ndPara(variableParachute);
+
+			if(eventJudgement.judge2ndPara(variableParachute)) {
+				index2ndPara = index;
+			}
+
 			if(eventJudgement.judgeLanding(variableParachute)) {
 				indexLandingParachute = index;
 				break;
@@ -158,27 +170,21 @@ public class Solver {
 		iventValue.setIndexLandingParachute(indexLandingParachute);
 		iventValue.calculateLandingParachute();
 
+		iventValue.setIndex2ndPara(index2ndPara);
+		iventValue.compute2ndPara();
+
 	}
 
 	public IventValueSingle getIventValueSingle() {
 		return iventValue;
 	}
 
-/*	public void makeResult() {
-
-		OutputLogTrajectory olt = new OutputLogTrajectory("flightlog_trajectory", spec, trajectoryLog);
-		OutputLogParachute olp = new OutputLogParachute("flightlog_parachute", spec, parachuteLog, indexApogee);
-
-		olt.runOutputLine(timeLandingTrajectory);
-		olp.runOutputLine(timeLandingParachute, timeApogee);
-	}*/
-
 	public void makeResult_() {
 
-		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory("flightlog_trajectory", spec, trajectoryLog, lovt);
-		OutputFlightlogParachute ofp = new OutputFlightlogParachute("flightlog_parachute", spec, parachuteLog, lovp);
-		oft.runOutputLine();
-		//ofp.runOutputLine();
+		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory(spec, trajectoryLog, lovt,iventValue);
+		OutputFlightlogParachute ofp = new OutputFlightlogParachute(spec, parachuteLog, lovp, iventValue);
+		oft.runOutputLine(spec.result_filepath + "flightlog_trajectory.csv");
+		ofp.runOutputLine(spec.result_filepath + "flightlog_parachute.csv");
 	}
 
 	public void outputResultTxt() {
@@ -212,6 +218,8 @@ public class Solver {
 			resultTxt.outputLine(String.format("Max Mach Time : %.3f [sec]", iventValue.getTimeMaxMach()));
 			resultTxt.outputLine(String.format("Max Mach : %.3f [-]", iventValue.getMachMax()));
 			resultTxt.outputLine(String.format("Max Mach Altitude : %.3f [km]", iventValue.getAltitudeMaxMach()));
+
+			resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", iventValue.getTime2ndPara()));
 
 			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", iventValue.getTimeLandingTrajectory()));
 			resultTxt.outputLine(String.format("Landing Trajectory Downrange %.3f [km]", iventValue.getDownrangeLandingTrajectory()));

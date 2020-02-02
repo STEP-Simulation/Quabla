@@ -18,6 +18,7 @@ public class IventValueMulti {
 	velAirMax,
 	machMax,
 	timeApogeeMax,
+	time2ndParaMax,
 	timeLandingTrajectoryMax,
 	timeLandingParachuteMax;
 
@@ -27,6 +28,7 @@ public class IventValueMulti {
 	speedMaxVelAir, azimuthMaxVelAir,
 	speedMaxMach, azimuthMaxMach,
 	speedMaxTimeApogee, azimuthMaxTimeApogee,
+	speedMaxTime2ndPara, azimuthMaxTime2ndPara,
 	speedMaxTimeLandingTrajectory, azimuthMaxTimeLandingTrajectory,
 	speedMaxTimeLandingParachute, azimuthMaxTimeLandingParachute;
 
@@ -37,6 +39,7 @@ public class IventValueMulti {
 			velAirMaxArray,
 			machMaxArray,
 			timeApogeeArray,
+			time2ndParaArray,
 			timeLandingTrajectoryArray,
 			timeLandingParachuteArray;
 
@@ -58,6 +61,7 @@ public class IventValueMulti {
 		velAirMaxArray = new double[row][column];
 		machMaxArray = new double[row][column];
 		timeApogeeArray = new double[row][column];
+		time2ndParaArray = new double[row][column];
 		timeLandingTrajectoryArray = new double[row][column];
 		timeLandingParachuteArray = new double[row][column];
 		posENUlandingTrajectory = new double[row][column][2];
@@ -70,6 +74,7 @@ public class IventValueMulti {
 		velAirMaxArray[i][j] = ivs.getVelAirMax();
 		machMaxArray[i][j] = ivs.getMachMax();
 		timeApogeeArray[i][j] = ivs.getTimeApogee();
+		time2ndParaArray[i][j] = ivs.getTime2ndPara();
 		timeLandingTrajectoryArray[i][j] = ivs.getTimeLandingTrajectory();
 		timeLandingParachuteArray[i][j] = ivs.getTimeLandingParachute();
 		System.arraycopy(ivs.getPosENUlandingTrajectory(), 0, posENUlandingTrajectory[i][j], 0, 2);
@@ -116,6 +121,14 @@ public class IventValueMulti {
 		azimuthMaxTimeApogee = azimuthArray[iva.getMaxColumn()];
 	}
 
+	public void computeMaxTime2ndPara() {
+		IventValueArrange iva = new IventValueArrange(row);
+		iva.computeMax(time2ndParaArray);
+		time2ndParaMax = iva.getMaxValue();
+		speedMaxTime2ndPara = speedArray[iva.getMaxRow()];
+		azimuthMaxTime2ndPara = azimuthArray[iva.getMaxColumn()];
+	}
+
 	public void computeMaxTimeLandingTrajectory(){
 		IventValueArrange iva = new IventValueArrange(row);
 		iva.computeMax(timeLandingTrajectoryArray);
@@ -137,6 +150,7 @@ public class IventValueMulti {
 		this.computeMaxAltAopgee();
 		this.computeMaxMach();
 		this.computeMaxTimeApogee();
+		this.computeMaxTime2ndPara();
 		this.computeMaxVelAirSpeed();
 		this.computeMaxTimeLandingTrajectory();
 		this.computeMaxTimeLandingParachute();
@@ -155,6 +169,7 @@ public class IventValueMulti {
 			resultTxt.outputLine(String.format("Max Air Speed : %.3f [m/s](%.1f m/s, %.1f deg)", velAirMax, speedMaxVelAir, azimuthMaxVelAir));
 			resultTxt.outputLine(String.format("Max Mach Number : %.3f [-](%.1f m/s, %.1f deg)", machMax, speedMaxMach, azimuthMaxMach));
 			resultTxt.outputLine(String.format("Max Time Apogee : %.3f [sec](%.1f m/s, %.1f deg)", timeApogeeMax, speedMaxTimeApogee, azimuthMaxTimeApogee));
+			resultTxt.outputLine(String.format("Max Time 2nd Parachute Separation : %.3f [sec](%.1f m/s, %.1f deg)", time2ndParaMax, speedMaxTime2ndPara, azimuthMaxTime2ndPara));
 			resultTxt.outputLine(String.format("Max Time LandingTrajectory : %.3f [sec](%.1f m/s, %.1f deg)", timeLandingTrajectoryMax, speedMaxTimeLandingTrajectory, azimuthMaxTimeLandingTrajectory));
 			resultTxt.outputLine(String.format("Max Time LandingParachute : %.3f [sec](%.1f m/s, %.1f deg)", timeLandingParachuteMax, speedMaxTimeLandingParachute, azimuthMaxTimeLandingParachute));
 		}catch(IOException e) {
@@ -175,6 +190,7 @@ public class IventValueMulti {
 		OutputCsvMulti ocmVelAirMax = new OutputCsvMulti(filepath + "velAirMax.csv", speedArray, azimuthArray);
 		OutputCsvMulti ocmMachMax = new OutputCsvMulti(filepath + "machMax.csv", speedArray, azimuthArray);
 		OutputCsvMulti ocmTimeApogee = new OutputCsvMulti(filepath + "timeApogee.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmTime2ndPara = new OutputCsvMulti(filepath + "time2ndPara.csv", speedArray, azimuthArray);
 		OutputCsvMulti ocmTimeLandingTrajectory = new OutputCsvMulti(filepath + "timeLandingTrajectory.csv", speedArray, azimuthArray);
 		OutputCsvMulti ocmTimeLandingParachute = new OutputCsvMulti(filepath + "timeLandingParachute.csv", speedArray, azimuthArray);
 
@@ -183,6 +199,7 @@ public class IventValueMulti {
 		ocmVelAirMax.runOutputLine(velAirMaxArray);
 		ocmMachMax.runOutputLine(machMaxArray);
 		ocmTimeApogee.runOutputLine(timeApogeeArray);
+		ocmTime2ndPara.runOutputLine(time2ndParaArray);
 		ocmTimeLandingTrajectory.runOutputLine(timeLandingTrajectoryArray);
 		ocmTimeLandingParachute.runOutputLine(timeLandingParachuteArray);
 	}

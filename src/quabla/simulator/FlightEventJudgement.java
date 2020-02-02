@@ -53,4 +53,18 @@ public class FlightEventJudgement {
 		return judge;
 	}
 
+	public boolean judge2ndPara(Variable variable) {
+		boolean judge;
+
+		if(rocket.para2Exist &&
+				(variable.getVelDescet() <= 0.0) &&
+				(variable.getAltitude() >= rocket.alt_para2)) {
+			judge = true;
+		}else {
+			judge = false;
+		}
+
+		return judge;
+	}
+
 }

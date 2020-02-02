@@ -8,8 +8,8 @@ import quabla.simulator.numerical_analysis.ArrayAnalysis;
 public class IventValueSingle {
 
 	private double velLaunchClear;
-	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeApogee, timeLandingTrajectory, timeLandingParachute;
-	private double altApogee, altMaxQ, altVelAirMax, altMachMax;
+	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeApogee, time2ndPara, timeLandingTrajectory, timeLandingParachute;
+	private double altApogee, altMaxQ, altVelAirMax, altMachMax, alt2ndPara;
 	private double accLaunchClear;
 	private double dynamicsPressureMax;
 	private double velAirMax, velAirApogee;
@@ -17,7 +17,7 @@ public class IventValueSingle {
 	private double downrangeApogee, downrangeLandingTrajectory, downrangeLandingParachute;
 	private double[] posENUlandingTrajectory = new double[2];
 	private double[] posENUlandingParachute = new double[2];
-	private int indexLaunchClear, indexMaxQ, indexMaxVelAir, indexMaxMach, indexApogee, indexLandingTrajectory, indexLandingParachute;
+	private int indexLaunchClear, indexMaxQ, index2ndPara, indexMaxVelAir, indexMaxMach, indexApogee, indexLandingTrajectory, indexLandingParachute;
 
 	LoggerVariable lvt; // LoggerVariable Trajectory
 	LoggerVariable lvp; // LoggerVariable Parachute
@@ -45,6 +45,10 @@ public class IventValueSingle {
 
 	public void setIndexLandingParachute(int indexLandingParachute) {
 		this.indexLandingParachute = indexLandingParachute;
+	}
+
+	public void setIndex2ndPara(int index2ndPara) {
+		this.index2ndPara = index2ndPara;
 	}
 
 	public void calculateLaunchClear() {
@@ -92,6 +96,11 @@ public class IventValueSingle {
 
 		timeMaxMach = lvt.getTime(indexMaxMach);
 		altMachMax = lovt.getAltitudeLog(indexMaxMach);
+	}
+
+	public void compute2ndPara() {
+		time2ndPara = lvp.getTime(index2ndPara);
+		alt2ndPara = lovp.getAltitudeLog(index2ndPara);
 	}
 
 	public void calculateLandingTrajectory() {
@@ -219,6 +228,19 @@ public class IventValueSingle {
 
 	public int getIndexLandingTorajectory() {
 		return indexLandingTrajectory;
+	}
+
+	// 2nd Para Open
+	public double getTime2ndPara() {
+		return time2ndPara;
+	}
+
+	public int getIndex2ndPara() {
+		return index2ndPara;
+	}
+
+	public double getAlt2ndPara() {
+		return alt2ndPara;
 	}
 
 	// Landing Parachute
