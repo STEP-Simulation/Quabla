@@ -1,7 +1,9 @@
-package quabla.simulator;
+package quabla.simulator.variable;
 
 import quabla.parameter.InputParam;
-import quabla.simulator.dynamics.DynamicsMinuteChange;
+import quabla.simulator.Coordinate;
+import quabla.simulator.RocketParameter;
+import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
@@ -45,9 +47,9 @@ public class Variable {
 		roll0 = Math.PI;
 
 		//Initial Position_ENU
-		pos_ENU = new MathematicalVector((rocket.l - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
-				(rocket.l - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0),
-				(rocket.l - rocket.lcgBef)*Math.sin(Math.abs(elevation0)));
+		pos_ENU = new MathematicalVector((rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
+				(rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0),
+				(rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation0)));
 
 		//Initial Attitude with Quaternion
 		quat0 = Coordinate.getQuatFromEuler(azimuth0, elevation0, roll0);
@@ -149,6 +151,7 @@ public class Variable {
 		return pos_ENU.getValue()[2];
 	}
 
+
 	//TODO clone()をオーバーライド
 /*
 	@Override
@@ -167,14 +170,13 @@ public class Variable {
 
 
 	//TODO DynamicsMinuteChangeからVariableをセット
-	public void renewVariable(double time,DynamicsMinuteChange delta) {
-		//double h = rocket.dt;
+	public void update(double time,DynamicsMinuteChangeTrajectory delta) {
 
 		setTime(time);
-		setPos_ENU(pos_ENU.add(delta.deltaPos_ENU));
-		setVel_ENU(vel_ENU.add(delta.deltaVel_ENU));
-		setOmega_Body(omega_Body.add(delta.deltaOmega_Body));
-		setQuat(quat.add(delta.deltaQuat));
+		setPos_ENU(pos_ENU.add(delta.getDeltaPos_ENU()));
+		setVel_ENU(vel_ENU.add(delta.getDeltaVel_ENU()));
+		setOmega_Body(omega_Body.add(delta.getDeltaOmega_Body()));
+		setQuat(quat.add(delta.getDeltaQuat()));
 
 	}
 
