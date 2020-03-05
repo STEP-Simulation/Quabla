@@ -36,17 +36,9 @@ public class MultiSolver {
 
 		ivm = new IventValueMulti(speedArray, azimuthArray);
 
-
-
 	}
 
 	public void solveMulti() {
-		double[][] wind_map_trajectory = new double[2*speed_num][angle_num+1];
-		double[][] wind_map_parachute = new double[2*speed_num][angle_num+1];
-
-
-		//row:風速, column:風向
-
 
 		int i = 0;
 		for(double speed: speedArray) {
@@ -61,34 +53,28 @@ public class MultiSolver {
 
 				ivm.setResultArray(i, j, single_solver.getIventValueSingle());
 				single_solver.dump();
-
-				//trajectory,parachuteでの落下地点を取得
-				double[] pos_ENU_landing_trajectory = single_solver.pos_ENU_landing_trajectory;
-				double[] pos_ENU_landing_parachute = single_solver.pos_ENU_landing_parachute;
-
-				wind_map_trajectory[2*i][j] = pos_ENU_landing_trajectory[0];
-				wind_map_trajectory[2*i+1][j] = pos_ENU_landing_trajectory[1];
-				wind_map_parachute[2*i][j] = pos_ENU_landing_parachute[0];
-				wind_map_parachute[2*i+1][j] = pos_ENU_landing_parachute[1];
 				j++;
 			}
 			displayProcess(i);
 			i++;
 		}
 
+		double[][] windMapTrajectory = getWindMap(ivm.getPosENUlandTrajectory());
+		double[][] windMapParachute = getWindMap(ivm.getPosENUlandParachute());
+
 		ivm.outputResultTxt(spec.result_filepath);
 		ivm.outputCsv(spec.result_filepath);
 
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
-			trajectory.output(spec.result_filepath + "trajectory"+spec.elevation_launcher+"[deg].csv",wind_map_trajectory, speedArray);
+			trajectory.output(spec.result_filepath + "trajectory"+spec.elevation_launcher+"[deg].csv",windMapTrajectory, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
-			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",wind_map_parachute, speedArray);
+			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",windMapParachute, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -105,5 +91,20 @@ public class MultiSolver {
 			}
 		}
 		System.out.println("|" + process + "|" + String.format("%d", (int)(processDouble * 100)) + "%");
+	}
+
+	private double[][] getWindMap(double[][][] posLandingArray) {
+		double[][] windMap = new double[2 * speed_num][angle_num + 1];
+		int i = 0;
+		for(double[][] posSpeed : posLandingArray) { //風速ごとの要素
+			int j = 0;
+			for(double[] posAngle : posSpeed) { //各風速における風向ごとの要素
+				windMap[2 * i][j] = posAngle[0];
+				windMap[2 * i + 1][j] = posAngle[1];
+				j ++;
+			}
+			i ++;
+		}
+		return windMap;
 	}
 }

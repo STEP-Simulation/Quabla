@@ -145,6 +145,14 @@ public class IventValueMulti {
 		azimuthMaxTimeLandingParachute = azimuthArray[iva.getMaxColumn()];
 	}
 
+	public double[][][] getPosENUlandTrajectory(){
+		return posENUlandingTrajectory;
+	}
+
+	public double[][][] getPosENUlandParachute(){
+		return posENUlandingParachute;
+	}
+
 	public void outputResultTxt(String filepath) {
 		this.computeMinVelLaunchClear();
 		this.computeMaxAltAopgee();
