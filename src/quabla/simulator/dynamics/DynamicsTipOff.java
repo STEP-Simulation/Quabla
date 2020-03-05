@@ -5,10 +5,10 @@ import quabla.simulator.ConstantVariable;
 import quabla.simulator.Coordinate;
 import quabla.simulator.Atmosphere;
 import quabla.simulator.RocketParameter;
-import quabla.simulator.Variable;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.variable.Variable;
 
 public class DynamicsTipOff extends AbstractDynamics {
 
@@ -25,7 +25,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 	}
 
 	@Override
-	public DynamicsMinuteChange calculateDynamics(Variable variable) {
+	public DynamicsMinuteChangeTrajectory calculateDynamics(Variable variable) {
 
 		// Import variable
 		double t = variable.getTime();
@@ -86,7 +86,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
 		MathematicalVector f_aero = new MathematicalVector(- drag , - side , - nomal);
 
-		DynamicsMinuteChange delta = new DynamicsMinuteChange();
+		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
 
 
 		return delta;
