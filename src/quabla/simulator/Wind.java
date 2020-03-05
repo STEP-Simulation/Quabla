@@ -22,6 +22,9 @@ public class Wind {
 		magnetic_dec = spec.magnetic_dec;
 
 		if(spec.Wind_file_exsit) {
+			/* 1st Column : altitude [m]
+			 * 2nd Column : wind speed [m/s]
+			 * 3rd Column : direction [deg] **/
 			double[][] wind_data = GetCsv.get3ColumnArray(spec.wind_file);
 			double[] alt_array = new double[wind_data.length];
 			double[] speed_array = new double[wind_data.length];
