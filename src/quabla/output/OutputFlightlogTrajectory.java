@@ -68,6 +68,7 @@ public class OutputFlightlogTrajectory {
 	attitudeAnaly,
 	massAnaly,
 	lcgAnaly,
+	lcgPropAnaly,
 	lcpAnaly,
 	IjRollAnaly,
 	IjPitchAnaly,
@@ -115,6 +116,7 @@ public class OutputFlightlogTrajectory {
 			"yaw",
 			"Mass [kg]",
 			"Lcg [m]",
+			"Lcg_prop [m]",
 			"Lcp [m]",
 			"Ij_roll [kg m2]",
 			"Ij_pitch [kg m2]",
@@ -155,12 +157,7 @@ public class OutputFlightlogTrajectory {
 	 * */
 	public OutputFlightlogTrajectory(InputParam spec, LoggerVariable lv, LoggerOtherVariableTrajectory lov,IventValueSingle ivs) {
 		timeLandingTrajectory = ivs.getTimeLandingTrajectory();
-/*
-		this.filepath = filepath;
-		this.spec = spec;
-		this.lv = lv;
-		this.lov = lov;
-*/
+
 		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
 		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
 		omegaBODYanaly = new Interpolation(lv.getTimeArray(), lv.getOmegaBODYArray());
@@ -168,6 +165,7 @@ public class OutputFlightlogTrajectory {
 		attitudeAnaly = new Interpolation(lv.getTimeArray(), lov.getAttitudeLogArray());
 		massAnaly = new Interpolation(lv.getTimeArray(), lov.getMassLogArray());
 		lcgAnaly = new Interpolation(lv.getTimeArray(), lov.getLcgLogArray());
+		lcgPropAnaly = new Interpolation(lv.getTimeArray(), lov.getLcgPropLogArray());
 		lcpAnaly = new Interpolation(lv.getTimeArray(), lov.getLcpLogArray());
 		IjRollAnaly = new Interpolation(lv.getTimeArray(), lov.getIjRollLogArray());
 		IjPitchAnaly = new Interpolation(lv.getTimeArray(), lov.getIjPitchLogArray());
@@ -223,28 +221,29 @@ public class OutputFlightlogTrajectory {
 			System.arraycopy(attitudeAnaly.linearInterpPluralColumns(time), 0, result, 14, 3);
 			result[17] = massAnaly.linearInterp1column(time);
 			result[18] = lcgAnaly.linearInterp1column(time);
-			result[19] = lcpAnaly.linearInterp1column(time);
-			result[20] = IjRollAnaly.linearInterp1column(time);
-			result[21] = IjPitchAnaly.linearInterp1column(time);
-			result[22] = altitudeAnaly.linearInterp1column(time);
-			result[23] = downrangeAnaly.linearInterp1column(time);
-			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 24, 3);
-			System.arraycopy(velAirBODYanaly.linearInterpPluralColumns(time), 0, result, 27, 3);
-			result[30] = velAirAbsAnaly.linearInterp1column(time);
-			result[31] = alphaAnaly.linearInterp1column(time);
-			result[32] = betaAnaly.linearInterp1column(time);
-			result[33] = machAnaly.linearInterp1column(time);
-			result[34] = dynamicsPressureAnaly.linearInterp1column(time);
-			result[35] = fstAnaly.linearInterp1column(time);
-			result[36] = dragAnaly.linearInterp1column(time);
-			result[37] = normalAnaly.linearInterp1column(time);
-			result[38] = sideAnaly.linearInterp1column(time);
-			result[39] = thrustAnaly.linearInterp1column(time);
-			System.arraycopy(forceBODYanaly.linearInterpPluralColumns(time), 0, result, 40, 3);
-			System.arraycopy(accENUanaly.linearInterpPluralColumns(time), 0, result, 43, 3);
-			System.arraycopy(accBODYanaly.linearInterpPluralColumns(time), 0, result, 46, 3);
-			result[49] = accAbsAnaly.linearInterp1column(time);
-			result[50] = pAirAnaly.linearInterp1column(time);
+			result[19] = lcgPropAnaly.linearInterp1column(time);
+			result[20] = lcpAnaly.linearInterp1column(time);
+			result[21] = IjRollAnaly.linearInterp1column(time);
+			result[22] = IjPitchAnaly.linearInterp1column(time);
+			result[23] = altitudeAnaly.linearInterp1column(time);
+			result[24] = downrangeAnaly.linearInterp1column(time);
+			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 25, 3);
+			System.arraycopy(velAirBODYanaly.linearInterpPluralColumns(time), 0, result, 28, 3);
+			result[31] = velAirAbsAnaly.linearInterp1column(time);
+			result[32] = alphaAnaly.linearInterp1column(time);
+			result[33] = betaAnaly.linearInterp1column(time);
+			result[34] = machAnaly.linearInterp1column(time);
+			result[35] = dynamicsPressureAnaly.linearInterp1column(time);
+			result[36] = fstAnaly.linearInterp1column(time);
+			result[37] = dragAnaly.linearInterp1column(time);
+			result[38] = normalAnaly.linearInterp1column(time);
+			result[39] = sideAnaly.linearInterp1column(time);
+			result[40] = thrustAnaly.linearInterp1column(time);
+			System.arraycopy(forceBODYanaly.linearInterpPluralColumns(time), 0, result, 41, 3);
+			System.arraycopy(accENUanaly.linearInterpPluralColumns(time), 0, result, 44, 3);
+			System.arraycopy(accBODYanaly.linearInterpPluralColumns(time), 0, result, 47, 3);
+			result[50] = accAbsAnaly.linearInterp1column(time);
+			result[51] = pAirAnaly.linearInterp1column(time);
 
 			try {
 				flightlog.outputLine(result);
@@ -264,70 +263,5 @@ public class OutputFlightlogTrajectory {
 			throw new RuntimeException(e);
 		}
 	}
-/*
-	public void runOutputLine() {
-		OutputCsv flightlog = null;
-		try {
-			flightlog = new OutputCsv(spec.result_filepath + filepath + ".csv", nameList);
-		}catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		//1行目(変数名)の書き込み
-		try {
-			flightlog.outputFirstLine();
-		}catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-
-		int length = lv.getArrayLength();
-		for(int i = 0; i < length; i++) {
-			double[] result = new double[nameList.length];
-
-			result[0] = lv.getTime(i);
-			System.arraycopy(lv.getPosENUlog(i), 0, result, 1, 3);
-			System.arraycopy(lv.getVelENUlog(i), 0, result, 4, 3);
-			System.arraycopy(lv.getOmegaBODYlog(i), 0, result, 7, 3);
-			System.arraycopy(lv.getQuatLog(i), 0, result, 10, 4);
-			result[14] = lov.getMassLog(i);
-			result[15] = lov.getLcgLog(i);
-			result[16] = lov.getLcpLog(i);
-			result[17] = lov.getIjRollLog(i);
-			result[18] = lov.getIjPitchLog(i);
-			result[19] = lov.getAltitudeLog(i);
-			result[20] = lov.getDownrangeLog(i);
-			System.arraycopy(lov.getVelAirENUlog(i), 0, result, 21, 3);
-			System.arraycopy(lov.getVelAirBODYlog(i), 0, result, 24, 3);
-			result[27] = lov.getVelAirAbsLog(i);
-			result[28] = lov.getAlphaLog(i);
-			result[29] = lov.getBetaLog(i);
-			result[30] = lov.getMachLog(i);
-			result[31] = lov.getDynamicsPressureLog(i);
-			result[32] = lov.getFstLog(i);
-			result[33] = lov.getDragLog(i);
-			result[34] = lov.getNormalLog(i);
-			result[35] = lov.getSideLog(i);
-			result[36] = lov.getThrustLog(i);
-			System.arraycopy(lov.getForceBODYlog(i), 0, result, 37, 3);
-			System.arraycopy(lov.getAccENUlog(i), 0, result, 40, 3);
-			System.arraycopy(lov.getAccBODYlog(i), 0, result, 43, 3);
-			result[46] = lov.getAccAbsLog(i);
-			result[47] = lov.getPairLog(i);
-
-			try {
-				flightlog.outputLine(result);
-			}catch(IOException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		//ファイルのクローズ
-		try {
-			flightlog.close();
-		}catch(IOException e) {
-			throw new RuntimeException(e);
-		}
-
-	}*/
-
 
 }

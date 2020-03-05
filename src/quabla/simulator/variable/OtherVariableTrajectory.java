@@ -1,6 +1,11 @@
-package quabla.simulator;
+package quabla.simulator.variable;
 
 import quabla.parameter.InputParam;
+import quabla.simulator.AeroParameter;
+import quabla.simulator.Atmosphere;
+import quabla.simulator.Coordinate;
+import quabla.simulator.RocketParameter;
+import quabla.simulator.Wind;
 
 /**
  * Variable以外の変数用のクラス
@@ -24,6 +29,7 @@ public class OtherVariableTrajectory {
 	 * beta
 	 * attitude
 	 * lcg
+	 * lcgProp
 	 * lcp
 	 * Fst
 	 * dynamics pressure
@@ -45,6 +51,7 @@ public class OtherVariableTrajectory {
 	private double[] attitude;
 	private double mass;
 	private double lcg;
+	private double lcgProp;
 	private double lcp;
 	private double IjRoll, IjPitch;
 	private double altitude, downrange;
@@ -83,9 +90,10 @@ public class OtherVariableTrajectory {
 		attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
 		mass = rocket.getMass(time);
-		IjRoll = rocket.Ij_roll(time);
-		IjPitch = rocket.Ij_pitch(time);
+		IjRoll = rocket.getIjRoll(time);
+		IjPitch = rocket.getIjPitch(time);
 		lcg = rocket.getLcg(time);
+		lcgProp = rocket.getLcgProp(time);
 
 		altitude = pos_ENU[2];
 		downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
@@ -114,7 +122,7 @@ public class OtherVariableTrajectory {
 		dynamicsPressure = 0.5 * rho * Math.pow(velAirAbs, 2);
 
 		lcp = aero.Lcp(Mach);
-		Fst = (lcp - lcg) / rocket.l * 100.0;
+		Fst = (lcp - lcg) / rocket.L * 100.0;
 
 		// force
 		drag = dynamicsPressure * aero.Cd(Mach) * rocket.S;
@@ -153,6 +161,10 @@ public class OtherVariableTrajectory {
 
 	public double getLcg() {
 		return lcg;
+	}
+
+	public double getLcgProp() {
+		return lcgProp;
 	}
 
 	public double getLcp() {

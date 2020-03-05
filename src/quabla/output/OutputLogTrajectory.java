@@ -148,7 +148,7 @@ public class OutputLogTrajectory {
 			side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
 
 			Lcp = aero.Lcp(Mach);
-			Fst = (Lcp - Lcg) / rocket.l * 100;
+			Fst = (Lcp - Lcg) / rocket.L * 100;
 
 			attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
