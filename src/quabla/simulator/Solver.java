@@ -11,44 +11,31 @@ import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
 import quabla.simulator.dynamics.DynamicsTrajectory;
 import quabla.simulator.logger.LoggerVariable;
+import quabla.simulator.logger.LoggerVariableParachute;
 import quabla.simulator.logger.ivent_value.IventValueSingle;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
 import quabla.simulator.numerical_analysis.ODEsolverWithRK4;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.variable.Variable;
+import quabla.simulator.variable.VariableParachute;
 
 public class Solver {
 
 	InputParam spec;
 
-	double[] pos_ENU_landing_trajectory = new double[2];
-	double[] pos_ENU_landing_parachute = new double[2];
-
-	/*
-	private double velLaunchClear;
-	private double timeLaunchClear;
-	private double timeApogee;
-	private double altitudeApogee;
-	private double timeLandingTrajectory;
-	private double timeLandingParachute;
-	*/
-
-	private int indexApogee;
-	//TODO 結果保存用のクラス作成
-
 	private IventValueSingle iventValue;
 
-	private LoggerVariable trajectoryLog, parachuteLog;
+	private LoggerVariable trajectoryLog;
+	private LoggerVariableParachute parachuteLog;
 	private LoggerOtherVariableTrajectory lovt;
 	private LoggerOtherVariableParachute lovp;
-
-	boolean flag;
 
 	public Solver(InputParam spec) {
 		this.spec = spec;
 
 		trajectoryLog = new LoggerVariable();
-		parachuteLog = new LoggerVariable();
+		parachuteLog = new LoggerVariableParachute();
 	}
 
 
@@ -68,7 +55,7 @@ public class Solver {
 		// Dynamics
 		AbstractDynamics dynTrajectory = new DynamicsTrajectory(constant);
 		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(constant);
-		AbstractDynamics dynParachute = new DynamicsParachute(constant);
+		DynamicsParachute dynParachute = new DynamicsParachute(constant);
 
 		// ODE solver
 		ODEsolverWithRK4 ODEsolver = new ODEsolverWithRK4(constant);
@@ -77,17 +64,17 @@ public class Solver {
 
 		// Initial Variable
 		variableTrajectory.setInitialVariable();
-		trajectoryLog.logVariable(variableTrajectory);
+		trajectoryLog.log(variableTrajectory);
 
 
-		////////// on Launcher //////////
+		//------------------- on Launcher -------------------
 		for(;;) {
 			index ++;
 			time = index * h;
 			// solve ODE
-			variableTrajectory.renewVariable(time, ODEsolver.runRK4(variableTrajectory, dynOnLauncher));
+			variableTrajectory.update(time, ODEsolver.runRK4(variableTrajectory, dynOnLauncher));
 			// store flightlog
-			trajectoryLog.logVariable(variableTrajectory);
+			trajectoryLog.log(variableTrajectory);
 
 			if(eventJudgement.judgeLaunchClear(variableTrajectory)) {
 				indexLaunchClear = index;
@@ -96,12 +83,12 @@ public class Solver {
 		}
 
 
-		////////// Trajectory //////////
+		//------------------- Trajectory -------------------
 		for(;;) {
 			index ++;
 			time = index * h;
-			variableTrajectory.renewVariable(time, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
-			trajectoryLog.logVariable(variableTrajectory);
+			variableTrajectory.update(time, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
+			trajectoryLog.log(variableTrajectory);
 
 			if(eventJudgement.judgeLanding(variableTrajectory)) {
 				indexLandingTrajectory = index;
@@ -124,45 +111,34 @@ public class Solver {
 		iventValue.calculateAtApogee();
 		iventValue.calculateLandingTrajectory();
 
-		System.arraycopy(trajectoryLog.getPosENUlog(indexLandingTrajectory), 0, pos_ENU_landing_trajectory, 0, 2);
-
 		indexApogee = iventValue.getIndexApogee();
-		parachuteLog.copyLog(indexApogee, trajectoryLog);
+		parachuteLog.copy(indexApogee, trajectoryLog);
 		trajectoryLog.dumpArrayList();
 
 		//頂点時のvariableを渡す
-		Variable variableParachute = new Variable(spec,rocket);
-		variableParachute.setPos_ENU(new MathematicalVector(trajectoryLog.getPosENUlog(indexApogee)));
-		variableParachute.setVel_ENU(new MathematicalVector(trajectoryLog.getVelENUlog(indexApogee)));
-		variableParachute.setOmega_Body(new MathematicalVector(0.0, 0.0, 0.0));
-		variableParachute.setQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));
+		VariableParachute variablePara = new VariableParachute(spec);
+		variablePara.setTime(trajectoryLog.getTime(indexApogee));
+		variablePara.setPosENU(new MathematicalVector(trajectoryLog.getPosENUlog(indexApogee)));
+		variablePara.setVelDescent(trajectoryLog.getVelENUlog(indexApogee)[2]);
 
 		index = indexApogee; //indexの更新
-		////////// Parachute //////////
+		//-------------------  Parachute -------------------
 		for( ; ; ) {
 			index ++;
 			time = index * h;
-			variableParachute.renewVariable(time, ODEsolver.runRK4(variableParachute, dynParachute));
-			parachuteLog.logVariable(variableParachute);
+			variablePara.update(time, ODEsolver.runRK4(variablePara, dynParachute));
+			parachuteLog.log(variablePara);
 
-/*		if(eventJudgement.judge2ndPara(variableParachute)) {
-				index2ndPara = index;
-			}*/
-
-			flag = eventJudgement.judge2ndPara(variableParachute);
-
-			if(eventJudgement.judge2ndPara(variableParachute)) {
+			if(eventJudgement.judge2ndPara(variablePara)) {
 				index2ndPara = index;
 			}
 
-			if(eventJudgement.judgeLanding(variableParachute)) {
+			if(eventJudgement.judgeLanding(variablePara)) {
 				indexLandingParachute = index;
 				break;
 			}
 		}
 		parachuteLog.makeArray();
-		parachuteLog.dumpArrayList();
-		System.arraycopy(parachuteLog.getPosENUlog(indexLandingParachute), 0, pos_ENU_landing_parachute, 0, 2);
 
 		lovp = new LoggerOtherVariableParachute(spec, parachuteLog);
 
@@ -179,7 +155,7 @@ public class Solver {
 		return iventValue;
 	}
 
-	public void makeResult_() {
+	public void makeResult() {
 
 		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory(spec, trajectoryLog, lovt,iventValue);
 		OutputFlightlogParachute ofp = new OutputFlightlogParachute(spec, parachuteLog, lovp, iventValue);
@@ -223,9 +199,11 @@ public class Solver {
 
 			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", iventValue.getTimeLandingTrajectory()));
 			resultTxt.outputLine(String.format("Landing Trajectory Downrange %.3f [km]", iventValue.getDownrangeLandingTrajectory()));
+			resultTxt.outputLine(String.format("Landing Trajectory Point : [ %.3f , %.3f ]", iventValue.getPosENUlandingTrajectory()[0], iventValue.getPosENUlandingTrajectory()[1]));
 
 			resultTxt.outputLine(String.format("Landing Parachute Time %.3f [sec]", iventValue.getTimeLandingParachute()));
 			resultTxt.outputLine(String.format("Landing Parachute Downrange %.3f [km]", iventValue.getDownrangeLandingParachute()));
+			resultTxt.outputLine(String.format("Landing Parachute Point : [ %.3f , %.3f ]", iventValue.getPosENUlandingParachute()[0], iventValue.getPosENUlandingParachute()[1]));
 
 		}catch(IOException e) {
 			throw new RuntimeException(e) ;
