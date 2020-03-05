@@ -2,16 +2,28 @@ package quabla.simulator.dynamics;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-public class DynamicsMinuteChange {
+public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange {
 
-	public MathematicalVector deltaPos_ENU = new MathematicalVector(new double[3]);
-	public MathematicalVector deltaVel_ENU = new MathematicalVector(new double[3]);
-	public MathematicalVector deltaOmega_Body = new MathematicalVector(new double[3]);
-	public MathematicalVector deltaQuat = new MathematicalVector(new double[4]);
+	private MathematicalVector deltaPos_ENU = new MathematicalVector(new double[3]);
+	private MathematicalVector deltaVel_ENU = new MathematicalVector(new double[3]);
+	private MathematicalVector deltaOmega_Body = new MathematicalVector(new double[3]);
+	private MathematicalVector deltaQuat = new MathematicalVector(new double[4]);
 
 
 	public void setDeltaPos_ENU(MathematicalVector deltaPos_ENU) {
 		this.deltaPos_ENU = deltaPos_ENU;
+	}
+
+	public void setDeltaVelENU(MathematicalVector deltaVelENU) {
+		this.deltaVel_ENU = deltaVelENU;
+	}
+
+	public void setDeltaOmegaBODY(MathematicalVector deltaOmegaBODY) {
+		this.deltaOmega_Body = deltaOmegaBODY;
+	}
+
+	public void setDeltaQuat(MathematicalVector deltaQuat) {
+		this.deltaQuat = deltaQuat;
 	}
 
 	public MathematicalVector getDeltaPos_ENU() {
