@@ -2,9 +2,13 @@ package quabla.simulator.logger;
 
 import java.util.ArrayList;
 
-import quabla.simulator.Variable;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.variable.Variable;
 
+/**
+ * 飛翔中のvariableの値を記録するためのクラス
+ *
+ * */
 public class LoggerVariable {
 
 	private double[] time_array;
@@ -15,7 +19,6 @@ public class LoggerVariable {
 
 	private int length;
 
-	//private ArrayList<Variable> variableLog = new ArrayList<>();
 	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> pos_ENULogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
@@ -23,16 +26,17 @@ public class LoggerVariable {
 	private ArrayList<MathematicalVector> quatLogArrayList = new ArrayList<>();
 
 
-	public void logVariable(Variable variable) {
+	public void log(Variable variable) {
 
-		//variableLog.add(index, variable);
 		timeLogArrayList.add(variable.getTime());
 		pos_ENULogArrayList.add(variable.getPos_ENU());
 		velENUlogArrayList.add(variable.getVel_ENU());
 		omegaBODYlogArraylist.add(variable.getOmega_Body());
 		quatLogArrayList.add(variable.getQuat());
 	}
-
+	/**
+	 * ArrayListをdouble型の配列へ変換する
+	 * */
 	public void makeArray() {
 		length = timeLogArrayList.size();
 
@@ -41,9 +45,6 @@ public class LoggerVariable {
 		vel_ENU_log = new double[length][3];
 		omega_BODY_log = new double[length][3];
 		quat_log = new double[length][4];
-
-		//この関数呼び出し時に,他の対気速度などの変数も計算すればよいのでは？
-		//TrajectoryとParachuteで記録する変数を変えるにはどうすればいいか
 
 		for(int i=0; i<length; i++) {
 			time_array[i] = timeLogArrayList.get(i);
@@ -58,15 +59,15 @@ public class LoggerVariable {
 		return length;
 	}
 
-	private double getTimeArrayList(int index) {
+	public double getTimeArrayList(int index) {
 		return timeLogArrayList.get(index);
 	}
 
-	private MathematicalVector getPos_ENU(int index) {
+	public MathematicalVector getPos_ENU(int index) {
 		return pos_ENULogArrayList.get(index);
 	}
 
-	private MathematicalVector getVel_ENU(int index) {
+	public MathematicalVector getVel_ENU(int index) {
 		return velENUlogArrayList.get(index);
 	}
 
@@ -118,6 +119,9 @@ public class LoggerVariable {
 		return quat_log;
 	}
 
+	/**使わなくなったArrayListをnullにする
+	 * 意図的にガベージコレクションの対象にして省メモリ化を図る
+	 * */
 	public void dumpArrayList() {
 		timeLogArrayList = null;
 		pos_ENULogArrayList = null;
@@ -125,16 +129,4 @@ public class LoggerVariable {
 		omegaBODYlogArraylist = null;
 		quatLogArrayList = null;
 	}
-
-	public void copyLog(int index_limit,LoggerVariable logdata) {
-
-		for(int i=0; i <= index_limit; i++) {
-			timeLogArrayList.add(logdata.getTimeArrayList(i));
-			pos_ENULogArrayList.add(logdata.getPos_ENU(i));
-			velENUlogArrayList.add(logdata.getVel_ENU(i));
-			omegaBODYlogArraylist.add(logdata.getOmega_BODY(i));
-			quatLogArrayList.add(logdata.getQuat(i));
-		}
-	}
-
 }
