@@ -1,5 +1,11 @@
 package quabla.simulator;
 
+import quabla.simulator.variable.Variable;
+import quabla.simulator.variable.VariableParachute;
+
+/**ロケットの飛行状態を判断するためのクラス
+ *
+ * */
 public class FlightEventJudgement {
 
 	private RocketParameter rocket;
@@ -53,11 +59,22 @@ public class FlightEventJudgement {
 		return judge;
 	}
 
-	public boolean judge2ndPara(Variable variable) {
+	public boolean judgeLanding(VariableParachute variable) {
+		boolean judge;
+
+		if((variable.getTime() >= rocket.timeBurnout) && (variable.getAltitude() <= 0.0)) {
+			judge = true;
+		}else {
+			judge = false;
+		}
+		return judge;
+	}
+
+	public boolean judge2ndPara(VariableParachute variable) {
 		boolean judge;
 
 		if(rocket.para2Exist &&
-				(variable.getVelDescet() <= 0.0) &&
+				(variable.getVelDescent() <= 0.0) &&
 				(variable.getAltitude() >= rocket.alt_para2)) {
 			judge = true;
 		}else {
