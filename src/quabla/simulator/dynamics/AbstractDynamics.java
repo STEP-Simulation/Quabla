@@ -1,6 +1,6 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.Variable;
+import quabla.simulator.variable.Variable;
 
 /**
  * AbstractDynamics is an abstract class of {@link quabla.simulator.dynamics.DynamicsTrajectory},
@@ -9,7 +9,7 @@ import quabla.simulator.Variable;
  * */
 public abstract class AbstractDynamics {
 
-	public abstract DynamicsMinuteChange calculateDynamics(Variable variable);
+	public abstract DynamicsMinuteChangeTrajectory calculateDynamics(Variable variable);
 
 }
 //TODO 各クラスの実装

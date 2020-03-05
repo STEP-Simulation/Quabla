@@ -1,13 +1,13 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.ConstantVariable;
 import quabla.simulator.Atmosphere;
+import quabla.simulator.ConstantVariable;
 import quabla.simulator.RocketParameter;
-import quabla.simulator.Variable;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.variable.VariableParachute;
 
-public class DynamicsParachute extends AbstractDynamics {
+public class DynamicsParachute {
 
 	private RocketParameter rocket;
 	private Atmosphere atm;
@@ -20,13 +20,12 @@ public class DynamicsParachute extends AbstractDynamics {
 		this.wind = constant.getWind();
 	}
 
-	@Override
-	public DynamicsMinuteChange calculateDynamics(Variable variable) {
+	public DynamicsMinuteChangeParachute calculateDynamics(VariableParachute variable) {
 
 		// Import variable
 		double t = variable.getTime();
 		double altitude = variable.getAltitude();
-		double VelDescent = variable.getVelDescet();
+		double VelDescent = variable.getVelDescent();
 
 		double m = rocket.getMass(t);
 
@@ -48,11 +47,20 @@ public class DynamicsParachute extends AbstractDynamics {
 		double drag = 0.5 * rho * CdS * Math.pow(VelDescent, 2);
 		double Acc = drag / m - g;
 
-		DynamicsMinuteChange delta = new DynamicsMinuteChange();
-		delta.deltaPos_ENU = vel_ENU;
+		//DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
+		/*delta.deltaPos_ENU = vel_ENU;
 		delta.deltaVel_ENU = new MathematicalVector(0.0, 0.0, Acc);
 		delta.deltaOmega_Body = new MathematicalVector(0.0, 0.0, 0.0);
-		delta.deltaQuat = new MathematicalVector(0.0, 0.0, 0.0, 0.0);
+		delta.deltaQuat = new MathematicalVector(0.0, 0.0, 0.0, 0.0);*/
+		/*delta.setDeltaPos_ENU(vel_ENU);
+		delta.setDeltaVelENU(new MathematicalVector(0.0, 0.0, Acc));
+		delta.setDeltaOmegaBODY(new MathematicalVector(0.0, 0.0, 0.0));
+		delta.setDeltaQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));*/
+		DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
+		delta.setDeltaPosENU(vel_ENU);
+		delta.setDeltaVelDescent(Acc);
+
+
 
 		return delta;
 	}
