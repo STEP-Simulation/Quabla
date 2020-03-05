@@ -15,12 +15,10 @@ public class QUABLA {
 		System.out.println("Running Solver...");
 
 		InputParam spec = new InputParam();
-		//String dir_filepath;
-		switch(spec.Mode) {
-		case 1:
-			//single condition
 
-			//TODO single solver用のクラスの作成
+		switch(spec.simulationMode) {
+		case "single":
+			//single condition
 
 			//ディレクトリの作成
 			dir_filepath = spec.result_filepath + "Result_single_" + spec.dir_name;
@@ -29,13 +27,11 @@ public class QUABLA {
 
 			Solver solver = new Solver(spec);
 			solver.solve_dynamics();
-
-			//solver.makeResult();
-			solver.makeResult_();
+			solver.makeResult();
 			solver.outputResultTxt();
 			break;
 
-		case 2:
+		case "multi":
 			//multiple condition
 
 			//ディレクトリの作成
