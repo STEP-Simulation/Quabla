@@ -1,13 +1,12 @@
 package quabla.simulator.logger.logger_other_variable;
 
 import quabla.parameter.InputParam;
-import quabla.simulator.OtherVariableParachute;
-import quabla.simulator.logger.LoggerVariable;
+import quabla.simulator.logger.LoggerVariableParachute;
+import quabla.simulator.variable.OtherVariableParachute;
 
 public class LoggerOtherVariableParachute{
 
 	private OtherVariableParachute ovp;
-	private LoggerVariable logdata;
 	private int length;
 
 	private double[] altitudeLog;
@@ -16,8 +15,7 @@ public class LoggerOtherVariableParachute{
 	private double[][] velAirENUlog;
 	private double[] velAirAbsLog;
 
-	public LoggerOtherVariableParachute(InputParam spec, LoggerVariable logdata) {
-		this.logdata = logdata;
+	public LoggerOtherVariableParachute(InputParam spec, LoggerVariableParachute logdata) {
 		ovp = new OtherVariableParachute(spec);
 
 		length = logdata.getArrayLength();
@@ -27,10 +25,10 @@ public class LoggerOtherVariableParachute{
 		velAirENUlog = new double[length][3];
 		velAirAbsLog = new double[length];
 
-		setOtherVariableLog();
+		setOtherVariableLog(logdata);
 	}
 
-	private void setOtherVariableLog() {
+	private void setOtherVariableLog(LoggerVariableParachute logdata) {
 		for(int i = 0; i < length; i++) {
 			ovp.calculateOtherVariable(logdata.getTime(i), logdata.getPosENUlog(i), logdata.getVelENUlog(i));
 
@@ -40,26 +38,6 @@ public class LoggerOtherVariableParachute{
 			System.arraycopy(ovp.getVelAirENU(), 0, velAirENUlog[i], 0, 3);
 			velAirAbsLog[i] = ovp.getVelAirAbs();
 		}
-	}
-
-	public double getAltitudeLog(int index) {
-		return altitudeLog[index];
-	}
-
-	public double getDownrangeLog(int index) {
-		return downrangeLog[index];
-	}
-
-	public double[] getWindENUlog(int index) {
-		return windENUlog[index];
-	}
-
-	public double[] getVelAirENUlog(int index) {
-		return velAirENUlog[index];
-	}
-
-	public double getVelAirAbsLog(int index) {
-		return velAirAbsLog[index];
 	}
 
 	public double[][] getWindENUarray(){
