@@ -1,6 +1,7 @@
-package quabla.simulator;
+package quabla.simulator.variable;
 
 import quabla.parameter.InputParam;
+import quabla.simulator.Wind;
 
 public class OtherVariableParachute {
 
@@ -12,12 +13,10 @@ public class OtherVariableParachute {
 	 * downrange
 	 * */
 
-	//private InputParam spec;
 	private Wind wind;
 
 	private double altitude;
 	private double downrange;
-	//private double velDescent;
 
 	private double[] windENU = new double[3];
 	private double[] velAirENU = new double[3];
@@ -25,7 +24,6 @@ public class OtherVariableParachute {
 
 	public OtherVariableParachute(InputParam spec) {
 
-		//this.spec = spec;
 		wind = new Wind(spec);
 	}
 
@@ -53,7 +51,7 @@ public class OtherVariableParachute {
 	}
 
 	public double getDownrange() {
-		return downrange;
+		return downrange * Math.pow(10, -3);
 	}
 
 	public double[] getWindENU() {
