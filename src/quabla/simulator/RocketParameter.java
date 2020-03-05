@@ -9,102 +9,121 @@ import quabla.simulator.numerical_analysis.Interpolation;
  * */
 public class RocketParameter {
 
-	public double l, d, S, upperLug, lowerLug;
-	public double lcgBef, lcgAft, lcgPropBef;
-	public double dth, eps, Ath, Ae;
-	/** Engine nozzle diameter [m] */
-	public double de;
+	public final double L, D, S, upperLug, lowerLug;
+	public final double lcgBef;
+	private double lcgAft;
+	private double dth, eps, Ath;
+	public final double Ae;
+	/** Engine Nozzle Outlet Diameter [m] */
+	public final double de;
 	/** Mass */
-	double m0, mAft, mProp0, massOxBef;
-	private double lengthTank;
+	private double mBef, mAft, mSt, mOxBef, mDry;
+	/** Length of Oxidizer Tank */
+	private double lTank;
 	/** Moment of Inertia */
-	double IjPitchBef, IjPitchAft, IjRollBef, IjRollAft;
-	double IjDotPitch, IjDotRoll;
-	double IjPropPitchBef, IjPropRollBef;
-	private double IjFuelRollBef, IjFuelPitchBef;
-	public double CdS1, CdS2;
-	public boolean para2Exist;
-	public double alt_para2;
+	private double IjPitchBef, IjPitchAft, IjRollBef, IjRollAft;
+	private double IjFuelRollBef, IjFuelRollAft, IjFuelPitchBef, IjFuelPitchAft;
+	/** 燃料の '燃料の重心回り' の慣性モーメント */
+	private double IjFuelPitchBefUnit;
+	private double IjFuelPitchDry;
+	private double IjOxPitchBef, IjOxRollBef;
+	private final double IjPitchDry, IjRollDry;
+	public final double CdS1, CdS2;
+	public final boolean para2Exist;
+	public final double alt_para2;
 	/** Simulation time step */
-	public double dt;
+	public final double dt;
 	Interpolation thrustAnaly;
-	public double timeBurnout;
-	double lengthLauncherRail;
+	public final double timeBurnout, timeActuate;
+	final double lengthLauncherRail;
 	boolean existTipOff;
-	private double IjStPitch, IjStRoll;
+	/** Structure Moment of Inertia
+	 * '構造重心回り' の慣性モーメント*/
+	private double IjStPitchUnit, IjStRollUnit;
 	private double lMotor, dTank, lFuel;
-	private double massFuelBef, massFuelAft;
-	private double diffMassFuel;
+	private double mFuelBef, mFuelAft;
+	/** Diameter of Fuel */
 	private double dFuelInBef,dFuelInAft ,dFuelOut;
-	private double lcgFuel;
+	private double lcgDry, lcgSt,lcgFuel, lcgOxBef, lcgOxAft;
 
 	public RocketParameter(InputParam spec) {
 
-		//// Geometory //////////////////////////////////////////////////
-		l = spec.l;
-		d = spec.d;
-		S = 0.25 * Math.PI * Math.pow(d, 2);
-		existTipOff = spec.tip_off_exist;
-		if (existTipOff) {
-			upperLug = spec.upper_lug;
-			lowerLug = spec.lower_lug;
-		} else { // launch clearは重心がランチャを抜けたとき
-			upperLug = spec.lcg0;
-			lowerLug = spec.lcg0 + 0.01;
-		}
+		//-------------------- Geometory --------------------
+		L = spec.l;
+		D = spec.d;
+		S = 0.25 * Math.PI * Math.pow(D, 2);
 
 		// Engine configuration
 		dth = spec.dth * Math.pow(10, -3);// [mm] => [m]
-		eps = spec.eps; //
+		eps = spec.eps;
 		Ath = 0.25 * Math.PI * Math.pow(dth, 2);
 		Ae = Ath * eps;
 		de = Math.sqrt(Ae * 4 / Math.PI);
 
 		// fuel(grain)
-		dFuelInBef = spec.diameterFuelPort;
-		dFuelInAft = spec.diameterFuelPort;
-		dFuelOut = spec.diameterFuelOut;
+		dFuelInBef = spec.diameterFuelPort * Math.pow(10, -3);
+		dFuelOut = spec.diameterFuelOut * Math.pow(10, -3);
 		lFuel = spec.lengthFuel;
+		lMotor = spec.lenghtMotor;
 
 		// oxidizer tank
-		lengthTank = spec.lengthTank;
-		dTank = spec.diameterTank;
-		/////////////////////////////////////////////////////////////////
+		lTank = spec.lengthTank;
+		dTank = spec.diameterTank * Math.pow(10, -3);
+		//----------------------------------------------------
 
-		///// Center of Gravity /////////////////////////////////////////
-		lcgBef = spec.lcg0;
-		lcgAft = spec.lcgf;
-		lcgPropBef = spec.lcgp;
-		lcgFuel = l - (lMotor - 0.5 * lFuel);
-		//TODO l_cgProp の時間変化
-		lMotor = spec.lenghtMotor;
-		/////////////////////////////////////////////////////////////////
+		//-------------------- Mass --------------------
+		mOxBef = (spec.volTank * Math.pow(10, -6)) * spec.densityOxidizer;
+		mDry = spec.mDry;
+		mFuelBef = spec.massFuelBef;
+		mFuelAft = spec.massFuelAft;
+		//燃料は密度分布が一様であると仮定して,燃焼前後の重量比を用いて算出
+		dFuelInAft = Math.sqrt((1 - mFuelAft / mFuelBef) * Math.pow(dFuelOut, 2) + (mFuelAft / mFuelBef) * Math.pow(dFuelInBef, 2));
+		mSt = mDry - mFuelBef;
 
-		//// Mass ///////////////////////////////////////////////////////
-		m0 = spec.m0;
-		//massOxBef = spec.massOxInit;
-		massOxBef = (spec.volTank * Math.pow(10, -6)) * spec.densityOxidizer;
-		mAft = spec.mf;
-		mProp0 = m0 - mAft;
-		massFuelBef = spec.massFuelBef;
-		massFuelAft = spec.massFuelAft;
-		diffMassFuel = spec.massFuelBef - massFuelAft;
-		/////////////////////////////////////////////////////////////////
+		mBef = mDry + mOxBef;
+		mAft = mDry - (mFuelBef - mFuelAft);
+		//----------------------------------------------
 
-		///// Moment of Inertia /////////////////////////////////////////
-		IjPitchBef = spec.Ij_pitch_0;
-		IjPitchAft = spec.Ij_pitch_f;
-		IjRollBef = spec.Ij_roll_0;
-		IjRollAft = spec.Ij_roll_f;
-		IjPropPitchBef = IjPitchBef - IjPitchAft;
-		IjPropRollBef = IjRollBef - IjRollAft;
+		//-------------------- Center of Gravity --------------------
+		lcgDry = spec.lcgDry;
+		//燃料は半径方向にのみ一様に減少するとし,重心が機軸方向に移動しない仮定
+		lcgFuel = L - (lMotor - 0.5 * lFuel);
+		lcgOxBef = L - (lMotor + 0.5 * lTank);
+		lcgOxAft = L - lMotor;
+		lcgSt = (lcgDry * mDry - lcgFuel * mFuelBef) / mSt;
 
-		// Structure's Momtnt of Inertia
-		IjStRoll = spec.IjStRoll;
-		IjStPitch = spec.IjStructPitch;
-		/////////////////////////////////////////////////////////////////
+		lcgBef = (lcgDry * mDry + lcgOxBef * mOxBef) / (mDry + mOxBef);
+		lcgAft = (lcgSt * mSt + lcgFuel * mFuelAft) / (mSt + mFuelAft);
+		//------------------------------------------------------------
 
-		//// Parachute //////////////////////////////////////////////////
+		//-------------------- Moment of Inertia --------------------
+		// Moment of Inertia @ Dry
+		IjPitchDry = spec.IjPitchDry;
+		IjRollDry = spec.IjRollDry;
+
+		// Moment of Inertia @ Before Flight
+		IjFuelPitchBefUnit = mFuelBef * ((Math.pow(dFuelInBef, 2) + Math.pow(dFuelOut, 2)) / 16.0 + Math.pow(lFuel, 2) / 12.0); //Fuelの 'fuel重心回り' のPitch慣性モーメント
+		IjFuelPitchDry = IjFuelPitchBefUnit + mFuelBef * Math.pow(lcgDry - lcgFuel, 2); //乾燥時のFuelの '全機重心回り' のPitch慣性モーメント
+		IjFuelPitchBef = IjFuelPitchBefUnit + mFuelBef * Math.pow(lcgBef - lcgFuel, 2);
+		IjStPitchUnit = (IjPitchDry - IjFuelPitchDry) - mSt * Math.pow(lcgDry - lcgSt, 2);
+		IjOxPitchBef = mOxBef * (Math.pow(dTank, 2) / 16.0 + Math.pow(lTank, 2) / 12.0) + mOxBef * Math.pow(lcgBef - lcgOxBef, 2);
+		IjPitchBef =  (IjStPitchUnit + mSt * Math.pow(lcgBef - lcgSt, 2)) + IjFuelPitchBef + IjOxPitchBef;
+
+		IjFuelRollBef = mFuelBef * (Math.pow(dFuelInBef, 2) + Math.pow(dFuelOut, 2)) / 8.0;
+		IjStRollUnit = IjRollDry - IjFuelRollBef;
+		IjOxRollBef = mOxBef * Math.pow(dTank, 2) / 8.0;
+		IjRollBef = IjStRollUnit + IjFuelRollBef + IjOxRollBef;
+
+		// Moment of Inertia @ After Flight
+		IjFuelPitchAft = mFuelAft * ((Math.pow(dFuelInAft, 2) + Math.pow(dFuelOut, 2)) / 16.0 + Math.pow(lFuel, 2) / 12.0);
+		IjFuelPitchAft += mFuelAft * Math.pow(lcgAft - lcgFuel, 2);
+		IjPitchAft = (IjStPitchUnit + mSt * Math.pow(lcgAft - lcgSt, 2)) + IjFuelPitchAft;
+
+		IjFuelRollAft = mFuelAft * ((Math.pow(dFuelInAft, 2) + Math.pow(dFuelOut, 2))) / 8.0;
+		IjRollAft = IjStRollUnit + IjFuelRollAft;
+		//------------------------------------------------------------
+
+		//-------------------- Parachute --------------------
 		CdS1 = spec.CdS1;
 		para2Exist = spec.para2_exist;
 		if (para2Exist) {
@@ -114,11 +133,13 @@ public class RocketParameter {
 			CdS2 = 0.0;
 			alt_para2 = 0.0;
 		}
-		/////////////////////////////////////////////////////////////////
+		//---------------------------------------------------
 
 		dt = spec.dt;
 
-		//// Thrust /////////////////////////////////////////////////////
+		//-------------------- Thrust --------------------
+		/* 1st Column : Time [s]
+		 * 2nd Column : Thrust [N] **/
 		double[][] thrust_data = GetCsv.get2ColumnArray(spec.thrustcurve);
 		double[] time_array = new double[thrust_data.length];
 		double[] thrust_array = new double[thrust_data.length];
@@ -127,17 +148,28 @@ public class RocketParameter {
 			thrust_array[i] = thrust_data[i][1];
 		}
 		thrustAnaly = new Interpolation(time_array, thrust_array);
-		timeBurnout = time_array[thrust_data.length - 1];
-		/////////////////////////////////////////////////////////////////
+		timeActuate = time_array[thrust_data.length - 1];
+		timeBurnout = spec.timeBurnout;
+		//-------------------------------------------------
 
+		//------------------- Launch Config -----------------
 		lengthLauncherRail = spec.length_Launcher;
+		existTipOff = spec.tip_off_exist;
+		if (existTipOff) {
+			upperLug = spec.upper_lug;
+			lowerLug = spec.lower_lug;
+		} else { // launch clearは重心がランチャを抜けたとき
+			upperLug = lcgBef;
+			lowerLug = lcgBef + 0.01;
+		}
+		//----------------------------------------------------
 	}
 
 	public double mdot(double t) {
 		double mdot;
 
 		if (t < timeBurnout) {
-			mdot = (mAft - m0) / timeBurnout;// mdot < 0
+			mdot = (mAft - mBef) / timeBurnout;// mdot < 0
 		} else {
 			mdot = 0;
 		}
@@ -145,25 +177,37 @@ public class RocketParameter {
 		return mdot;
 	}
 
-	public double[] Ij_dot(double t) {
-		double[] Ij_dot = new double[3];
-
-		if (t < timeBurnout) {
-			Ij_dot[0] = (IjRollAft - IjRollBef) / timeBurnout;
-			Ij_dot[1] = (IjPitchAft - IjPitchBef) / timeBurnout;
-			Ij_dot[2] = Ij_dot[1];
-		} else {
-			for (int i = 0; i < 3; i++) {
-				Ij_dot[i] = 0.0;
+	public double getIjDotPitch(double t) {
+		if(t < timeBurnout) {
+			if(t == 0.0) {
+				return 0.0;
+			}else {
+				return (getIjPropPitch(t) - getIjPropPitch(t - dt)) / dt;
 			}
+		}else {
+			return 0.0;
 		}
+	}
 
-		return Ij_dot;
+	public double getIjDotRoll(double t) {
+		if(t < timeBurnout) {
+			if(t == 0.0) {
+				return 0.0;
+			}else {
+				return (getIjPropRoll(t) - getIjPropRoll(t - dt)) / dt;
+			}
+		}else {
+			return 0.0;
+		}
 	}
 
 	// TODO 修正
 	private double getMassFuel(double t) {
-		return diffMassFuel * t / timeBurnout;
+		if(t < timeBurnout) {
+		return mFuelBef + (mFuelAft - mFuelBef) * (t / timeBurnout);
+		}else {
+			return mFuelAft;
+		}
 	}
 
 	/**
@@ -173,7 +217,7 @@ public class RocketParameter {
 	 * */
 	private double getMassOxidizer(double t)	{
 		if(t < timeBurnout) {
-			return massOxBef * t / timeBurnout;
+			return mOxBef *(1 -  t / timeBurnout);
 		}else {
 			return 0.0;
 		}
@@ -181,99 +225,123 @@ public class RocketParameter {
 
 	public double getMass(double t) {
 		if (t < timeBurnout) {
-			return m0 + (mAft - m0) * t / timeBurnout;
+			return mBef + (mAft - mBef) * t / timeBurnout;
 		} else {
 			return mAft;
 		}
 	}
 
-	//TODO 燃焼前後での条件分岐
-	private double getIjPropPitch(double t) {
-		double IjPropPitch;
-		double lcg = getLcg(t);
-
-		// fuel
-		/* 燃料(グレイン)の内径 **/
-		double dFuelIn = dFuelInBef + (dFuelInAft - dFuelInBef) * t / timeBurnout;
-		double massFuel = getMassFuel(t);
-
-		// 中空円筒の慣性モーメント
-		// Iyy = m * ((din^2 + dout^2) / 16 + Lf / 12)
-		double IjFuelPitch = massFuel * ((Math.pow(dFuelOut, 2) + Math.pow(dFuelIn, 2)) / 16.0 + Math.pow(lFuel, 2) / 12.0); //fuelの重心回りの慣性モーメント
-		IjFuelPitch += massFuel * Math.pow(lcgFuel - lcg, 2); // parallel axis thorem
-
-		// oxidizer
-		double massOx = getMassOxidizer(t);
-		double lengthOx = lengthTank * t / timeBurnout;
-		/*oxidizerの慣性モーメント
-		 * スロッシングの影響を無視し,液体酸化剤を一様円柱と仮定して計算 **/
-		double IjOxPitch = massOx * (Math.pow(dTank, 2) / 16.0 + Math.pow(lengthOx, 2) / 12.0); //oxidizer自身の重心回りの慣性モーメント
-		IjOxPitch += massOx * Math.pow(getLcgOx(t) - lcg, 2); // parallel axis theorem
-
-		IjPropPitch = IjOxPitch + IjFuelPitch;
-
-		return IjPropPitch;
-	}
-
-	public double Ij_roll(double t) {
-		double Ij_roll;
-
-		if (t < timeBurnout) {
-			Ij_roll = IjRollBef + t * (IjRollAft - IjRollBef) / timeBurnout;
-		} else {
-			Ij_roll = IjRollAft;
-		}
-
-		return Ij_roll;
-	}
-
-	public double Ij_pitch(double t) {
-		double Ij_pitch;
-
-		if (t < timeBurnout) {
-			Ij_pitch = IjPitchBef + t * (IjPitchAft - IjPitchBef) / timeBurnout;
-		} else {
-			Ij_pitch = IjPitchAft;
-		}
-
-		return Ij_pitch;
-	}
-
-	public double getLcg(double t) {
-		double Lcg;
-
-		if (t < timeBurnout) {
-			Lcg = lcgBef + (lcgAft - lcgBef) * t / timeBurnout;
-		} else {
-			Lcg = lcgAft;
-		}
-
-		return Lcg;
-	}
-
-	//実装中
-	public double getLcgProp(double t) {
+	public double getMassProp(double t) {
 		if(t < timeBurnout) {
-			return getMassFuel(t) * lcgFuel + getMassOxidizer(t) * getLcgOx(t);
+			return getMassFuel(t) + getMassOxidizer(t);
+		}else {
+			return mFuelAft;
+		}
+	}
+
+	private double getIjPropPitch(double t) {
+		if(t < timeBurnout) {
+			double lcg = getLcg(t);
+
+			//----- fuel -------------------------------------
+			double massFuel = getMassFuel(t);
+			// 中空円筒の慣性モーメント
+			// Iyy = m * ((din^2 + dout^2) / 16 + Lf / 12)
+			double IjFuelPitch = massFuel * ((Math.pow(dFuelOut, 2) + Math.pow(getDiamFuelIn(t), 2)) / 16.0 + Math.pow(lFuel, 2) / 12.0); //fuelの重心回りの慣性モーメント
+			IjFuelPitch += massFuel * Math.pow(lcgFuel - lcg, 2); // parallel axis thorem
+
+			//----- oxidizer ----------------------------------
+			double massOx = getMassOxidizer(t);
+			/* oxidizerの慣性モーメント
+			 * スロッシングの影響を無視し,液体酸化剤を一様円柱と仮定して計算 **/
+			double IjOxPitch = massOx * (Math.pow(dTank, 2) / 16.0 + Math.pow(getLengthOx(t), 2) / 12.0); //oxidizer自身の重心回りの慣性モーメント
+			IjOxPitch += massOx * Math.pow(getLcgOx(t) - lcg, 2); // parallel axis theorem
+
+			return IjOxPitch + IjFuelPitch;
+		}else {
+			return IjFuelPitchAft;
+		}
+	}
+
+	private double getIjPropRoll(double t) {
+		if(t < timeBurnout) {
+			double IjFuelRoll = getMassFuel(t) * (Math.pow(getDiamFuelIn(t), 2) + Math.pow(dFuelOut, 2)) / 8.0;
+			double IjOxRoll = getMassOxidizer(t) * Math.pow(dTank, 2) / 8.0;
+			return IjFuelRoll + IjOxRoll;
+		}else {
+			return IjFuelRollAft;
+		}
+	}
+
+	public double getIjPitch(double t) {
+		if(t < timeBurnout) {
+			return (IjStPitchUnit + mSt * Math.pow(getLcg(t) - lcgSt, 2)) + getIjPropPitch(t);
+		}else {
+			return IjPitchAft;
+		}
+	}
+
+	public double getIjRoll(double t) {
+		if(t < timeBurnout) {
+			return IjStRollUnit + getIjPropRoll(t);
+		}else {
+			return IjRollAft;
+		}
+	}
+
+	//TODO 変更
+	public double getLcg(double t) {
+	//	double Lcg;
+
+		if (t < timeBurnout) {
+			return (lcgSt * mSt + getLcgProp(t) * getMassProp(t)) / getMass(t);
+		} else {
+			return lcgAft;
+		}
+	}
+
+	private double getLengthOx(double t) {
+		if(t < timeBurnout) {
+			return lTank * (t / timeBurnout);
 		}else {
 			return 0.0;
 		}
 	}
 
 	/**
-	 * claculate oxidizer's cnter of gravity
-	 * @param t [sec]
-	 * @return lcgOx 機体先端からoxidizer重心までの距離
+	 * @param t time [s]
+	 * @return 機体先端から酸化剤重心までの距離 [m]
 	 * */
-	public double getLcgOx(double t) {
-		double lengthOx = lengthTank * (t / timeBurnout); //oxidizerを円柱としたときの円柱の長さ
-		return l - (lMotor + lengthOx);
+	private double getLcgOx(double t) {
+		if(t < timeBurnout) {
+			return L - (lMotor + 0.5 * getLengthOx(t));
+		}else {
+			return lcgOxAft;
+		}
+	}
+
+	private double getDiamFuelIn(double t) {
+		if(t < timeBurnout) {
+			return dFuelInBef + (dFuelInAft - dFuelInBef) * (t / timeBurnout);
+		}else {
+			return dFuelInAft;
+		}
+	}
+
+	public double getLcgProp(double t) {
+		if(t < timeBurnout) {
+			double massFuel = getMassFuel(t);
+			double massOx = getMassOxidizer(t);
+			return (lcgFuel * massFuel + getLcgOx(t) * massOx) / (massFuel + massOx);
+		}else {
+			return lcgFuel;
+		}
 	}
 
 	public double thrust(double t) {
 		double thrust;
 
-		if (t < timeBurnout) {
+		if (t < timeActuate) {
 			thrust = thrustAnaly.linearInterp1column(t);
 		} else {
 			thrust = 0.0;
