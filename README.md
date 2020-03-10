@@ -11,5 +11,6 @@ Quabla
 2. Execute *QUABLA.java*
 
 ## Future Works
+* Tip offの時の運動
 * 変数が発散したときの例外処理
 * gui化
