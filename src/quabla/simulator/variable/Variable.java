@@ -19,6 +19,7 @@ public class Variable {
 	private InputParam spec;
 
 	private double time;
+	private final double h;
 
 	//Main parameters
 	private MathematicalVector pos_ENU;
@@ -32,6 +33,7 @@ public class Variable {
 	public Variable(InputParam spec,RocketParameter rocket) {
 		this.spec = spec;
 		this.rocket = rocket;
+		h = rocket.dt;
 	}
 
 	public void setInitialVariable() {//初期パラメータの取得
@@ -173,10 +175,10 @@ public class Variable {
 	public void update(double time,DynamicsMinuteChangeTrajectory delta) {
 
 		setTime(time);
-		setPos_ENU(pos_ENU.add(delta.getDeltaPos_ENU()));
-		setVel_ENU(vel_ENU.add(delta.getDeltaVel_ENU()));
-		setOmega_Body(omega_Body.add(delta.getDeltaOmega_Body()));
-		setQuat(quat.add(delta.getDeltaQuat()));
+		setPos_ENU(pos_ENU.add(delta.getDeltaPos_ENU().multiply(h)));
+		setVel_ENU(vel_ENU.add(delta.getDeltaVel_ENU().multiply(h)));
+		setOmega_Body(omega_Body.add(delta.getDeltaOmega_Body().multiply(h)));
+		setQuat(quat.add(delta.getDeltaQuat().multiply(h)));
 
 	}
 

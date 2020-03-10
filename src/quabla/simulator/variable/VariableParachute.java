@@ -10,6 +10,7 @@ public class VariableParachute {
 	private Wind wind;
 
 	private double time;
+	private double h;
 
 	private MathematicalVector posENU;
 	private MathematicalVector velENU;
@@ -37,6 +38,7 @@ public class VariableParachute {
 		velENU = new MathematicalVector(0.0, 0.0, 0.0);
 		velDescent = 0.0;
 		wind = new Wind(spec);
+		h = spec.dt;
 	}
 
 	public void set(VariableParachute variable) {
@@ -84,8 +86,8 @@ public class VariableParachute {
 
 	public void update(double time, DynamicsMinuteChangeParachute delta) {
 		this.time = time;
-		posENU = posENU.add(delta.getDeltaPosENU());
-		velDescent = velDescent + delta.getDeltaVelDescent();
+		posENU = posENU.add(delta.getDeltaPosENU().multiply(h));
+		velDescent = velDescent + delta.getDeltaVelDescent() * h;
 		double altitude = getAltitude();
 		System.arraycopy(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)), 0, windENU, 0, 2);
 		velENU.set(windENU[0], windENU[1], velDescent);

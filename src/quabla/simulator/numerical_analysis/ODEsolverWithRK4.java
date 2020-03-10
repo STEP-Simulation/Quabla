@@ -26,43 +26,45 @@ public class ODEsolverWithRK4 {
 		DynamicsMinuteChangeTrajectory k1, k2, k3, k4;
 		Variable variable2;
 
-		// k1
+		// k1 = f(t, x)
 		k1 = dyn.calculateDynamics(variable);
 
-		// k2
+		// k2 = f(t + h / 2, x + k1 * h / 2)
 		variable2 = getVariable(variable, 0.5 * h, k1);
 		k2 = dyn.calculateDynamics(variable2);
 
-		// k3
+		// k3 = f(t + h / 2, x + k2 * h / 2)
 		variable2 = getVariable(variable, 0.5 * h, k2);
 		k3 = dyn.calculateDynamics(variable2);
 
-		// k4
+		// k4 = f(t + h, x + k3 * h)
 		variable2 = getVariable(variable, h, k3);
 		k4 = dyn.calculateDynamics(variable2);
 
 		//TODO Dynamics~のメソッドとこのメソッドとでdeltaの次元が違うので修正
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
+		// delta = (k1 + 2 * k2 + 2 * k3 + k4) / 6
+		// x_i+1 = x_i + delta * h
 		delta.setDeltaPos_ENU(
 				k1.getDeltaPos_ENU()
 				.add(k2.getDeltaPos_ENU().multiply(2.0))
 				.add(k3.getDeltaPos_ENU().multiply(2.0))
-				.add(k4.getDeltaPos_ENU()).multiply(h / 6.0));
+				.add(k4.getDeltaPos_ENU()).multiply(1 / 6.0));
 		delta.setDeltaVelENU(
 				k1.getDeltaVel_ENU()
 				.add(k2.getDeltaVel_ENU().multiply(2.0))
 				.add(k3.getDeltaVel_ENU().multiply(2.0))
-				.add(k4.getDeltaVel_ENU()).multiply(h / 6.0));
+				.add(k4.getDeltaVel_ENU()).multiply(1 / 6.0));
 		delta.setDeltaOmegaBODY(
 				k1.getDeltaOmega_Body()
 				.add(k2.getDeltaOmega_Body().multiply(2.0))
 				.add(k3.getDeltaOmega_Body().multiply(2.0))
-				.add(k4.getDeltaOmega_Body()).multiply(h / 6.0));
+				.add(k4.getDeltaOmega_Body()).multiply(1 / 6.0));
 		delta.setDeltaQuat(
 				k1.getDeltaQuat()
 				.add(k2.getDeltaQuat().multiply(2.0))
 				.add(k3.getDeltaQuat().multiply(2.0))
-				.add(k4.getDeltaQuat()).multiply(h / 6.0));
+				.add(k4.getDeltaQuat()).multiply(1 / 6.0));
 
 		return delta;
 	}
@@ -91,12 +93,12 @@ public class ODEsolverWithRK4 {
 				k1.getDeltaPosENU()
 				.add(k2.getDeltaPosENU().multiply(2.0))
 				.add(k3.getDeltaPosENU().multiply(2.0))
-				.add(k4.getDeltaPosENU()).multiply(h / 6.0));
+				.add(k4.getDeltaPosENU()).multiply(1 / 6.0));
 		delta.setDeltaVelDescent((
 				k1.getDeltaVelDescent()
 				+ 2.0 * k2.getDeltaVelDescent()
 				+ 2.0 * k3.getDeltaVelDescent()
-				+ k4.getDeltaVelDescent()) * (h / 6.0));
+				+ k4.getDeltaVelDescent()) * (1 / 6.0));
 
 		return delta;
 	}
