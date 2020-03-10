@@ -87,6 +87,7 @@ public class InputParam {
 	// Engine Configulation -----------------------------------
 	/** Nozzle throat diameter */
 	public double dth = 18.00;   //[mm]
+
 	/** nozzle expansion ratio
 	 * nozzle area ratio */
 	public double eps = 4.3403; //[-]
@@ -99,6 +100,9 @@ public class InputParam {
 	/** 平均比推力 */
 	public double Isp = 220.38; // [s]
 
+	/** 機体後端からグレイン重心までの距離(インジェクタベル含めず) */
+	public double distanceFuelCG = 0.2333; // [m]
+
 	public double massFuelBef = 1.45; //[kg]
 
 	public double massFuelAft = 0.558; //[kg]
@@ -106,6 +110,9 @@ public class InputParam {
 	public double diameterFuelPort = 40.50 ; //[mm]
 
 	public double diameterFuelOut = 72.3; //[mm]
+
+	/** 機体後端からタンク後端(口金)までの距離 */
+	public double distanceTank = 0.4665;// [m]
 
 	/**length of oxidizer's tank */
 	public double lengthTank = 0.829; //[m]
@@ -118,10 +125,6 @@ public class InputParam {
 
 	/** Oxidizer's Density */
 	public double densityOxidizer = 724 ; //[kg/m^3]
-
-	/** length of motor case
-	 * if using HyperTEK series, length of grain*/
-	public double lenghtMotor = 0.4665; //[m]
 
 	public double lengthFuel = 0.4665; //[m]
 	//---------------------------------------------------------
@@ -170,7 +173,7 @@ public class InputParam {
 	 							 * **/
 	//----------------------------------------------------------
 
-	//simulation -----------------------------------------------
+	// Simulation -----------------------------------------------
 	public String simulationMode = "single";
 		/* Input "single" OR "multi"
 		 * single : single condition

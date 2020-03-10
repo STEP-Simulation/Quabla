@@ -20,6 +20,7 @@ public class RocketParameter {
 	private double mBef, mAft, mSt, mOxBef, mDry;
 	/** Length of Oxidizer Tank */
 	private double lTank;
+	private double distanceTank;
 	/** Moment of Inertia */
 	private double IjPitchBef, IjPitchAft, IjRollBef, IjRollAft;
 	private double IjFuelRollBef, IjFuelRollAft, IjFuelPitchBef, IjFuelPitchAft;
@@ -40,7 +41,7 @@ public class RocketParameter {
 	/** Structure Moment of Inertia
 	 * '構造重心回り' の慣性モーメント*/
 	private double IjStPitchUnit, IjStRollUnit;
-	private double lMotor, dTank, lFuel;
+	private double dTank, lFuel;
 	private double mFuelBef, mFuelAft;
 	/** Diameter of Fuel */
 	private double dFuelInBef,dFuelInAft ,dFuelOut;
@@ -60,15 +61,15 @@ public class RocketParameter {
 		Ae = Ath * eps;
 		de = Math.sqrt(Ae * 4 / Math.PI);
 
-		// fuel(grain)
+		// Fuel(grain)
 		dFuelInBef = spec.diameterFuelPort * Math.pow(10, -3);
 		dFuelOut = spec.diameterFuelOut * Math.pow(10, -3);
 		lFuel = spec.lengthFuel;
-		lMotor = spec.lenghtMotor;
 
-		// oxidizer tank
+		// Oxidizer tank
 		lTank = spec.lengthTank;
 		dTank = spec.diameterTank * Math.pow(10, -3);
+		distanceTank = spec.distanceTank;
 		//----------------------------------------------------
 
 		//-------------------- Mass --------------------
@@ -87,9 +88,9 @@ public class RocketParameter {
 		//-------------------- Center of Gravity --------------------
 		lcgDry = spec.lcgDry;
 		//燃料は半径方向にのみ一様に減少するとし,重心が機軸方向に移動しない仮定
-		lcgFuel = L - (lMotor - 0.5 * lFuel);
-		lcgOxBef = L - (lMotor + 0.5 * lTank);
-		lcgOxAft = L - lMotor;
+		lcgFuel = L - spec.distanceFuelCG;
+		lcgOxBef = L - (distanceTank + 0.5 * lTank);
+		lcgOxAft = L - distanceTank;
 		lcgSt = (lcgDry * mDry - lcgFuel * mFuelBef) / mSt;
 
 		lcgBef = (lcgDry * mDry + lcgOxBef * mOxBef) / (mDry + mOxBef);
@@ -314,7 +315,7 @@ public class RocketParameter {
 	 * */
 	private double getLcgOx(double t) {
 		if(t < timeBurnout) {
-			return L - (lMotor + 0.5 * getLengthOx(t));
+			return L - (distanceTank + 0.5 * getLengthOx(t));
 		}else {
 			return lcgOxAft;
 		}
