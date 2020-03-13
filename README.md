@@ -2,6 +2,8 @@ Quabla
 ==
 6-DoF Rocket Simulator for STEP
 
+![Quabla_logo](./image/Quablaロゴ(透過済).png)
+
 ## Reference
 * スピンを伴うロケットの運動を計算するプログラム
 * 嶋田, 佐々 : 飛行力学, 2017
