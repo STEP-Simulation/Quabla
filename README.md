@@ -5,8 +5,8 @@ Quabla
 ![Quabla_logo](./src/image/Quablaロゴ(透過済).png)
 
 ## Reference
-* スピンを伴うロケットの運動を計算するプログラム
-* 嶋田, 佐々 : 飛行力学, 2017
+* 戸川隼人，石黒登美子；スピンを伴うロケットの運動を計算するプログラム，航空宇宙技術研究所資料 NAL TM-145，1968
+* 嶋田有三，佐々修一；飛行力学，森北出版，2017
 
 ## Useage
 1. Edit *InputParam.java*
