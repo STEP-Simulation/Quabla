@@ -1,24 +1,21 @@
-package quabla.simulator.numerical_analysis;
+package quabla.simulator.numerical_analysis.ODEsolver;
 
 import quabla.simulator.ConstantVariable;
 import quabla.simulator.dynamics.AbstractDynamics;
-import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsParachute;
 import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
 
-public class ODEsolverWithRK4 {
+public class RK4 {
 
-	private ConstantVariable constant;
 	private final double h;
 
-	private AbstractDynamicsMinuteChange delta;
+	//private AbstractDynamicsMinuteChange delta;
 
 
-	public ODEsolverWithRK4(ConstantVariable constant) {
-		this.constant = constant;
+	public RK4(ConstantVariable constant) {
 		h = constant.getRocket().dt;
 	}
 
