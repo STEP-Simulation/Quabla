@@ -16,6 +16,8 @@ public class QUABLA {
 
 		InputParam spec = new InputParam();
 
+		long startTime = System.currentTimeMillis();
+
 		switch(spec.simulationMode) {
 		case "single":
 			//single condition
@@ -44,6 +46,8 @@ public class QUABLA {
 			break;
 		}
 
+		long endTime = System.currentTimeMillis();
+		System.out.println("Calculate Time : " + (endTime - startTime) + " [ms]");
 		System.out.println("Completed!!");
 	}
 
