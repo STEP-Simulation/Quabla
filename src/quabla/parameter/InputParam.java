@@ -7,65 +7,65 @@ public class InputParam {
 
 	// Length -------------------------------------------------
 	/** Total Length*/
-	public double l    = 2.850;//[m]
+	public double l    = 1.793;//[m]
 
 	/** Center of Grabity @ Dry*/
-	public double lcgDry = 1.680; // [m]
+	public double lcgDry = 1.020; // [m]
 
 	/** Outer Diameter*/
-	public double d    = 0.120; //[m]
+	public double d    = 0.102; //[m]
 
 	/** Upper Launch Lug from Nosecone*/
 	public double upper_lug = 0.8;//[m]
 
 	/** Lower Launch Lug from Nosecone*/
-	public double lower_lug = 1.8;//[m]
+	public double lower_lug = 1.793;//[m]
 	//---------------------------------------------------------
 
 
 
 	// Weight -------------------------------------------------
 	/** Weight @ Dry */
-	public double mDry = 13.76; // [kg]
+	public double mDry = 4.85; // [kg]
 	//---------------------------------------------------------
 
 
 
 	// Moment of Inertia --------------------------------------
-	public double IjPitchDry = 8.544; // [kg m^2]
-	public double IjRollDry = 0.03559; // [kg m^2]
+	public double IjPitchDry = 0.7053; // [kg m^2]
+	public double IjRollDry = 0.0133; // [kg m^2]
 	//---------------------------------------------------------
 
 
 	// Aero Parameter -----------------------------------------
 	public boolean Cd_file_exist = true;
-	public boolean CNa_file_exist = true;
-	public boolean Lcp_file_exist = true;
-	public String Lcp_file = "C:\\Users\\zoooi\\Documents\\STEP\\洋上打上げ\\2020205\\Lcp.csv";
-	public String Cd_file = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\ForRocket_config\\Cd3.csv";
-	public String CNa_file = "C:\\Users\\zoooi\\Documents\\STEP\\洋上打上げ\\2020205\\CNa.csv";
+	public boolean CNa_file_exist = false;
+	public boolean Lcp_file_exist = false;
+	public String Lcp_file = "Lcp.csv";
+	public String Cd_file = "Cd.csv";
+	public String CNa_file = "CNa.csv";
 	/**Constant Center of Pressure*/
-	public double Lcp = 2.126;//[m]
+	public double Lcp = 1.313;//[m]
 
 	/** Constant Coefficient of Drag*/
 	public double Cd  = 0.60; //[-]
 
 	/** Constant Coefficient of Nomal Force*/
-	public double CNa = 8.80;  //[1/rad]
+	public double CNa = 8.579;  //[1/rad]
 
 	/** Coefficient of Aero Dumping Moment in Pitch and Yaw*/
-	public double Cmq = -3.403;//[1/rad]
+	public double Cmq = - 2.676;//[1/rad]
 
 	/** Coefficient of Aero Dumping Moment in Roll*/
-	public double Clp = -0.018166; //[1/rad]
+	public double Clp = -0.0504; //[1/rad]
 	//---------------------------------------------------------
 
 
 
 	// Parachute ----------------------------------------------
 	/** Product of drag coefficient of parachute(or draug chute) and  */
-	public double CdS1 = 0.323026;     //[m2]
-	public boolean para2_exist = true;
+	public double CdS1 = 0.7734;     //[m2]
+	public boolean para2_exist = false;
 											/**
 											 * true : using 2 parachutes
 											 * false : using only a parachute
@@ -77,8 +77,8 @@ public class InputParam {
 
 	// Launcher -----------------------------------------------
 	public double elevation_launcher = 85.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
-	public double azimuth_launcher   = 304.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
-	public double length_Launcher    = 6.0;       //[m]length of launcher
+	public double azimuth_launcher   = 285.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
+	public double length_Launcher    = 5.0;       //[m]length of launcher
 	public double magnetic_dec       = 0.0;    //[deg] magnetic declination
 	//---------------------------------------------------------
 
@@ -86,54 +86,54 @@ public class InputParam {
 
 	// Engine Configulation -----------------------------------
 	/** Nozzle throat diameter */
-	public double dth = 18.00;   //[mm]
+	public double dth = 11.45;   //[mm]
 
 	/** nozzle expansion ratio
 	 * nozzle area ratio */
-	public double eps = 4.3403; //[-]
+	public double eps = 2.6951; //[-]
 
 	//---------- 改良後エンジンパラメータ ----------
 
 	// 燃焼時間 , エンジン作動時間ではない
-	public double timeBurnout = 9.1; //[s]
+	public double timeBurnout = 5.6; //[s]
 
 	/** 平均比推力 */
 	public double Isp = 220.38; // [s]
 
 	/** 機体後端からグレイン重心までの距離(インジェクタベル含めず) */
-	public double distanceFuelCG = 0.2333; // [m]
+	public double distanceFuelCG = 0.139; // [m]
 
-	public double massFuelBef = 1.45; //[kg]
+	public double massFuelBef = 0.3800; //[kg]
 
-	public double massFuelAft = 0.558; //[kg]
+	public double massFuelAft = 0.2805; //[kg]
 
-	public double diameterFuelPort = 40.50 ; //[mm]
+	public double diameterFuelPort = 25.50 ; //[mm]
 
-	public double diameterFuelOut = 72.3; //[mm]
+	public double diameterFuelOut = 50.0; //[mm]
 
 	/** 機体後端からタンク後端(口金)までの距離 */
-	public double distanceTank = 0.4665;// [m]
+	public double distanceTank = 0.2794;// [m]
 
 	/**length of oxidizer's tank */
-	public double lengthTank = 0.829; //[m]
+	public double lengthTank = 0.541; //[m]
 
 	/** diameter of oxidizer's tank */
-	public double diameterTank = 98 ; //[mm]
+	public double diameterTank = 54; //[mm]
 
 	/** Tank Volume */
-	public double volTank = 4630 ; //[cc]
+	public double volTank = 835; //[cc]
 
 	/** Oxidizer's Density */
 	public double densityOxidizer = 724 ; //[kg/m^3]
 
-	public double lengthFuel = 0.4665; //[m]
+	public double lengthFuel = 0.2794; //[m]
 	//---------------------------------------------------------
 
 
 
 	// Wind ---------------------------------------------------
 	public boolean Wind_file_exsit = true;
-	public String wind_file = "C:\\Users\\zoooi\\Documents\\STEP\\洋上打上げ\\上空風\\wind_0224_1200.csv";
+	public String wind_file = "wind.csv";
 
 	public int WindModel   = 1;  // wind model
 
@@ -188,14 +188,14 @@ public class InputParam {
 	 * メインソルバより細かくすると値がおかしくなる
 	 * */
 	public double dt_output = 0.01;//[s]
-	public String  thrustcurve = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\thrust_M1000.csv"; //推力データのアドレス
+	public String  thrustcurve = "thrust.csv"; //推力データのアドレス
 
 	/**
 	 * 計算結果の出力先のファイルパス
 	 * パスは\\で終わるように
 	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\";//出力先のファイルパス
-	public String dir_name = "test";
+	public String dir_name = "sample";
 	//------------------------------------------------------------
 
 
