@@ -12,4 +12,3 @@ public abstract class AbstractDynamics {
 	public abstract DynamicsMinuteChangeTrajectory calculateDynamics(Variable variable);
 
 }
-//TODO 各クラスの実装
