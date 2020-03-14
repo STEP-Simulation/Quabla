@@ -38,8 +38,8 @@ public class RK4 {
 		variable2 = getVariable(variable, h, k3);
 		k4 = dyn.calculateDynamics(variable2);
 
-		//TODO Dynamics~のメソッドとこのメソッドとでdeltaの次元が違うので修正
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
+		//deltaの次元の関係上，vafiable更新時にhをかける
 		// delta = (k1 + 2 * k2 + 2 * k3 + k4) / 6
 		// x_i+1 = x_i + delta * h
 		delta.setDeltaPos_ENU(
