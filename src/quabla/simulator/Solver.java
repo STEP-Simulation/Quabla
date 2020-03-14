@@ -66,7 +66,7 @@ public class Solver {
 		variableTrajectory.setInitialVariable();
 		trajectoryLog.log(variableTrajectory);
 
-
+		//
 		//------------------- on Launcher -------------------
 		for(;;) {
 			index ++;
