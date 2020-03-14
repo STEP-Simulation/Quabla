@@ -85,6 +85,7 @@ public class RK4 {
 		variable2 = getVariable(variable, h, k3);
 		k4 = dyn.calculateDynamics(variable2);
 
+		//deltaの次元の関係上，vafiable更新時にhをかける
 		DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
 		delta.setDeltaPosENU(
 				k1.getDeltaPosENU()
@@ -118,9 +119,5 @@ public class RK4 {
 		variable2.setVelDescent(variable.getVelDescent() + kn.getDeltaVelDescent() * timestep);
 		return variable2;
 	}
-
-}
-
-class RK4Parameter extends DynamicsMinuteChangeTrajectory{
 
 }
