@@ -52,7 +52,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		// alpha , beta
 		MathematicalVector windENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
-		MathematicalVector velAirENU = velENU.substract(windENU);
+		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
 		double v = velAirBODY.getValue()[1];

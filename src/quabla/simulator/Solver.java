@@ -7,6 +7,7 @@ import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
 import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
+import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
@@ -17,6 +18,7 @@ import quabla.simulator.logger.ivent_value.IventValueSingle;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
 import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
+import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.variable.Variable;
@@ -62,9 +64,10 @@ public class Solver {
 		// ODE solver
 		AbstractODEsolver ODEsolver = new RK4(constant);
 		//RK4 ODEsolver1 = new RK4(constant);
-		//PredictorCorrector ODEsolver2 = new PredictorCorrector(spec, rocket);
+		PredictorCorrector predCorr = new PredictorCorrector(spec, rocket);
 
-		DynamicsMinuteChangeTrajectory[] delta = new DynamicsMinuteChangeTrajectory[3];
+		DynamicsMinuteChangeTrajectory[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
+		DynamicsMinuteChangeParachute[] deltaParArray = new DynamicsMinuteChangeParachute[3];
 
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
 
@@ -77,8 +80,19 @@ public class Solver {
 			index ++;
 			time = index * h;
 
-				// solve ODE
-			variableTrajectory.update(time, ODEsolver.compute(variableTrajectory, dynOnLauncher));
+			if(index == 4) {
+				predCorr.setTra(deltaArray[2], deltaArray[1], deltaArray[0]);
+				// ODE 解法の変更
+				ODEsolver = predCorr;
+			}
+
+			// solve ODE
+			DynamicsMinuteChangeTrajectory delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
+			if(index <= 3) {
+				deltaArray[index - 1] = delta;
+			}
+
+			variableTrajectory.update(time, delta);
 			// store flightlog
 			trajectoryLog.log(variableTrajectory);
 
@@ -88,13 +102,24 @@ public class Solver {
 			}
 		}
 
+		//deltaArray = new DynamicsMinuteChangeTrajectory[3];
 
 		//------------------- Trajectory -------------------
+		int countTrajectory = 0;// 南海Trajectoryをループしたかのカウント用
 		for(;;) {
 			index ++;
 			time = index * h;
+			DynamicsMinuteChangeTrajectory delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
 			variableTrajectory.update(time, ODEsolver.compute(variableTrajectory, dynTrajectory));
 			trajectoryLog.log(variableTrajectory);
+
+			if(countTrajectory < 3) {
+				deltaArray[countTrajectory] = delta;
+			}else {
+				deltaArray[0] = deltaArray[1];
+				deltaArray[1] = deltaArray[2];
+				deltaArray[2] = delta;
+			}
 
 			if(eventJudgement.judgeLanding(variableTrajectory)) {
 				indexLandingTrajectory = index;
@@ -126,6 +151,9 @@ public class Solver {
 		variablePara.setTime(trajectoryLog.getTime(indexApogee));
 		variablePara.setPosENU(new MathematicalVector(trajectoryLog.getPosENUlog(indexApogee)));
 		variablePara.setVelDescent(trajectoryLog.getVelENUlog(indexApogee)[2]);
+
+		predCorr.setDeltaPar(deltaArray[2].getDelatPar(), deltaArray[1].getDelatPar(), deltaArray[0].getDelatPar());
+		ODEsolver = predCorr;
 
 		index = indexApogee; //indexの更新
 		//-------------------  Parachute -------------------

@@ -42,4 +42,8 @@ public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange
 		return deltaQuat;
 	}
 
+	public DynamicsMinuteChangeParachute getDelatPar() {
+		return new DynamicsMinuteChangeParachute(deltaPos_ENU, deltaVel_ENU.getValue()[2]);
+	}
+
 }

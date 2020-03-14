@@ -174,7 +174,7 @@ public class InputParam {
 	//----------------------------------------------------------
 
 	// Simulation -----------------------------------------------
-	public String simulationMode = "single";
+	public String simulationMode = "multi";
 		/* Input "single" OR "multi"
 		 * single : single condition
 		 * multi : multi condition (落下分散の計算)
@@ -195,7 +195,7 @@ public class InputParam {
 	 * パスは\\で終わるように
 	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\";//出力先のファイルパス
-	public String dir_name = "sample";
+	public String dir_name = "debug";
 	//------------------------------------------------------------
 
 

@@ -7,6 +7,15 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 	private MathematicalVector deltaPosENU;
 	private double deltaVelDescent;
 
+	public DynamicsMinuteChangeParachute() {
+
+	}
+
+	public DynamicsMinuteChangeParachute(MathematicalVector deltaPosENU, double deltaVelDescent) {
+		this.deltaPosENU = deltaPosENU;
+		this.deltaVelDescent = deltaVelDescent;
+	}
+
 	public void setDeltaPosENU(MathematicalVector deltaPosENU) {
 		this.deltaPosENU = deltaPosENU;
 	}

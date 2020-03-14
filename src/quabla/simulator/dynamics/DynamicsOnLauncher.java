@@ -45,7 +45,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 
 		//Wind, Vel_air
 		MathematicalVector windENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
-		MathematicalVector velAirENU = velENU.substract(windENU);
+		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
 

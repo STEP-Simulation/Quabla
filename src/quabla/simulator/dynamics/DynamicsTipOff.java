@@ -1,9 +1,9 @@
 package quabla.simulator.dynamics;
 
 import quabla.simulator.AeroParameter;
+import quabla.simulator.Atmosphere;
 import quabla.simulator.ConstantVariable;
 import quabla.simulator.Coordinate;
-import quabla.simulator.Atmosphere;
 import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
@@ -48,7 +48,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 
 		// wind
 		MathematicalVector wind_ENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
-		MathematicalVector vel_airENU = vel_ENU.substract(wind_ENU);
+		MathematicalVector vel_airENU = vel_ENU.sub(wind_ENU);
 		MathematicalVector vel_airBODY = dcm_ENU2BODY.dot(vel_airENU);
 		double vel_airAbs = vel_airBODY.norm();
 		double v = vel_airBODY.getValue()[1];
@@ -82,9 +82,9 @@ public class DynamicsTipOff extends AbstractDynamics {
 
 		// Aero Force
 		double drag = dynamics_pressure * aero.Cd(Mach) * rocket.S;
-		double nomal = dynamics_pressure * aero.CNa(Mach) * rocket.S * alpha;
+		//double nomal = dynamics_pressure * aero.CNa(Mach) * rocket.S * alpha;
 		double side = dynamics_pressure * aero.CNa(Mach) * rocket.S * beta;
-		MathematicalVector f_aero = new MathematicalVector(- drag , - side , - nomal);
+		MathematicalVector f_aero = new MathematicalVector(- drag, 0.0, 0.0);
 
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
 
