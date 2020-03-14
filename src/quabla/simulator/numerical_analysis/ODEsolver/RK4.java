@@ -8,7 +8,7 @@ import quabla.simulator.dynamics.DynamicsParachute;
 import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
 
-public class RK4 {
+public class RK4 extends AbstractODEsolver{
 
 	private final double h;
 
@@ -19,7 +19,8 @@ public class RK4 {
 		h = constant.getRocket().dt;
 	}
 
-	public DynamicsMinuteChangeTrajectory runRK4(Variable variable, AbstractDynamics dyn) {
+	@Override
+	public DynamicsMinuteChangeTrajectory compute(Variable variable, AbstractDynamics dyn) {
 		DynamicsMinuteChangeTrajectory k1, k2, k3, k4;
 		Variable variable2;
 
@@ -39,7 +40,7 @@ public class RK4 {
 		k4 = dyn.calculateDynamics(variable2);
 
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
-		//deltaの次元の関係上，vafiable更新時にhをかける
+		//deltaの次元の関係上，variable更新時にhをかける
 		// delta = (k1 + 2 * k2 + 2 * k3 + k4) / 6
 		// x_i+1 = x_i + delta * h
 		delta.setDeltaPos_ENU(
@@ -66,7 +67,8 @@ public class RK4 {
 		return delta;
 	}
 
-	public DynamicsMinuteChangeParachute runRK4(VariableParachute variable, DynamicsParachute dyn) {
+	@Override
+	public DynamicsMinuteChangeParachute compute(VariableParachute variable, DynamicsParachute dyn) {
 		DynamicsMinuteChangeParachute k1, k2, k3, k4;
 		VariableParachute variable2;
 
@@ -85,7 +87,7 @@ public class RK4 {
 		variable2 = getVariable(variable, h, k3);
 		k4 = dyn.calculateDynamics(variable2);
 
-		//deltaの次元の関係上，vafiable更新時にhをかける
+		//deltaの次元の関係上，variable更新時にhをかける
 		DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
 		delta.setDeltaPosENU(
 				k1.getDeltaPosENU()

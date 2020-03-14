@@ -7,6 +7,7 @@ import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
 import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
+import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
 import quabla.simulator.dynamics.DynamicsTrajectory;
@@ -15,7 +16,8 @@ import quabla.simulator.logger.LoggerVariableParachute;
 import quabla.simulator.logger.ivent_value.IventValueSingle;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
-import quabla.simulator.numerical_analysis.ODEsolverWithRK4;
+import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
+import quabla.simulator.numerical_analysis.ODEsolver.RK4;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
@@ -58,7 +60,11 @@ public class Solver {
 		DynamicsParachute dynParachute = new DynamicsParachute(constant);
 
 		// ODE solver
-		ODEsolverWithRK4 ODEsolver = new ODEsolverWithRK4(constant);
+		AbstractODEsolver ODEsolver = new RK4(constant);
+		//RK4 ODEsolver1 = new RK4(constant);
+		//PredictorCorrector ODEsolver2 = new PredictorCorrector(spec, rocket);
+
+		DynamicsMinuteChangeTrajectory[] delta = new DynamicsMinuteChangeTrajectory[3];
 
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
 
@@ -66,13 +72,13 @@ public class Solver {
 		variableTrajectory.setInitialVariable();
 		trajectoryLog.log(variableTrajectory);
 
-		//
 		//------------------- on Launcher -------------------
 		for(;;) {
 			index ++;
 			time = index * h;
-			// solve ODE
-			variableTrajectory.update(time, ODEsolver.runRK4(variableTrajectory, dynOnLauncher));
+
+				// solve ODE
+			variableTrajectory.update(time, ODEsolver.compute(variableTrajectory, dynOnLauncher));
 			// store flightlog
 			trajectoryLog.log(variableTrajectory);
 
@@ -87,7 +93,7 @@ public class Solver {
 		for(;;) {
 			index ++;
 			time = index * h;
-			variableTrajectory.update(time, ODEsolver.runRK4(variableTrajectory, dynTrajectory));
+			variableTrajectory.update(time, ODEsolver.compute(variableTrajectory, dynTrajectory));
 			trajectoryLog.log(variableTrajectory);
 
 			if(eventJudgement.judgeLanding(variableTrajectory)) {
@@ -126,7 +132,7 @@ public class Solver {
 		for( ; ; ) {
 			index ++;
 			time = index * h;
-			variablePara.update(time, ODEsolver.runRK4(variablePara, dynParachute));
+			variablePara.update(time, ODEsolver.compute(variablePara, dynParachute));
 			parachuteLog.log(variablePara);
 
 			if(eventJudgement.judge2ndPara(variablePara)) {
