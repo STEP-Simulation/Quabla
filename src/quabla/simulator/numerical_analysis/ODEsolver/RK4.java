@@ -1,6 +1,5 @@
 package quabla.simulator.numerical_analysis.ODEsolver;
 
-import quabla.simulator.ConstantVariable;
 import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
@@ -12,11 +11,8 @@ public class RK4 extends AbstractODEsolver{
 
 	private final double h;
 
-	//private AbstractDynamicsMinuteChange delta;
-
-
-	public RK4(ConstantVariable constant) {
-		h = constant.getRocket().dt;
+	public RK4(double timeStep) {
+		h = timeStep;
 	}
 
 	@Override
@@ -104,7 +100,7 @@ public class RK4 extends AbstractODEsolver{
 	}
 
 	private Variable getVariable(Variable variable, double timestep, DynamicsMinuteChangeTrajectory kn) {
-		Variable variable2 = variable.setClone();
+		Variable variable2 = variable.getClone();
 		variable2.setTime(variable.getTime() + timestep);
 		variable2.setPos_ENU(variable.getPos_ENU().add(kn.getDeltaPos_ENU().multiply(timestep)));
 		variable2.setVel_ENU(variable.getVel_ENU().add(kn.getDeltaVel_ENU().multiply(timestep)));

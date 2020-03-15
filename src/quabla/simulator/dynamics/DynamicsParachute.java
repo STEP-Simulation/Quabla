@@ -1,7 +1,6 @@
 package quabla.simulator.dynamics;
 
 import quabla.simulator.Atmosphere;
-import quabla.simulator.ConstantVariable;
 import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
@@ -13,11 +12,10 @@ public class DynamicsParachute {
 	private Atmosphere atm;
 	private Wind wind;
 
-	public DynamicsParachute(ConstantVariable constant) {
-
-		this.rocket = constant.getRocket();
-		this.atm = constant.getAtmosphere();
-		this.wind = constant.getWind();
+	public DynamicsParachute(RocketParameter rocket, Atmosphere atm, Wind wind) {
+		this.rocket = rocket;
+		this.atm = atm;
+		this.wind = wind;
 	}
 
 	public DynamicsMinuteChangeParachute calculateDynamics(VariableParachute variable) {

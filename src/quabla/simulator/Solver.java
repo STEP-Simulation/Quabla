@@ -7,7 +7,6 @@ import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
 import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
-import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
@@ -53,21 +52,18 @@ public class Solver {
 		RocketParameter rocket = new RocketParameter(spec);
 		AeroParameter aero = new AeroParameter(spec);
 		Wind wind = new Wind(spec);
-		ConstantVariable constant = new ConstantVariable(atm, rocket, aero, wind);
-		Variable variableTrajectory = new Variable(spec,rocket);
+		Variable variableTrajectory = new Variable(spec, rocket);
 
 		// Dynamics
-		AbstractDynamics dynTrajectory = new DynamicsTrajectory(constant);
-		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(constant);
-		DynamicsParachute dynParachute = new DynamicsParachute(constant);
+		AbstractDynamics dynTrajectory = new DynamicsTrajectory(rocket, aero, atm, wind);
+		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(rocket, aero, atm, wind);
+		DynamicsParachute dynParachute = new DynamicsParachute(rocket, atm, wind);
 
 		// ODE solver
-		AbstractODEsolver ODEsolver = new RK4(constant);
-		//RK4 ODEsolver1 = new RK4(constant);
-		PredictorCorrector predCorr = new PredictorCorrector(spec, rocket);
+		AbstractODEsolver ODEsolver = new RK4(h);
+		PredictorCorrector predCorr = new PredictorCorrector(h);
 
 		DynamicsMinuteChangeTrajectory[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
-		DynamicsMinuteChangeParachute[] deltaParArray = new DynamicsMinuteChangeParachute[3];
 
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
 
@@ -102,10 +98,9 @@ public class Solver {
 			}
 		}
 
-		//deltaArray = new DynamicsMinuteChangeTrajectory[3];
 
 		//------------------- Trajectory -------------------
-		int countTrajectory = 0;// 南海Trajectoryをループしたかのカウント用
+		int countTrajectory = 0;// 何回Trajectory開始からループしたかのカウント
 		for(;;) {
 			index ++;
 			time = index * h;

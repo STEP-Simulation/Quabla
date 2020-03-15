@@ -2,7 +2,6 @@ package quabla.simulator.dynamics;
 
 import quabla.simulator.AeroParameter;
 import quabla.simulator.Atmosphere;
-import quabla.simulator.ConstantVariable;
 import quabla.simulator.Coordinate;
 import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
@@ -20,11 +19,11 @@ public class DynamicsTrajectory extends AbstractDynamics {
 	private Atmosphere atm;
 	private Wind wind;
 
-	public DynamicsTrajectory(ConstantVariable constant) {
-		this.rocket = constant.getRocket();
-		this.aero = constant.getAeroParam();
-		this.atm = constant.getAtmosphere();
-		this.wind = constant.getWind();
+	public DynamicsTrajectory(RocketParameter rocket, AeroParameter aero, Atmosphere atm, Wind wind) {
+		this.rocket = rocket;
+		this.aero = aero;
+		this.atm = atm;
+		this.wind = wind;
 
 	}
 

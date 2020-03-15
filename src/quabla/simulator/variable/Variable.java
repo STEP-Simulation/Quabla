@@ -153,23 +153,11 @@ public class Variable {
 		return pos_ENU.getValue()[2];
 	}
 
-
-	//TODO clone()をオーバーライド
-/*
-	@Override
-	public Variable clone() {
-
-		return (Variable) super.clone();
-	}*/
-
-	public Variable setClone() {
+	public Variable getClone() {
 		Variable variable2 = new Variable(spec, rocket);
 		variable2.setVariable(time, pos_ENU, vel_ENU, omega_Body, quat);
-
 		return variable2;
 	}
-
-
 
 	//TODO DynamicsMinuteChangeからVariableをセット
 	public void update(double time,DynamicsMinuteChangeTrajectory delta) {

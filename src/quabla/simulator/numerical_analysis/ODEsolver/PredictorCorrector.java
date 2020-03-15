@@ -1,7 +1,5 @@
 package quabla.simulator.numerical_analysis.ODEsolver;
 
-import quabla.parameter.InputParam;
-import quabla.simulator.RocketParameter;
 import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
@@ -21,11 +19,8 @@ public class PredictorCorrector extends AbstractODEsolver{
 	private DynamicsMinuteChangeTrajectory delta1, delta2, delta3;
 	private DynamicsMinuteChangeParachute delta1Par, delta2Par, delta3Par;
 
-	public PredictorCorrector(InputParam spec,RocketParameter rocket) {
-		variablePred = new Variable(spec, rocket);
-		variablePredPar = new VariableParachute(spec);
-		h = rocket.dt;
-
+	public PredictorCorrector(double timeStep) {
+		h = timeStep;
 	}
 
 	public void setTra(DynamicsMinuteChangeTrajectory delta_1, DynamicsMinuteChangeTrajectory delta_2, DynamicsMinuteChangeTrajectory delta_3) {
@@ -39,6 +34,8 @@ public class PredictorCorrector extends AbstractODEsolver{
 		DynamicsMinuteChangeTrajectory delta = dyn.calculateDynamics(variable);
 
 		//--------------- Predictor ---------------
+		variablePred = variable.getClone();
+		variablePred.setTime(variable.getTime() + h);
 		variablePred.setPos_ENU(
 				variable.getPos_ENU()
 				.add((
@@ -71,7 +68,6 @@ public class PredictorCorrector extends AbstractODEsolver{
 						.add(delta2.getDeltaQuat().multiply(37.0))
 						.sub(delta3.getDeltaQuat().multiply(9.0))
 						).multiply(h / 24.0)));
-		variablePred.setTime(variable.getTime() + h);
 
 		DynamicsMinuteChangeTrajectory deltaPred = dyn.calculateDynamics(variablePred);
 
@@ -122,6 +118,8 @@ public class PredictorCorrector extends AbstractODEsolver{
 		DynamicsMinuteChangeParachute delta = dyn.calculateDynamics(variable);
 
 		//--------------- Predictor ---------------
+		variablePredPar = variable.getClone();
+		variablePredPar.setTime(variable.getTime() + h);
 		variablePredPar.setPosENU(
 				variable.getPosENU()
 				.add((
@@ -138,7 +136,6 @@ public class PredictorCorrector extends AbstractODEsolver{
 						+ 37.0 * delta2Par.getDeltaVelDescent()
 						- 9.0 * delta3Par.getDeltaVelDescent()
 						) * (h / 24.0));
-		variablePredPar.setTime(variable.getTime() + h);
 
 		DynamicsMinuteChangeParachute deltaPred = dyn.calculateDynamics(variablePredPar);
 
