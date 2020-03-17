@@ -128,9 +128,9 @@ public class Variable {
 	 * origin(launch point) to C.G.
 	 * */
 	public MathematicalVector getDistanceBody() {
-		MathematicalMatrix DCM_ENU2Body = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat0));
+		MathematicalMatrix dcm_ENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat0));
 
-		return DCM_ENU2Body.dot(pos_ENU);
+		return dcm_ENU2BODY.dot(pos_ENU);
 	}
 
 	public double getDistanceUpperLug() {
