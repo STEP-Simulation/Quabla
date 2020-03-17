@@ -148,7 +148,7 @@ public class Solver {
 		variablePara.setVelDescent(trajectoryLog.getVelENUlog(indexApogee)[2]);
 
 		predCorr.setDeltaPar(deltaArray[2].getDelatPar(), deltaArray[1].getDelatPar(), deltaArray[0].getDelatPar());
-		ODEsolver = predCorr;
+		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはず
 
 		index = indexApogee; //indexの更新
 		//-------------------  Parachute -------------------
