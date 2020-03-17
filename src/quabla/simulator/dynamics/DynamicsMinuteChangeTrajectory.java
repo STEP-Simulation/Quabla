@@ -2,7 +2,7 @@ package quabla.simulator.dynamics;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange {
+public class DynamicsMinuteChangeTrajectory{
 
 	private MathematicalVector deltaPos_ENU = new MathematicalVector(new double[3]);
 	private MathematicalVector deltaVel_ENU = new MathematicalVector(new double[3]);

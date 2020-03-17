@@ -2,7 +2,9 @@ package quabla.simulator.dynamics;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
+public class DynamicsMinuteChangeParachute
+//extends AbstractDynamicsMinuteChange
+{
 
 	private MathematicalVector deltaPosENU;
 	private double deltaVelDescent;
