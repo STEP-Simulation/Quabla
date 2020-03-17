@@ -45,7 +45,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		double q = omegaBODY.getValue()[1];
 		double r = omegaBODY.getValue()[2];
 
-		//Translation coodinate
+		// Translation coodinate
 		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.getValue()));
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
@@ -66,16 +66,16 @@ public class DynamicsTrajectory extends AbstractDynamics {
 			beta = Math.asin(v / velAirAbs);
 		}
 
-		//Environment
+		// Environment
 		MathematicalVector g = new MathematicalVector(0.0 , 0.0 , -atm.getGravity(altitude));
 		double P0 = atm.getAtomosphericPressure(0.0);
 		double P = atm.getAtomosphericPressure(altitude);
 		double rho = atm.getAirDensity(altitude);
 		double Cs = atm.getSoundSpeed(altitude);
 		double Mach = velAirAbs / Cs;
-		double dynamicsPressure = 0.5 * rho * Math.pow(velAirAbs, 2);
+		double pressureDynamics = 0.5 * rho * Math.pow(velAirAbs, 2);
 
-		//Thrust
+		// Thrust
 		MathematicalVector thrust ;
 		if(rocket.thrust(t) > 0.0) {
 			double thrustPressure = (P0 - P)* rocket.Ae;
@@ -84,25 +84,24 @@ public class DynamicsTrajectory extends AbstractDynamics {
 			thrust = new MathematicalVector(0.0, 0.0, 0.0);
 		}
 
-		//Aero Force
-		double drag = dynamicsPressure * aero.Cd(Mach) * rocket.S;
-		double nomal = dynamicsPressure * aero.CNa(Mach) * rocket.S * alpha;
-		double side = dynamicsPressure * aero.CNa(Mach) * rocket.S * beta;
+		// Aero Force
+		double drag = pressureDynamics * aero.Cd(Mach) * rocket.S;
+		double nomal = pressureDynamics * aero.CNa(Mach) * rocket.S * alpha;
+		double side = pressureDynamics * aero.CNa(Mach) * rocket.S * beta;
 		MathematicalVector forceAero = new MathematicalVector(- drag , - side , - nomal);
 
-		//Newton Equation
+		// Newton Equation
 		MathematicalVector forceENU = dcmBODY2ENU.dot(thrust.add(forceAero));
 
-
-		//Accelaration
+		// Accelaration
 		MathematicalVector accENU = forceENU.multiply(1/m).add(g);
 
-		//Center of Gravity , Pressure
+		// Center of Gravity , Pressure
 		double lcg = rocket.getLcg(t);
 		double lcgProp = rocket.getLcgProp(t);
 		double lcp = aero.Lcp(Mach);
 
-		//Inretia Moment
+		// Momento of Inertia
 		double IjRoll = rocket.getIjRoll(t);
 		double IjPitch = rocket.getIjPitch(t);
 		double[] Ij = {IjRoll, IjPitch, IjPitch};
@@ -111,17 +110,17 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		double IjDotRoll = rocket.getIjDotRoll(t);
 		double[] IjDot = {IjDotRoll, IjDotPitch, IjDotPitch};
 
-		//Aero Moment
+		// Aero Moment
 		MathematicalVector armMoment = new MathematicalVector(lcg - lcp, 0.0, 0.0);
 		MathematicalVector momentAero = armMoment.cross(forceAero);
 
-		//Aero Dumping Moment
+		// Aero Damping Moment
 		MathematicalVector momentAeroDamping = new MathematicalVector(
-				dynamicsPressure * aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * p,
-				dynamicsPressure * aero.Cmq * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * q,
-				dynamicsPressure * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
+				pressureDynamics * aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * p,
+				pressureDynamics * aero.Cmq * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * q,
+				pressureDynamics * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
 
-		//Jet Dumping Moment
+		// Jet Damping Moment
 		MathematicalVector momentJetDamping = new MathematicalVector(
 				(-IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.de, 2))) * p,
 				(-IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * q,
@@ -139,7 +138,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 				moment_[1] / Ij[1],
 				moment_[2] / Ij[2]);
 
-		//Kinematics Equation
+		// Kinematics Equation
 		MathematicalMatrix tensor = new MathematicalMatrix(Coordinate.Omega_tensor(p, q, r));
 		MathematicalVector quatdot = tensor.dot(quat).multiply(0.5);
 
