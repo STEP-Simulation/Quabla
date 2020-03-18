@@ -35,7 +35,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		double m = rocket.getMass(t);
 
 		//Tronsition Coodinate
-		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.getValue()));
+		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.toDouble()));
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
 		double elevation = Coordinate.deg2rad(Coordinate.getEulerFromDCM(dcmENU2BODY.getDouble())[2]);
@@ -78,7 +78,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		MathematicalVector accENU = dcmBODY2ENU.dot(accBDOY);
 
 		//推力が自重に負けているとき(居座り)
-		if(accENU.getValue()[2] <= 0.0 && t < rocket.timeBurnout && altitude <= Z0) {
+		if(accENU.toDouble(2) <= 0.0 && t < rocket.timeBurnout && altitude <= Z0) {
 			accENU = new MathematicalVector(0.0, 0.0, 0.0);
 		}
 

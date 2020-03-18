@@ -12,6 +12,10 @@ public class DynamicsParachute {
 	private Atmosphere atm;
 	private Wind wind;
 
+	MathematicalVector vel_ENU = new MathematicalVector();
+
+	DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
+
 	public DynamicsParachute(RocketParameter rocket, Atmosphere atm, Wind wind) {
 		this.rocket = rocket;
 		this.atm = atm;
@@ -29,7 +33,8 @@ public class DynamicsParachute {
 
 		//Wind , Velocity
 		double[] wind_ENU = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
-		MathematicalVector vel_ENU = new MathematicalVector(wind_ENU[0], wind_ENU[1], VelDescent);
+		//MathematicalVector vel_ENU = new MathematicalVector(wind_ENU[0], wind_ENU[1], VelDescent);
+		vel_ENU.set(wind_ENU[0], wind_ENU[1], VelDescent);
 
 		//Environment
 		double g = atm.getGravity(altitude);
@@ -54,7 +59,7 @@ public class DynamicsParachute {
 		delta.setDeltaVelENU(new MathematicalVector(0.0, 0.0, Acc));
 		delta.setDeltaOmegaBODY(new MathematicalVector(0.0, 0.0, 0.0));
 		delta.setDeltaQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));*/
-		DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
+		//DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
 		delta.setDeltaPosENU(vel_ENU);
 		delta.setDeltaVelDescent(Acc);
 
