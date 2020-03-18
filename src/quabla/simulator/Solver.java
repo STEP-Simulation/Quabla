@@ -19,7 +19,6 @@ import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajecto
 import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
 import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
-import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
 
@@ -63,6 +62,7 @@ public class Solver {
 		AbstractODEsolver ODEsolver = new RK4(h);
 		PredictorCorrector predCorr = new PredictorCorrector(h);
 
+		// Predictor-Corrector法で用いる過去の微分値を保存するための配列
 		DynamicsMinuteChangeTrajectory[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
 
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
@@ -105,9 +105,11 @@ public class Solver {
 			index ++;
 			time = index * h;
 			DynamicsMinuteChangeTrajectory delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
-			variableTrajectory.update(time, ODEsolver.compute(variableTrajectory, dynTrajectory));
+			//variableTrajectory.update(time, ODEsolver.compute(variableTrajectory, dynTrajectory));
+			variableTrajectory.update(time, delta);
 			trajectoryLog.log(variableTrajectory);
 
+			// Predictor-Corrector用の過去の微分値を逐次保存
 			if(countTrajectory < 3) {
 				deltaArray[countTrajectory] = delta;
 			}else {
@@ -125,17 +127,10 @@ public class Solver {
 
 		lovt = new LoggerOtherVariableTrajectory(spec, trajectoryLog);
 
+		// store Ivent Value
 		iventValue = new IventValueSingle(trajectoryLog, lovt);
-
 		iventValue.setIndexLaunchClear(indexLaunchClear);
 		iventValue.setIndexLandingTrajectory(indexLandingTrajectory);
-
-		iventValue.calculateLaunchClear();
-		iventValue.calculateMachMax();
-		iventValue.calculateAtVelAirMax();
-		iventValue.calculateAtMaxQ();
-		iventValue.calculateAtApogee();
-		iventValue.calculateLandingTrajectory();
 
 		indexApogee = iventValue.getIndexApogee();
 		parachuteLog.copy(indexApogee, trajectoryLog);
@@ -143,12 +138,10 @@ public class Solver {
 
 		//頂点時のvariableを渡す
 		VariableParachute variablePara = new VariableParachute(spec);
-		variablePara.setTime(trajectoryLog.getTime(indexApogee));
-		variablePara.setPosENU(new MathematicalVector(trajectoryLog.getPosENUlog(indexApogee)));
-		variablePara.setVelDescent(trajectoryLog.getVelENUlog(indexApogee)[2]);
+		variablePara.set(trajectoryLog, indexApogee);
 
 		predCorr.setDeltaPar(deltaArray[2].getDelatPar(), deltaArray[1].getDelatPar(), deltaArray[0].getDelatPar());
-		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはず
+		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
 
 		index = indexApogee; //indexの更新
 		//-------------------  Parachute -------------------
@@ -173,10 +166,8 @@ public class Solver {
 
 		iventValue.setLoggerVariableParachute(parachuteLog, lovp);
 		iventValue.setIndexLandingParachute(indexLandingParachute);
-		iventValue.calculateLandingParachute();
 
 		iventValue.setIndex2ndPara(index2ndPara);
-		iventValue.compute2ndPara();
 
 	}
 
