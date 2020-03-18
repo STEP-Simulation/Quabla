@@ -36,8 +36,8 @@ public class LoggerVariableParachute {
 
 		for(int i = 0; i < length; i++) {
 			timeLog[i] = timeLogArrayList.get(i);
-			System.arraycopy(posENUlogArrayList.get(i).getValue(), 0, posENUlog[i], 0, 3);
-			System.arraycopy(velENUlogArrayList.get(i).getValue(), 0, velENUlog[i], 0, 3);
+			System.arraycopy(posENUlogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
+			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
 			velDescentLog[i] = velDescentLogArrayList.get(i);
 		}
 	}
@@ -82,7 +82,7 @@ public class LoggerVariableParachute {
 		for(int i = 0; i <= indexLimit; i++) {
 			timeLogArrayList.add(logdata.getTimeArrayList(i));
 			posENUlogArrayList.add(logdata.getPos_ENU(i));
-			velDescentLogArrayList.add(logdata.getVel_ENU(i).getValue()[2]);
+			velDescentLogArrayList.add(logdata.getVel_ENU(i).toDouble(2));
 			velENUlogArrayList.add(logdata.getVel_ENU(i));
 		}
 	}

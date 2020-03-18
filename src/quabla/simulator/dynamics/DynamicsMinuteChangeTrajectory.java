@@ -43,7 +43,7 @@ public class DynamicsMinuteChangeTrajectory{
 	}
 
 	public DynamicsMinuteChangeParachute getDelatPar() {
-		return new DynamicsMinuteChangeParachute(deltaPos_ENU, deltaVel_ENU.getValue()[2]);
+		return new DynamicsMinuteChangeParachute(deltaPos_ENU, deltaVel_ENU.toDouble(2));
 	}
 
 }

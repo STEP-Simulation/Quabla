@@ -2,6 +2,9 @@ package quabla.simulator.numerical_analysis.vectorOperation;
 
 public class MathematicalVector {
 
+	// Constant Vector
+	public static final MathematicalVector ZERO = new MathematicalVector(0.0, 0.0, 0.0);
+
 	private double[] vector;
 	private int length;
 
@@ -10,9 +13,13 @@ public class MathematicalVector {
 	public MathematicalVector(double[] vector) {
 		length = vector.length;
 		this.vector = new double[length];
-		for(int i=0; i<length; i++) {
-			this.vector[i] = vector[i];
-		}
+		System.arraycopy(vector, 0, this.vector, 0, length);
+	}
+
+	public MathematicalVector(MathematicalVector vector) {
+		length = vector.toDouble().length;
+		this.vector = new double[length];
+		System.arraycopy(vector.toDouble(), 0, this.vector, 0, length);
 	}
 
 	public MathematicalVector(double x, double y, double z) {
@@ -32,16 +39,17 @@ public class MathematicalVector {
 		vector[3] = z;
 	}
 
+	public MathematicalVector() {
+		this(0.0, 0.0, 0.0);
+		length = 3;
+	}
+
 	public void set(MathematicalVector vector2) {
-		for(int i = 0; i < length; i++) {
-			vector[i] = vector2.getValue()[i];
-		}
+		System.arraycopy(vector2.toDouble(), 0, vector, 0, length);
 	}
 
 	public void set(double[] vector2) {
-		for(int i = 0; i < length; i++) {
-			vector[i]  = vector2[i];
-		}
+		System.arraycopy(vector2, 0, vector, 0, length);
 	}
 
 	public void set(double x, double y, double z) {
@@ -51,33 +59,31 @@ public class MathematicalVector {
 	}
 
 	public MathematicalVector multiply(double a) {
-		double[] vector2 = new double[length];
-
-		for(int i=0; i<length; i++) {
-			vector2[i] = a * this.vector[i] ;
+		double[] vectorNew = new double[length];
+		int i = 0;
+		for(double vi : vector) {
+			vectorNew[i] = a * vi;
+			i ++;
 		}
-
-		return new MathematicalVector(vector2);
+		return new MathematicalVector(vectorNew);
 	}
 
 	public MathematicalVector add(MathematicalVector vector) {
-		double[] vector2 = new double[length];
-
+		double[] vectorNew = new double[length];
 		for(int i=0; i<length; i++) {
-			vector2[i] = this.vector[i] + vector.getValue()[i];
+			vectorNew[i] = this.vector[i] + vector.toDouble(i);
 		}
 
-		return new MathematicalVector(vector2);
+		return new MathematicalVector(vectorNew);
 	}
 
 	public MathematicalVector sub(MathematicalVector vector) {
-		double[] vector2 = new double[length];
-
+		double[] vectorNew = new double[length];
 		for(int i=0; i<length; i++) {
-			vector2[i] = this.vector[i] - vector.getValue()[i];
+			vectorNew[i] = this.vector[i] - vector.toDouble(i);
 		}
 
-		return new MathematicalVector(vector2);
+		return new MathematicalVector(vectorNew);
 	}
 
 
@@ -88,7 +94,7 @@ public class MathematicalVector {
 		double innerProduct = 0.0;
 
 		for(int i=0; i<length; i++) {
-			innerProduct += this.vector[i] * vector.getValue()[i];
+			innerProduct += this.vector[i] * vector.toDouble(i);
 		}
 
 		return innerProduct;
@@ -99,15 +105,13 @@ public class MathematicalVector {
 	 * Makes outer product of vector
 	 * */
 	public MathematicalVector cross(MathematicalVector vector) {
+		double[] vectorNew = new double[length];
 		// TODO length=3以外での例外処理
-		double[] vector2 = new double[length];
-		double[] vector_double = vector.getValue();
+		vectorNew[0] = this.vector[1]*vector.toDouble(2) - this.vector[2]*vector.toDouble(1);
+		vectorNew[1] = this.vector[2]*vector.toDouble(0) - this.vector[0]*vector.toDouble(2);
+		vectorNew[2] = this.vector[0]*vector.toDouble(1)- this.vector[1]*vector.toDouble(0);
 
-		vector2[0] = this.vector[1]*vector_double[2] - this.vector[2]*vector_double[1];
-		vector2[1] = this.vector[2]*vector_double[0] - this.vector[0]*vector_double[2];
-		vector2[2] = this.vector[0]*vector_double[1] - this.vector[1]*vector_double[0];
-
-		return new MathematicalVector(vector2);
+		return new MathematicalVector(vectorNew);
 	}
 
 	public double norm() {
@@ -120,7 +124,11 @@ public class MathematicalVector {
 		return norm;
 	}
 
-	public double[] getValue() {
+	public double[] toDouble() {
 		return vector;
+	}
+
+	public double toDouble(int i) {
+		return vector[i];
 	}
 }

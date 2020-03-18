@@ -7,13 +7,13 @@ public class InputParam {
 
 	// Length -------------------------------------------------
 	/** Total Length*/
-	public double l    = 1.793;//[m]
+	public double l    =  2.037;//[m]
 
 	/** Center of Grabity @ Dry*/
-	public double lcgDry = 1.020; // [m]
+	public double lcgDry = 1.218; // [m]
 
 	/** Outer Diameter*/
-	public double d    = 0.102; //[m]
+	public double d    = 0.162; //[m]
 
 	/** Upper Launch Lug from Nosecone*/
 	public double upper_lug = 0.8;//[m]
@@ -26,14 +26,14 @@ public class InputParam {
 
 	// Weight -------------------------------------------------
 	/** Weight @ Dry */
-	public double mDry = 4.85; // [kg]
+	public double mDry = 7.67; // [kg]
 	//---------------------------------------------------------
 
 
 
 	// Moment of Inertia --------------------------------------
-	public double IjPitchDry = 0.7053; // [kg m^2]
-	public double IjRollDry = 0.0133; // [kg m^2]
+	public double IjPitchDry = 2.551; // [kg m^2]
+	public double IjRollDry = 0.0233; // [kg m^2]
 	//---------------------------------------------------------
 
 
@@ -45,26 +45,26 @@ public class InputParam {
 	public String Cd_file = "Cd.csv";
 	public String CNa_file = "CNa.csv";
 	/**Constant Center of Pressure*/
-	public double Lcp = 1.313;//[m]
+	public double Lcp = 1.465;//[m]
 
 	/** Constant Coefficient of Drag*/
 	public double Cd  = 0.60; //[-]
 
 	/** Constant Coefficient of Nomal Force*/
-	public double CNa = 8.579;  //[1/rad]
+	public double CNa = 9.23;  //[1/rad]
 
 	/** Coefficient of Aero Dumping Moment in Pitch and Yaw*/
 	public double Cmq = - 2.676;//[1/rad]
 
 	/** Coefficient of Aero Dumping Moment in Roll*/
-	public double Clp = -0.0504; //[1/rad]
+	public double Clp = -0.0104; //[1/rad]
 	//---------------------------------------------------------
 
 
 
 	// Parachute ----------------------------------------------
 	/** Product of drag coefficient of parachute(or draug chute) and  */
-	public double CdS1 = 0.7734;     //[m2]
+	public double CdS1 = 1.044;     //[m2]
 	public boolean para2_exist = false;
 											/**
 											 * true : using 2 parachutes
@@ -76,8 +76,8 @@ public class InputParam {
 
 
 	// Launcher -----------------------------------------------
-	public double elevation_launcher = 85.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
-	public double azimuth_launcher   = 285.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
+	public double elevation_launcher = 88.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
+	public double azimuth_launcher   = 90.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
 	public double length_Launcher    = 5.0;       //[m]length of launcher
 	public double magnetic_dec       = 0.0;    //[deg] magnetic declination
 	//---------------------------------------------------------
@@ -137,7 +137,7 @@ public class InputParam {
 
 	public int WindModel   = 1;  // wind model
 
-	public double Cdv      = 6.0;   //coefficient []
+	public double Cdv      = 4.5;   //coefficient []
 									/**
 									 * coefficient [-]
 									 * in case of WindModel = 1

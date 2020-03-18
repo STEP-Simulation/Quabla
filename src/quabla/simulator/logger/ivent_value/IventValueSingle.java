@@ -29,8 +29,15 @@ public class IventValueSingle {
 	public IventValueSingle(LoggerVariable lvt, LoggerOtherVariableTrajectory lovt) {
 		this.lvt = lvt;
 		this.lovt = lovt;
+		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
+		// イベント発生時のインデックスを外部から入力する必要があるもの(ランチクリアなど)は値入力時に計算
+		calculateMachMax();
+		calculateAtVelAirMax();
+		calculateAtMaxQ();
+		calculateAtApogee();
 	}
 
+	//-------------------- Set Function --------------------
 	public void setLoggerVariableParachute(LoggerVariableParachute lvp, LoggerOtherVariableParachute lovp) {
 		this.lvp = lvp;
 		this.lovp = lovp;
@@ -38,27 +45,32 @@ public class IventValueSingle {
 
 	public void setIndexLaunchClear(int indexLaunchClear) {
 		this.indexLaunchClear = indexLaunchClear;
+		calculateLaunchClear();
 	}
 
 	public void setIndexLandingTrajectory(int indexLandingTrajectory) {
 		this.indexLandingTrajectory = indexLandingTrajectory;
+		calculateLandingTrajectory();
 	}
 
 	public void setIndexLandingParachute(int indexLandingParachute) {
 		this.indexLandingParachute = indexLandingParachute;
+		calculateLandingParachute();
 	}
 
 	public void setIndex2ndPara(int index2ndPara) {
 		this.index2ndPara = index2ndPara;
+		compute2ndPara();
 	}
 
-	public void calculateLaunchClear() {
+	//-------------------- Calculate Function --------------------
+	private void calculateLaunchClear() {
 		timeLaunchClear = lvt.getTime(indexLaunchClear);
 		accLaunchClear = lovt.getAccAbsLogArray()[indexLaunchClear];
 		velLaunchClear = Math.sqrt(Math.pow(lvt.getVelENUlog(indexLaunchClear)[0], 2) + Math.pow(lvt.getVelENUlog(indexLaunchClear)[1], 2) + Math.pow(lvt.getVelENUlog(indexLaunchClear)[2], 2));
 	}
 
-	public void calculateAtApogee() {
+	private void calculateAtApogee() {
 		ArrayAnalysis aa = new ArrayAnalysis(lovt.getAltitudeLogArray());
 		aa.calculateMaxValue();
 		this.altApogee = aa.getMaxValue();
@@ -69,7 +81,7 @@ public class IventValueSingle {
 		velAirApogee = lovt.getVelAirAbsLogArray()[indexApogee];
 	}
 
-	public void calculateAtVelAirMax() {
+	private void calculateAtVelAirMax() {
 		ArrayAnalysis aa = new ArrayAnalysis(lovt.getVelAirAbsLogArray());
 		aa.calculateMaxValue();
 		velAirMax = aa.getMaxValue();
@@ -79,7 +91,7 @@ public class IventValueSingle {
 		altVelAirMax = lovt.getAltitudeLogArray()[indexMaxVelAir];
 	}
 
-	public void calculateAtMaxQ() {
+	private void calculateAtMaxQ() {
 		ArrayAnalysis aa = new ArrayAnalysis(lovt.getDynamicsPressureLogArray());
 		aa.calculateMaxValue();
 		dynamicsPressureMax = aa.getMaxValue();
@@ -89,7 +101,7 @@ public class IventValueSingle {
 		altMaxQ = lovt.getAltitudeLogArray()[indexMaxQ];
 	}
 
-	public void calculateMachMax() {
+	private void calculateMachMax() {
 		ArrayAnalysis aa = new ArrayAnalysis(lovt.getMachLogArray());
 		aa.calculateMaxValue();
 		machMax = aa.getMaxValue();
@@ -99,18 +111,18 @@ public class IventValueSingle {
 		altMachMax = lovt.getAltitudeLogArray()[indexMaxMach];
 	}
 
-	public void compute2ndPara() {
+	private void compute2ndPara() {
 		time2ndPara = lvp.getTime(index2ndPara);
 		alt2ndPara = lovp.getAltitudeArray()[index2ndPara];
 	}
 
-	public void calculateLandingTrajectory() {
+	private void calculateLandingTrajectory() {
 		timeLandingTrajectory = lvt.getTime(indexLandingTrajectory);
 		System.arraycopy(lvt.getPosENUlog(indexLandingTrajectory), 0, posENUlandingTrajectory, 0, 2);
 		downrangeLandingTrajectory = lovt.getDownrangeLogArray()[indexLandingTrajectory];
 	}
 
-	public void calculateLandingParachute() {
+	private void calculateLandingParachute() {
 		timeLandingParachute = lvp.getTime(indexLandingParachute);
 		System.arraycopy(lvp.getPosENUlog(indexLandingParachute), 0, posENUlandingParachute, 0, 2);
 		downrangeLandingParachute = lovp.getDownrangeArray()[indexLandingParachute];
@@ -125,6 +137,7 @@ public class IventValueSingle {
 		calculateLandingTrajectory();
 	}
 
+	//-------------------- Get Function --------------------
 	// Launch Clear
 	public double getVelLaunchClear() {
 		return velLaunchClear;

@@ -10,16 +10,14 @@ public class MathematicalMatrix {
 
 
 	public MathematicalVector dot(MathematicalVector vector){
-		double[] vector2 = vector.getValue();
-		double[] vector3 = new double[matrix.length];
+		double[] vectorNew = new double[matrix.length];
 
 		for(int i=0; i<matrix.length; i++) {
 			for(int j=0; j<matrix.length; j++) {
-				vector3[i] += matrix[i][j] * vector2[j];
+				vectorNew[i] += matrix[i][j] * vector.toDouble(j);
 			}
 		}
-
-		return new MathematicalVector(vector3);
+		return new MathematicalVector(vectorNew);
 	}
 
 	public MathematicalMatrix transpose() {

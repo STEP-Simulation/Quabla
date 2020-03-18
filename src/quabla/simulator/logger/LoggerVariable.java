@@ -48,10 +48,10 @@ public class LoggerVariable {
 
 		for(int i=0; i<length; i++) {
 			time_array[i] = timeLogArrayList.get(i);
-			System.arraycopy(pos_ENULogArrayList.get(i).getValue(), 0, pos_ENU_log[i], 0, 3);
-			System.arraycopy(velENUlogArrayList.get(i).getValue(), 0, vel_ENU_log[i], 0, 3);
-			System.arraycopy(omegaBODYlogArraylist.get(i).getValue(), 0, omega_BODY_log[i], 0, 3);
-			System.arraycopy(quatLogArrayList.get(i).getValue(), 0, quat_log[i], 0, 4);
+			System.arraycopy(pos_ENULogArrayList.get(i).toDouble(), 0, pos_ENU_log[i], 0, 3);
+			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, vel_ENU_log[i], 0, 3);
+			System.arraycopy(omegaBODYlogArraylist.get(i).toDouble(), 0, omega_BODY_log[i], 0, 3);
+			System.arraycopy(quatLogArrayList.get(i).toDouble(), 0, quat_log[i], 0, 4);
 		}
 	}
 
