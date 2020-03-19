@@ -136,21 +136,21 @@ public class Variable {
 	public double getDistanceUpperLug() {
 		double upperLugFromCG = rocket.getLcg(time) - rocket.upperLug;
 
-		return getDistanceBody().add(new MathematicalVector(upperLugFromCG, 0.0, 0.0)).getValue()[0];
+		return getDistanceBody().add(new MathematicalVector(upperLugFromCG, 0.0, 0.0)).toDouble(0);
 	}
 
 	public double getDistanceLowerLug() {
 		double lowerLugFromCG = rocket.getLcg(time) - rocket.lowerLug;
 
-		return getDistanceBody().add(new MathematicalVector(lowerLugFromCG, 0.0, 0.0)).getValue()[0];
+		return getDistanceBody().add(new MathematicalVector(lowerLugFromCG, 0.0, 0.0)).toDouble(0);
 	}
 
 	public double getVelDescet() {
-		return vel_ENU.getValue()[2];
+		return vel_ENU.toDouble(2);
 	}
 
 	public double getAltitude() {
-		return pos_ENU.getValue()[2];
+		return pos_ENU.toDouble(2);
 	}
 
 	public Variable getClone() {

@@ -3,6 +3,7 @@ package quabla.simulator.variable;
 import quabla.parameter.InputParam;
 import quabla.simulator.Wind;
 import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
+import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
 public class VariableParachute {
@@ -46,6 +47,11 @@ public class VariableParachute {
 		velDescent = variable.getVelDescent();
 	}
 
+	public void set(LoggerVariable logdata, int index) {
+		posENU = new MathematicalVector(logdata.getPosENUlog(index));
+		velDescent = logdata.getVelENUlog(index)[2];
+	}
+
 	public void setTime(double time) {
 		this.time = time;
 	}
@@ -72,7 +78,7 @@ public class VariableParachute {
 	//TODO オーバーライド
 
 	public double getAltitude() {
-		return posENU.getValue()[2];
+		return posENU.toDouble(2);
 	}
 
 	public double getVelDescent() {

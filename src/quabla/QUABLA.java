@@ -15,6 +15,8 @@ public class QUABLA {
 		System.out.println("Running Solver...");
 
 		InputParam spec = new InputParam();
+		System.out.println("Simulation Mode : " + spec.simulationMode);
+		System.out.println("Model : " + spec.dir_name);
 
 		long startTime = System.currentTimeMillis();
 
