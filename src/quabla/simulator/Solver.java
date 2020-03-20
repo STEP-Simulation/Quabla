@@ -105,7 +105,6 @@ public class Solver {
 			index ++;
 			time = index * h;
 			DynamicsMinuteChangeTrajectory delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
-			//variableTrajectory.update(time, ODEsolver.compute(variableTrajectory, dynTrajectory));
 			variableTrajectory.update(time, delta);
 			trajectoryLog.log(variableTrajectory);
 
@@ -140,7 +139,7 @@ public class Solver {
 		VariableParachute variablePara = new VariableParachute(spec);
 		variablePara.set(trajectoryLog, indexApogee);
 
-		predCorr.setDeltaPar(deltaArray[2].getDelatPar(), deltaArray[1].getDelatPar(), deltaArray[0].getDelatPar());
+		predCorr.setDeltaPar(deltaArray[2].getDelatPar(), deltaArray[1].getDelatPar(), deltaArray[0].getDelatPar()); // Predicto-Correctorのための準備
 		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
 
 		index = indexApogee; //indexの更新
