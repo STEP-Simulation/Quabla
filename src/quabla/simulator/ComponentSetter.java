@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 
 /**
  * レイアウトマネジャークラス
+ * gui用のクラス
  * GribBagLayoutとGribBagConstraintsを統合し,Frameクラスの簡素化を図るクラス
  * */
 public class ComponentSetter extends GridBagLayout {
