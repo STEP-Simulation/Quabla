@@ -43,7 +43,7 @@ public class Solver {
 
 	public void solve_dynamics() {
 		int index = 0;
-		int indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
+		int indexTipOff, indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
 		double time = 0.0;
 		final double h = spec.dt;
 
@@ -80,6 +80,13 @@ public class Solver {
 				predCorr.setTra(deltaArray[2], deltaArray[1], deltaArray[0]);
 				// ODE 解法の変更
 				ODEsolver = predCorr;
+			}
+
+			// Tip-Off -----------------------------------------
+			if(spec.tip_off_exist && eventJudgement.judgeTipOff(variableTrajectory)) {
+				indexTipOff = index;
+
+
 			}
 
 			// solve ODE
