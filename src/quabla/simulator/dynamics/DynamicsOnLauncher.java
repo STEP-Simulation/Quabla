@@ -38,7 +38,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.toDouble()));
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
-		double elevation = Coordinate.deg2rad(Coordinate.getEulerFromDCM(dcmENU2BODY.getDouble())[2]);
+		double elevation = Coordinate.deg2rad(Coordinate.getEulerFromDCM(dcmENU2BODY.getDouble())[1]);
 		double Z0 = (rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation));
 
 		//Wind, Vel_air
@@ -48,7 +48,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		double velAirAbs = velAirBODY.norm();
 
 		//Environment
-		double g = -atm.getGravity(altitude);
+		double g = - atm.getGravity(altitude);
 		double P0 = atm.getAtomosphericPressure(0.0);
 		double P = atm.getAtomosphericPressure(altitude);
 		double rho = atm.getAirDensity(altitude);
@@ -71,10 +71,10 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 
 		//Newton Equation
 		MathematicalVector forceBODY =  thrust.add(forceAero);
-		MathematicalVector forceGravity = new MathematicalVector(Math.abs(g)*Math.sin(elevation), 0.0, 0.0);
+		MathematicalVector gBODY = new MathematicalVector(Math.abs(g)*Math.sin(elevation), 0.0, 0.0);
 
 		//Accelaration
-		MathematicalVector accBDOY = forceBODY.multiply(1/m).add(forceGravity);
+		MathematicalVector accBDOY = forceBODY.multiply(1/m).add(gBODY);
 		MathematicalVector accENU = dcmBODY2ENU.dot(accBDOY);
 
 		//推力が自重に負けているとき(居座り)

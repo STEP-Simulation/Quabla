@@ -34,6 +34,8 @@ public class Variable {
 		this.spec = spec;
 		this.rocket = rocket;
 		h = rocket.dt;
+
+		setInitialVariable();
 	}
 
 	public void setInitialVariable() {//初期パラメータの取得
@@ -158,6 +160,8 @@ public class Variable {
 		variable2.setVariable(time, pos_ENU, vel_ENU, omega_Body, quat);
 		return variable2;
 	}
+
+	//public
 
 	//TODO DynamicsMinuteChangeからVariableをセット
 	public void update(double time,DynamicsMinuteChangeTrajectory delta) {

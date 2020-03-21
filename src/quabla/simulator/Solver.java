@@ -10,6 +10,7 @@ import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
+import quabla.simulator.dynamics.DynamicsTipOff;
 import quabla.simulator.dynamics.DynamicsTrajectory;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.LoggerVariableParachute;
@@ -46,6 +47,7 @@ public class Solver {
 		int indexTipOff, indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
 		double time = 0.0;
 		final double h = spec.dt;
+		boolean isTipOff = false;
 
 		Atmosphere atm = new Atmosphere(spec.temperture0);
 		RocketParameter rocket = new RocketParameter(spec);
@@ -68,7 +70,6 @@ public class Solver {
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
 
 		// Initial Variable
-		variableTrajectory.setInitialVariable();
 		trajectoryLog.log(variableTrajectory);
 
 		//------------------- on Launcher -------------------
@@ -82,13 +83,6 @@ public class Solver {
 				ODEsolver = predCorr;
 			}
 
-			// Tip-Off -----------------------------------------
-			if(spec.tip_off_exist && eventJudgement.judgeTipOff(variableTrajectory)) {
-				indexTipOff = index;
-
-
-			}
-
 			// solve ODE
 			DynamicsMinuteChangeTrajectory delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
 			if(index <= 3) {
@@ -98,6 +92,13 @@ public class Solver {
 			variableTrajectory.update(time, delta);
 			// store flightlog
 			trajectoryLog.log(variableTrajectory);
+
+			// Tip-Off -----------------------------------------
+			if(spec.tip_off_exist && eventJudgement.judgeTipOff(variableTrajectory) && !isTipOff) {// 1回のみ実行
+				indexTipOff = index;
+				dynOnLauncher = new DynamicsTipOff(rocket, aero, atm, wind);
+				isTipOff = true;
+			}
 
 			if(eventJudgement.judgeLaunchClear(variableTrajectory)) {
 				indexLaunchClear = index;

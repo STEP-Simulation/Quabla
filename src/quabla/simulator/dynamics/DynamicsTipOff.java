@@ -30,7 +30,6 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double t = variable.getTime();
 		double altitude = variable.getAltitude();
 		double distanceLowerLug = variable.getDistanceLowerLug();
-		double distanceUpperLug = variable.getDistanceUpperLug();
 		MathematicalVector velENU = variable.getVel_ENU();
 		MathematicalVector omegaBODY = variable.getOmega_Body();
 		MathematicalVector quat = new MathematicalVector(Coordinate.nomalizeQuat(variable.getQuat().toDouble()));
@@ -44,6 +43,10 @@ public class DynamicsTipOff extends AbstractDynamics {
 		// Transition coordinate
 		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.toDouble()));
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
+
+		double[] attitudeDeg = Coordinate.getEulerFromDCM(dcmENU2BODY.getDouble());
+		double elevation = Coordinate.deg2rad(attitudeDeg[1]);
+		double roll = Coordinate.deg2rad(attitudeDeg[2]);
 
 		// Wind
 		MathematicalVector windENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
@@ -62,7 +65,9 @@ public class DynamicsTipOff extends AbstractDynamics {
 		}
 
 		// Environment
-		MathematicalVector g = new MathematicalVector(0.0 , 0.0 , -atm.getGravity(altitude));
+		double g = atm.getGravity(altitude); // 負の値ではなく絶対値なので注意
+		MathematicalVector gBODY = (new MathematicalVector(- Math.sin(elevation), Math.sin(roll) * Math.cos(elevation), 0.0)).multiply(g);
+		//MathematicalVector gENU = new MathematicalVector(0.0 , 0.0 , -atm.getGravity(altitude));
 		double P0 = atm.getAtomosphericPressure(0.0);
 		double P = atm.getAtomosphericPressure(altitude);
 		double rho = atm.getAirDensity(altitude);
@@ -81,27 +86,25 @@ public class DynamicsTipOff extends AbstractDynamics {
 
 		// Aero Force
 		double drag = pressureDynamics * aero.Cd(Mach) * rocket.S;
-		double normal = pressureDynamics * aero.CNa(Mach) * rocket.S * alpha;
 		double side = pressureDynamics * aero.CNa(Mach) * rocket.S * beta;
-		MathematicalVector forceAero = new MathematicalVector(- drag, - side, - normal);
+		MathematicalVector forceAero = new MathematicalVector(- drag, - side, 0.0);
 
 		// Newton Equation
-		MathematicalVector forceENU = dcmBODY2ENU.dot(thrust.add(forceAero));
-		MathematicalVector accENU = (forceENU.multiply(1 / m)).add(g);
+		MathematicalVector forceBODY = thrust.add(forceAero);
+		MathematicalVector accBODY = forceBODY.multiply(1 / m).add(gBODY);
+		MathematicalVector accENU = dcmBODY2ENU.dot(accBODY);
 
 		// Center of Gravity , Pressure
 		double lcg = rocket.getLcg(t);
 		double lcgProp = rocket.getLcgProp(t);
 		double lcp = aero.Lcp(Mach);
 
-		double pointPivot = distanceLowerLug;
-
 		// Moment of Inertia
 		double IjPitch = rocket.getIjPitch(t) + m * Math.pow(distanceLowerLug - lcg, 2);
 		double IjRoll = rocket.getIjRoll(t);
 		double[] Ij = {IjRoll, IjPitch, IjPitch};
 
-		double IjDotPitch = rocket.getIjDotPitch(t) + m * Math.pow(distanceLowerLug - lcg, 2);
+		double IjDotPitch = rocket.getIjDotPitch(t) + m * Math.pow(distanceLowerLug - lcg, 2);// 回転中心を下部ランチラグ周りとして，慣性モーメントに反映
 		double IjDotRoll = rocket.getIjDotRoll(t);
 		double[] IjDot = {IjDotRoll, IjDotPitch, IjDotPitch};
 

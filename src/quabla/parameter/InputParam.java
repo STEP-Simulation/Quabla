@@ -16,10 +16,10 @@ public class InputParam {
 	public double d    = 0.162; //[m]
 
 	/** Upper Launch Lug from Nosecone*/
-	public double upper_lug = 0.8;//[m]
+	public double upper_lug = 0.92;//[m]
 
 	/** Lower Launch Lug from Nosecone*/
-	public double lower_lug = 1.793;//[m]
+	public double lower_lug = 2.037;//[m]
 	//---------------------------------------------------------
 
 
@@ -174,12 +174,12 @@ public class InputParam {
 	//----------------------------------------------------------
 
 	// Simulation -----------------------------------------------
-	public String simulationMode = "multi";
+	public String simulationMode = "single";
 		/* Input "single" OR "multi"
 		 * single : single condition
 		 * multi : multi condition (落下分散の計算)
 		 * **/
-	public boolean tip_off_exist = false;
+	public boolean tip_off_exist = true;
 	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
 
