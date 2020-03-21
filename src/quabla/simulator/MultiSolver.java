@@ -49,7 +49,7 @@ public class MultiSolver {
 
 				//solverのインスタンスの生成
 				Solver single_solver = new Solver(spec);//Multi_solverでは各フライトでのlogは保存しない
-				single_solver.solve_dynamics();
+				single_solver.solveDynamics();
 
 				ivm.setResultArray(i, j, single_solver.getIventValueSingle());
 				single_solver.dump();

@@ -30,7 +30,7 @@ public class QUABLA {
 			spec.result_filepath = dir_filepath + "\\";
 
 			Solver solver = new Solver(spec);
-			solver.solve_dynamics();
+			solver.solveDynamics();
 			solver.makeResult();
 			solver.outputResultTxt();
 			break;

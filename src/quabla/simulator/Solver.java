@@ -42,7 +42,7 @@ public class Solver {
 	}
 
 
-	public void solve_dynamics() {
+	public void solveDynamics() {
 		int index = 0;
 		int indexTipOff, indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
 		double time = 0.0;
