@@ -113,7 +113,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		forceENU = dcmBODY2ENU.dot(thrust.add(forceAero));
 
 		// Accelaration
-		accENU = forceENU.multiply(1/m).add(gENU);
+		accENU = forceENU.multiply(1 / m).add(gENU);
 
 		// Center of Gravity , Pressure
 		double lcg = rocket.getLcg(t);
@@ -141,10 +141,9 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		// Jet Damping Moment
 		momentJetDamping.set(
-				(-IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.de, 2))) * p,
-				(-IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * q,
-				(-IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * r);
-
+				(- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.de, 2))) * p,
+				(- IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * q,
+				(- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * r);
 
 		momentGyro.set(
 				(Ij[1] - Ij[2])*q*r,
@@ -156,7 +155,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		omegadot.set(
 				moment.toDouble(0) / Ij[0],
 				moment.toDouble(1) / Ij[1],
-				moment.toDouble(2)/ Ij[2]);
+				moment.toDouble(2) / Ij[2]);
 
 		// Kinematics Equation
 		MathematicalMatrix tensor = new MathematicalMatrix(Coordinate.Omega_tensor(p, q, r));
