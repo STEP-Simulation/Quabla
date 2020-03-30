@@ -31,7 +31,7 @@ public class LoggerVariable {
 		timeLogArrayList.add(variable.getTime());
 		pos_ENULogArrayList.add(variable.getPosENU());
 		velENUlogArrayList.add(variable.getVelENU());
-		omegaBODYlogArraylist.add(variable.getOmega_Body());
+		omegaBODYlogArraylist.add(variable.getOmegaBODY());
 		quatLogArrayList.add(variable.getQuat());
 	}
 	/**

@@ -54,7 +54,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		// Import variable
 		velENU = variable.getVelENU();
-		omegaBODY = variable.getOmega_Body();
+		omegaBODY = variable.getOmegaBODY();
 		MathematicalVector quat = new MathematicalVector(Coordinate.nomalizeQuat(variable.getQuat().toDouble()));
 		double altitude = variable.getAltitude();
 		double t = variable.getTime();

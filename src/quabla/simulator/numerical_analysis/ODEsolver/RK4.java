@@ -104,7 +104,7 @@ public class RK4 extends AbstractODEsolver{
 		variable2.setTime(variable.getTime() + timestep);
 		variable2.setPos_ENU(variable.getPosENU().add(kn.getDeltaPos_ENU().multiply(timestep)));
 		variable2.setVelENU(variable.getVelENU().add(kn.getDeltaVel_ENU().multiply(timestep)));
-		variable2.setOmegaBODY(variable.getOmega_Body().add(kn.getDeltaOmega_Body().multiply(timestep)));
+		variable2.setOmegaBODY(variable.getOmegaBODY().add(kn.getDeltaOmega_Body().multiply(timestep)));
 		variable2.setQuat(variable.getQuat().add(kn.getDeltaQuat().multiply(timestep)));
 		//variableにadd(knを追加)
 		return variable2;

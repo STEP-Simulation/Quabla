@@ -73,7 +73,7 @@ public class Variable {
 		this.time = variable.getTime();
 		this.posENU = variable.getPosENU();
 		this.velENU = variable.getVelENU();
-		this.omegaBODY = variable.getOmega_Body();
+		this.omegaBODY = variable.getOmegaBODY();
 		this.quat = variable.getQuat();
 	}
 
@@ -115,7 +115,7 @@ public class Variable {
 		this.omegaBODY = omegaBODY;
 	}
 
-	public MathematicalVector getOmega_Body() {
+	public MathematicalVector getOmegaBODY() {
 		return omegaBODY;
 	}
 

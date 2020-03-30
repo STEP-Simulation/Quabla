@@ -31,7 +31,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double altitude = variable.getAltitude();
 		double distanceLowerLug = variable.getDistanceLowerLug();
 		MathematicalVector velENU = variable.getVelENU();
-		MathematicalVector omegaBODY = variable.getOmega_Body();
+		MathematicalVector omegaBODY = variable.getOmegaBODY();
 		MathematicalVector quat = new MathematicalVector(Coordinate.nomalizeQuat(variable.getQuat().toDouble()));
 
 		double m = rocket.getMass(t);

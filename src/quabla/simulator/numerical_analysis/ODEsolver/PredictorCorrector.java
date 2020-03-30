@@ -53,7 +53,7 @@ public class PredictorCorrector extends AbstractODEsolver{
 						.sub(delta3.getDeltaVel_ENU().multiply(9.0))
 						).multiply(h / 24.0)));
 		variablePred.setOmegaBODY(
-				variable.getOmega_Body()
+				variable.getOmegaBODY()
 				.add((
 						(delta.getDeltaOmega_Body().multiply(55.0))
 						.sub(delta1.getDeltaOmega_Body().multiply(59.0))
