@@ -50,8 +50,6 @@ public class DynamicsTrajectory extends AbstractDynamics {
 	@Override
 	public DynamicsMinuteChangeTrajectory calculateDynamics(Variable variable) {
 
-		//TODO インスタンス生成の回数の減少(計算速度に密接に関係)
-
 		// Import variable
 		velENU = variable.getVelENU();
 		omegaBODY = variable.getOmegaBODY();
@@ -136,8 +134,8 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		// Aero Damping Moment
 		momentAeroDamping .set(
 				pressureDynamics * aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * p,
-				pressureDynamics * aero.Cmq * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * q,
-				pressureDynamics * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
+				pressureDynamics * aero.Cmq * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * q,
+				pressureDynamics * aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
 
 		// Jet Damping Moment
 		momentJetDamping.set(

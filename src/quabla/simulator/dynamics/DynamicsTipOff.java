@@ -36,9 +36,9 @@ public class DynamicsTipOff extends AbstractDynamics {
 
 		double m = rocket.getMass(t);
 		double mDot = rocket.mdot(t);
-		double p = omegaBODY.toDouble()[0];
-		double q = omegaBODY.toDouble()[1];
-		double r = omegaBODY.toDouble()[2];
+		double p = omegaBODY.toDouble(0);
+		double q = omegaBODY.toDouble(1);
+		double r = omegaBODY.toDouble(2);
 
 		// Transition coordinate
 		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.toDouble()));
@@ -116,13 +116,13 @@ public class DynamicsTipOff extends AbstractDynamics {
 		MathematicalVector momentAeroDamping = new MathematicalVector(
 				0.0,
 				0.0,
-				pressureDynamics * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
+				pressureDynamics * aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
 
 		// Jet Damping Moment
 		MathematicalVector momentJetDamping = new MathematicalVector(
 				0.0,
 				0.0,
-				(-IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * r);
+				(- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * r);
 
 		MathematicalVector momentGyro = new MathematicalVector(
 				0.0,
