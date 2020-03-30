@@ -100,14 +100,14 @@ public class DynamicsTrajectory extends AbstractDynamics {
 			double thrustPressure = (P0 - P)* rocket.Ae;
 			thrust.set(rocket.thrust(t) + thrustPressure, 0.0, 0.0);
 		}else {
-			thrust.set(0.0, 0.0, 0.0);
+			thrust.set(MathematicalVector.ZERO);
 		}
 
 		// Aero Force
 		double drag = pressureDynamics * aero.Cd(Mach) * rocket.S;
-		double nomal = pressureDynamics * aero.CNa(Mach) * rocket.S * alpha;
+		double normal = pressureDynamics * aero.CNa(Mach) * rocket.S * alpha;
 		double side = pressureDynamics * aero.CNa(Mach) * rocket.S * beta;
-		forceAero.set(- drag , - side , - nomal);
+		forceAero.set(- drag , - side , - normal);
 
 		// Newton Equation
 		forceENU = dcmBODY2ENU.dot(thrust.add(forceAero));

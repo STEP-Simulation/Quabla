@@ -85,7 +85,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
 		delta.setDeltaVelENU(accENU);
 		delta.setDeltaPos_ENU(velENU);
-		delta.setDeltaOmegaBODY(new MathematicalVector(0.0, 0.0, 0.0));
+		delta.setDeltaOmegaBODY(MathematicalVector.ZERO);
 		delta.setDeltaQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));
 
 		return delta;
