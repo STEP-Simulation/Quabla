@@ -12,10 +12,10 @@ import quabla.simulator.variable.Variable;
 
 public class DynamicsOnLauncher extends AbstractDynamics {
 
-	private RocketParameter rocket ;
-	private AeroParameter aero;
-	private Atmosphere atm;
-	private Wind wind;
+	private final RocketParameter rocket ;
+	private final AeroParameter aero;
+	private final Atmosphere atm;
+	private final Wind wind;
 
 	public DynamicsOnLauncher(RocketParameter rocket, AeroParameter aero, Atmosphere atm, Wind wind) {
 		this.rocket = rocket;
@@ -27,7 +27,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 	@Override
 	public DynamicsMinuteChangeTrajectory calculateDynamics(Variable variable) {
 		// Import from Varible
-		MathematicalVector velENU = variable.getVel_ENU();
+		MathematicalVector velENU = variable.getVelENU();
 		MathematicalVector quat = variable.getQuat();
 		double altitude = variable.getAltitude();
 		double t = variable.getTime();
@@ -42,7 +42,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		double Z0 = (rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation));
 
 		//Wind, Vel_air
-		MathematicalVector windENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
+		MathematicalVector windENU = new MathematicalVector(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
 		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
@@ -74,7 +74,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		MathematicalVector gBODY = new MathematicalVector(Math.abs(g)*Math.sin(elevation), 0.0, 0.0);
 
 		//Accelaration
-		MathematicalVector accBDOY = forceBODY.multiply(1/m).add(gBODY);
+		MathematicalVector accBDOY = forceBODY.multiply(1 / m).add(gBODY);
 		MathematicalVector accENU = dcmBODY2ENU.dot(accBDOY);
 
 		//推力が自重に負けているとき(居座り)

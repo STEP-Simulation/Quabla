@@ -53,9 +53,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		//TODO インスタンス生成の回数の減少(計算速度に密接に関係)
 
 		// Import variable
-		//MathematicalVector velENU = variable.getVel_ENU();
-		velENU = variable.getVel_ENU();
-		//MathematicalVector omegaBODY = variable.getOmega_Body();
+		velENU = variable.getVelENU();
 		omegaBODY = variable.getOmega_Body();
 		MathematicalVector quat = new MathematicalVector(Coordinate.nomalizeQuat(variable.getQuat().toDouble()));
 		double altitude = variable.getAltitude();
@@ -72,11 +70,8 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
 		// alpha , beta
-		//MathematicalVector windENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
-		windENU.set(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
-		//MathematicalVector velAirENU = velENU.sub(windENU);
+		windENU.set(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
 		velAirENU = velENU.sub(windENU);
-		//MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
 		double v = velAirBODY.toDouble(1);
@@ -92,7 +87,6 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		}
 
 		// Environment
-		//MathematicalVector g = new MathematicalVector(0.0 , 0.0 , -atm.getGravity(altitude));
 		gENU.set(0.0 , 0.0 , -atm.getGravity(altitude));
 		double P0 = atm.getAtomosphericPressure(0.0);
 		double P = atm.getAtomosphericPressure(altitude);
@@ -102,7 +96,6 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		double pressureDynamics = 0.5 * rho * Math.pow(velAirAbs, 2);
 
 		// Thrust
-		//MathematicalVector thrust ;
 		if(rocket.thrust(t) > 0.0) {
 			double thrustPressure = (P0 - P)* rocket.Ae;
 			thrust.set(rocket.thrust(t) + thrustPressure, 0.0, 0.0);
@@ -114,15 +107,12 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		double drag = pressureDynamics * aero.Cd(Mach) * rocket.S;
 		double nomal = pressureDynamics * aero.CNa(Mach) * rocket.S * alpha;
 		double side = pressureDynamics * aero.CNa(Mach) * rocket.S * beta;
-		//MathematicalVector forceAero = new MathematicalVector(- drag , - side , - nomal);
 		forceAero.set(- drag , - side , - nomal);
 
 		// Newton Equation
-		//MathematicalVector forceENU = dcmBODY2ENU.dot(thrust.add(forceAero));
 		forceENU = dcmBODY2ENU.dot(thrust.add(forceAero));
 
 		// Accelaration
-		//MathematicalVector accENU = forceENU.multiply(1/m).add(gENU);
 		accENU = forceENU.multiply(1/m).add(gENU);
 
 		// Center of Gravity , Pressure
@@ -140,35 +130,31 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		double[] IjDot = {IjDotRoll, IjDotPitch, IjDotPitch};
 
 		// Aero Moment
-		//MathematicalVector armMoment = new MathematicalVector(lcg - lcp, 0.0, 0.0);
 		armMoment.set(lcg - lcp, 0.0, 0.0);
-		//MathematicalVector momentAero = armMoment.cross(forceAero);
 		momentAero = armMoment.cross(forceAero);
 
 		// Aero Damping Moment
-		//MathematicalVector momentAeroDamping = new MathematicalVector(
 		momentAeroDamping .set(
 				pressureDynamics * aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * p,
 				pressureDynamics * aero.Cmq * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * q,
 				pressureDynamics * aero.Cnr * rocket.S *(0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
 
 		// Jet Damping Moment
-		//MathematicalVector momentJetDamping = new MathematicalVector(
 		momentJetDamping.set(
 				(-IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.de, 2))) * p,
 				(-IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * q,
 				(-IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * r);
 
-		//MathematicalVector momentGyro = new MathematicalVector(
+
 		momentGyro.set(
 				(Ij[1] - Ij[2])*q*r,
 				(Ij[2] - Ij[0])*p*r,
 				(Ij[0] - Ij[1])*p*q);
 
 		MathematicalVector moment = momentGyro.add(momentAero).add(momentAeroDamping).add(momentJetDamping);
-		//MathematicalVector omegadot = new MathematicalVector(
+
 		omegadot.set(
-		moment.toDouble(0) / Ij[0],
+				moment.toDouble(0) / Ij[0],
 				moment.toDouble(1) / Ij[1],
 				moment.toDouble(2)/ Ij[2]);
 

@@ -22,9 +22,9 @@ public class Variable {
 	private final double h;
 
 	//Main parameters
-	private MathematicalVector pos_ENU;
-	private MathematicalVector vel_ENU;
-	private MathematicalVector omega_Body;
+	private MathematicalVector posENU;
+	private MathematicalVector velENU;
+	private MathematicalVector omegaBODY;
 	private MathematicalVector quat;
 
 	private double[] quat0;
@@ -51,7 +51,8 @@ public class Variable {
 		roll0 = Math.PI;
 
 		//Initial Position_ENU
-		pos_ENU = new MathematicalVector((rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
+		posENU = new MathematicalVector(
+				(rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
 				(rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0),
 				(rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation0)));
 
@@ -61,27 +62,27 @@ public class Variable {
 		quat = new MathematicalVector(quat0);
 
 		//Initial Velocity
-		vel_ENU = new MathematicalVector(0.0, 0.0, 0.0);
+		velENU = new MathematicalVector(0.0, 0.0, 0.0);
 
 		//Initial Anguler Velocity
-		omega_Body = new MathematicalVector(0.0, 0.0, 0.0);
+		omegaBODY = new MathematicalVector(0.0, 0.0, 0.0);
 
 	}
 
 	public void setVariable(Variable variable) {
 		this.time = variable.getTime();
-		this.pos_ENU = variable.getPos_ENU();
-		this.vel_ENU = variable.getVel_ENU();
-		this.omega_Body = variable.getOmega_Body();
+		this.posENU = variable.getPosENU();
+		this.velENU = variable.getVelENU();
+		this.omegaBODY = variable.getOmega_Body();
 		this.quat = variable.getQuat();
 	}
 
 	public void setVariable(double time, MathematicalVector Pos_ENU, MathematicalVector Vel_ENU, MathematicalVector omega_Body, MathematicalVector quat) {
 
 		this.time = time;
-		this.pos_ENU = Pos_ENU;
-		this.vel_ENU = Vel_ENU;
-		this.omega_Body = omega_Body;
+		this.posENU = Pos_ENU;
+		this.velENU = Vel_ENU;
+		this.omegaBODY = omega_Body;
 		this.quat = quat;
 
 	}
@@ -94,28 +95,28 @@ public class Variable {
 		return time;
 	}
 
-	public void setPos_ENU(MathematicalVector Pos_ENU) {
-		this.pos_ENU = Pos_ENU;
+	public void setPos_ENU(MathematicalVector posENU) {
+		this.posENU = posENU;
 	}
 
-	public MathematicalVector getPos_ENU() {
-		return pos_ENU;
+	public MathematicalVector getPosENU() {
+		return posENU;
 	}
 
-	public void setVel_ENU(MathematicalVector Vel_ENU) {
-		this.vel_ENU = Vel_ENU;
+	public void setVelENU(MathematicalVector velENU) {
+		this.velENU = velENU;
 	}
 
-	public MathematicalVector getVel_ENU() {
-		return vel_ENU;
+	public MathematicalVector getVelENU() {
+		return velENU;
 	}
 
-	public void setOmega_Body(MathematicalVector omega_Body) {
-		this.omega_Body = omega_Body;
+	public void setOmegaBODY(MathematicalVector omegaBODY) {
+		this.omegaBODY = omegaBODY;
 	}
 
 	public MathematicalVector getOmega_Body() {
-		return omega_Body;
+		return omegaBODY;
 	}
 
 	public void setQuat(MathematicalVector quat) {
@@ -132,7 +133,7 @@ public class Variable {
 	public MathematicalVector getDistanceBody() {
 		MathematicalMatrix dcm_ENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat0));
 
-		return dcm_ENU2BODY.dot(pos_ENU);
+		return dcm_ENU2BODY.dot(posENU);
 	}
 
 	public double getDistanceUpperLug() {
@@ -148,16 +149,16 @@ public class Variable {
 	}
 
 	public double getVelDescet() {
-		return vel_ENU.toDouble(2);
+		return velENU.toDouble(2);
 	}
 
 	public double getAltitude() {
-		return pos_ENU.toDouble(2);
+		return posENU.toDouble(2);
 	}
 
 	public Variable getClone() {
 		Variable variable2 = new Variable(spec, rocket);
-		variable2.setVariable(time, pos_ENU, vel_ENU, omega_Body, quat);
+		variable2.setVariable(time, posENU, velENU, omegaBODY, quat);
 		return variable2;
 	}
 
@@ -167,9 +168,9 @@ public class Variable {
 	public void update(double time,DynamicsMinuteChangeTrajectory delta) {
 
 		setTime(time);
-		setPos_ENU(pos_ENU.add(delta.getDeltaPos_ENU().multiply(h)));
-		setVel_ENU(vel_ENU.add(delta.getDeltaVel_ENU().multiply(h)));
-		setOmega_Body(omega_Body.add(delta.getDeltaOmega_Body().multiply(h)));
+		setPos_ENU(posENU.add(delta.getDeltaPos_ENU().multiply(h)));
+		setVelENU(velENU.add(delta.getDeltaVel_ENU().multiply(h)));
+		setOmegaBODY(omegaBODY.add(delta.getDeltaOmega_Body().multiply(h)));
 		setQuat(quat.add(delta.getDeltaQuat().multiply(h)));
 
 	}

@@ -32,7 +32,7 @@ public class OtherVariableParachute {
 		downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
 		//velDescent = vel_ENU[2];
 
-		windENU = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
+		windENU = Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 		//velAirENU[2] = vel_ENU[2] - windENU[2];
 		if(vel_ENU[2] <= 0.0) {
 			velAirENU[0] = windENU[0];

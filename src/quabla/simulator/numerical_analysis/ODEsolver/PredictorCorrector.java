@@ -37,22 +37,22 @@ public class PredictorCorrector extends AbstractODEsolver{
 		variablePred = variable.getClone();
 		variablePred.setTime(variable.getTime() + h);
 		variablePred.setPos_ENU(
-				variable.getPos_ENU()
+				variable.getPosENU()
 				.add((
 						(delta.getDeltaPos_ENU().multiply(55.0))
 						.sub(delta1.getDeltaPos_ENU().multiply(59.0))
 						.add(delta2.getDeltaPos_ENU().multiply(37.0))
 						.sub(delta3.getDeltaPos_ENU().multiply(9.0))
 						).multiply(h / 24.0)));
-		variablePred.setVel_ENU(
-				variable.getVel_ENU()
+		variablePred.setVelENU(
+				variable.getVelENU()
 				.add((
 						(delta.getDeltaVel_ENU().multiply(55.0))
 						.sub(delta1.getDeltaVel_ENU().multiply(59.0))
 						.add(delta2.getDeltaVel_ENU().multiply(37.0))
 						.sub(delta3.getDeltaVel_ENU().multiply(9.0))
 						).multiply(h / 24.0)));
-		variablePred.setOmega_Body(
+		variablePred.setOmegaBODY(
 				variable.getOmega_Body()
 				.add((
 						(delta.getDeltaOmega_Body().multiply(55.0))

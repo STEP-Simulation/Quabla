@@ -30,7 +30,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double t = variable.getTime();
 		double altitude = variable.getAltitude();
 		double distanceLowerLug = variable.getDistanceLowerLug();
-		MathematicalVector velENU = variable.getVel_ENU();
+		MathematicalVector velENU = variable.getVelENU();
 		MathematicalVector omegaBODY = variable.getOmega_Body();
 		MathematicalVector quat = new MathematicalVector(Coordinate.nomalizeQuat(variable.getQuat().toDouble()));
 
@@ -49,7 +49,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double roll = Coordinate.deg2rad(attitudeDeg[2]);
 
 		// Wind
-		MathematicalVector windENU = new MathematicalVector(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
+		MathematicalVector windENU = new MathematicalVector(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
 		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();

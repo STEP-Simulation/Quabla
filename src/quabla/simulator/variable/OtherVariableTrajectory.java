@@ -104,7 +104,7 @@ public class OtherVariableTrajectory {
 		rho = atm.getAirDensity(altitude);
 
 		// velAir , alpha , beta
-		double[] wind_ENU = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
+		double[] wind_ENU = Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 		for(int i = 0; i < 3; i++) {
 			velAirENU[i] = vel_ENU[i] - wind_ENU[i];
 		}

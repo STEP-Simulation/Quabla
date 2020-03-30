@@ -32,7 +32,7 @@ public class DynamicsParachute {
 		double m = rocket.getMass(t);
 
 		//Wind , Velocity
-		double[] wind_ENU = Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
+		double[] wind_ENU = Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
 		//MathematicalVector vel_ENU = new MathematicalVector(wind_ENU[0], wind_ENU[1], VelDescent);
 		vel_ENU.set(wind_ENU[0], wind_ENU[1], VelDescent);
 

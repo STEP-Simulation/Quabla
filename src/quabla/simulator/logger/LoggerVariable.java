@@ -29,8 +29,8 @@ public class LoggerVariable {
 	public void log(Variable variable) {
 
 		timeLogArrayList.add(variable.getTime());
-		pos_ENULogArrayList.add(variable.getPos_ENU());
-		velENUlogArrayList.add(variable.getVel_ENU());
+		pos_ENULogArrayList.add(variable.getPosENU());
+		velENUlogArrayList.add(variable.getVelENU());
 		omegaBODYlogArraylist.add(variable.getOmega_Body());
 		quatLogArrayList.add(variable.getQuat());
 	}

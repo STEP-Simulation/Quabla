@@ -23,7 +23,7 @@ public class VariableParachute {
 	 * */
 	public VariableParachute(Variable variable) {
 		time = variable.getTime();
-		posENU.set(variable.getPos_ENU());
+		posENU.set(variable.getPosENU());
 		velDescent = variable.getVelDescet();
 	}
 
@@ -95,7 +95,7 @@ public class VariableParachute {
 		posENU = posENU.add(delta.getDeltaPosENU().multiply(h));
 		velDescent = velDescent + delta.getDeltaVelDescent() * h;
 		double altitude = getAltitude();
-		System.arraycopy(Wind.wind_ENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)), 0, windENU, 0, 2);
+		System.arraycopy(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)), 0, windENU, 0, 2);
 		velENU.set(windENU[0], windENU[1], velDescent);
 	}
 }

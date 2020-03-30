@@ -99,7 +99,7 @@ public class Wind {
 	 * @param direction [deg]
 	 * @return wind_ENU
 	 * */
-	public static double[] wind_ENU(double speed, double direction) {
+	public static double[] windENU(double speed, double direction) {
 		//wind_azimuth [deg] 磁北から時計回りを正
 		double[] wind_ENU = new double[3];
 		double wind_azimuth_ENU;//[rad] 磁東から反時計回りを正
