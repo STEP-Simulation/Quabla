@@ -180,7 +180,7 @@ public class OutputFlightlogTrajectory {
 		dynamicsPressureAnaly = new Interpolation(lv.getTimeArray(), lov.getDynamicsPressureLogArray());
 		fstAnaly = new Interpolation(lv.getTimeArray(), lov.getFstLogArray());
 		dragAnaly = new Interpolation(lv.getTimeArray(), lov.getDragLogArray());
-		normalAnaly = new Interpolation(lv.getTimeArray(), lov.getDownrangeLogArray());
+		normalAnaly = new Interpolation(lv.getTimeArray(), lov.getNormalLogArray());
 		sideAnaly = new Interpolation(lv.getTimeArray(), lov.getSideLogArray());
 		thrustAnaly = new Interpolation(lv.getTimeArray(), lov.getThrustLogArray());
 		forceBODYanaly = new Interpolation(lv.getTimeArray(), lov.getForceBODYlogArray());
