@@ -10,7 +10,7 @@ import quabla.simulator.numerical_analysis.Interpolation;
 
 public class OutputFlightlogTrajectory {
 
-	/**出力するもの
+	/* 出力するもの
 	 * 時間 time,
 	 * 位置局所水平座標軸成分x_ENU,
 	 * 位置局所水平座標軸成分y_ENU,
@@ -121,7 +121,7 @@ public class OutputFlightlogTrajectory {
 			"Ij_roll [kg m2]",
 			"Ij_pitch [kg m2]",
 			"Altitude [km]",
-			"downrange [km]",
+			"Downrange [km]",
 			"vel_air_east [m/s]",
 			"vel_air_north [m/s]",
 			"vel_air_up [m/s]",
