@@ -195,7 +195,7 @@ public class InputParam {
 	 * パスは\\で終わるように
 	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\";//出力先のファイルパス
-	public String dir_name = "debug";
+	public String dirName = "debug";
 	//------------------------------------------------------------
 
 

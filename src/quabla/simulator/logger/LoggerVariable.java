@@ -11,16 +11,16 @@ import quabla.simulator.variable.Variable;
  * */
 public class LoggerVariable {
 
-	private double[] time_array;
-	private double[][] pos_ENU_log;
-	private double[][] vel_ENU_log;
-	private double[][] omega_BODY_log;
-	private double[][] quat_log;
+	private double[] timeArray;
+	private double[][] posENUlog;
+	private double[][] velENUlog;
+	private double[][] omegaBODYlog;
+	private double[][] quatLog;
 
 	private int length;
 
 	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
-	private ArrayList<MathematicalVector> pos_ENULogArrayList = new ArrayList<>();
+	private ArrayList<MathematicalVector> posENULogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> omegaBODYlogArraylist = new ArrayList<>();
 	private ArrayList<MathematicalVector> quatLogArrayList = new ArrayList<>();
@@ -29,7 +29,7 @@ public class LoggerVariable {
 	public void log(Variable variable) {
 
 		timeLogArrayList.add(variable.getTime());
-		pos_ENULogArrayList.add(variable.getPosENU());
+		posENULogArrayList.add(variable.getPosENU());
 		velENUlogArrayList.add(variable.getVelENU());
 		omegaBODYlogArraylist.add(variable.getOmegaBODY());
 		quatLogArrayList.add(variable.getQuat());
@@ -40,18 +40,18 @@ public class LoggerVariable {
 	public void makeArray() {
 		length = timeLogArrayList.size();
 
-		time_array = new double[length];
-		pos_ENU_log = new double[length][3];
-		vel_ENU_log = new double[length][3];
-		omega_BODY_log = new double[length][3];
-		quat_log = new double[length][4];
+		timeArray = new double[length];
+		posENUlog = new double[length][3];
+		velENUlog = new double[length][3];
+		omegaBODYlog = new double[length][3];
+		quatLog = new double[length][4];
 
 		for(int i=0; i<length; i++) {
-			time_array[i] = timeLogArrayList.get(i);
-			System.arraycopy(pos_ENULogArrayList.get(i).toDouble(), 0, pos_ENU_log[i], 0, 3);
-			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, vel_ENU_log[i], 0, 3);
-			System.arraycopy(omegaBODYlogArraylist.get(i).toDouble(), 0, omega_BODY_log[i], 0, 3);
-			System.arraycopy(quatLogArrayList.get(i).toDouble(), 0, quat_log[i], 0, 4);
+			timeArray[i] = timeLogArrayList.get(i);
+			System.arraycopy(posENULogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
+			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
+			System.arraycopy(omegaBODYlogArraylist.get(i).toDouble(), 0, omegaBODYlog[i], 0, 3);
+			System.arraycopy(quatLogArrayList.get(i).toDouble(), 0, quatLog[i], 0, 4);
 		}
 	}
 
@@ -64,7 +64,7 @@ public class LoggerVariable {
 	}
 
 	public MathematicalVector getPos_ENU(int index) {
-		return pos_ENULogArrayList.get(index);
+		return posENULogArrayList.get(index);
 	}
 
 	public MathematicalVector getVel_ENU(int index) {
@@ -80,43 +80,43 @@ public class LoggerVariable {
 	}
 
 	public double getTime(int index) {
-		return time_array[index];
+		return timeArray[index];
 	}
 
 	public double[] getPosENUlog(int index) {
-		return pos_ENU_log[index];
+		return posENUlog[index];
 	}
 
 	public double[] getVelENUlog(int index) {
-		return vel_ENU_log[index];
+		return velENUlog[index];
 	}
 
 	public double[] getOmegaBODYlog(int index) {
-		return omega_BODY_log[index];
+		return omegaBODYlog[index];
 	}
 
 	public double[] getQuatLog(int index) {
-		return quat_log[index];
+		return quatLog[index];
 	}
 
 	public double[] getTimeArray() {
-		return time_array;
+		return timeArray;
 	}
 
 	public double[][] getPosENUArray(){
-		return pos_ENU_log;
+		return posENUlog;
 	}
 
 	public double[][] getVelENUArray(){
-		return vel_ENU_log;
+		return velENUlog;
 	}
 
 	public double[][] getOmegaBODYArray(){
-		return omega_BODY_log;
+		return omegaBODYlog;
 	}
 
 	public double[][] getQuatArray(){
-		return quat_log;
+		return quatLog;
 	}
 
 	/**使わなくなったArrayListをnullにする
@@ -124,7 +124,7 @@ public class LoggerVariable {
 	 * */
 	public void dumpArrayList() {
 		timeLogArrayList = null;
-		pos_ENULogArrayList = null;
+		posENULogArrayList = null;
 		velENUlogArrayList = null;
 		omegaBODYlogArraylist = null;
 		quatLogArrayList = null;

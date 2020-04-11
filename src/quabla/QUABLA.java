@@ -8,7 +8,7 @@ import quabla.simulator.Solver;
 
 public class QUABLA {
 
-	private static String dir_filepath;
+	private static String dirFilepath;
 
 	public static void main(String[] args) {
 
@@ -16,7 +16,7 @@ public class QUABLA {
 
 		InputParam spec = new InputParam();
 		System.out.println("Simulation Mode : " + spec.simulationMode);
-		System.out.println("Model : " + spec.dir_name);
+		System.out.println("Model : " + spec.dirName);
 
 		long startTime = System.currentTimeMillis();
 
@@ -25,9 +25,9 @@ public class QUABLA {
 			//single condition
 
 			//ディレクトリの作成
-			dir_filepath = spec.result_filepath + "Result_single_" + spec.dir_name;
-			make_resultdir(dir_filepath);
-			spec.result_filepath = dir_filepath + "\\";
+			dirFilepath = spec.result_filepath + "Result_single_" + spec.dirName;
+			makeResultdir(dirFilepath);
+			spec.result_filepath = dirFilepath + "\\";
 
 			Solver solver = new Solver(spec);
 			solver.solveDynamics();
@@ -39,9 +39,9 @@ public class QUABLA {
 			//multiple condition
 
 			//ディレクトリの作成
-			dir_filepath = spec.result_filepath + "Result_multi_" + spec.dir_name;
-			make_resultdir(dir_filepath);
-			spec.result_filepath = dir_filepath + "\\";
+			dirFilepath = spec.result_filepath + "Result_multi_" + spec.dirName;
+			makeResultdir(dirFilepath);
+			spec.result_filepath = dirFilepath + "\\";
 
 			MultiSolver multi_solver = new MultiSolver(spec);
 			multi_solver.solveMulti();
@@ -53,24 +53,24 @@ public class QUABLA {
 		System.out.println("Completed!!");
 	}
 
-	public static void make_resultdir(String filepath) {
-		String dir_filepath_org = filepath;
-		String dir_filepath_ = filepath;
+	public static void makeResultdir(String filepath) {
+		String dirFilepathOrg = filepath;
+		String dirFilepath_ = filepath;
 
-		File result_dir = new File(dir_filepath_);
+		File resultDir = new File(dirFilepath_);
 		int i = 0;
-		while((result_dir = new File(dir_filepath_)).exists()){
-			dir_filepath_ = dir_filepath_org +"_"+ String.format("%02d", i+1);
+		while((resultDir = new File(dirFilepath_)).exists()){
+			dirFilepath_ = dirFilepathOrg +"_"+ String.format("%02d", i+1);
 			i ++;
 		}
 
-		if( result_dir.mkdir()) {
+		if( resultDir.mkdir()) {
 			System.out.println("Make Directory : success");
 		}else {
 			System.out.println("Make Directroy : false");//TODO ディレクトリ作成失敗の時の例外処理
 		}
 
-		dir_filepath = dir_filepath_;
+		dirFilepath = dirFilepath_;
 
 	}
 
