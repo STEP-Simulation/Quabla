@@ -63,7 +63,7 @@ public class InputParam {
 
 
 	// Parachute ----------------------------------------------
-	/** Product of drag coefficient of parachute(or draug chute) and  */
+	/** Product of drag coefficient and area of parachute(or draug chute) */
 	public double CdS1 = 1.044;     //[m2]
 	public boolean para2_exist = false;
 											/**
@@ -77,9 +77,9 @@ public class InputParam {
 
 	// Launcher -----------------------------------------------
 	public double elevation_launcher = 88.0;  //[deg] elevation of launcher (vertical = 90.0 deg)
-	public double azimuth_launcher   = 90.0;  //[deg] azimuth of launcher (east = 0 deg , south = 270 deg )
+	public double azimuth_launcher   = 90.0;  //[deg] azimuth of launcher (north = 0 deg , west = 270 deg )
 	public double length_Launcher    = 5.0;       //[m]length of launcher
-	public double magnetic_dec       = 0.0;    //[deg] magnetic declination
+	public double magnetic_dec       = 8.9;    //[deg] magnetic declination
 	//---------------------------------------------------------
 
 
@@ -91,8 +91,6 @@ public class InputParam {
 	/** nozzle expansion ratio
 	 * nozzle area ratio */
 	public double eps = 2.6951; //[-]
-
-	//---------- 改良後エンジンパラメータ ----------
 
 	// 燃焼時間 , エンジン作動時間ではない
 	public double timeBurnout = 5.6; //[s]
@@ -135,22 +133,24 @@ public class InputParam {
 	public boolean Wind_file_exsit = true;
 	public String wind_file = "wind.csv";
 
-	public int WindModel   = 1;  // wind model
+	public int WindModel   = 1;
+											/* wind model
+											 * 1 : power law
+											 * **/
 
 	public double Cdv      = 4.5;   //coefficient []
-									/**
-									 * coefficient [-]
+									/* coefficient [-]
 									 * in case of WindModel = 1
 									 * */
 
 	/** Wind Azimuth @ Reference Altitude */
 	public double wind_azimuth = 270.0;//[deg]
-	/* 0 deg : from west to east
+	/* 0 deg : from north to south
 	 * 270 deg : from north to south
 	 * **/
 
 	/** Wind Speed @ reference altitude */
-	public double wind_speed   = 2.0; 	 //wind speed [m/s];
+	public double wind_speed   = 2.0; //[m/s];
 
 	/** wind reference altitude*/
 	public double Zr     = 5.0; //[m]
@@ -174,20 +174,14 @@ public class InputParam {
 	//----------------------------------------------------------
 
 	// Simulation -----------------------------------------------
-	public String simulationMode = "single";
+	public String simulationMode = "multi";
 		/* Input "single" OR "multi"
 		 * single : single condition
 		 * multi : multi condition (落下分散の計算)
 		 * **/
 	public boolean tip_off_exist = true;
-	public int     n = 400000; //maximum number of simulation steps
 	public double dt = 0.001;   // [s] メインソルバの時間ステップ
 
-	/**log dataの時間ステップ
-	 * 粗くしてもメインソルバの精度には影響が出ない
-	 * メインソルバより細かくすると値がおかしくなる
-	 * */
-	public double dt_output = 0.01;//[s]
 	public String  thrustcurve = "thrust.csv"; //推力データのアドレス
 
 	/**
@@ -195,7 +189,7 @@ public class InputParam {
 	 * パスは\\で終わるように
 	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\";//出力先のファイルパス
-	public String dirName = "debug";
+	public String dirName = "STEP15";
 	//------------------------------------------------------------
 
 
