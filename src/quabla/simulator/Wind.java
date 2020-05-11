@@ -3,11 +3,18 @@ package quabla.simulator;
 import quabla.parameter.InputParam;
 import quabla.simulator.numerical_analysis.Interpolation;
 
+/**
+ * Wind deals with wind, e.g. wind speed, direction.
+ * */
 public class Wind {
 
 	Interpolation speed_analy, direction_analy;
 	boolean Wind_file_exist;
-	private double wind_speed, Zr, wind_azimuth,Cdv;
+	private double wind_speed,
+	Zr,
+	wind_azimuth,
+	/** exponetial of power function*/
+	Cdv;
 	private static double magnetic_dec;
 
 	//落下分散の時は,spec.wind_file_exist, spec.wind_speed, spec.wind_azimuthを書き換える
@@ -50,8 +57,8 @@ public class Wind {
 
 		if(Wind_file_exist) {
 			speed = speed_analy.linearInterp1column(alt);
-		}else {//べき法則
-			speed = getWindSpeedWithPowerLaw(alt, wind_speed, Zr, Cdv);
+		}else {// power law
+			speed = getWindSpeedPowerLaw(alt, wind_speed, Zr, Cdv);
 		}
 
 		return speed;
@@ -67,7 +74,7 @@ public class Wind {
 
 		if(Wind_file_exist) {
 			direction = direction_analy.linearInterp1column(alt);
-		}else {//べき法則
+		}else {// power law
 			direction = wind_azimuth;
 		}
 
@@ -76,13 +83,15 @@ public class Wind {
 
 
 	/**
-	 * @param alt [m] if alt if below 0[m], wind speed is 0[m/s]
+	 * This function calcurate wind speed, if wind model is selected "power law".
+	 * @param alt [m]
 	 * @param ref_wind_speed [m/s]
-	 * @param ref_alt [m]
+	 * @param ref_alt [m] Refarence altitude
 	 * @param wind_pow_exp [-]
 	 * @return speed [m/s]
+	 * If alt is below 0m, wind speed is 0 m/s.
 	 * */
-	private static double getWindSpeedWithPowerLaw(double alt, double ref_wind_speed, double ref_alt, double wind_pow_exp) {
+	private static double getWindSpeedPowerLaw(double alt, double ref_wind_speed, double ref_alt, double wind_pow_exp) {
 		double windSpeed;
 		if(alt <= 0.0) {
 			windSpeed = 0.0;

@@ -6,6 +6,9 @@ import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachut
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
 import quabla.simulator.numerical_analysis.ArrayAnalysis;
 
+/**
+ * IventValueSingle stores and calcurate flight event values(e.g. Launch Clear, apogee, etc.).
+ * */
 public class IventValueSingle {
 
 	private double velLaunchClear;

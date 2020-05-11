@@ -3,8 +3,9 @@ package quabla.simulator;
 import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
 
-/**ロケットの飛行状態を判断するためのクラス
- *
+/**
+ * FlightEventJudgement check rocket flight status and judge flight event.
+ * This class can judge event of tip-off, launch clear, apogee, landing, separation of 2nd parachute.
  * */
 public class FlightEventJudgement {
 

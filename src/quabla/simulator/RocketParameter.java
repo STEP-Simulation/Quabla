@@ -4,8 +4,9 @@ import quabla.parameter.InputParam;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 /**
- * このクラスはhogehoge
- *
+ * RocketParameter calucurate parameters about rocket(e.g. C.G., moment of inertia, etc.).
+ * Parameters of aerodynamics is calcurated by {@link quabla.simulator.AeroParameter},
+ * parameters of atmosphere is calcurated by {@link quabla.simulator.Atmosphere}
  * */
 public class RocketParameter {
 

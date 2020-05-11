@@ -6,6 +6,11 @@ package quabla.simulator;
  * q = q0*1 + q1*i + q2*j + q3*k
  * ----↑define quaternion ↑----
  * */
+
+/**
+ * Coordinate deals with coordinte transformation
+ * using DCM(Direct Cosine Matrix), euler angles(321 System) and quaternion.
+ * */
 public class Coordinate {
 
 
@@ -49,7 +54,9 @@ public class Coordinate {
 	}
 
 
-
+	/**
+	 * This function makes tensor used in Kinematic ODE.
+	 * */
 	public static double[][] Omega_tensor(double p, double q , double r){
 		double tensor[][] = new double[4][4];
 		double omega_Body[] = new double[3];
@@ -96,6 +103,7 @@ public class Coordinate {
 
 
 	/**
+	 * This function is used initial quaterion from launch azimuth, elevation and roll angle.
 	 * @param azimuth [deg]
 	 * @param elevation [deg]
 	 * @param roll [deg]
@@ -183,6 +191,8 @@ public class Coordinate {
 
 
 	/**
+	 * This function calucurate euler angles from DCM.
+	 * This function is used to get result euler angles.
 	 * @param DCM
 	 * @return euler [deg]
 	 * */

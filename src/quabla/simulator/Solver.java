@@ -23,6 +23,9 @@ import quabla.simulator.numerical_analysis.ODEsolver.RK4;
 import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
 
+/**
+ * Solver command functions in single condition, which are needed simulating dynamics and storing.
+ * */
 public class Solver {
 
 	InputParam spec;
@@ -61,15 +64,16 @@ public class Solver {
 		DynamicsParachute dynParachute = new DynamicsParachute(rocket, atm, wind);
 
 		// ODE solver
-		AbstractODEsolver ODEsolver = new RK4(h);
+		AbstractODEsolver ODEsolver = new RK4(h); // 最初は4次ルンゲクッタで計算
 		PredictorCorrector predCorr = new PredictorCorrector(h);
 
 		// Predictor-Corrector法で用いる過去の微分値を保存するための配列
 		DynamicsMinuteChangeTrajectory[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
 
+		// どの飛行状態に遷移したかを判定
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
 
-		// Initial Variable
+		// log Initial Variable
 		trajectoryLog.log(variableTrajectory);
 
 		//------------------- on Launcher -------------------
@@ -190,6 +194,9 @@ public class Solver {
 		ofp.runOutputLine(spec.result_filepath + "flightlog_parachute.csv");
 	}
 
+	/**
+	 * outputResultTxt writes txt file about ivent values.
+	 * */
 	public void outputResultTxt() {
 		OutputTxt resultTxt = null;
 

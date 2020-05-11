@@ -6,6 +6,10 @@ import quabla.output.OutputCsv;
 import quabla.output.OutputTxt;
 import quabla.simulator.numerical_analysis.ArrayAnalysis;
 
+/**
+ * 落下分散計算時のイベント値の処理
+ * csvファイルへの保存，全条件での最大値や最小値及びその時の条件を計算
+ * */
 public class IventValueMulti {
 
 	int row,column;

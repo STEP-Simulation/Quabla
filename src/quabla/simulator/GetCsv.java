@@ -6,6 +6,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * GetCsv reads csv file.
+ * Functions of this class must be used properly for the number of columns.
+ * */
 public class GetCsv {
 
 	public static double[] get1ColumnArray(String filepath) {

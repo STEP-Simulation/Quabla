@@ -6,6 +6,9 @@ import quabla.output.OutputLandingScatter;
 import quabla.parameter.InputParam;
 import quabla.simulator.logger.ivent_value.IventValueMulti;
 
+/**
+ * MultiSolver mangages solver and store values in multiple conditions.
+ * */
 public class MultiSolver {
 	InputParam spec;
 	double speed_min,speed_step;
@@ -80,6 +83,9 @@ public class MultiSolver {
 		}
 	}
 
+	/**
+	 * This fanction display progress bar.
+	 * */
 	private void displayProcess(int numSpeed) {
 		String process = "";
 		double processDouble = (double)(numSpeed + 1) / (double)speed_num ;
@@ -93,8 +99,16 @@ public class MultiSolver {
 		System.out.println("|" + process + "|" + String.format("%d", (int)(processDouble * 100)) + "%");
 	}
 
+	/**
+	 * @param posLandingArray 落下地点の3次元配列
+	 * @return windMap 落下地点の2次元配列
+	 * */
 	private double[][] getWindMap(double[][][] posLandingArray) {
 		double[][] windMap = new double[2 * speed_num][angle_num + 1];
+		/*
+		 * 1st column : per wind speed
+		 * 2nd columun : per wind angle
+		 * */
 		int i = 0;
 		for(double[][] posSpeed : posLandingArray) { //風速ごとの要素
 			int j = 0;

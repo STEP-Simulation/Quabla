@@ -8,6 +8,9 @@ import quabla.simulator.logger.ivent_value.IventValueSingle;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
 import quabla.simulator.numerical_analysis.Interpolation;
 
+/**
+ * OutputFlightlogTrajectory makes csv file and writes value about flightlog(e.g. time, position, velocity, etc.).
+ * */
 public class OutputFlightlogTrajectory {
 
 	/* 出力するもの
