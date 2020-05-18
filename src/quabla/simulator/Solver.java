@@ -33,7 +33,6 @@ public class Solver {
 
 	private LoggerVariable trajectoryLog;
 	private LoggerVariableParachute parachuteLog;
-	//private LoggerOtherVariableTrajectory lovt;
 	private LoggerOtherVariableParachute lovp;
 
 	public Solver(InputParam spec) {
@@ -134,8 +133,6 @@ public class Solver {
 			}
 		}
 		trajectoryLog.makeArray();
-
-//		lovt = new LoggerOtherVariableTrajectory(spec, trajectoryLog);
 
 		// store Ivent Value
 		eventValue = new EventValueSingle(trajectoryLog);
@@ -250,7 +247,6 @@ public class Solver {
 	}
 
 	public void dump() {
-//		lovt.dumpLog();
 		lovp.dumpLog();
 	}
 
