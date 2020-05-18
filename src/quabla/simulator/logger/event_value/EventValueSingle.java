@@ -1,4 +1,4 @@
-package quabla.simulator.logger.ivent_value;
+package quabla.simulator.logger.event_value;
 
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.LoggerVariableParachute;
@@ -7,9 +7,9 @@ import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajecto
 import quabla.simulator.numerical_analysis.ArrayAnalysis;
 
 /**
- * IventValueSingle stores and calcurate flight event values(e.g. Launch Clear, apogee, etc.).
+ * EventValueSingle stores and calcurate flight event values(e.g. Launch Clear, apogee, etc.).
  * */
-public class IventValueSingle {
+public class EventValueSingle {
 
 	private double velLaunchClear;
 	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeApogee, time2ndPara, timeLandingTrajectory, timeLandingParachute;
@@ -29,7 +29,7 @@ public class IventValueSingle {
 	LoggerOtherVariableTrajectory lovt;
 	LoggerOtherVariableParachute lovp;
 
-	public IventValueSingle(LoggerVariable lvt, LoggerOtherVariableTrajectory lovt) {
+	public EventValueSingle(LoggerVariable lvt, LoggerOtherVariableTrajectory lovt) {
 		this.lvt = lvt;
 		this.lovt = lovt;
 		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
@@ -71,6 +71,7 @@ public class IventValueSingle {
 		timeLaunchClear = lvt.getTime(indexLaunchClear);
 		accLaunchClear = lovt.getAccAbsLogArray()[indexLaunchClear];
 		velLaunchClear = Math.sqrt(Math.pow(lvt.getVelENUlog(indexLaunchClear)[0], 2) + Math.pow(lvt.getVelENUlog(indexLaunchClear)[1], 2) + Math.pow(lvt.getVelENUlog(indexLaunchClear)[2], 2));
+		//velLaunchClear =
 	}
 
 	private void calculateAtApogee() {
