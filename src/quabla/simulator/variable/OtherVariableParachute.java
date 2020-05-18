@@ -47,7 +47,7 @@ public class OtherVariableParachute {
 	}
 
 	public double getAltitude() {
-		return altitude;
+		return altitude * Math.pow(10, -3);
 	}
 
 	public double getDownrange() {
