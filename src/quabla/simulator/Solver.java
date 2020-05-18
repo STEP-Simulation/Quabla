@@ -167,10 +167,10 @@ public class Solver {
 		}
 		parachuteLog.makeArray();
 
-		eventValue.setLoggerVariableParachute(parachuteLog);
 		eventValue.setIndexLandingParachute(indexLandingParachute);
 
 		eventValue.setIndex2ndPara(index2ndPara);
+		eventValue.calculate(trajectoryLog, parachuteLog);
 
 	}
 
