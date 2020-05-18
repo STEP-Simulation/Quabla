@@ -55,7 +55,6 @@ public class MultiSolver {
 				single_solver.solveDynamics();
 
 				ivm.setResultArray(i, j, single_solver.getIventValueSingle());
-				single_solver.dump();
 				j++;
 			}
 			displayProcess(i);

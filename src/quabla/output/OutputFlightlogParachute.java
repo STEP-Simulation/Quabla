@@ -5,7 +5,6 @@ import java.io.IOException;
 import quabla.parameter.InputParam;
 import quabla.simulator.logger.LoggerVariableParachute;
 import quabla.simulator.logger.event_value.EventValueSingle;
-import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 public class OutputFlightlogParachute {
@@ -43,18 +42,18 @@ public class OutputFlightlogParachute {
 	 * @param filename 出力するcsvのfile名
 	 * @throws IOException
 	 * */
-	public OutputFlightlogParachute(InputParam spec, LoggerVariableParachute lv, LoggerOtherVariableParachute lov, EventValueSingle ivs) {
+	public OutputFlightlogParachute(InputParam spec, LoggerVariableParachute lv, EventValueSingle ivs) {
 
 		timeApogee = ivs.getTimeApogee();
 		timeLandingParachute = ivs.getTimeLandingParachute();
 
 		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
 		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
-		windENUanaly = new Interpolation(lv.getTimeArray(), lov.getWindENUarray());
-		altitudeAnaly = new Interpolation(lv.getTimeArray(), lov.getAltitudeArray());
-		downrangeAnaly = new Interpolation(lv.getTimeArray(), lov.getDownrangeArray());
-		velAirENUanaly = new Interpolation(lv.getTimeArray(), lov.getVelAirENUArray());
-		velAirAbsAnaly = new Interpolation(lv.getTimeArray(), lov.getVelAirAbsArray());
+		windENUanaly = new Interpolation(lv.getTimeArray(), lv.getWindENUarray());
+		altitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAltitudeArray());
+		downrangeAnaly = new Interpolation(lv.getTimeArray(), lv.getDownrangeArray());
+		velAirENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirENUArray());
+		velAirAbsAnaly = new Interpolation(lv.getTimeArray(), lv.getVelAirAbsArray());
 	}
 
 	public void runOutputLine(String filepath) {

@@ -15,7 +15,6 @@ import quabla.simulator.dynamics.DynamicsTrajectory;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.LoggerVariableParachute;
 import quabla.simulator.logger.event_value.EventValueSingle;
-import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
 import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
 import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
@@ -33,13 +32,12 @@ public class Solver {
 
 	private LoggerVariable trajectoryLog;
 	private LoggerVariableParachute parachuteLog;
-	private LoggerOtherVariableParachute lovp;
 
 	public Solver(InputParam spec) {
 		this.spec = spec;
 
 		trajectoryLog = new LoggerVariable(spec);
-		parachuteLog = new LoggerVariableParachute();
+		parachuteLog = new LoggerVariableParachute(spec);
 	}
 
 
@@ -169,9 +167,7 @@ public class Solver {
 		}
 		parachuteLog.makeArray();
 
-		lovp = new LoggerOtherVariableParachute(spec, parachuteLog);
-
-		eventValue.setLoggerVariableParachute(parachuteLog, lovp);
+		eventValue.setLoggerVariableParachute(parachuteLog);
 		eventValue.setIndexLandingParachute(indexLandingParachute);
 
 		eventValue.setIndex2ndPara(index2ndPara);
@@ -185,7 +181,7 @@ public class Solver {
 	public void makeResult() {
 
 		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory(spec, trajectoryLog, eventValue);
-		OutputFlightlogParachute ofp = new OutputFlightlogParachute(spec, parachuteLog, lovp, eventValue);
+		OutputFlightlogParachute ofp = new OutputFlightlogParachute(spec, parachuteLog, eventValue);
 		oft.runOutputLine(spec.result_filepath + "flightlog_trajectory.csv");
 		ofp.runOutputLine(spec.result_filepath + "flightlog_parachute.csv");
 	}
@@ -244,10 +240,6 @@ public class Solver {
 		}catch(IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public void dump() {
-		lovp.dumpLog();
 	}
 
 }

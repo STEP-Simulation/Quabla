@@ -2,7 +2,9 @@ package quabla.simulator.logger;
 
 import java.util.ArrayList;
 
+import quabla.parameter.InputParam;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.variable.OtherVariableParachute;
 import quabla.simulator.variable.VariableParachute;
 
 public class LoggerVariableParachute {
@@ -12,12 +14,25 @@ public class LoggerVariableParachute {
 	private double[][] velENUlog;
 	private double[] velDescentLog;
 
+	private double[] altitudeLog;
+	private double[] downrangeLog;
+	private double[][] windENUlog;
+	private double[][] velAirENUlog;
+	private double[] velAirAbsLog;
+
+
 	private int length;
 
 	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> posENUlogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
 	private ArrayList<Double> velDescentLogArrayList = new ArrayList<>();
+
+	private final OtherVariableParachute ovp;
+
+	public LoggerVariableParachute(InputParam spec) {
+		ovp = new OtherVariableParachute(spec);
+	}
 
 	public void log(VariableParachute variable) {
 		timeLogArrayList.add(variable.getTime());
@@ -34,11 +49,24 @@ public class LoggerVariableParachute {
 		velENUlog = new double[length][3];
 		velDescentLog = new double[length];
 
+		altitudeLog = new double[length];
+		downrangeLog = new double[length];
+		windENUlog = new double[length][3];
+		velAirENUlog = new double[length][3];
+		velAirAbsLog = new double[length];
+
 		for(int i = 0; i < length; i++) {
 			timeLog[i] = timeLogArrayList.get(i);
 			System.arraycopy(posENUlogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
 			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
 			velDescentLog[i] = velDescentLogArrayList.get(i);
+
+			ovp.calculateOtherVariable(timeLog[i], posENUlog[i], velENUlog[i]);
+			altitudeLog[i] = ovp.getAltitude();
+			downrangeLog[i] = ovp.getDownrange();
+			System.arraycopy(ovp.getWindENU(), 0, windENUlog[i], 0, 3);
+			System.arraycopy(ovp.getVelAirENU(), 0, velAirENUlog[i], 0, 3);
+			velAirAbsLog[i] = ovp.getVelAirAbs();
 		}
 	}
 
@@ -76,6 +104,26 @@ public class LoggerVariableParachute {
 
 	public double[] getVelDescentArray() {
 		return velDescentLog;
+	}
+
+	public double[][] getWindENUarray(){
+		return windENUlog;
+	}
+
+	public double[][] getVelAirENUArray(){
+		return velAirENUlog;
+	}
+
+	public double[] getVelAirAbsArray() {
+		return velAirAbsLog;
+	}
+
+	public double[] getAltitudeArray() {
+		return altitudeLog;
+	}
+
+	public double[] getDownrangeArray(){
+		return downrangeLog;
 	}
 
 	public void copy(int indexLimit, LoggerVariable logdata) {
