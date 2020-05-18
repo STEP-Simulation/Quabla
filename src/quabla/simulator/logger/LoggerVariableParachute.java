@@ -81,9 +81,9 @@ public class LoggerVariableParachute {
 	public void copy(int indexLimit, LoggerVariable logdata) {
 		for(int i = 0; i <= indexLimit; i++) {
 			timeLogArrayList.add(logdata.getTimeArrayList(i));
-			posENUlogArrayList.add(logdata.getPos_ENU(i));
-			velDescentLogArrayList.add(logdata.getVel_ENU(i).toDouble(2));
-			velENUlogArrayList.add(logdata.getVel_ENU(i));
+			posENUlogArrayList.add(logdata.getPosENU(i));
+			velDescentLogArrayList.add(logdata.getVelENU(i).toDouble(2));
+			velENUlogArrayList.add(logdata.getVelENU(i));
 		}
 	}
 }

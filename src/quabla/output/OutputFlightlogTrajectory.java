@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import quabla.parameter.InputParam;
 import quabla.simulator.logger.LoggerVariable;
-import quabla.simulator.logger.ivent_value.IventValueSingle;
-import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
+import quabla.simulator.logger.event_value.EventValueSingle;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 /**
@@ -158,39 +157,39 @@ public class OutputFlightlogTrajectory {
 	 * @param filepath 出力先のファイルパス
 	 * @throws IOException
 	 * */
-	public OutputFlightlogTrajectory(InputParam spec, LoggerVariable lv, LoggerOtherVariableTrajectory lov,IventValueSingle ivs) {
+	public OutputFlightlogTrajectory(InputParam spec, LoggerVariable lv, EventValueSingle ivs) {
 		timeLandingTrajectory = ivs.getTimeLandingTrajectory();
 
 		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
 		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
 		omegaBODYanaly = new Interpolation(lv.getTimeArray(), lv.getOmegaBODYArray());
 		quatAnaly = new Interpolation(lv.getTimeArray(), lv.getQuatArray());
-		attitudeAnaly = new Interpolation(lv.getTimeArray(), lov.getAttitudeLogArray());
-		massAnaly = new Interpolation(lv.getTimeArray(), lov.getMassLogArray());
-		lcgAnaly = new Interpolation(lv.getTimeArray(), lov.getLcgLogArray());
-		lcgPropAnaly = new Interpolation(lv.getTimeArray(), lov.getLcgPropLogArray());
-		lcpAnaly = new Interpolation(lv.getTimeArray(), lov.getLcpLogArray());
-		IjRollAnaly = new Interpolation(lv.getTimeArray(), lov.getIjRollLogArray());
-		IjPitchAnaly = new Interpolation(lv.getTimeArray(), lov.getIjPitchLogArray());
-		altitudeAnaly = new Interpolation(lv.getTimeArray(), lov.getAltitudeLogArray());
-		downrangeAnaly = new Interpolation(lv.getTimeArray(), lov.getDownrangeLogArray());
-		velAirENUanaly = new Interpolation(lv.getTimeArray(), lov.getVelAirENUlogArray());
-		velAirBODYanaly = new Interpolation(lv.getTimeArray(), lov.getVelAirBODYlogArray());
-		velAirAbsAnaly = new Interpolation(lv.getTimeArray(), lov.getVelAirAbsLogArray());
-		alphaAnaly = new Interpolation(lv.getTimeArray(), lov.getAlphaLogArray());
-		betaAnaly = new Interpolation(lv.getTimeArray(), lov.getBetaLogArray());
-		machAnaly = new Interpolation(lv.getTimeArray(), lov.getMachLogArray());
-		dynamicsPressureAnaly = new Interpolation(lv.getTimeArray(), lov.getDynamicsPressureLogArray());
-		fstAnaly = new Interpolation(lv.getTimeArray(), lov.getFstLogArray());
-		dragAnaly = new Interpolation(lv.getTimeArray(), lov.getDragLogArray());
-		normalAnaly = new Interpolation(lv.getTimeArray(), lov.getNormalLogArray());
-		sideAnaly = new Interpolation(lv.getTimeArray(), lov.getSideLogArray());
-		thrustAnaly = new Interpolation(lv.getTimeArray(), lov.getThrustLogArray());
-		forceBODYanaly = new Interpolation(lv.getTimeArray(), lov.getForceBODYlogArray());
-		accENUanaly = new Interpolation(lv.getTimeArray(), lov.getAccENUlogArray());
-		accBODYanaly = new Interpolation(lv.getTimeArray(), lov.getAccBODYlogArray());
-		accAbsAnaly = new Interpolation(lv.getTimeArray(), lov.getAccAbsLogArray());
-		pAirAnaly = new Interpolation(lv.getTimeArray(), lov.getPairLogArray());
+		attitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAttitudeLogArray());
+		massAnaly = new Interpolation(lv.getTimeArray(), lv.getMassLogArray());
+		lcgAnaly = new Interpolation(lv.getTimeArray(), lv.getLcgLogArray());
+		lcgPropAnaly = new Interpolation(lv.getTimeArray(), lv.getLcgPropLogArray());
+		lcpAnaly = new Interpolation(lv.getTimeArray(), lv.getLcpLogArray());
+		IjRollAnaly = new Interpolation(lv.getTimeArray(), lv.getIjRollLogArray());
+		IjPitchAnaly = new Interpolation(lv.getTimeArray(), lv.getIjPitchLogArray());
+		altitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAltitudeLogArray());
+		downrangeAnaly = new Interpolation(lv.getTimeArray(), lv.getDownrangeLogArray());
+		velAirENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirENUlogArray());
+		velAirBODYanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirBODYlogArray());
+		velAirAbsAnaly = new Interpolation(lv.getTimeArray(), lv.getVelAirAbsLogArray());
+		alphaAnaly = new Interpolation(lv.getTimeArray(), lv.getAlphaLogArray());
+		betaAnaly = new Interpolation(lv.getTimeArray(), lv.getBetaLogArray());
+		machAnaly = new Interpolation(lv.getTimeArray(), lv.getMachLogArray());
+		dynamicsPressureAnaly = new Interpolation(lv.getTimeArray(), lv.getDynamicsPressureLogArray());
+		fstAnaly = new Interpolation(lv.getTimeArray(), lv.getFstLogArray());
+		dragAnaly = new Interpolation(lv.getTimeArray(), lv.getDragLogArray());
+		normalAnaly = new Interpolation(lv.getTimeArray(), lv.getNormalLogArray());
+		sideAnaly = new Interpolation(lv.getTimeArray(), lv.getSideLogArray());
+		thrustAnaly = new Interpolation(lv.getTimeArray(), lv.getThrustLogArray());
+		forceBODYanaly = new Interpolation(lv.getTimeArray(), lv.getForceBODYlogArray());
+		accENUanaly = new Interpolation(lv.getTimeArray(), lv.getAccENUlogArray());
+		accBODYanaly = new Interpolation(lv.getTimeArray(), lv.getAccBODYlogArray());
+		accAbsAnaly = new Interpolation(lv.getTimeArray(), lv.getAccAbsLogArray());
+		pAirAnaly = new Interpolation(lv.getTimeArray(), lv.getPairLogArray());
 	}
 
 	public void runOutputLine(String filepath) {

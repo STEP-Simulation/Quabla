@@ -1,4 +1,4 @@
-package quabla.simulator.logger.ivent_value;
+package quabla.simulator.logger.event_value;
 
 import java.io.IOException;
 
@@ -72,7 +72,7 @@ public class IventValueMulti {
 		posENUlandingParachute = new double[row][column][2];
 	}
 
-	public void setResultArray(int i, int j, IventValueSingle ivs) {
+	public void setResultArray(int i, int j, EventValueSingle ivs) {
 		velLaunchClearArray[i][j] = ivs.getVelLaunchClear();
 		altApogeeArray[i][j] = ivs.getAltApogee();
 		velAirMaxArray[i][j] = ivs.getVelAirMax();

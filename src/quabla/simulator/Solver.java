@@ -14,9 +14,8 @@ import quabla.simulator.dynamics.DynamicsTipOff;
 import quabla.simulator.dynamics.DynamicsTrajectory;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.LoggerVariableParachute;
-import quabla.simulator.logger.ivent_value.IventValueSingle;
+import quabla.simulator.logger.event_value.EventValueSingle;
 import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableParachute;
-import quabla.simulator.logger.logger_other_variable.LoggerOtherVariableTrajectory;
 import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
 import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
@@ -30,17 +29,17 @@ public class Solver {
 
 	InputParam spec;
 
-	private IventValueSingle iventValue;
+	private EventValueSingle eventValue;
 
 	private LoggerVariable trajectoryLog;
 	private LoggerVariableParachute parachuteLog;
-	private LoggerOtherVariableTrajectory lovt;
+	//private LoggerOtherVariableTrajectory lovt;
 	private LoggerOtherVariableParachute lovp;
 
 	public Solver(InputParam spec) {
 		this.spec = spec;
 
-		trajectoryLog = new LoggerVariable();
+		trajectoryLog = new LoggerVariable(spec);
 		parachuteLog = new LoggerVariableParachute();
 	}
 
@@ -136,14 +135,14 @@ public class Solver {
 		}
 		trajectoryLog.makeArray();
 
-		lovt = new LoggerOtherVariableTrajectory(spec, trajectoryLog);
+//		lovt = new LoggerOtherVariableTrajectory(spec, trajectoryLog);
 
 		// store Ivent Value
-		iventValue = new IventValueSingle(trajectoryLog, lovt);
-		iventValue.setIndexLaunchClear(indexLaunchClear);
-		iventValue.setIndexLandingTrajectory(indexLandingTrajectory);
+		eventValue = new EventValueSingle(trajectoryLog);
+		eventValue.setIndexLaunchClear(indexLaunchClear);
+		eventValue.setIndexLandingTrajectory(indexLandingTrajectory);
 
-		indexApogee = iventValue.getIndexApogee();
+		indexApogee = eventValue.getIndexApogee();
 		parachuteLog.copy(indexApogee, trajectoryLog);
 		trajectoryLog.dumpArrayList();
 
@@ -175,21 +174,21 @@ public class Solver {
 
 		lovp = new LoggerOtherVariableParachute(spec, parachuteLog);
 
-		iventValue.setLoggerVariableParachute(parachuteLog, lovp);
-		iventValue.setIndexLandingParachute(indexLandingParachute);
+		eventValue.setLoggerVariableParachute(parachuteLog, lovp);
+		eventValue.setIndexLandingParachute(indexLandingParachute);
 
-		iventValue.setIndex2ndPara(index2ndPara);
+		eventValue.setIndex2ndPara(index2ndPara);
 
 	}
 
-	public IventValueSingle getIventValueSingle() {
-		return iventValue;
+	public EventValueSingle getIventValueSingle() {
+		return eventValue;
 	}
 
 	public void makeResult() {
 
-		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory(spec, trajectoryLog, lovt,iventValue);
-		OutputFlightlogParachute ofp = new OutputFlightlogParachute(spec, parachuteLog, lovp, iventValue);
+		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory(spec, trajectoryLog, eventValue);
+		OutputFlightlogParachute ofp = new OutputFlightlogParachute(spec, parachuteLog, lovp, eventValue);
 		oft.runOutputLine(spec.result_filepath + "flightlog_trajectory.csv");
 		ofp.runOutputLine(spec.result_filepath + "flightlog_parachute.csv");
 	}
@@ -208,36 +207,36 @@ public class Solver {
 
 		try {
 
-			resultTxt.outputLine(String.format("Launch Clear Time : %.3f [sec]", iventValue.getTimeLaunchClear()));
-			resultTxt.outputLine(String.format("Launch Clear Velocity : %.3f [m/s]", iventValue.getVelLaunchClear()));
-			resultTxt.outputLine(String.format("Launch Clear Accelaration : %.3f G", iventValue.getAccLaunchClear() / 9.80665));
+			resultTxt.outputLine(String.format("Launch Clear Time : %.3f [sec]", eventValue.getTimeLaunchClear()));
+			resultTxt.outputLine(String.format("Launch Clear Velocity : %.3f [m/s]", eventValue.getVelLaunchClear()));
+			resultTxt.outputLine(String.format("Launch Clear Accelaration : %.3f G", eventValue.getAccLaunchClear() / 9.80665));
 
-			resultTxt.outputLine(String.format("Apogee Time : %.3f [sec]", iventValue.getTimeApogee()));
-			resultTxt.outputLine(String.format("Apogee Altitude : %.3f [km]", iventValue.getAltApogee()));
-			resultTxt.outputLine(String.format("Apogee Downrange : %.3f [km]", iventValue.getDownrangeApogee()));
-			resultTxt.outputLine(String.format("Apogee Air Speed : %.3f [m/s]", iventValue.getVelAirApogee()));
+			resultTxt.outputLine(String.format("Apogee Time : %.3f [sec]", eventValue.getTimeApogee()));
+			resultTxt.outputLine(String.format("Apogee Altitude : %.3f [km]", eventValue.getAltApogee()));
+			resultTxt.outputLine(String.format("Apogee Downrange : %.3f [km]", eventValue.getDownrangeApogee()));
+			resultTxt.outputLine(String.format("Apogee Air Speed : %.3f [m/s]", eventValue.getVelAirApogee()));
 
-			resultTxt.outputLine(String.format("Max Air Speed Time : %.3f [sec]", iventValue.getTimeMaxVelAir()));
-			resultTxt.outputLine(String.format("Max Air Speed : %.3f [m/s]", iventValue.getVelAirMax()));
-			resultTxt.outputLine(String.format("Max Air Speed Altitude : %.3f [km]", iventValue.getAltitudeMaxVelAir()));
+			resultTxt.outputLine(String.format("Max Air Speed Time : %.3f [sec]", eventValue.getTimeMaxVelAir()));
+			resultTxt.outputLine(String.format("Max Air Speed : %.3f [m/s]", eventValue.getVelAirMax()));
+			resultTxt.outputLine(String.format("Max Air Speed Altitude : %.3f [km]", eventValue.getAltitudeMaxVelAir()));
 
-			resultTxt.outputLine(String.format("Max-Q Time : %.3f [sec]", iventValue.getTimeMaxQ()));
-			resultTxt.outputLine(String.format("Max-Q Dynamics Pressure : %.3f [kPa]", iventValue.getDynamicsPressureMax()));
-			resultTxt.outputLine(String.format("Max-Q Altitude : %.3f [km]", iventValue.getAltitudeMaxQ()));
+			resultTxt.outputLine(String.format("Max-Q Time : %.3f [sec]", eventValue.getTimeMaxQ()));
+			resultTxt.outputLine(String.format("Max-Q Dynamics Pressure : %.3f [kPa]", eventValue.getDynamicsPressureMax()));
+			resultTxt.outputLine(String.format("Max-Q Altitude : %.3f [km]", eventValue.getAltitudeMaxQ()));
 
-			resultTxt.outputLine(String.format("Max Mach Time : %.3f [sec]", iventValue.getTimeMaxMach()));
-			resultTxt.outputLine(String.format("Max Mach : %.3f [-]", iventValue.getMachMax()));
-			resultTxt.outputLine(String.format("Max Mach Altitude : %.3f [km]", iventValue.getAltitudeMaxMach()));
+			resultTxt.outputLine(String.format("Max Mach Time : %.3f [sec]", eventValue.getTimeMaxMach()));
+			resultTxt.outputLine(String.format("Max Mach : %.3f [-]", eventValue.getMachMax()));
+			resultTxt.outputLine(String.format("Max Mach Altitude : %.3f [km]", eventValue.getAltitudeMaxMach()));
 
-			resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", iventValue.getTime2ndPara()));
+			resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", eventValue.getTime2ndPara()));
 
-			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", iventValue.getTimeLandingTrajectory()));
-			resultTxt.outputLine(String.format("Landing Trajectory Downrange %.3f [km]", iventValue.getDownrangeLandingTrajectory()));
-			resultTxt.outputLine(String.format("Landing Trajectory Point : [ %.3f , %.3f ]", iventValue.getPosENUlandingTrajectory()[0], iventValue.getPosENUlandingTrajectory()[1]));
+			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", eventValue.getTimeLandingTrajectory()));
+			resultTxt.outputLine(String.format("Landing Trajectory Downrange %.3f [km]", eventValue.getDownrangeLandingTrajectory()));
+			resultTxt.outputLine(String.format("Landing Trajectory Point : [ %.3f , %.3f ]", eventValue.getPosENUlandingTrajectory()[0], eventValue.getPosENUlandingTrajectory()[1]));
 
-			resultTxt.outputLine(String.format("Landing Parachute Time %.3f [sec]", iventValue.getTimeLandingParachute()));
-			resultTxt.outputLine(String.format("Landing Parachute Downrange %.3f [km]", iventValue.getDownrangeLandingParachute()));
-			resultTxt.outputLine(String.format("Landing Parachute Point : [ %.3f , %.3f ]", iventValue.getPosENUlandingParachute()[0], iventValue.getPosENUlandingParachute()[1]));
+			resultTxt.outputLine(String.format("Landing Parachute Time %.3f [sec]", eventValue.getTimeLandingParachute()));
+			resultTxt.outputLine(String.format("Landing Parachute Downrange %.3f [km]", eventValue.getDownrangeLandingParachute()));
+			resultTxt.outputLine(String.format("Landing Parachute Point : [ %.3f , %.3f ]", eventValue.getPosENUlandingParachute()[0], eventValue.getPosENUlandingParachute()[1]));
 
 		}catch(IOException e) {
 			throw new RuntimeException(e) ;
@@ -251,7 +250,7 @@ public class Solver {
 	}
 
 	public void dump() {
-		lovt.dumpLog();
+//		lovt.dumpLog();
 		lovp.dumpLog();
 	}
 

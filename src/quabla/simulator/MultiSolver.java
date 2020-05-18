@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import quabla.output.OutputLandingScatter;
 import quabla.parameter.InputParam;
-import quabla.simulator.logger.ivent_value.IventValueMulti;
+import quabla.simulator.logger.event_value.IventValueMulti;
 
 /**
  * MultiSolver mangages solver and store values in multiple conditions.
