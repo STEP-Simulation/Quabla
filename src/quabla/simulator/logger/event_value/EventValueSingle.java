@@ -21,9 +21,6 @@ public class EventValueSingle {
 	private double[] posENUlandingParachute = new double[2];
 	private int indexLaunchClear, indexMaxQ, index2ndPara, indexMaxVelAir, indexMaxMach, indexApogee, indexLandingTrajectory, indexLandingParachute;
 
-//	LoggerVariable lvt; // LoggerVariable Trajectory
-//	LoggerVariableParachute lvp; // LoggerVariable Parachute
-
 	public EventValueSingle(LoggerVariable lvt) {
 		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
 		// イベント発生時のインデックスを外部から入力する必要があるもの(ランチクリアなど)は値入力時に計算
