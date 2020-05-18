@@ -8,7 +8,7 @@ import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 
 /**
- * Variable以外の変数用のクラス
+ * Variable以外の変数を計算するクラス
  * */
 public class OtherVariableTrajectory {
 
