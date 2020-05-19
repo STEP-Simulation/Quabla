@@ -1,5 +1,6 @@
 package quabla.simulator.logger.event_value;
 
+import quabla.simulator.Coordinate;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.LoggerVariableParachute;
 import quabla.simulator.numerical_analysis.ArrayAnalysis;
@@ -52,7 +53,8 @@ public class EventValueSingle {
 	private void calculateLaunchClear(LoggerVariable lvt) {
 		timeLaunchClear = lvt.getTime(indexLaunchClear);
 		accLaunchClear = lvt.getAccAbsLogArray()[indexLaunchClear];
-		velLaunchClear = Math.sqrt(Math.pow(lvt.getVelENUlog(indexLaunchClear)[0], 2) + Math.pow(lvt.getVelENUlog(indexLaunchClear)[1], 2) + Math.pow(lvt.getVelENUlog(indexLaunchClear)[2], 2));
+		double[][] dcmENUtoBODY = Coordinate.getDCM_ENU2BODYfromQuat(lvt.getQuatLog(indexLaunchClear));
+		velLaunchClear = Coordinate.vec_trans(dcmENUtoBODY, lvt.getVelENUlog(indexLaunchClear))[0]; // 機軸方向対地速度をランチクリア速度とする
 	}
 
 	private void calculateAtApogee(LoggerVariable lvt) {
