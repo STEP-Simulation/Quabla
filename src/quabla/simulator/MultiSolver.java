@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import quabla.output.OutputLandingScatter;
 import quabla.parameter.InputParam;
-import quabla.simulator.logger.event_value.IventValueMulti;
+import quabla.simulator.logger.event_value.EventValueMulti;
 
 /**
  * MultiSolver mangages solver and store values in multiple conditions.
@@ -15,7 +15,7 @@ public class MultiSolver {
 	int speed_num,angle_num;
 	private double[] speedArray, azimuthArray;
 
-	private IventValueMulti ivm;
+	private EventValueMulti evm;
 
 	public MultiSolver(InputParam spec) {
 		this.spec = spec;
@@ -37,7 +37,7 @@ public class MultiSolver {
 			azimuthArray[i] = 360.0 * i / angle_num;
 		}
 
-		ivm = new IventValueMulti(speedArray, azimuthArray);
+		evm = new EventValueMulti(speedArray, azimuthArray);
 
 	}
 
@@ -54,18 +54,18 @@ public class MultiSolver {
 				Solver single_solver = new Solver(spec);//Multi_solverでは各フライトでのlogは保存しない
 				single_solver.solveDynamics();
 
-				ivm.setResultArray(i, j, single_solver.getIventValueSingle());
+				evm.setResultArray(i, j, single_solver.getEventValueSingle());
 				j++;
 			}
 			displayProcess(i);
 			i++;
 		}
 
-		double[][] windMapTrajectory = getWindMap(ivm.getPosENUlandTrajectory());
-		double[][] windMapParachute = getWindMap(ivm.getPosENUlandParachute());
+		double[][] windMapTrajectory = getWindMap(evm.getPosENUlandTrajectory());
+		double[][] windMapParachute = getWindMap(evm.getPosENUlandParachute());
 
-		ivm.outputResultTxt(spec.result_filepath);
-		ivm.outputCsv(spec.result_filepath);
+		evm.outputResultTxt(spec.result_filepath);
+		evm.outputCsv(spec.result_filepath);
 
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {

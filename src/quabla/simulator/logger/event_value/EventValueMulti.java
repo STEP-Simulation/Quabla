@@ -10,7 +10,7 @@ import quabla.simulator.numerical_analysis.ArrayAnalysis;
  * 落下分散計算時のイベント値の処理
  * csvファイルへの保存，全条件での最大値や最小値及びその時の条件を計算
  * */
-public class IventValueMulti {
+public class EventValueMulti {
 
 	int row,column;
 
@@ -49,7 +49,7 @@ public class IventValueMulti {
 
 	private double[][][] posENUlandingTrajectory, posENUlandingParachute;
 
-	public IventValueMulti(double[] speedArray, double[] azimuthArray) {
+	public EventValueMulti(double[] speedArray, double[] azimuthArray) {
 		row = speedArray.length;
 		column = azimuthArray.length;
 

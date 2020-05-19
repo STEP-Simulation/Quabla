@@ -174,7 +174,7 @@ public class Solver {
 
 	}
 
-	public EventValueSingle getIventValueSingle() {
+	public EventValueSingle getEventValueSingle() {
 		return eventValue;
 	}
 
