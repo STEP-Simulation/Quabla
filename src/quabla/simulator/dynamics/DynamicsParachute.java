@@ -4,15 +4,15 @@ import quabla.simulator.Atmosphere;
 import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
-import quabla.simulator.variable.VariableParachute;
+import quabla.simulator.variable.AbstractVariable;
 
-public class DynamicsParachute {
+public class DynamicsParachute extends AbstractDynamics{
 
 	private RocketParameter rocket;
 	private Atmosphere atm;
 	private Wind wind;
 
-	MathematicalVector vel_ENU = new MathematicalVector();
+	MathematicalVector velENU = new MathematicalVector();
 
 	DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
 
@@ -22,7 +22,7 @@ public class DynamicsParachute {
 		this.wind = wind;
 	}
 
-	public DynamicsMinuteChangeParachute calculateDynamics(VariableParachute variable) {
+	public DynamicsMinuteChangeParachute calculateDynamics(AbstractVariable variable) {
 
 		// Import variable
 		double t = variable.getTime();
@@ -33,8 +33,7 @@ public class DynamicsParachute {
 
 		//Wind , Velocity
 		double[] wind_ENU = Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
-		//MathematicalVector vel_ENU = new MathematicalVector(wind_ENU[0], wind_ENU[1], VelDescent);
-		vel_ENU.set(wind_ENU[0], wind_ENU[1], VelDescent);
+		velENU.set(wind_ENU[0], wind_ENU[1], VelDescent);
 
 		//Environment
 		double g = atm.getGravity(altitude);
@@ -60,7 +59,7 @@ public class DynamicsParachute {
 		delta.setDeltaOmegaBODY(new MathematicalVector(0.0, 0.0, 0.0));
 		delta.setDeltaQuat(new MathematicalVector(0.0, 0.0, 0.0, 0.0));*/
 		//DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
-		delta.setDeltaPosENU(vel_ENU);
+		delta.setDeltaPosENU(velENU);
 		delta.setDeltaVelDescent(Acc);
 
 

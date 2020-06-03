@@ -7,6 +7,7 @@ import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
 import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
+import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
@@ -18,8 +19,8 @@ import quabla.simulator.logger.event_value.EventValueSingle;
 import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
 import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
-import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
+import quabla.simulator.variable.VariableTrajectory;
 
 /**
  * Solver command functions in single condition, which are needed simulating dynamics and storing.
@@ -52,7 +53,7 @@ public class Solver {
 		RocketParameter rocket = new RocketParameter(spec);
 		AeroParameter aero = new AeroParameter(spec);
 		Wind wind = new Wind(spec);
-		Variable variableTrajectory = new Variable(spec, rocket);
+		VariableTrajectory variableTrajectory = new VariableTrajectory(spec, rocket);
 
 		// Dynamics
 		AbstractDynamics dynTrajectory = new DynamicsTrajectory(rocket, aero, atm, wind);
@@ -64,7 +65,7 @@ public class Solver {
 		PredictorCorrector predCorr = new PredictorCorrector(h);
 
 		// Predictor-Corrector法で用いる過去の微分値を保存するための配列
-		DynamicsMinuteChangeTrajectory[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
+		AbstractDynamicsMinuteChange[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
 
 		// どの飛行状態に遷移したかを判定
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
@@ -78,13 +79,13 @@ public class Solver {
 			time = index * h;
 
 			if(index == 4) {
-				predCorr.setTra(deltaArray[2], deltaArray[1], deltaArray[0]);
+				predCorr.setDelta(deltaArray[2], deltaArray[1], deltaArray[0]);
 				// ODE 解法の変更
 				ODEsolver = predCorr;
 			}
 
 			// solve ODE
-			DynamicsMinuteChangeTrajectory delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
+			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
 			if(index <= 3) {
 				deltaArray[index - 1] = delta;
 			}
@@ -112,7 +113,7 @@ public class Solver {
 		for(;;) {
 			index ++;
 			time = index * h;
-			DynamicsMinuteChangeTrajectory delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
+			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
 			variableTrajectory.update(time, delta);
 			trajectoryLog.log(variableTrajectory);
 
@@ -145,7 +146,7 @@ public class Solver {
 		VariableParachute variablePara = new VariableParachute(spec);
 		variablePara.set(trajectoryLog, indexApogee);
 
-		predCorr.setDeltaPar(deltaArray[2].getDelatPar(), deltaArray[1].getDelatPar(), deltaArray[0].getDelatPar()); // Predicto-Correctorのための準備
+		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
 		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
 
 		index = indexApogee; //indexの更新

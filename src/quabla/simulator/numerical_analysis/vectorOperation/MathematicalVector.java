@@ -58,6 +58,13 @@ public class MathematicalVector {
 		vector[2] = z;
 	}
 
+	public void set(double x, double y, double z, double w) {
+		vector[0] = x;
+		vector[1] = y;
+		vector[2] = z;
+		vector[3] = w;
+	}
+
 	public MathematicalVector multiply(double a) {
 		double[] vectorNew = new double[length];
 		int i = 0;

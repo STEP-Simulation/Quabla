@@ -7,7 +7,7 @@ import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
-import quabla.simulator.variable.Variable;
+import quabla.simulator.variable.AbstractVariable;
 
 public class DynamicsTipOff extends AbstractDynamics {
 
@@ -24,7 +24,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 	}
 
 	@Override
-	public DynamicsMinuteChangeTrajectory calculateDynamics(Variable variable) {
+	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
 
 		// Import variable
 		double t = variable.getTime();

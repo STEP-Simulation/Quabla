@@ -1,7 +1,7 @@
 package quabla.simulator;
 
-import quabla.simulator.variable.Variable;
 import quabla.simulator.variable.VariableParachute;
+import quabla.simulator.variable.VariableTrajectory;
 
 /**
  * FlightEventJudgement check rocket flight status and judge flight event.
@@ -15,7 +15,7 @@ public class FlightEventJudgement {
 		this.rocket = rocket;
 	}
 
-	public boolean judgeTipOff(Variable variable) {
+	public boolean judgeTipOff(VariableTrajectory variable) {
 		boolean judge;
 
 		if(variable.getDistanceUpperLug() >= rocket.lengthLauncherRail) {
@@ -27,7 +27,7 @@ public class FlightEventJudgement {
 		return judge;
 	}
 
-	public boolean judgeLaunchClear(Variable  variable) {
+	public boolean judgeLaunchClear(VariableTrajectory  variable) {
 		boolean judge;
 
 		if(variable.getDistanceLowerLug() >= rocket.lengthLauncherRail) {
@@ -38,10 +38,10 @@ public class FlightEventJudgement {
 		return judge;
 	}
 
-	public boolean judgeApogee(Variable variable) {
+	public boolean judgeApogee(VariableTrajectory variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.timeBurnout) && (variable.getVelDescet() >= 0.0)) {
+		if((variable.getTime() >= rocket.timeBurnout) && (variable.getVelDescent() >= 0.0)) {
 			judge = true;
 		}else {
 			judge = false;
@@ -49,7 +49,7 @@ public class FlightEventJudgement {
 		return judge;
 	}
 
-	public boolean judgeLanding(Variable variable) {
+	public boolean judgeLanding(VariableTrajectory variable) {
 		boolean judge;
 
 		if((variable.getTime() >= rocket.timeBurnout) && (variable.getAltitude() <= 0.0)) {

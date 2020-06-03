@@ -7,7 +7,7 @@ import quabla.simulator.RocketParameter;
 import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
-import quabla.simulator.variable.Variable;
+import quabla.simulator.variable.AbstractVariable;
 
 /**
  * DynamicsTrajectory is an extension of {@link quabla.simulator.dynamics.AbstractDynamics}.
@@ -48,7 +48,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 	}
 
 	@Override
-	public DynamicsMinuteChangeTrajectory calculateDynamics(Variable variable) {
+	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
 
 		// Import variable
 		velENU = variable.getVelENU();

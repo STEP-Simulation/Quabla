@@ -3,7 +3,7 @@ package quabla.simulator.variable;
 import quabla.parameter.InputParam;
 import quabla.simulator.Coordinate;
 import quabla.simulator.RocketParameter;
-import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
+import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
@@ -13,7 +13,7 @@ import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
  * <p> When you set initial variables, use {@link #setInitialVariable()}.
  * You are not able to set initial variables at making instance of Variable
  * */
-public class Variable {
+public class VariableTrajectory extends AbstractVariable{
 
 	private RocketParameter rocket;
 	private InputParam spec;
@@ -30,7 +30,7 @@ public class Variable {
 	private double[] quat0;
 
 
-	public Variable(InputParam spec,RocketParameter rocket) {
+	public VariableTrajectory(InputParam spec,RocketParameter rocket) {
 		this.spec = spec;
 		this.rocket = rocket;
 		h = rocket.dt;
@@ -69,7 +69,7 @@ public class Variable {
 
 	}
 
-	public void setVariable(Variable variable) {
+	public void setVariable(VariableTrajectory variable) {
 		this.time = variable.getTime();
 		this.posENU = variable.getPosENU();
 		this.velENU = variable.getVelENU();
@@ -78,19 +78,26 @@ public class Variable {
 	}
 
 	public void setVariable(double time, MathematicalVector Pos_ENU, MathematicalVector Vel_ENU, MathematicalVector omega_Body, MathematicalVector quat) {
-
 		this.time = time;
-		this.posENU = Pos_ENU;
-		this.velENU = Vel_ENU;
-		this.omegaBODY = omega_Body;
-		this.quat = quat;
+		this.posENU.set(Pos_ENU.toDouble());
+		this.velENU.set(Vel_ENU.toDouble());
+		this.omegaBODY.set(omega_Body.toDouble());
+		this.quat.set(quat.toDouble());
+	}
 
+	public void setVariable(double time, double[] x) {
+		this.time = time;
+		this.posENU.set(x[0], x[1], x[2]);
+		this.velENU.set(x[3], x[4], x[5]);
+		this.omegaBODY.set(x[6], x[7], x[8]);
+		this.quat.set(x[9], x[10], x[11], x[12]);
 	}
 
 	public void setTime(double time) {
 		this.time = time;
 	}
 
+	@Override
 	public double getTime() {
 		return time;
 	}
@@ -107,6 +114,7 @@ public class Variable {
 		this.velENU = velENU;
 	}
 
+	@Override
 	public MathematicalVector getVelENU() {
 		return velENU;
 	}
@@ -115,6 +123,7 @@ public class Variable {
 		this.omegaBODY = omegaBODY;
 	}
 
+	@Override
 	public MathematicalVector getOmegaBODY() {
 		return omegaBODY;
 	}
@@ -123,6 +132,7 @@ public class Variable {
 		this.quat = quat;
 	}
 
+	@Override
 	public MathematicalVector getQuat() {
 		return quat;
 	}
@@ -130,10 +140,9 @@ public class Variable {
 	/**distance_Bpdy is vector at Body frame , in lift-off
 	 * origin(launch point) to C.G.
 	 * */
-	public MathematicalVector getDistanceBody() {
-		MathematicalMatrix dcm_ENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat0));
-
-		return dcm_ENU2BODY.dot(posENU);
+	private MathematicalVector getDistanceBody() {
+		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat0));
+		return dcmENU2BODY.dot(posENU);
 	}
 
 	public double getDistanceUpperLug() {
@@ -142,35 +151,47 @@ public class Variable {
 		return getDistanceBody().add(new MathematicalVector(upperLugFromCG, 0.0, 0.0)).toDouble(0);
 	}
 
+	@Override
 	public double getDistanceLowerLug() {
 		double lowerLugFromCG = rocket.getLcg(time) - rocket.lowerLug;
 
 		return getDistanceBody().add(new MathematicalVector(lowerLugFromCG, 0.0, 0.0)).toDouble(0);
 	}
 
-	public double getVelDescet() {
+	@Override
+	public double getVelDescent() {
 		return velENU.toDouble(2);
 	}
 
+	@Override
 	public double getAltitude() {
 		return posENU.toDouble(2);
 	}
 
-	public Variable getClone() {
-		Variable variable2 = new Variable(spec, rocket);
+	public VariableTrajectory getClone() {
+		VariableTrajectory variable2 = new VariableTrajectory(spec, rocket);
 		variable2.setVariable(time, posENU, velENU, omegaBODY, quat);
 		return variable2;
 	}
 
-	//public
+	public double[] toDouble() {
+		double[] x = new double[13];
+		System.arraycopy(posENU.toDouble(), 0, x, 0, 3);
+		System.arraycopy(velENU.toDouble(), 0, x, 3, 3);
+		System.arraycopy(omegaBODY.toDouble(), 0, x, 6, 3);
+		System.arraycopy(quat.toDouble(), 0, x, 9, 4);
+
+		return x;
+	}
 
 	//TODO DynamicsMinuteChangeからVariableをセット
-	public void update(double time,DynamicsMinuteChangeTrajectory delta) {
+	@Override
+	public void update(double time, AbstractDynamicsMinuteChange delta) {
 
 		setTime(time);
-		setPos_ENU(posENU.add(delta.getDeltaPos_ENU().multiply(h)));
-		setVelENU(velENU.add(delta.getDeltaVel_ENU().multiply(h)));
-		setOmegaBODY(omegaBODY.add(delta.getDeltaOmega_Body().multiply(h)));
+		setPos_ENU(posENU.add(delta.getDeltaPosENU().multiply(h)));
+		setVelENU(velENU.add(delta.getDeltaVelENU().multiply(h)));
+		setOmegaBODY(omegaBODY.add(delta.getDeltaOmegaBODY().multiply(h)));
 		setQuat(quat.add(delta.getDeltaQuat().multiply(h)));
 
 	}

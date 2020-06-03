@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import quabla.parameter.InputParam;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.variable.OtherVariableTrajectory;
-import quabla.simulator.variable.Variable;
+import quabla.simulator.variable.VariableTrajectory;
 
 /**
  * 飛翔中のvariableの値を記録するためのクラス
@@ -60,7 +60,7 @@ public class LoggerVariable {
 		ovt = new OtherVariableTrajectory(spec);
 	}
 
-	public void log(Variable variable) {
+	public void log(VariableTrajectory variable) {
 
 		timeLogArrayList.add(variable.getTime());
 		posENULogArrayList.add(variable.getPosENU());
