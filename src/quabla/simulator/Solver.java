@@ -19,6 +19,10 @@ import quabla.simulator.logger.event_value.EventValueSingle;
 import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
 import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
+import quabla.simulator.rocket.AeroParameter;
+import quabla.simulator.rocket.Atmosphere;
+import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.VariableParachute;
 import quabla.simulator.variable.VariableTrajectory;
 
@@ -50,15 +54,16 @@ public class Solver {
 		boolean isTipOff = false;
 
 		Atmosphere atm = new Atmosphere(spec.temperture0);
-		RocketParameter rocket = new RocketParameter(spec);
+		//RocketParameter rocket = new RocketParameter(spec);
+		Rocket rocket = new Rocket(spec);
 		AeroParameter aero = new AeroParameter(spec);
 		Wind wind = new Wind(spec);
 		VariableTrajectory variableTrajectory = new VariableTrajectory(spec, rocket);
 
 		// Dynamics
-		AbstractDynamics dynTrajectory = new DynamicsTrajectory(rocket, aero, atm, wind);
-		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(rocket, aero, atm, wind);
-		DynamicsParachute dynParachute = new DynamicsParachute(rocket, atm, wind);
+		AbstractDynamics dynTrajectory = new DynamicsTrajectory(rocket);
+		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(rocket);
+		DynamicsParachute dynParachute = new DynamicsParachute(rocket);
 
 		// ODE solver
 		AbstractODEsolver ODEsolver = new RK4(h); // 最初は4次ルンゲクッタで計算
@@ -97,7 +102,7 @@ public class Solver {
 			// Tip-Off -----------------------------------------
 			if(spec.tip_off_exist && eventJudgement.judgeTipOff(variableTrajectory) && !isTipOff) {// 1回のみ実行
 				indexTipOff = index;
-				dynOnLauncher = new DynamicsTipOff(rocket, aero, atm, wind);
+				dynOnLauncher = new DynamicsTipOff(rocket);
 				isTipOff = true;
 			}
 

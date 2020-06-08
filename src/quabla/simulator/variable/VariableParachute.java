@@ -1,10 +1,10 @@
 package quabla.simulator.variable;
 
 import quabla.parameter.InputParam;
-import quabla.simulator.Wind;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Wind;
 
 public class VariableParachute extends AbstractVariable{
 

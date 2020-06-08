@@ -1,6 +1,7 @@
-package quabla.simulator;
+package quabla.simulator.rocket;
 
 import quabla.parameter.InputParam;
+import quabla.simulator.GetCsv;
 import quabla.simulator.numerical_analysis.Interpolation;
 
 public class AeroParameter {

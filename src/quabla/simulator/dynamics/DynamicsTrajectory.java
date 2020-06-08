@@ -1,12 +1,10 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.AeroParameter;
-import quabla.simulator.Atmosphere;
 import quabla.simulator.Coordinate;
-import quabla.simulator.RocketParameter;
-import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.AbstractVariable;
 
 /**
@@ -14,10 +12,7 @@ import quabla.simulator.variable.AbstractVariable;
  * */
 public class DynamicsTrajectory extends AbstractDynamics {
 
-	private RocketParameter rocket;
-	private AeroParameter aero;
-	private Atmosphere atm;
-	private Wind wind;
+	private Rocket rocket;
 
 	MathematicalVector velENU = new MathematicalVector();
 	MathematicalVector omegaBODY = new MathematicalVector();
@@ -39,12 +34,8 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 	DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
 
-	public DynamicsTrajectory(RocketParameter rocket, AeroParameter aero, Atmosphere atm, Wind wind) {
+	public DynamicsTrajectory(Rocket rocket) {
 		this.rocket = rocket;
-		this.aero = aero;
-		this.atm = atm;
-		this.wind = wind;
-
 	}
 
 	@Override
@@ -68,7 +59,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
 		// alpha , beta
-		windENU.set(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
+		windENU.set(Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude)));
 		velAirENU = velENU.sub(windENU);
 		velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
@@ -85,26 +76,26 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		}
 
 		// Environment
-		gENU.set(0.0 , 0.0 , -atm.getGravity(altitude));
-		double P0 = atm.getAtomosphericPressure(0.0);
-		double P = atm.getAtomosphericPressure(altitude);
-		double rho = atm.getAirDensity(altitude);
-		double Cs = atm.getSoundSpeed(altitude);
+		gENU.set(0.0 , 0.0 , - rocket.atm.getGravity(altitude));
+		double P0 = rocket.atm.getAtomosphericPressure(0.0);
+		double P = rocket.atm.getAtomosphericPressure(altitude);
+		double rho = rocket.atm.getAirDensity(altitude);
+		double Cs = rocket.atm.getSoundSpeed(altitude);
 		double Mach = velAirAbs / Cs;
 		double pressureDynamics = 0.5 * rho * Math.pow(velAirAbs, 2);
 
 		// Thrust
-		if(rocket.thrust(t) > 0.0) {
-			double thrustPressure = (P0 - P)* rocket.Ae;
-			thrust.set(rocket.thrust(t) + thrustPressure, 0.0, 0.0);
+		if(rocket.engine.thrust(t) > 0.0) {
+			double thrustPressure = (P0 - P)* rocket.engine.Ae;
+			thrust.set(rocket.engine.thrust(t) + thrustPressure, 0.0, 0.0);
 		}else {
 			thrust.set(MathematicalVector.ZERO);
 		}
 
 		// Aero Force
-		double drag = pressureDynamics * aero.Cd(Mach) * rocket.S;
-		double normal = pressureDynamics * aero.CNa(Mach) * rocket.S * alpha;
-		double side = pressureDynamics * aero.CNa(Mach) * rocket.S * beta;
+		double drag = pressureDynamics * rocket.aero.Cd(Mach) * rocket.S;
+		double normal = pressureDynamics * rocket.aero.CNa(Mach) * rocket.S * alpha;
+		double side = pressureDynamics * rocket.aero.CNa(Mach) * rocket.S * beta;
 		forceAero.set(- drag , - side , - normal);
 
 		// Newton Equation
@@ -116,7 +107,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		// Center of Gravity , Pressure
 		double lcg = rocket.getLcg(t);
 		double lcgProp = rocket.getLcgProp(t);
-		double lcp = aero.Lcp(Mach);
+		double lcp = rocket.aero.Lcp(Mach);
 
 		// Momento of Inertia
 		double IjRoll = rocket.getIjRoll(t);
@@ -133,13 +124,13 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		// Aero Damping Moment
 		momentAeroDamping .set(
-				pressureDynamics * aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * p,
-				pressureDynamics * aero.Cmq * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * q,
-				pressureDynamics * aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
+				pressureDynamics * rocket.aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * p,
+				pressureDynamics * rocket.aero.Cmq * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * q,
+				pressureDynamics * rocket.aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
 
 		// Jet Damping Moment
 		momentJetDamping.set(
-				(- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.de, 2))) * p,
+				(- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.engine.de, 2))) * p,
 				(- IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * q,
 				(- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * r);
 

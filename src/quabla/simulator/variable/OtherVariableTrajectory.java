@@ -1,11 +1,9 @@
 package quabla.simulator.variable;
 
 import quabla.parameter.InputParam;
-import quabla.simulator.AeroParameter;
-import quabla.simulator.Atmosphere;
 import quabla.simulator.Coordinate;
-import quabla.simulator.RocketParameter;
-import quabla.simulator.Wind;
+import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.Wind;
 
 /**
  * Variable以外の変数を計算するクラス
@@ -43,10 +41,7 @@ public class OtherVariableTrajectory {
 	 * */
 
 	private InputParam spec ;
-	private RocketParameter rocket;
-	private Atmosphere atm;
-	private Wind wind;
-	private AeroParameter aero;
+	private Rocket rocket;
 
 	private double[] attitude;
 	private double mass;
@@ -74,12 +69,8 @@ public class OtherVariableTrajectory {
 
 	public OtherVariableTrajectory(InputParam spec) {
 		this.spec = spec;
-		rocket = new RocketParameter(spec);
-		atm = new Atmosphere(spec.temperture0);
-		wind = new Wind(spec);
-		aero = new AeroParameter(spec);
-
-		P_air0 = atm.getAtomosphericPressure(0.0);
+		rocket = new Rocket(spec);
+		P_air0 = rocket.atm.getAtomosphericPressure(0.0);
 	}
 
 	public void setOtherVariable(double time, double[] pos_ENU, double[] vel_ENU, double[] quat) {
@@ -98,13 +89,13 @@ public class OtherVariableTrajectory {
 		altitude = pos_ENU[2];
 		downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
 
-		gravity = atm.getGravity(altitude);
+		gravity = rocket.atm.getGravity(altitude);
 		double[] g = {0.0, 0.0, - gravity};
-		 P_air = atm.getAtomosphericPressure(altitude);
-		rho = atm.getAirDensity(altitude);
+		 P_air = rocket.atm.getAtomosphericPressure(altitude);
+		rho = rocket.atm.getAirDensity(altitude);
 
 		// velAir , alpha , beta
-		double[] wind_ENU = Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
+		double[] wind_ENU = Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude));
 		for(int i = 0; i < 3; i++) {
 			velAirENU[i] = vel_ENU[i] - wind_ENU[i];
 		}
@@ -118,24 +109,24 @@ public class OtherVariableTrajectory {
 			betaRad = Math.asin(velAirBODY[1] / velAirAbs);
 		}
 
-		Mach = velAirAbs / atm.getSoundSpeed(altitude);
+		Mach = velAirAbs / rocket.atm.getSoundSpeed(altitude);
 		dynamicsPressure = 0.5 * rho * Math.pow(velAirAbs, 2);
 
-		lcp = aero.Lcp(Mach);
+		lcp = rocket.aero.Lcp(Mach);
 		Fst = (lcp - lcg) / rocket.L * 100.0;
 
 		// force
-		drag = dynamicsPressure * aero.Cd(Mach) * rocket.S;
-		normal = dynamicsPressure * aero.CNa(Mach) * rocket.S * alphaRad;
-		side = dynamicsPressure * aero.CNa(Mach) * rocket.S * betaRad;
+		drag = dynamicsPressure * rocket.aero.Cd(Mach) * rocket.S;
+		normal = dynamicsPressure * rocket.aero.CNa(Mach) * rocket.S * alphaRad;
+		side = dynamicsPressure * rocket.aero.CNa(Mach) * rocket.S * betaRad;
 
 		double pressureThrust;
-		thrust = rocket.thrust(time);
+		thrust = rocket.engine.thrust(time);
 		if(thrust <= 0.0) {
 			pressureThrust = 0.0;
 			thrust = 0.0;
 		}else {
-			pressureThrust = (P_air0 - P_air) * rocket.Ae;
+			pressureThrust = (P_air0 - P_air) * rocket.engine.Ae;
 			thrust += pressureThrust;
 		}
 

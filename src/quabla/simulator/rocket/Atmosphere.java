@@ -1,4 +1,4 @@
-package quabla.simulator;
+package quabla.simulator.rocket;
 
 /**
  * Atmospere offers values about atmospher.

@@ -1,26 +1,18 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.AeroParameter;
-import quabla.simulator.Atmosphere;
 import quabla.simulator.Coordinate;
-import quabla.simulator.RocketParameter;
-import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.AbstractVariable;
 
 public class DynamicsTipOff extends AbstractDynamics {
 
-	private RocketParameter rocket;
-	private AeroParameter aero;
-	private Atmosphere atm;
-	private Wind wind;
+	private Rocket rocket;
 
-	public DynamicsTipOff(RocketParameter rocket, AeroParameter aero, Atmosphere atm, Wind wind) {
+	public DynamicsTipOff(Rocket rocket) {
 		this.rocket = rocket;
-		this.aero = aero;
-		this.atm = atm;
-		this.wind = wind;
 	}
 
 	@Override
@@ -49,7 +41,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double roll = Coordinate.deg2rad(attitudeDeg[2]);
 
 		// Wind
-		MathematicalVector windENU = new MathematicalVector(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
+		MathematicalVector windENU = new MathematicalVector(Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude)));
 		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
@@ -65,28 +57,27 @@ public class DynamicsTipOff extends AbstractDynamics {
 		}
 
 		// Environment
-		double g = atm.getGravity(altitude); // 負の値ではなく絶対値なので注意
+		double g = rocket.atm.getGravity(altitude); // 負の値ではなく絶対値なので注意
 		MathematicalVector gBODY = (new MathematicalVector(- Math.sin(elevation), Math.sin(roll) * Math.cos(elevation), 0.0)).multiply(g);
-		//MathematicalVector gENU = new MathematicalVector(0.0 , 0.0 , -atm.getGravity(altitude));
-		double P0 = atm.getAtomosphericPressure(0.0);
-		double P = atm.getAtomosphericPressure(altitude);
-		double rho = atm.getAirDensity(altitude);
-		double Cs = atm.getSoundSpeed(altitude);
+		double P0 = rocket.atm.getAtomosphericPressure(0.0);
+		double P = rocket.atm.getAtomosphericPressure(altitude);
+		double rho = rocket.atm.getAirDensity(altitude);
+		double Cs = rocket.atm.getSoundSpeed(altitude);
 		double Mach = velAirAbs / Cs;
 		double pressureDynamics = 0.5 * rho * Math.pow(velAirAbs, 2);
 
 		// Thrust
 		MathematicalVector thrust ;
-		if(rocket.thrust(t) > 0.0) {
-			double thrustPressure = (P0 - P)* rocket.Ae;
-			thrust = new MathematicalVector(rocket.thrust(t) + thrustPressure, 0.0, 0.0);
+		if(rocket.engine.thrust(t) > 0.0) {
+			double thrustPressure = (P0 - P)* rocket.engine.Ae;
+			thrust = new MathematicalVector(rocket.engine.thrust(t) + thrustPressure, 0.0, 0.0);
 		}else {
 			thrust = new MathematicalVector(0.0, 0.0, 0.0);
 		}
 
 		// Aero Force
-		double drag = pressureDynamics * aero.Cd(Mach) * rocket.S;
-		double side = pressureDynamics * aero.CNa(Mach) * rocket.S * beta;
+		double drag = pressureDynamics * rocket.aero.Cd(Mach) * rocket.S;
+		double side = pressureDynamics * rocket.aero.CNa(Mach) * rocket.S * beta;
 		MathematicalVector forceAero = new MathematicalVector(- drag, - side, 0.0);
 
 		// Newton Equation
@@ -97,7 +88,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		// Center of Gravity , Pressure
 		double lcg = rocket.getLcg(t);
 		double lcgProp = rocket.getLcgProp(t);
-		double lcp = aero.Lcp(Mach);
+		double lcp = rocket.aero.Lcp(Mach);
 
 		// Moment of Inertia
 		double IjPitch = rocket.getIjPitch(t) + m * Math.pow(distanceLowerLug - lcg, 2);
@@ -116,7 +107,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		MathematicalVector momentAeroDamping = new MathematicalVector(
 				0.0,
 				0.0,
-				pressureDynamics * aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
+				pressureDynamics * rocket.aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * r);
 
 		// Jet Damping Moment
 		MathematicalVector momentJetDamping = new MathematicalVector(

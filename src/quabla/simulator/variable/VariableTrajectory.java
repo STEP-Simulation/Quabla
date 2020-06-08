@@ -2,10 +2,10 @@ package quabla.simulator.variable;
 
 import quabla.parameter.InputParam;
 import quabla.simulator.Coordinate;
-import quabla.simulator.RocketParameter;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Rocket;
 
 /**
  * Variable stores variables of rocket when it flights.
@@ -15,7 +15,7 @@ import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
  * */
 public class VariableTrajectory extends AbstractVariable{
 
-	private RocketParameter rocket;
+	private Rocket rocket;
 	private InputParam spec;
 
 	private double time;
@@ -30,7 +30,7 @@ public class VariableTrajectory extends AbstractVariable{
 	private double[] quat0;
 
 
-	public VariableTrajectory(InputParam spec,RocketParameter rocket) {
+	public VariableTrajectory(InputParam spec,Rocket rocket) {
 		this.spec = spec;
 		this.rocket = rocket;
 		h = rocket.dt;

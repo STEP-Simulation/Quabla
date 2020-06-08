@@ -1,7 +1,7 @@
 package quabla.simulator.variable;
 
 import quabla.parameter.InputParam;
-import quabla.simulator.Wind;
+import quabla.simulator.rocket.Wind;
 
 public class OtherVariableParachute {
 

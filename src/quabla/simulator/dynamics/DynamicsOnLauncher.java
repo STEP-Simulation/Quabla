@@ -1,27 +1,19 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.AeroParameter;
-import quabla.simulator.Atmosphere;
 import quabla.simulator.Coordinate;
-import quabla.simulator.RocketParameter;
-import quabla.simulator.Wind;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.AbstractVariable;
 
 
 public class DynamicsOnLauncher extends AbstractDynamics {
 
-	private final RocketParameter rocket ;
-	private final AeroParameter aero;
-	private final Atmosphere atm;
-	private final Wind wind;
+	private final Rocket rocket ;
 
-	public DynamicsOnLauncher(RocketParameter rocket, AeroParameter aero, Atmosphere atm, Wind wind) {
+	public DynamicsOnLauncher(Rocket rocket) {
 		this.rocket = rocket;
-		this.aero = aero;
-		this.atm = atm;
-		this.wind = wind;
 	}
 
 	@Override
@@ -42,31 +34,31 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		double Z0 = (rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation));
 
 		//Wind, Vel_air
-		MathematicalVector windENU = new MathematicalVector(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)));
+		MathematicalVector windENU = new MathematicalVector(Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude)));
 		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
 
 		//Environment
-		double g = - atm.getGravity(altitude);
-		double P0 = atm.getAtomosphericPressure(0.0);
-		double P = atm.getAtomosphericPressure(altitude);
-		double rho = atm.getAirDensity(altitude);
-		double Cs = atm.getSoundSpeed(altitude);
+		double g = - rocket.atm.getGravity(altitude);
+		double P0 = rocket.atm.getAtomosphericPressure(0.0);
+		double P = rocket.atm.getAtomosphericPressure(altitude);
+		double rho = rocket.atm.getAirDensity(altitude);
+		double Cs = rocket.atm.getSoundSpeed(altitude);
 		double Mach = velAirAbs / Cs;
 		double dynamicPressure = 0.5 * rho * Math.pow(velAirAbs, 2);
 
 		//Thrust
 		MathematicalVector thrust ;
-		if(rocket.thrust(t) > 0.0) {
-			double thrustPressure = (P0 - P)* rocket.Ae;
-			thrust = new MathematicalVector(rocket.thrust(t) + thrustPressure, 0.0, 0.0);
+		if(rocket.engine.thrust(t) > 0.0) {
+			double thrustPressure = (P0 - P)* rocket.engine.Ae;
+			thrust = new MathematicalVector(rocket.engine.thrust(t) + thrustPressure, 0.0, 0.0);
 		}else {
 			thrust = new MathematicalVector(0.0, 0.0, 0.0);
 		}
 
 		//Aero Force
-		double drag = dynamicPressure * rocket.S * aero.Cd(Mach);
+		double drag = dynamicPressure * rocket.S * rocket.aero.Cd(Mach);
 		MathematicalVector forceAero = new MathematicalVector(- drag, 0.0, 0.0);
 
 		//Newton Equation
@@ -78,7 +70,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		MathematicalVector accENU = dcmBODY2ENU.dot(accBDOY);
 
 		//推力が自重に負けているとき(居座り)
-		if(accENU.toDouble(2) <= 0.0 && t < rocket.timeBurnout && altitude <= Z0) {
+		if(accENU.toDouble(2) <= 0.0 && t < rocket.engine.timeBurnout && altitude <= Z0) {
 			accENU = new MathematicalVector(0.0, 0.0, 0.0);
 		}
 
