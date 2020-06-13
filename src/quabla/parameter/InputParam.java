@@ -96,7 +96,7 @@ public class InputParam {
 	public double timeBurnout = 5.6; //[s]
 
 	/** 平均比推力 */
-	public double Isp = 220.38; // [s]
+	public double Isp = 166.6; // [s]
 
 	/** 機体後端からグレイン重心までの距離(インジェクタベル含めず) */
 	public double distanceFuelCG = 0.139; // [m]
@@ -130,13 +130,14 @@ public class InputParam {
 
 
 	// Wind ---------------------------------------------------
-	public boolean Wind_file_exsit = true;
+	public boolean Wind_file_exsit = false;
 	public String wind_file = "wind.csv";
 
-	public int WindModel   = 1;
-											/* wind model
-											 * 1 : power law
-											 * **/
+	public String WindModel   = "law";
+	/* wind_file_existがfalseのとき使用
+	 * constant : constant wind
+	 * law : power law
+	 * **/
 
 	public double Cdv      = 4.5;   //coefficient []
 									/* coefficient [-]
@@ -174,7 +175,7 @@ public class InputParam {
 	//----------------------------------------------------------
 
 	// Simulation -----------------------------------------------
-	public String simulationMode = "multi";
+	public String simulationMode = "single";
 		/* Input "single" OR "multi"
 		 * single : single condition
 		 * multi : multi condition (落下分散の計算)
@@ -189,7 +190,7 @@ public class InputParam {
 	 * パスは\\で終わるように
 	 * */
 	public String result_filepath = "C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\";//出力先のファイルパス
-	public String dirName = "STEP15";
+	public String dirName = "test";
 	//------------------------------------------------------------
 
 

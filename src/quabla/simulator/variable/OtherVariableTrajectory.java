@@ -1,9 +1,7 @@
 package quabla.simulator.variable;
 
-import quabla.parameter.InputParam;
 import quabla.simulator.Coordinate;
 import quabla.simulator.rocket.Rocket;
-import quabla.simulator.rocket.Wind;
 
 /**
  * Variable以外の変数を計算するクラス
@@ -40,7 +38,6 @@ public class OtherVariableTrajectory {
 	 * acc_abs
 	 * */
 
-	private InputParam spec ;
 	private Rocket rocket;
 
 	private double[] attitude;
@@ -67,9 +64,8 @@ public class OtherVariableTrajectory {
 	private double P_air, P_air0, gravity,rho;
 
 
-	public OtherVariableTrajectory(InputParam spec) {
-		this.spec = spec;
-		rocket = new Rocket(spec);
+	public OtherVariableTrajectory(Rocket rocket) {
+		this.rocket = rocket;
 		P_air0 = rocket.atm.getAtomosphericPressure(0.0);
 	}
 
@@ -95,7 +91,7 @@ public class OtherVariableTrajectory {
 		rho = rocket.atm.getAirDensity(altitude);
 
 		// velAir , alpha , beta
-		double[] wind_ENU = Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude));
+		double[] wind_ENU = rocket.wind.getWindENU(altitude);
 		for(int i = 0; i < 3; i++) {
 			velAirENU[i] = vel_ENU[i] - wind_ENU[i];
 		}

@@ -1,14 +1,14 @@
 package quabla.simulator.variable;
 
-import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
-import quabla.simulator.rocket.Wind;
+import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.wind.AbstractWind;
 
 public class VariableParachute extends AbstractVariable{
 
-	private Wind wind;
+	private AbstractWind wind;
 
 	private double time;
 	private double h;
@@ -35,13 +35,13 @@ public class VariableParachute extends AbstractVariable{
 		velDescent = variable.getVelDescent();
 	}
 
-	public VariableParachute(InputParam spec) {
+	public VariableParachute(Rocket rocket) {
 		time = 0.0;
 		posENU = new MathematicalVector(0.0, 0.0, 0.0);
 		velENU = new MathematicalVector(0.0, 0.0, 0.0);
 		velDescent = 0.0;
-		wind = new Wind(spec);
-		h = spec.dt;
+		wind = rocket.wind;
+		h = rocket.dt;
 	}
 
 	public void set(VariableParachute variable) {
@@ -130,7 +130,7 @@ public class VariableParachute extends AbstractVariable{
 		posENU = posENU.add(delta.getDeltaPosENU().multiply(h));
 		velDescent = velDescent + delta.getDeltaVelDescent() * h;
 		double altitude = getAltitude();
-		System.arraycopy(Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude)), 0, windENU, 0, 2);
+		System.arraycopy(wind.getWindENU(altitude), 0, windENU, 0, 2);
 		velENU.set(windENU[0], windENU[1], velDescent);
 	}
 }

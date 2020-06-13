@@ -2,8 +2,8 @@ package quabla.simulator.logger;
 
 import java.util.ArrayList;
 
-import quabla.parameter.InputParam;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.OtherVariableParachute;
 import quabla.simulator.variable.VariableParachute;
 
@@ -30,8 +30,8 @@ public class LoggerVariableParachute {
 
 	private final OtherVariableParachute ovp;
 
-	public LoggerVariableParachute(InputParam spec) {
-		ovp = new OtherVariableParachute(spec);
+	public LoggerVariableParachute(Rocket rocket) {
+		ovp = new OtherVariableParachute(rocket);
 	}
 
 	public void log(VariableParachute variable) {

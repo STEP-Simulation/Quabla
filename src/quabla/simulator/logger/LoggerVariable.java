@@ -2,8 +2,8 @@ package quabla.simulator.logger;
 
 import java.util.ArrayList;
 
-import quabla.parameter.InputParam;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.OtherVariableTrajectory;
 import quabla.simulator.variable.VariableTrajectory;
 
@@ -56,8 +56,8 @@ public class LoggerVariable {
 
 	private final OtherVariableTrajectory ovt;
 
-	public LoggerVariable(InputParam spec) {
-		ovt = new OtherVariableTrajectory(spec);
+	public LoggerVariable(Rocket rocket) {
+		ovt = new OtherVariableTrajectory(rocket);
 	}
 
 	public void log(VariableTrajectory variable) {

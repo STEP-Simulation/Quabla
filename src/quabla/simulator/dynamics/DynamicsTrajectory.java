@@ -4,7 +4,6 @@ import quabla.simulator.Coordinate;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
-import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.AbstractVariable;
 
 /**
@@ -59,7 +58,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
 		// alpha , beta
-		windENU.set(Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude)));
+		windENU.set(rocket.wind.getWindENU(altitude));
 		velAirENU = velENU.sub(windENU);
 		velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();

@@ -2,7 +2,6 @@ package quabla.output;
 
 import java.io.IOException;
 
-import quabla.parameter.InputParam;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.event_value.EventValueSingle;
 import quabla.simulator.numerical_analysis.Interpolation;
@@ -157,7 +156,7 @@ public class OutputFlightlogTrajectory {
 	 * @param filepath 出力先のファイルパス
 	 * @throws IOException
 	 * */
-	public OutputFlightlogTrajectory(InputParam spec, LoggerVariable lv, EventValueSingle ivs) {
+	public OutputFlightlogTrajectory(LoggerVariable lv, EventValueSingle ivs) {
 		timeLandingTrajectory = ivs.getTimeLandingTrajectory();
 
 		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());

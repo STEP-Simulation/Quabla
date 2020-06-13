@@ -2,7 +2,6 @@ package quabla.simulator.dynamics;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
-import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.AbstractVariable;
 
 public class DynamicsParachute extends AbstractDynamics{
@@ -27,7 +26,7 @@ public class DynamicsParachute extends AbstractDynamics{
 		double m = rocket.getMass(t);
 
 		//Wind , Velocity
-		double[] wind_ENU = Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude));
+		double[] wind_ENU = rocket.wind.getWindENU(altitude);
 		velENU.set(wind_ENU[0], wind_ENU[1], VelDescent);
 
 		//Environment

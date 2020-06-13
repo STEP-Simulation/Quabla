@@ -4,7 +4,6 @@ import quabla.simulator.Coordinate;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
-import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.AbstractVariable;
 
 
@@ -34,7 +33,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		double Z0 = (rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation));
 
 		//Wind, Vel_air
-		MathematicalVector windENU = new MathematicalVector(Wind.windENU(rocket.wind.getWindSpeed(altitude), rocket.wind.getWindDirection(altitude)));
+		MathematicalVector windENU = new MathematicalVector(rocket.wind.getWindENU(altitude));
 		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();

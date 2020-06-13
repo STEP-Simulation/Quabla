@@ -51,7 +51,7 @@ public class MultiSolver {
 				spec.wind_azimuth = azimuth;
 
 				//solverのインスタンスの生成
-				Solver single_solver = new Solver(spec);//Multi_solverでは各フライトでのlogは保存しない
+				Solver single_solver = new Solver(spec, spec.result_filepath);//Multi_solverでは各フライトでのlogは保存しない
 				single_solver.solveDynamics();
 
 				evm.setResultArray(i, j, single_solver.getEventValueSingle());

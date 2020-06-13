@@ -1,7 +1,7 @@
 package quabla.simulator.variable;
 
-import quabla.parameter.InputParam;
-import quabla.simulator.rocket.Wind;
+import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.wind.AbstractWind;
 
 public class OtherVariableParachute {
 
@@ -13,7 +13,7 @@ public class OtherVariableParachute {
 	 * downrange
 	 * */
 
-	private Wind wind;
+	private AbstractWind wind;
 
 	private double altitude;
 	private double downrange;
@@ -22,9 +22,8 @@ public class OtherVariableParachute {
 	private double[] velAirENU = new double[3];
 	private double velAirAbs;
 
-	public OtherVariableParachute(InputParam spec) {
-
-		wind = new Wind(spec);
+	public OtherVariableParachute(Rocket rocket) {
+		wind = rocket.wind;
 	}
 
 	public void calculateOtherVariable(double time, double[] pos_ENU, double[] vel_ENU) {
@@ -32,8 +31,7 @@ public class OtherVariableParachute {
 		downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
 		//velDescent = vel_ENU[2];
 
-		windENU = Wind.windENU(wind.getWindSpeed(altitude), wind.getWindDirection(altitude));
-		//velAirENU[2] = vel_ENU[2] - windENU[2];
+		windENU = wind.getWindENU(altitude);
 		if(vel_ENU[2] <= 0.0) {
 			velAirENU[0] = windENU[0];
 			velAirENU[1] = windENU[1];

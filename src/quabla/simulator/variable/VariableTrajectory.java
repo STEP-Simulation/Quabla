@@ -1,6 +1,5 @@
 package quabla.simulator.variable;
 
-import quabla.parameter.InputParam;
 import quabla.simulator.Coordinate;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
@@ -16,7 +15,6 @@ import quabla.simulator.rocket.Rocket;
 public class VariableTrajectory extends AbstractVariable{
 
 	private Rocket rocket;
-	private InputParam spec;
 
 	private double time;
 	private final double h;
@@ -30,11 +28,9 @@ public class VariableTrajectory extends AbstractVariable{
 	private double[] quat0;
 
 
-	public VariableTrajectory(InputParam spec,Rocket rocket) {
-		this.spec = spec;
+	public VariableTrajectory(Rocket rocket) {
 		this.rocket = rocket;
 		h = rocket.dt;
-
 		setInitialVariable();
 	}
 
@@ -43,8 +39,8 @@ public class VariableTrajectory extends AbstractVariable{
 
 		//Initial Euler Angle
 		double azimuth0, elevation0, roll0;
-		azimuth0 = Coordinate.deg2rad((- spec.azimuth_launcher + 90.0) + spec.magnetic_dec);
-		elevation0 = Coordinate.deg2rad(spec.elevation_launcher);
+		azimuth0 = Coordinate.deg2rad((- rocket.azimuthLauncher + 90.0) + rocket.magneticDec);
+		elevation0 = Coordinate.deg2rad(rocket.elevationLauncher);
 		if(elevation0 > 0.0) {
 			elevation0 *= -1.0;
 		}
@@ -169,7 +165,7 @@ public class VariableTrajectory extends AbstractVariable{
 	}
 
 	public VariableTrajectory getClone() {
-		VariableTrajectory variable2 = new VariableTrajectory(spec, rocket);
+		VariableTrajectory variable2 = new VariableTrajectory(rocket);
 		variable2.setVariable(time, posENU, velENU, omegaBODY, quat);
 		return variable2;
 	}

@@ -1,6 +1,10 @@
 package quabla.simulator.rocket;
 
 import quabla.parameter.InputParam;
+import quabla.simulator.rocket.wind.AbstractWind;
+import quabla.simulator.rocket.wind.Constant;
+import quabla.simulator.rocket.wind.Original;
+import quabla.simulator.rocket.wind.Power;
 
 public class Rocket {
 
@@ -9,7 +13,7 @@ public class Rocket {
 	public final Engine engine;
 	public final AeroParameter aero;
 	public final Atmosphere atm;
-	public final Wind wind;
+	public final AbstractWind wind;
 
 	public final double
 	L,
@@ -43,13 +47,20 @@ public class Rocket {
 	public final double alt_para2;
 	public final double dt;
 	public final boolean existTipOff;
-	public final double lengthLauncherRail;
+	public final double lengthLauncherRail, elevationLauncher, azimuthLauncher, magneticDec;
 
 	public Rocket(InputParam spec) {
 		engine = new Engine(spec);
 		aero = new AeroParameter(spec);
 		atm = new Atmosphere(spec.temperture0);
-		wind = new Wind(spec);
+		if(spec.Wind_file_exsit) {
+			wind = new Original(spec.wind_file, spec.magnetic_dec);
+		}else if(spec.WindModel == "law"){
+			wind = new Power(spec.wind_speed, spec.wind_azimuth, spec.Zr, spec.Cdv, spec.magnetic_dec);
+		}else {
+			wind  = new Constant(spec.wind_speed, spec.wind_azimuth, spec.magnetic_dec);
+		}
+//		wind = new Wind(spec);
 
 		//--------------- Geometory ---------------
 		L = spec.l;
@@ -113,6 +124,9 @@ public class Rocket {
 
 		//------------------- Launch Config -----------------
 		lengthLauncherRail = spec.length_Launcher;
+		elevationLauncher = spec.elevation_launcher;
+		azimuthLauncher = spec.azimuth_launcher;
+		magneticDec = spec.magnetic_dec;
 		existTipOff = spec.tip_off_exist;
 		if (existTipOff) {
 			upperLug = spec.upper_lug;

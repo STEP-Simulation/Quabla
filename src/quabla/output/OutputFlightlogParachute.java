@@ -2,7 +2,6 @@ package quabla.output;
 
 import java.io.IOException;
 
-import quabla.parameter.InputParam;
 import quabla.simulator.logger.LoggerVariableParachute;
 import quabla.simulator.logger.event_value.EventValueSingle;
 import quabla.simulator.numerical_analysis.Interpolation;
@@ -42,7 +41,7 @@ public class OutputFlightlogParachute {
 	 * @param filename 出力するcsvのfile名
 	 * @throws IOException
 	 * */
-	public OutputFlightlogParachute(InputParam spec, LoggerVariableParachute lv, EventValueSingle ivs) {
+	public OutputFlightlogParachute(LoggerVariableParachute lv, EventValueSingle ivs) {
 
 		timeApogee = ivs.getTimeApogee();
 		timeLandingParachute = ivs.getTimeLandingParachute();

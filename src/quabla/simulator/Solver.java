@@ -19,10 +19,7 @@ import quabla.simulator.logger.event_value.EventValueSingle;
 import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
 import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
-import quabla.simulator.rocket.AeroParameter;
-import quabla.simulator.rocket.Atmosphere;
 import quabla.simulator.rocket.Rocket;
-import quabla.simulator.rocket.Wind;
 import quabla.simulator.variable.VariableParachute;
 import quabla.simulator.variable.VariableTrajectory;
 
@@ -32,33 +29,29 @@ import quabla.simulator.variable.VariableTrajectory;
 public class Solver {
 
 	InputParam spec;
+	private final String resultDir;
 
 	private EventValueSingle eventValue;
 
 	private LoggerVariable trajectoryLog;
 	private LoggerVariableParachute parachuteLog;
 
-	public Solver(InputParam spec) {
+	public Solver(InputParam spec, String resultDir) {
 		this.spec = spec;
-
-		trajectoryLog = new LoggerVariable(spec);
-		parachuteLog = new LoggerVariableParachute(spec);
+		this.resultDir = resultDir;
 	}
 
 
 	public void solveDynamics() {
+		Rocket rocket = new Rocket(spec);
+
 		int index = 0;
 		int indexTipOff, indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
 		double time = 0.0;
-		final double h = spec.dt;
+		double h = rocket.dt;
 		boolean isTipOff = false;
 
-		Atmosphere atm = new Atmosphere(spec.temperture0);
-		//RocketParameter rocket = new RocketParameter(spec);
-		Rocket rocket = new Rocket(spec);
-		AeroParameter aero = new AeroParameter(spec);
-		Wind wind = new Wind(spec);
-		VariableTrajectory variableTrajectory = new VariableTrajectory(spec, rocket);
+		VariableTrajectory variableTrajectory = new VariableTrajectory(rocket);
 
 		// Dynamics
 		AbstractDynamics dynTrajectory = new DynamicsTrajectory(rocket);
@@ -74,6 +67,9 @@ public class Solver {
 
 		// どの飛行状態に遷移したかを判定
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
+
+		trajectoryLog = new LoggerVariable(rocket);
+		parachuteLog = new LoggerVariableParachute(rocket);
 
 		// log Initial Variable
 		trajectoryLog.log(variableTrajectory);
@@ -148,7 +144,7 @@ public class Solver {
 		trajectoryLog.dumpArrayList();
 
 		//頂点時のvariableを渡す
-		VariableParachute variablePara = new VariableParachute(spec);
+		VariableParachute variablePara = new VariableParachute(rocket);
 		variablePara.set(trajectoryLog, indexApogee);
 
 		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
@@ -186,10 +182,10 @@ public class Solver {
 
 	public void makeResult() {
 
-		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory(spec, trajectoryLog, eventValue);
-		OutputFlightlogParachute ofp = new OutputFlightlogParachute(spec, parachuteLog, eventValue);
-		oft.runOutputLine(spec.result_filepath + "flightlog_trajectory.csv");
-		ofp.runOutputLine(spec.result_filepath + "flightlog_parachute.csv");
+		OutputFlightlogTrajectory oft = new OutputFlightlogTrajectory(trajectoryLog, eventValue);
+		OutputFlightlogParachute ofp = new OutputFlightlogParachute(parachuteLog, eventValue);
+		oft.runOutputLine(resultDir + "flightlog_trajectory.csv");
+		ofp.runOutputLine(resultDir + "flightlog_parachute.csv");
 	}
 
 	/**
@@ -199,7 +195,7 @@ public class Solver {
 		OutputTxt resultTxt = null;
 
 		try {
-			resultTxt = new OutputTxt(spec.result_filepath + "result.txt");
+			resultTxt = new OutputTxt(resultDir + "result.txt");
 		}catch(IOException e) {
 			throw new RuntimeException(e);
 		}
