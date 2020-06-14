@@ -5,6 +5,7 @@ import java.io.File;
 import quabla.parameter.InputParam;
 import quabla.simulator.MultiSolver;
 import quabla.simulator.Solver;
+import quabla.simulator.rocket.Rocket;
 
 public class QUABLA {
 
@@ -29,8 +30,9 @@ public class QUABLA {
 			makeResultdir(dirFilepath);
 			spec.result_filepath = dirFilepath + "\\";
 
-			Solver solver = new Solver(spec, spec.result_filepath);
-			solver.solveDynamics();
+			Rocket rocket = new Rocket(spec);
+			Solver solver = new Solver(spec.result_filepath);
+			solver.solveDynamics(rocket);
 			solver.makeResult();
 			solver.outputResultTxt();
 			break;

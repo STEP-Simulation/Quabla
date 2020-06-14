@@ -5,6 +5,7 @@ import java.io.IOException;
 import quabla.output.OutputLandingScatter;
 import quabla.parameter.InputParam;
 import quabla.simulator.logger.event_value.EventValueMulti;
+import quabla.simulator.rocket.Rocket;
 
 /**
  * MultiSolver mangages solver and store values in multiple conditions.
@@ -45,14 +46,13 @@ public class MultiSolver {
 
 		int i = 0;
 		for(double speed: speedArray) {
-			spec.wind_speed = speed;
 			int j = 0;
 			for(double azimuth: azimuthArray) {
-				spec.wind_azimuth = azimuth;
-
+				Rocket rocket = new Rocket(spec);
+				rocket.wind.setRefWind(speed, azimuth);;
 				//solverのインスタンスの生成
-				Solver single_solver = new Solver(spec, spec.result_filepath);//Multi_solverでは各フライトでのlogは保存しない
-				single_solver.solveDynamics();
+				Solver single_solver = new Solver(spec.result_filepath);//Multi_solverでは各フライトでのlogは保存しない
+				single_solver.solveDynamics(rocket);
 
 				evm.setResultArray(i, j, single_solver.getEventValueSingle());
 				j++;

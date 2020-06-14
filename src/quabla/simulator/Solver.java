@@ -5,7 +5,6 @@ import java.io.IOException;
 import quabla.output.OutputFlightlogParachute;
 import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
-import quabla.parameter.InputParam;
 import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
@@ -28,7 +27,6 @@ import quabla.simulator.variable.VariableTrajectory;
  * */
 public class Solver {
 
-	InputParam spec;
 	private final String resultDir;
 
 	private EventValueSingle eventValue;
@@ -36,15 +34,12 @@ public class Solver {
 	private LoggerVariable trajectoryLog;
 	private LoggerVariableParachute parachuteLog;
 
-	public Solver(InputParam spec, String resultDir) {
-		this.spec = spec;
+	public Solver(String resultDir) {
 		this.resultDir = resultDir;
 	}
 
 
-	public void solveDynamics() {
-		Rocket rocket = new Rocket(spec);
-
+	public void solveDynamics(Rocket rocket) {
 		int index = 0;
 		int indexTipOff, indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
 		double time = 0.0;
@@ -96,7 +91,7 @@ public class Solver {
 			trajectoryLog.log(variableTrajectory);
 
 			// Tip-Off -----------------------------------------
-			if(spec.tip_off_exist && eventJudgement.judgeTipOff(variableTrajectory) && !isTipOff) {// 1回のみ実行
+			if(rocket.existTipOff && eventJudgement.judgeTipOff(variableTrajectory) && !isTipOff) {// 1回のみ実行
 				indexTipOff = index;
 				dynOnLauncher = new DynamicsTipOff(rocket);
 				isTipOff = true;
