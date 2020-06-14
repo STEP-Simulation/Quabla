@@ -1,6 +1,7 @@
 package quabla.simulator.rocket;
 
-import quabla.parameter.InputParam;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import quabla.simulator.rocket.wind.AbstractWind;
 import quabla.simulator.rocket.wind.Constant;
 import quabla.simulator.rocket.wind.Original;
@@ -49,34 +50,46 @@ public class Rocket {
 	public final boolean existTipOff;
 	public final double lengthLauncherRail, elevationLauncher, azimuthLauncher, magneticDec;
 
-	public Rocket(InputParam spec) {
-		engine = new Engine(spec);
-		aero = new AeroParameter(spec);
-		atm = new Atmosphere(spec.temperture0);
-		if(spec.Wind_file_exsit) {
-			wind = new Original(spec.wind_file, spec.magnetic_dec);
-		}else if(spec.WindModel == "law"){
-			wind = new Power(spec.wind_speed, spec.wind_azimuth, spec.Zr, spec.Cdv, spec.magnetic_dec);
+	public Rocket(JsonNode spec) {
+		engine = new Engine(spec.get("Engine"));
+		aero = new AeroParameter(spec.get("Aero"));
+		atm = new Atmosphere(spec.get("Atmosphere").get("Temperture at 0 m [℃]").asDouble());
+		JsonNode structure = spec.get("Structure");
+		JsonNode parachute = spec.get("Parachute");
+		JsonNode launchCond = spec.get("Launch Condition");
+		if(spec.get("Wind").get("Wind File Exist").asBoolean()) {
+			wind = new Original(
+					spec.get("Wind").get("Wind File").asText(),
+					launchCond.get("Input Magnetic Azimuth [deg]").asDouble());
+		}else if(spec.get("Wind").get("Wind Model").asText().equals("law")){
+			wind = new Power(
+					spec.get("Wind").get("Wind Speed [m/s]").asDouble(),
+					spec.get("Wind").get("Wind Azimuth [deg]").asDouble(),
+					spec.get("Wind").get("Wind Reference Altitude [m]").asDouble(),
+					spec.get("Wind").get("Wind Power Law Coefficient").asDouble(),
+					launchCond.get("Input Magnetic Azimuth [deg]").asDouble());
 		}else {
-			wind  = new Constant(spec.wind_speed, spec.wind_azimuth, spec.magnetic_dec);
+			wind  = new Constant(
+					spec.get("Wind").get("Wind Speed [m/s]").asDouble(),
+					spec.get("Wind").get("Wind Azimuth [deg]").asDouble(),
+					launchCond.get("Input Magnetic Azimuth [deg]").asDouble());
 		}
-//		wind = new Wind(spec);
 
 		//--------------- Geometory ---------------
-		L = spec.l;
-		D = spec.d;
+		L = structure.get("Length [m]").asDouble();
+		D = structure.get("Diameter [m]").asDouble();
 		S = 0.25 * Math.PI * Math.pow(D, 2);
 		//-----------------------------------------
 
 		//--------------- Mass ---------------
-		mDry = spec.mDry;
+		mDry = structure.get("Dry Mass [kg]").asDouble();
 		mSt = mDry - engine.mFuelBef;
 		mBef = mDry + engine.mOxBef;
 		mAft = mDry - (engine.mFuelBef - engine.mFuelAft);
 		//------------------------------------
 
 		//--------------- Center of Gravity ---------------
-		lcgDry = spec.lcgDry;
+		lcgDry = structure.get("Dry Length-C.G. from Nosetip [m]").asDouble();
 		lcgSt = (lcgDry * mDry - (L - engine.lcgFuel) * engine.mFuelBef) / mSt;
 		lcgBef = (lcgDry * mDry + (L - engine.lcgOxBef) * engine.mOxBef) / (mDry + engine.mOxBef);
 		lcgAft = (lcgSt * mSt + (L - engine.lcgFuel) * engine.mFuelAft) / (mSt + engine.mFuelAft);
@@ -84,8 +97,8 @@ public class Rocket {
 
 		//--------------- Moment of Inertia ---------------
 		// @ Dry
-		IjPitchDry = spec.IjPitchDry;
-		IjRollDry = spec.IjRollDry;
+		IjPitchDry = structure.get("Dry Moment of Inertia  Pitch-Axis [kg*m^2]").asDouble();
+		IjRollDry = structure.get("Dry Moment of Inertia Roll-Axis [kg*m^2]").asDouble();
 
 		// @ Before Burn
 		// Pitch, Yaw Axsis
@@ -109,28 +122,28 @@ public class Rocket {
 		//-------------------------------------------------
 
 		//-------------------- Parachute --------------------
-		CdS1 = spec.CdS1;
-		para2Exist = spec.para2_exist;
+		CdS1 = parachute.get("1st Parachute CdS [m2]").asDouble();
+		para2Exist = parachute.get("2nd Parachute Exist").asBoolean();
 		if (para2Exist) {
-			CdS2 = spec.CdS2;
-			alt_para2 = spec.alt_para2;
+			CdS2 = parachute.get("2nd Parachute CdS [m2]").asDouble();
+			alt_para2 = parachute.get("2nd Parachute Opening Altitude [m]").asDouble();
 		} else {
 			CdS2 = 0.0;
 			alt_para2 = 0.0;
 		}
 		//---------------------------------------------------
 
-		dt = spec.dt;
+		dt = spec.get("Solver").get("Time Step [sec]").asDouble();
 
 		//------------------- Launch Config -----------------
-		lengthLauncherRail = spec.length_Launcher;
-		elevationLauncher = spec.elevation_launcher;
-		azimuthLauncher = spec.azimuth_launcher;
-		magneticDec = spec.magnetic_dec;
-		existTipOff = spec.tip_off_exist;
+		lengthLauncherRail = launchCond.get("Launcher Rail Length [m]").asDouble();
+		elevationLauncher = launchCond.get("Launch Elevation [deg]").asDouble();
+		azimuthLauncher = launchCond.get("Launch Azimuth [deg]").asDouble();
+		magneticDec = launchCond.get("Input Magnetic Azimuth [deg]").asDouble();
+		existTipOff = launchCond.get("Tip-Off Calculation Exist").asBoolean();
 		if (existTipOff) {
-			upperLug = spec.upper_lug;
-			lowerLug = spec.lower_lug;
+			upperLug = structure.get("Upper Launch Lug [m]").asDouble();
+			lowerLug = structure.get("Lower Launch Lug [m]").asDouble();
 		} else { // launch clearは重心がランチャを抜けたとき
 			upperLug = lcgBef;
 			lowerLug = lcgBef + 0.01;

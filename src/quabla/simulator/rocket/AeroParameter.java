@@ -1,6 +1,7 @@
 package quabla.simulator.rocket;
 
-import quabla.parameter.InputParam;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import quabla.simulator.GetCsv;
 import quabla.simulator.numerical_analysis.Interpolation;
 
@@ -9,15 +10,18 @@ public class AeroParameter {
 	private double Lcp_const;
 	private double Cd_const, CNa_const;
 	Interpolation Lcp_analy,Cd_analy,CNa_analy;
-	public double Clp,Cmq,Cnr;
-	private boolean Lcp_file_exist,Cd_file_exist,CNa_file_exist;
+	public double Clp, Cmq, Cnr;
+	private final boolean Lcp_file_exist,Cd_file_exist,CNa_file_exist;
 
 
-	public AeroParameter(InputParam spec){
+	public AeroParameter(JsonNode aero){
 
+		Lcp_file_exist = aero.get("Length-C.P. File").asBoolean();
+		Cd_file_exist = aero.get("Cd File").asBoolean();
+		CNa_file_exist = aero.get("CNa File").asBoolean();
 
-		if(spec.Lcp_file_exist) {
-			double[][] Lcp_data = GetCsv.get2ColumnArray(spec.Lcp_file);
+		if(Lcp_file_exist) {
+			double[][] Lcp_data = GetCsv.get2ColumnArray(aero.get("Length-C.P. File").asText());
 			double Mach_array[] = new double[Lcp_data.length];
 			double Lcp_array[] = new double[Lcp_data.length];
 			for(int i = 0; i < Lcp_data.length ; i++) {
@@ -26,12 +30,12 @@ public class AeroParameter {
 			}
 			this.Lcp_analy = new Interpolation(Mach_array , Lcp_array);//Mach_array,Lcp_arrayってインスタンス変数にする必要ある？
 		}else {
-			Lcp_const = spec.Lcp;
+			Lcp_const = aero.get("Constant Length-C.P. from Nosetip [m]").asDouble();
 		}
 
 
-		if(spec.Cd_file_exist) {
-			double[][] Cd_data = GetCsv.get2ColumnArray(spec.Cd_file);
+		if(Cd_file_exist) {
+			double[][] Cd_data = GetCsv.get2ColumnArray(aero.get("Cd File").asText());
 			double Mach_array[] = new double[Cd_data.length];
 			double Cd_array[] = new double[Cd_data.length];
 			for(int i = 0 ; i < Cd_data.length ; i++) {
@@ -40,12 +44,12 @@ public class AeroParameter {
 			}
 			this.Cd_analy = new Interpolation(Mach_array , Cd_array);
 		}else {
-			this.Cd_const = spec.Cd;
+			this.Cd_const = aero.get("Constant Cd").asDouble();
 		}
 
 
-		if(spec.CNa_file_exist) {
-			double[][] CNa_data = GetCsv.get2ColumnArray(spec.CNa_file);
+		if(CNa_file_exist) {
+			double[][] CNa_data = GetCsv.get2ColumnArray(aero.get("CNa File").asText());
 			double Mach_array[] = new double[CNa_data.length];
 			double CNa_array[] = new double[CNa_data.length];
 			for(int i = 0; i < CNa_data.length ; i++) {
@@ -54,24 +58,16 @@ public class AeroParameter {
 			}
 			this.CNa_analy = new Interpolation(Mach_array , CNa_array);
 		}else {
-			this.CNa_const = spec.CNa;
+			this.CNa_const = aero.get("Constant CNa").asDouble();
 		}
 
-
-		Lcp_file_exist = spec.Lcp_file_exist;
-		Cd_file_exist = spec.Cd_file_exist;
-		CNa_file_exist = spec.CNa_file_exist;
-
-
-		this.Clp = spec.Clp;
+		this.Clp = aero.get("Roll Dumping Moment Coefficient Clp").asDouble();
 		if(Clp > 0.0)
 			Clp *= -1.0;
 
-
-		this.Cmq = spec.Cmq;
+		this.Cmq = aero.get("Pitch Dumping Moment Coefficient Cmq").asDouble();
 		if(Cmq > 0.0)
 			Cmq *= -1.0;
-
 
 		this.Cnr = Cmq;
 
@@ -80,41 +76,29 @@ public class AeroParameter {
 
 
 	public double Lcp(double Mach) {
-		double Lcp;
-
 		if(Lcp_file_exist) {
-			Lcp = Lcp_analy.linearInterp1column(Mach);
+			return Lcp_analy.linearInterp1column(Mach);
 		}else {
-			Lcp = Lcp_const;
+			return Lcp_const;
 		}
-
-		return Lcp;
 	}
 
 
 	public double Cd(double Mach) {
-		double Cd;
-
 		if(Cd_file_exist) {
-			Cd = Cd_analy.linearInterp1column(Mach);
+			return Cd_analy.linearInterp1column(Mach);
 		}else {
-			Cd = Cd_const;
+			return Cd_const;
 		}
-
-		return Cd;
 	}
 
 
 	public double CNa(double Mach) {
-		double CNa;
-
 		if(CNa_file_exist) {
-			CNa = CNa_analy.linearInterp1column(Mach);
+			return CNa_analy.linearInterp1column(Mach);
 		}else {
-			CNa = CNa_const;
+			return CNa_const;
 		}
-
-		return CNa;
 	}
 
 

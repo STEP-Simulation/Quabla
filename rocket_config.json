@@ -10,13 +10,10 @@
 		"Azimuth": "North to East (clockwise) _ 0deg 360deg"
 	},
 
-	"System": {
-		"Name": "sample",
-		"Result Filepath":"C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\"
-	},
-
 	"Solver": {
-		"Simulation Mode":"single",
+		"Name": "sample",
+		"Result Filepath":"C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\",
+		"Simulation Mode":"multi",
 		"Time Step [sec]": 0.001
 	},
 
@@ -28,9 +25,9 @@
 	},
 
 	"Wind":{
-		"Wind File Exist": true,
+		"Wind File Exist": false,
 		"Wind File": "wind.csv",
-		"Wind Model":1,
+		"Wind Model":"law",
 		"Wind Power Law Coefficient": 4.5,
 		"Wind Speed [m/s]": 2.0,
 		"Wind Azimuth [deg]": 270.0,
@@ -44,10 +41,11 @@
 	"Launch Condition": {
 		"Date": "2018/8/23 6:00",
 		"Site": [40.138633, 139.984850, 0.0],
-		"Launch Azimuth [deg]": 290.0,
+		"Launch Azimuth [deg]": 90.0,
 		"Launch Elevation [deg]": 88.0,
 		"Launcher Rail Length [m]": 5.0,
-		"Input Magnetic Azimuth": 8.9
+		"Tip-Off Calculation Exist": true,
+		"Input Magnetic Azimuth [deg]": 8.9
 	},
 
 	"Structure": {
@@ -55,9 +53,8 @@
 		"Diameter [m]": 0.162,
 		"Dry Mass [kg]": 7.67,
 		"Dry Length-C.G. from Nosetip [m]": 1.218,
-		"Dry Inertia-Moment Roll-Axis [kg*m^2]": 0.0233,
-		"Dry Inertia-Moment Pitch-Axis [kg*m^2]": 2.551,
-		"Tip-Off Calculation Exist": true,
+		"Dry Moment of Inertia Roll-Axis [kg*m^2]": 0.0233,
+		"Dry Moment of Inertia  Pitch-Axis [kg*m^2]": 2.551,
 		"Upper Launch Lug [m]": 0.92,
 		"Lower Launch Lug [m]": 2.037
 	},
@@ -97,7 +94,7 @@
 		"Constant Length-C.P. from Nosetip [m]": 1.465,
 		"CNa File": "CNa.csv",
 		"CNa File Exist":false,
-		"Constant Normal Coefficient CNa": 9.23,
+		"Constant CNa": 9.23,
 		"Roll Dumping Moment Coefficient Clp": 0.0104,
 		"Pitch Dumping Moment Coefficient Cmq": 2.676
 	}

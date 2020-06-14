@@ -2,8 +2,9 @@ package quabla.simulator;
 
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import quabla.output.OutputLandingScatter;
-import quabla.parameter.InputParam;
 import quabla.simulator.logger.event_value.EventValueMulti;
 import quabla.simulator.rocket.Rocket;
 
@@ -11,22 +12,20 @@ import quabla.simulator.rocket.Rocket;
  * MultiSolver mangages solver and store values in multiple conditions.
  * */
 public class MultiSolver {
-	InputParam spec;
 	double speed_min,speed_step;
 	int speed_num,angle_num;
 	private double[] speedArray, azimuthArray;
+	private String filepathResult;
 
 	private EventValueMulti evm;
 
-	public MultiSolver(InputParam spec) {
-		this.spec = spec;
+	public MultiSolver(String filepath, JsonNode multiCond) {
+		filepathResult = filepath;
 
-		this.spec.Wind_file_exsit = false;//分散の時は強制的にべき法則
-
-		this.speed_min = spec.speed_min;
-		this.speed_step = spec.speed_step;
-		this.speed_num = spec.speed_num;
-		this.angle_num = spec.angle_num;
+		this.speed_min = multiCond.get("Minimum Wind Speed [m/s]").asDouble();
+		this.speed_step = multiCond.get("Step Wind Speed [m/s]").asDouble();
+		this.speed_num = multiCond.get("Number of Wind Speed").asInt();
+		this.angle_num = multiCond.get("Number of Wind Azimuth").asInt();
 
 		speedArray = new double[speed_num];
 		azimuthArray = new double[angle_num + 1];
@@ -42,7 +41,7 @@ public class MultiSolver {
 
 	}
 
-	public void solveMulti() {
+	public void solveMulti(JsonNode spec) {
 
 		int i = 0;
 		for(double speed: speedArray) {
@@ -51,7 +50,7 @@ public class MultiSolver {
 				Rocket rocket = new Rocket(spec);
 				rocket.wind.setRefWind(speed, azimuth);;
 				//solverのインスタンスの生成
-				Solver single_solver = new Solver(spec.result_filepath);//Multi_solverでは各フライトでのlogは保存しない
+				Solver single_solver = new Solver(filepathResult);//Multi_solverでは各フライトでのlogは保存しない
 				single_solver.solveDynamics(rocket);
 
 				evm.setResultArray(i, j, single_solver.getEventValueSingle());
@@ -64,19 +63,20 @@ public class MultiSolver {
 		double[][] windMapTrajectory = getWindMap(evm.getPosENUlandTrajectory());
 		double[][] windMapParachute = getWindMap(evm.getPosENUlandParachute());
 
-		evm.outputResultTxt(spec.result_filepath);
-		evm.outputCsv(spec.result_filepath);
+		evm.outputResultTxt(filepathResult);
+		evm.outputCsv(filepathResult);
 
+		double launchElev = spec.get("Launch Condition").get("Launch Elevation [deg]").asDouble();
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
-			trajectory.output(spec.result_filepath + "trajectory"+spec.elevation_launcher+"[deg].csv",windMapTrajectory, speedArray);
+			trajectory.output(filepathResult + "trajectory"+ launchElev +"[deg].csv",windMapTrajectory, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
-			parachute.output(spec.result_filepath + "parachute"+spec.elevation_launcher+"[deg].csv",windMapParachute, speedArray);
+			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

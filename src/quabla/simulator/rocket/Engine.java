@@ -1,6 +1,7 @@
 package quabla.simulator.rocket;
 
-import quabla.parameter.InputParam;
+import com.fasterxml.jackson.databind.JsonNode;
+
 import quabla.simulator.GetCsv;
 import quabla.simulator.numerical_analysis.Interpolation;
 
@@ -49,21 +50,21 @@ public class Engine {
 	timeActuate;
 	private double IspAve;
 
-	public Engine(InputParam spec) {
+	public Engine(JsonNode engine) {
 
 		// Specific thrust
-		IspAve = spec.Isp;
-		timeBurnout = spec.timeBurnout;
+		IspAve = engine.get("Burn Time [sec:]").asDouble();
+		timeBurnout = engine.get("Burn Time [sec:]").asDouble();
 
-		mOxBef = (spec.volTank * Math.pow(10, -6)) * spec.densityOxidizer;
-		mFuelBef = spec.massFuelBef;
-		mFuelAft = spec.massFuelAft;
+		mOxBef = (engine.get("Tank Volume [cc]").asDouble() * Math.pow(10, -6)) * engine.get("Oxidizer Density [kg/m^3]").asDouble();
+		mFuelBef = engine.get("Fuel Mass Before [kg]").asDouble();
+		mFuelAft = engine.get("Fuel Mass After [kg]").asDouble();
 		mDotFuel = (mFuelBef - mFuelAft) / timeBurnout;
 
 		//-------------------- Thrust --------------------
 		/* 1st Column : Time [s]
 		 *  2nd Column : Thrust [N] **/
-		double[][] thrust_data = GetCsv.get2ColumnArray(spec.thrustcurve);
+		double[][] thrust_data = GetCsv.get2ColumnArray(engine.get("Thrust Curve").asText());
 		double[] time_array = new double[thrust_data.length];
 		double[] thrust_array = new double[thrust_data.length];
 		double[] mDotPropLog = new double[thrust_data.length];
@@ -93,29 +94,29 @@ public class Engine {
 		mOxAnaly = new Interpolation(time_array, mOxLog);
 
 		//--------------- Length, Diameter ---------------
-		dth = spec.dth * Math.pow(10, -3);// [mm] => [m]
-		eps = spec.eps;
+		dth = engine.get("Nozzle Throat Diameter [mm]").asDouble() * Math.pow(10, -3);// [mm] => [m]
+		eps = engine.get("Nozzle Expansion Ratio").asDouble();
 		Ath = 0.25 * Math.PI * Math.pow(dth, 2);
 		Ae = Ath * eps;
 		de = Math.sqrt(Ae * 4 / Math.PI);
 
 		// Fuel(grain)
-		dFuelInBef = spec.diameterFuelPort * Math.pow(10, -3);
+		dFuelInBef = engine.get("Fuel Inside Diamter [mm]").asDouble() * Math.pow(10, -3);
 		//燃料は密度分布が一様であると仮定して,燃焼前後の重量比を用いて算出
 		dFuelInAft = Math.sqrt((1 - mFuelAft / mFuelBef) * Math.pow(dFuelOut, 2) + (mFuelAft / mFuelBef) * Math.pow(dFuelInBef, 2));
 
-		dFuelOut = spec.diameterFuelOut * Math.pow(10, -3);
-		lFuel = spec.lengthFuel;
+		dFuelOut = engine.get("Fuel Outside Diameter [mm]").asDouble() * Math.pow(10, -3);
+		lFuel = engine.get("Fuel Length [m]").asDouble();
 
 		// Oxidizer tank
-		lTank = spec.lengthTank;
-		dTank = spec.diameterTank * Math.pow(10, -3);
-		distanceTank = spec.distanceTank;
+		lTank = engine.get("Tank Length [m]").asDouble();
+		dTank = engine.get("Tank Diameter [mm]").asDouble() * Math.pow(10, -3);
+		distanceTank = engine.get("Length Tank-End from End [m]").asDouble();
 		//------------------------------------------------
 
 		//--------------- Center of Gravity ---------------
 		//燃料は半径方向にのみ一様に減少するとし,重心が機軸方向に移動しない仮定
-		lcgFuel = spec.distanceFuelCG;
+		lcgFuel = engine.get("Length Fuel-C.G. from End [m]").asDouble();
 		lcgOxBef = distanceTank + 0.5 * lTank;
 		lcgOxAft = distanceTank;
 		//-------------------------------------------------

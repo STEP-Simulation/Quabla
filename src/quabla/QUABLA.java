@@ -1,8 +1,11 @@
 package quabla;
 
 import java.io.File;
+import java.io.IOException;
 
-import quabla.parameter.InputParam;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import quabla.simulator.MultiSolver;
 import quabla.simulator.Solver;
 import quabla.simulator.rocket.Rocket;
@@ -15,23 +18,32 @@ public class QUABLA {
 
 		System.out.println("Running Solver...");
 
-		InputParam spec = new InputParam();
-		System.out.println("Simulation Mode : " + spec.simulationMode);
-		System.out.println("Model : " + spec.dirName);
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode node = null;
+		try {
+			node = mapper.readTree(new File(args[0]));
+		}catch(IOException e	) {
+			e.printStackTrace();
+		}
+		String simulationMode = node.get("Solver").get("Simulation Mode").asText();
+		String name = node.get("Solver").get("Name").asText();
+		System.out.println("Simulation Mode : " + simulationMode);
+		System.out.println("Model : " + name);
 
 		long startTime = System.currentTimeMillis();
 
-		switch(spec.simulationMode) {
+		switch(simulationMode) {
 		case "single":
 			//single condition
 
 			//ディレクトリの作成
-			dirFilepath = spec.result_filepath + "Result_single_" + spec.dirName;
+			String filepathResult = node.get("Solver").get("Result Filepath").asText();
+			dirFilepath = filepathResult + "Result_single_" + name;
 			makeResultdir(dirFilepath);
-			spec.result_filepath = dirFilepath + "\\";
+			filepathResult = dirFilepath + "\\";
 
-			Rocket rocket = new Rocket(spec);
-			Solver solver = new Solver(spec.result_filepath);
+			Rocket rocket = new Rocket(node);
+			Solver solver = new Solver(filepathResult);
 			solver.solveDynamics(rocket);
 			solver.makeResult();
 			solver.outputResultTxt();
@@ -41,12 +53,13 @@ public class QUABLA {
 			//multiple condition
 
 			//ディレクトリの作成
-			dirFilepath = spec.result_filepath + "Result_multi_" + spec.dirName;
+			String filepathResultMulti = node.get("Solver").get("Result Filepath").asText();
+			dirFilepath = filepathResultMulti + "Result_multi_" + name;
 			makeResultdir(dirFilepath);
-			spec.result_filepath = dirFilepath + "\\";
+			filepathResultMulti = dirFilepath + "\\";
 
-			MultiSolver multi_solver = new MultiSolver(spec);
-			multi_solver.solveMulti();
+			MultiSolver multi_solver = new MultiSolver(filepathResultMulti, node.get("Multi Solver"));
+			multi_solver.solveMulti(node);
 			break;
 		}
 
@@ -62,7 +75,7 @@ public class QUABLA {
 		File resultDir = new File(dirFilepath_);
 		int i = 0;
 		while((resultDir = new File(dirFilepath_)).exists()){
-			dirFilepath_ = dirFilepathOrg +"_"+ String.format("%02d", i+1);
+			dirFilepath_ = dirFilepathOrg +"_"+ String.format("%02d", i + 1);
 			i ++;
 		}
 
