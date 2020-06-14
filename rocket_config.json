@@ -12,12 +12,19 @@
 
 	"System": {
 		"Name": "sample",
-		"Result Filepath":"C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\",
+		"Result Filepath":"C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\"
 	},
 
 	"Solver": {
 		"Simulation Mode":"single",
 		"Time Step [sec]": 0.001
+	},
+
+	"Multi Solver": {
+		"Minimum Wind Speed [m/s]": 1.0,
+		"Step Wind Speed [m/s]": 1.0,
+		"Number of Wind Speed": 7,
+		"Number of Wind Azimuth": 8
 	},
 
 	"Wind":{
@@ -91,7 +98,7 @@
 		"CNa File": "CNa.csv",
 		"CNa File Exist":false,
 		"Constant Normal Coefficient CNa": 9.23,
-		"Roll Dumping Moment Coefficient Clp": - 0.0104,
-		"Pitch Dumping Moment Coefficient Cmq": - 2.676
+		"Roll Dumping Moment Coefficient Clp": 0.0104,
+		"Pitch Dumping Moment Coefficient Cmq": 2.676
 	}
 }

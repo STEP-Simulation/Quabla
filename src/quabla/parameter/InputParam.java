@@ -175,7 +175,7 @@ public class InputParam {
 	//----------------------------------------------------------
 
 	// Simulation -----------------------------------------------
-	public String simulationMode = "single";
+	public String simulationMode = "multi";
 		/* Input "single" OR "multi"
 		 * single : single condition
 		 * multi : multi condition (落下分散の計算)
