@@ -12,8 +12,8 @@
 
 	"Solver": {
 		"Name": "sample",
-		"Result Filepath":"C:\\Users\\zoooi\\Documents\\STEP\\機体班\\シュミレーション\\テスト\\",
-		"Simulation Mode":"multi",
+		"Result Filepath":"",
+		"Simulation Mode":"single",
 		"Time Step [sec]": 0.001
 	},
 
