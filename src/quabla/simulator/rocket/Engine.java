@@ -53,8 +53,8 @@ public class Engine {
 	public Engine(JsonNode engine) {
 
 		// Specific thrust
-		IspAve = engine.get("Burn Time [sec:]").asDouble();
-		timeBurnout = engine.get("Burn Time [sec:]").asDouble();
+		IspAve = engine.get("Burn Time [sec]").asDouble();
+		timeBurnout = engine.get("Burn Time [sec]").asDouble();
 
 		mOxBef = (engine.get("Tank Volume [cc]").asDouble() * Math.pow(10, -6)) * engine.get("Oxidizer Density [kg/m^3]").asDouble();
 		mFuelBef = engine.get("Fuel Mass Before [kg]").asDouble();
