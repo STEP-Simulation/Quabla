@@ -16,7 +16,7 @@ public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange
 		this.deltaQuat.set(dx[9], dx[10], dx[11], dx[12]);
 	}
 
-	public void setDeltaPos_ENU(MathematicalVector deltaPosENU) {
+	public void setDeltaPosENU(MathematicalVector deltaPosENU) {
 		this.deltaPosENU = deltaPosENU;
 	}
 
@@ -35,7 +35,7 @@ public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange
 	@Override
 	public DynamicsMinuteChangeTrajectory multiple(double a) {
 		DynamicsMinuteChangeTrajectory dmct = new DynamicsMinuteChangeTrajectory();
-		dmct.setDeltaPos_ENU(this.deltaPosENU.multiply(a));
+		dmct.setDeltaPosENU(this.deltaPosENU.multiply(a));
 		dmct.setDeltaVelENU(this.deltaVelENU.multiply(a));
 		dmct.setDeltaOmegaBODY(this.deltaOmegaBODY.multiply(a));
 		dmct.setDeltaQuat(this.deltaQuat.multiply(a));

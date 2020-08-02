@@ -149,7 +149,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		MathematicalMatrix tensor = new MathematicalMatrix(Coordinate.Omega_tensor(p, q, r));
 		MathematicalVector quatdot = tensor.dot(quat).multiply(0.5);
 
-		delta.setDeltaPos_ENU(velENU);
+		delta.setDeltaPosENU(velENU);
 		delta.setDeltaVelENU(accENU);
 		delta.setDeltaOmegaBODY(omegadot);
 		delta.setDeltaQuat(quatdot);

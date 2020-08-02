@@ -130,7 +130,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		MathematicalVector quatdot = tensor.dot(quat).multiply(0.5);
 
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
-		delta.setDeltaPos_ENU(velENU);
+		delta.setDeltaPosENU(velENU);
 		delta.setDeltaVelENU(accENU);
 		delta.setDeltaOmegaBODY(omegadot);
 		delta.setDeltaQuat(quatdot);
