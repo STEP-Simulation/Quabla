@@ -23,9 +23,14 @@ Jacksonで読み込んでいる。
 パスの指定方法は相対パスでも絶対パスでもどちらでもよい。
 例えば，あらかじめ入っている`sample_rocket.json`を相対パスで指定する場合，
 コマンドライン引数は`sample_rocket.json`となる。<br>
-`C:/hoge`にある`rocket_config.json`を絶対パスで指定する場合，
-コマンドライン引数は`C:/hoge/rocket_config.json`となる。
+`C:\hoge`にある`rocket_config.json`を絶対パスで指定する場合，
+コマンドライン引数は`C:\hoge\rocket_config.json`となる。
 2. `QUABLA.java`を実行。
+
+## Problem
+* Mac OSで使用する場合，文字コードのせいか階層を区切る`\\`が文字化けしてしまい，
+ディレクトリの指定で失敗する。<br>
+`QUABLA.java`中の`\\`を`/`に変更するとうまくいく。
 
 ## Future Works
 * 変数が発散したときの例外処理
