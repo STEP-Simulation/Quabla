@@ -3,7 +3,7 @@ Quabla
 6-DoF Rocket Simulator for STEP<br>
 coding UTF-8
 
-![Quabla_logo](./src/image/Quablaロゴ(透過済).png)
+<img src="./src/image/Quablaロゴ(透過済).png" width="400px")
 
 ## Libraries
 Jsonファイルを読み込むために，以下のライブラリが必要。
