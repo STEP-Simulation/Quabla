@@ -40,9 +40,53 @@ Jacksonで読み込んでいる。
 * 長さなどの定義に注意。長さの基準が異なっている可能性がある。
 
 ### Solver
+|項目|備考|
+|---|---|
+|Name|プロジェクト名や機体名など|
+|Result Filepath|結果の出力先。|
+|Simulation Mode|'single'か'multi'を指定。|
+|Time Step|シミュレーションの時間刻み。|
+
 ### Multi Solver
+複数条件のシミュレーション時の設定。
+|項目|単位|備考|
+|---|---|---|
+|Minimum Wind Speed | m/s | 計算する風速の最小値。|
+|Step Wind Speed | m/s || 風速の時間刻み。|
+|Number of Wind Speed | - | 計算する風速の数。|
+|Number of Wind Azimuth | -  | 計算する風向の数。基本的に4の倍数にすること。|
+
 ### Structure
+構造に関するパラメータ。
+|項目|単位|備考|
+|Length|m|機体全長。ノーズコーン先端から機体後端まで。ボートテイルを有する場合はボートテイル後端まで。ノズルカバーは含めない。|
+|Diameter|m|機体代表直径。|
+|Dry Mass|kg|乾燥時（酸化剤を除いた）の機体重量。|
+|Dry Length-C.G. from Nosetip|m|乾燥時の機体重心とノーズコーン先端の距離。|
+|Dry Moment of Inertia Roll-Axis|kg*m^2|乾燥時のロール軸回りの慣性モーメント。|
+|Dry Moment of Inertia  Pitch-Axis|kg*m^2|乾燥時のピッチ軸回りの慣性モーメント。|
+|Upper Launch Lug|m|1本目のランチラグとノーズコーン先端の距離。ランチラグが3本以上の場合，機体後端から2本目のランチラグとの距離にすること。|
+|Lower Launch Lug|m|機体後端から最も近いランチラグとノーズコーン先端との距離。|
+
 ### Engine
+|項目|単位|備考|
+|---|---|---|
+|Thrust Curve|-|推力履歴のcsvファイルのパス。|
+|Nozzle Throat Diameter|mm|ノズルスロートの直径|
+|Nozzle Expansion Ratio|-|ノズル開口比。ノズルの出口面積とスロートの面積比とすること。|
+|Burn Time|sec|燃焼時間。作動時間とは異なる。|
+|Isp|sec|平均比推力。|
+|Tank Volume|cc|酸化剤タンクの容量。|
+|Oxidizer Density|g/m^3|酸化剤密度。
+|Length Fuel-C.G. from End|m|機体後端から燃料（グレイン，固形燃料）重心までの距離。インジェクターベルは燃料重心に含めない。|
+|Length Tank-End from End|m|機体後端から酸化剤タンク口金までの距離。|
+|Fuel Mass Before|kg|燃焼前燃料重量。|
+|Fuel Mass After|kg|燃焼後燃料重量|
+|Fuel Outside Diameter|mm|燃料外径。|
+|Fuel Inside Diamter|mm|燃焼前の燃料内径。|
+|Tank Diameter|mm|タンク外径。|
+|Fuel Length|m|燃料長さ。インジェクターベル含めず。|
+|Tank Length|m|タンク長さ。|
 ### Parachute
 ### Wind
 
@@ -54,4 +98,4 @@ Jacksonで読み込んでいる。
 ## Future Works
 * 変数が発散したときの例外処理
 * gui化 → 現状，CUIを検討
-* マルチメソッド化（現状のコードでも速度自体は十分。今後計算条件が増えるなら実装の必要あり）
+* マルチスレッド化（現状のコードでも速度自体は十分。今後計算条件が増えるなら実装の必要あり）
