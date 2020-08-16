@@ -63,9 +63,22 @@ Jacksonで読み込んでいる。
 |Number of Wind Speed | - | 計算する風速の数。|
 |Number of Wind Azimuth | -  | 計算する風向の数。基本的に4の倍数にすること。|
 
+### Launch
+ランチャなどの打上げ条件に関する設定。<br>
+|項目|単位|備考|
+|---|---|---|
+|Date|N/A|打上げ日時。現状このパラメータは使用していない。|
+|Site|N/A|射点のLLH計における位置座標。`[緯度，経度，高度]`の順で入力すること。現状，使用していない。|
+|Launch Azimuth|deg|打上げ方位角。磁北から反時計回りを正。|
+|Launch Elevation|deg|打上げ仰角。|
+|Launcher Rail Length |m|ランチャ有効レール長。|
+|Tip-Off Calculation Exist|N/A|チップオフを考慮するかどうか。ガントリー式の場合，`false`にする。|
+|Input Magnetic Azimuth|deg|磁気偏角。磁北と真北のずれ。|
+
 ### Structure
 構造に関するパラメータ。<br>
 |項目|単位|備考|
+|---|---|---|
 |Length|m|機体全長。ノーズコーン先端から機体後端まで。ボートテイルを有する場合はボートテイル後端まで。ノズルカバーは含めない。|
 |Diameter|m|機体代表直径。|
 |Dry Mass|kg|乾燥時（酸化剤を除いた）の機体重量。|
@@ -83,7 +96,7 @@ Jacksonで読み込んでいる。
 |Nozzle Throat Diameter|mm|ノズルスロートの直径|
 |Nozzle Expansion Ratio|-|ノズル開口比。ノズルの出口面積とスロートの面積比とすること。|
 |Burn Time|sec|燃焼時間。作動時間とは異なる。|
-|Isp|sec|平均比推力。|
+|Isp|sec|平均比推力。現状，比推力はシミュレーションに用いていない。|
 |Tank Volume|cc|酸化剤タンクの容量。|
 |Oxidizer Density|kg/m^3|酸化剤密度。
 |Length Fuel-C.G. from End|m|機体後端から燃料（グレイン，固形燃料）重心までの距離。インジェクターベルは燃料重心に含めない。|
@@ -96,8 +109,48 @@ Jacksonで読み込んでいる。
 |Fuel Length|m|燃料長さ。インジェクターベル含めず。|
 |Tank Length|m|タンク長さ。|
 
+### Aero
+空力微係数関連のパラメータ。<br>
+|項目|単位|備考|
+|---|---|---|
+|Cd File|N/A|抗力係数（軸力係数）カーブのファイルのパス。|
+|Cd File Exist|N/A|抗力係数カーブを使用する（抗力係数のマッハ数依存性を考慮する。）かどうか|
+|Constant Cd|-|一定抗力係数。|
+|Length-C.P. File|N/A|圧力中心カーブのファイルのパス。|
+|Length-C.P. File Exist|N/A|圧力中心カーブを使用するかどうか。|
+|Constant Length-C.P. from Nosetip|m|一定圧力中心。ノーズコーン先端からの距離。|
+|CNa File|N/A|法線力係数傾斜（法線力傾斜。OpenRocketでいうところの法線力係数。）カーブ。|
+|CNa File Exist|N/A|法線力係数傾斜カーブを使用するかどうか。|
+|Constant CNa|1/rad|一定法線力係数傾斜。|
+|Roll Dumping Moment Coefficient Clp|1/rad|ロール減衰モーメント係数。本来，負の値だがJsonの文法エラーになるので，入力時は正の値で入力すること。|
+|Pitch Dumping Moment Coefficient Cmq|1/rad|ピッチ・ヨー減衰モーメント係数。本来，負の値だがJsonの文法エラーになるので，入力時は正の値で入力すること。|
+
 ### Parachute
+パラシュート，ドローグシュートについてのパラメータ。<br>
+|項目|単位|備考|
+|---|---|---|
+|1st Parachute CdS|m^2|1段目のパラシュート（単段分離ならメインシュート，2段分離ならドローグシュート）の抗力係数とパラシュート面積の積。|
+|2nd Parachute Exist|N/A|2段分離を行うかどうか。|
+|2nd Parachute CdS|m2|2段目パラシュートのCdS|
+|2nd Parachute Opening Altitude|m|2段目開傘の高度。|
+
 ### Wind
+風についての設定。<br>
+|項目|単位|備考|
+|---|---|---|
+|Wind File Exist|N/A|上空風データ（csvファイル）を用いてシミュレーションを行うかどうか。|
+|Wind File|N/A|上空風データのパス。|
+|Wind Model|N/A|風モデルの指定。`Wind File Exist`が`false`の場合，有効となる。'law','constant'の中から選択。モデルの指定に誤りがあるか，指定なしの場合'constant'になる。|
+|Wind Power Law Coefficient|-|高度分布係数。陸打ちは4.5，海打ちは6.0とする。運営から指定がある場合，そちらに従う。|
+|Wind Speed|m/s|基準高度（風速計設置高度）での基準風速。`Simulation Mode`が`single`の場合のみ有効。|
+|Wind Azimuth|deg|風向。北を0 deg，時計回り正。|
+|Wind Reference Altitude|m|基準高度。風向風速計の設置高度とする。|
+
+`Wind Model`については以下の通り。
+|項目|説明|
+|---|---|
+|'law'|べき法則で風速を計算。風向は高度分布をもたない。|
+|'constant'|定常風。風向・風速が高度分布をもたない。|
 
 ## Problem
 * Mac OSで使用する場合，文字コードのせいか階層を区切る`\\`が文字化けしてしまい，
