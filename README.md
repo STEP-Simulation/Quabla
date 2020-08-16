@@ -40,12 +40,19 @@ Jacksonで読み込んでいる。
 * 長さなどの定義に注意。長さの基準が異なっている可能性がある。
 
 ### Solver
+ソルバーに関する設定。
 |項目|備考|
 |---|---|
 |Name|プロジェクト名や機体名など|
 |Result Filepath|結果の出力先。|
 |Simulation Mode|'single'か'multi'を指定。|
 |Time Step|シミュレーションの時間刻み。|
+
+`'single'` `'multi'`の各モードについては以下の通り。<br>
+|項目|説明|
+|---|---|
+|'single'|単一条件での計算。位置や姿勢角の時間履歴などを見たい場合はこのモードを選択。|
+|'multi'|複数条件での計算。落下分散を計算したい場合に選択。singleモードと異なり位置などの時間履歴は出力されず，落下地点や最高高度などの表のみ出力。|
 
 ### Multi Solver
 複数条件のシミュレーション時の設定。
@@ -57,7 +64,7 @@ Jacksonで読み込んでいる。
 |Number of Wind Azimuth | -  | 計算する風向の数。基本的に4の倍数にすること。|
 
 ### Structure
-構造に関するパラメータ。
+構造に関するパラメータ。<br>
 |項目|単位|備考|
 |Length|m|機体全長。ノーズコーン先端から機体後端まで。ボートテイルを有する場合はボートテイル後端まで。ノズルカバーは含めない。|
 |Diameter|m|機体代表直径。|
@@ -69,6 +76,7 @@ Jacksonで読み込んでいる。
 |Lower Launch Lug|m|機体後端から最も近いランチラグとノーズコーン先端との距離。|
 
 ### Engine
+エンジンに関するパラメータ。<br>
 |項目|単位|備考|
 |---|---|---|
 |Thrust Curve|-|推力履歴のcsvファイルのパス。|
@@ -77,7 +85,7 @@ Jacksonで読み込んでいる。
 |Burn Time|sec|燃焼時間。作動時間とは異なる。|
 |Isp|sec|平均比推力。|
 |Tank Volume|cc|酸化剤タンクの容量。|
-|Oxidizer Density|g/m^3|酸化剤密度。
+|Oxidizer Density|kg/m^3|酸化剤密度。
 |Length Fuel-C.G. from End|m|機体後端から燃料（グレイン，固形燃料）重心までの距離。インジェクターベルは燃料重心に含めない。|
 |Length Tank-End from End|m|機体後端から酸化剤タンク口金までの距離。|
 |Fuel Mass Before|kg|燃焼前燃料重量。|
@@ -87,6 +95,7 @@ Jacksonで読み込んでいる。
 |Tank Diameter|mm|タンク外径。|
 |Fuel Length|m|燃料長さ。インジェクターベル含めず。|
 |Tank Length|m|タンク長さ。|
+
 ### Parachute
 ### Wind
 
