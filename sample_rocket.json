@@ -1,0 +1,101 @@
+{
+	"Define Comment": {
+		"Default_Unit": "m_kg_sec",
+		"Fuel": "Fuel-Grain-Cartridge",
+		"Dry": "Liftoff - Oxidizer",
+		"C.G.": "Center of Gravity",
+		"C.P.": "Center of Pressure",
+		"LLH":"Latitude, Longitude, Height",
+		"Elevation": "Ground to Up _ 0deg 90deg",
+		"Azimuth": "North to East (clockwise) _ 0deg 360deg"
+	},
+
+	"Solver": {
+		"Name": "sample",
+		"Result Filepath":"",
+		"Simulation Mode":"single",
+		"Time Step [sec]": 0.001
+	},
+
+	"Multi Solver": {
+		"Minimum Wind Speed [m/s]": 1.0,
+		"Step Wind Speed [m/s]": 1.0,
+		"Number of Wind Speed": 7,
+		"Number of Wind Azimuth": 8
+	},
+
+	"Wind":{
+		"Wind File Exist": false,
+		"Wind File": "wind.csv",
+		"Wind Model":"law",
+		"Wind Power Law Coefficient": 4.5,
+		"Wind Speed [m/s]": 2.0,
+		"Wind Azimuth [deg]": 270.0,
+		"Wind Reference Altitude [m]": 5.0
+	},
+
+	"Atmosphere":{
+		"Temperture at 0 m [℃]":15.0
+	},
+
+	"Launch Condition": {
+		"Date": "2018/8/23 6:00",
+		"Site": [40.138633, 139.984850, 0.0],
+		"Launch Azimuth [deg]": 90.0,
+		"Launch Elevation [deg]": 88.0,
+		"Launcher Rail Length [m]": 5.0,
+		"Tip-Off Calculation Exist": true,
+		"Input Magnetic Azimuth [deg]": 8.9
+	},
+
+	"Structure": {
+		"Length [m]": 2.037,
+		"Diameter [m]": 0.162,
+		"Dry Mass [kg]": 7.67,
+		"Dry Length-C.G. from Nosetip [m]": 1.218,
+		"Dry Moment of Inertia Roll-Axis [kg*m^2]": 0.0233,
+		"Dry Moment of Inertia  Pitch-Axis [kg*m^2]": 2.551,
+		"Upper Launch Lug [m]": 0.92,
+		"Lower Launch Lug [m]": 2.037
+	},
+
+	"Engine":{
+		"Thrust Curve":"thrust.csv",
+		"Nozzle Throat Diameter [mm]": 11.45,
+		"Nozzle Expansion Ratio": 2.6951,
+		"Burn Time [sec]": 5.6,
+		"Isp [sec]": 166.6,
+		"Tank Volume [cc]": 835,
+		"Oxidizer Density [kg/m^3]": 724,
+		"Length Fuel-C.G. from End [m]": 0.139,
+		"Length Tank-End from End [m]": 0.2794,
+		"Fuel Mass Before [kg]": 0.3800,
+		"Fuel Mass After [kg]": 0.2805,
+		"Fuel Outside Diameter [mm]": 50.00,
+		"Fuel Inside Diamter [mm]": 25.50,
+		"Tank Diameter [mm]": 54.00,
+		"Fuel Length [m]": 0.2794,
+		"Tank Length [m]": 0.541
+	},
+
+	"Parachute": {
+		"1st Parachute CdS [m2]": 1.044,
+		"2nd Parachute Exist": false,
+		"2nd Parachute CdS [m2]": 0.8513,
+		"2nd Parachute Opening Altitude [m]": 300.0
+	},
+
+	"Aero":{
+		"Cd File": "Cd.csv",
+		"Cd File Exist":false,
+		"Constant Cd":0.60,
+		"Length-C.P. File": "Lcp.csv",
+		"Length-C.P. File Exist":false,
+		"Constant Length-C.P. from Nosetip [m]": 1.465,
+		"CNa File": "CNa.csv",
+		"CNa File Exist":false,
+		"Constant CNa": 9.23,
+		"Roll Dumping Moment Coefficient Clp": 0.0104,
+		"Pitch Dumping Moment Coefficient Cmq": 2.676
+	}
+}
