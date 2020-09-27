@@ -2,3 +2,5 @@
 .eclipse
 .classpath
 .settings
+
+*.png
