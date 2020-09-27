@@ -22,7 +22,7 @@ public class QUABLA {
 		JsonNode node = null;
 		try {
 			node = mapper.readTree(new File(args[0]));
-		}catch(IOException e	) {
+		}catch(IOException e) {
 			e.printStackTrace();
 		}
 		String simulationMode = node.get("Solver").get("Simulation Mode").asText();
@@ -40,7 +40,7 @@ public class QUABLA {
 			String filepathResult = node.get("Solver").get("Result Filepath").asText();
 			dirFilepath = filepathResult + "Result_single_" + name;
 			makeResultdir(dirFilepath);
-			filepathResult = dirFilepath + "\\";
+			filepathResult = dirFilepath + File.separator;
 
 			Rocket rocket = new Rocket(node);
 			Solver solver = new Solver(filepathResult);
@@ -56,7 +56,7 @@ public class QUABLA {
 			String filepathResultMulti = node.get("Solver").get("Result Filepath").asText();
 			dirFilepath = filepathResultMulti + "Result_multi_" + name;
 			makeResultdir(dirFilepath);
-			filepathResultMulti = dirFilepath + "\\";
+			filepathResultMulti = dirFilepath + File.separator;
 
 			MultiSolver multi_solver = new MultiSolver(filepathResultMulti, node.get("Multi Solver"));
 			multi_solver.solveMulti(node);

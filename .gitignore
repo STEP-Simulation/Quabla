@@ -2,3 +2,4 @@
 .eclipse
 .classpath
 .settings
+bin/
