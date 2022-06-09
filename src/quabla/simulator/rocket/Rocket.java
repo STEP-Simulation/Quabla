@@ -2,6 +2,7 @@ package quabla.simulator.rocket;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import quabla.QUABLA;
 import quabla.simulator.rocket.wind.AbstractWind;
 import quabla.simulator.rocket.wind.Constant;
 import quabla.simulator.rocket.wind.Original;
@@ -22,6 +23,8 @@ public class Rocket {
 	S,
 	upperLug,
 	lowerLug;
+	public static int
+	site;
 	private final double
 	mBef,
 	mAft,
@@ -44,11 +47,12 @@ public class Rocket {
 	public final double
 	CdS1,
 	CdS2;
-	public final boolean para2Exist;
-	public final double alt_para2;
+	public final boolean para2Exist, para2Timer;
+	public final double alt_para2, time_para2;
 	public final double dt;
 	public final boolean existTipOff;
 	public final double lengthLauncherRail, elevationLauncher, azimuthLauncher, magneticDec;
+	public static double point[] = {0, 0, 0};
 
 	public Rocket(JsonNode spec) {
 		engine = new Engine(spec.get("Engine"));
@@ -57,7 +61,7 @@ public class Rocket {
 		JsonNode structure = spec.get("Structure");
 		JsonNode parachute = spec.get("Parachute");
 		JsonNode launchCond = spec.get("Launch Condition");
-		if(spec.get("Wind").get("Wind File Exist").asBoolean()) {
+		if(spec.get("Wind").get("Wind File Exist").asBoolean() && QUABLA.simulationModeCheck.equals("single")) {
 			wind = new Original(
 					spec.get("Wind").get("Wind File").asText(),
 					launchCond.get("Input Magnetic Azimuth [deg]").asDouble());
@@ -127,15 +131,23 @@ public class Rocket {
 		if (para2Exist) {
 			CdS2 = parachute.get("2nd Parachute CdS [m2]").asDouble();
 			alt_para2 = parachute.get("2nd Parachute Opening Altitude [m]").asDouble();
+			time_para2 = parachute.get("2nd Timer [s]").asDouble();
+			para2Timer = parachute.get("2nd Parachute Timer Mode").asBoolean();
 		} else {
 			CdS2 = 0.0;
 			alt_para2 = 0.0;
+			time_para2 = 0.0;
+			para2Timer = false;
 		}
 		//---------------------------------------------------
 
 		dt = spec.get("Solver").get("Time Step [sec]").asDouble();
 
 		//------------------- Launch Config -----------------
+		point[0] = launchCond.get("Launch lat").asDouble();
+		point[1] = launchCond.get("Launch lon").asDouble();
+		point[2] = launchCond.get("Launch height").asDouble();
+		site = launchCond.get("Site").asInt();
 		lengthLauncherRail = launchCond.get("Launcher Rail Length [m]").asDouble();
 		elevationLauncher = launchCond.get("Launch Elevation [deg]").asDouble();
 		azimuthLauncher = launchCond.get("Launch Azimuth [deg]").asDouble();
@@ -240,5 +252,14 @@ public class Rocket {
 			return 0.0;
 		}
 	}
+
+	public double[] getPoint() {
+		return point;
+	}
+
+	public int getSite() {
+		return site;
+	}
+
 
 }

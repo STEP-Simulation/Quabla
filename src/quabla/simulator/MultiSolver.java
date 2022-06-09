@@ -1,6 +1,7 @@
 package quabla.simulator;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -12,7 +13,7 @@ import quabla.simulator.rocket.Rocket;
  * MultiSolver mangages solver and store values in multiple conditions.
  * */
 public class MultiSolver {
-	double speed_min,speed_step;
+	double speed_min,speed_step,base_azimuth;
 	int speed_num,angle_num;
 	private double[] speedArray, azimuthArray;
 	private String filepathResult;
@@ -26,6 +27,7 @@ public class MultiSolver {
 		this.speed_step = multiCond.get("Step Wind Speed [m/s]").asDouble();
 		this.speed_num = multiCond.get("Number of Wind Speed").asInt();
 		this.angle_num = multiCond.get("Number of Wind Azimuth").asInt();
+		this.base_azimuth = multiCond.get("Base Wind Azimuth [deg]").asDouble();
 
 		speedArray = new double[speed_num];
 		azimuthArray = new double[angle_num + 1];
@@ -34,7 +36,11 @@ public class MultiSolver {
 			speedArray[i] = speed_min + i * speed_step;
 		}
 		for(int i = 0; i <= angle_num; i++) {
-			azimuthArray[i] = 360.0 * i / angle_num;
+			if(((360.0 * i / angle_num) + base_azimuth) <= 360) {
+				azimuthArray[i] = (360.0 * i / angle_num) + base_azimuth;
+			}else {
+				azimuthArray[i] = (360.0 * i / angle_num) + base_azimuth - 360;
+			}
 		}
 
 		evm = new EventValueMulti(speedArray, azimuthArray);
@@ -90,12 +96,27 @@ public class MultiSolver {
 		double processDouble = (double)(numSpeed + 1) / (double)speed_num ;
 		for(int i = 0; i < 10; i++) {
 			if(i < (int)(processDouble * 10)) {
-				process += "█";
+				process += "*";
 			}else {
 				process += " ";
 			}
 		}
-		System.out.println("|" + process + "|" + String.format("%d", (int)(processDouble * 100)) + "%");
+		byte[] bytes = null;
+		try {
+			bytes = process.getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		String processUTF8 = null;
+		try {
+			processUTF8 = new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+		System.out.println("|" + processUTF8 + "|" + String.format("%d", (int)(processDouble * 100)) + "%");
+
 	}
 
 	/**
