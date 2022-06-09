@@ -1,5 +1,6 @@
 package quabla.simulator;
 
+import quabla.QUABLA;
 import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.VariableParachute;
 import quabla.simulator.variable.VariableTrajectory;
@@ -53,7 +54,7 @@ public class FlightEventJudgement {
 	public boolean judgeLanding(VariableTrajectory variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= 0.0)) {
+		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= QUABLA.heightlanding - QUABLA.height)) {
 			judge = true;
 		}else {
 			judge = false;
@@ -64,7 +65,7 @@ public class FlightEventJudgement {
 	public boolean judgeLanding(VariableParachute variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= 0.0)) {
+		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= QUABLA.heightlanding - QUABLA.height)) {
 			judge = true;
 		}else {
 			judge = false;
@@ -82,7 +83,7 @@ public class FlightEventJudgement {
 //		}else {
 //			judge = false;
 //		}
-		
+
 		if(rocket.para2Exist) {
 			if(rocket.para2Timer) {
 				if((variable.getVelDescent() <= 0.0) &&

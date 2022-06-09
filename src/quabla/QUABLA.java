@@ -16,6 +16,8 @@ public class QUABLA {
 
 	private static String dirFilepath;
 	public static String simulationModeCheck;
+	public static Double height;
+	public static Double heightlanding;
 
 	public static void main(String[] args) throws IOException {
 
@@ -24,6 +26,8 @@ public class QUABLA {
         //String line = reader.readLine();
 
 		String line = args[0];
+		height = Double.parseDouble(args[2]);
+		heightlanding = Double.parseDouble(args[3]);
 
 		String simulationMode;
 		String filepathResult;

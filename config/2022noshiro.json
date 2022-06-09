@@ -11,8 +11,8 @@
 	},
 
 	"Solver": {
-		"Name": "sample",
-		"Result Filepath":"result",
+		"Name": "test",
+		"Result Filepath":"/Users/keiaizawa/Documents/STEP/Simulation/QuablaPy/results",
 		"Time Step [sec]": 0.001
 	},
 
@@ -20,17 +20,18 @@
 		"Minimum Wind Speed [m/s]": 1.0,
 		"Step Wind Speed [m/s]": 1.0,
 		"Number of Wind Speed": 7,
-		"Number of Wind Azimuth": 16,
-		"Base Wind Azimuth [deg]" : 288.95
+		"Number of Wind Azimuth": 4,
+		"Base Wind Azimuth [deg]" : 280
 	},
 
 	"Wind":{
-		"Wind File Exist": false,
-		"Wind File": "wind_noshiro_2022.csv",
-		"Wind Model":"constant",
+		"Wind File Exist": true,
+		"Wind File": "/Users/keiaizawa/Documents/STEP/Simulation/QuablaPy/config/wind_noshiro_2022.csv",
+		"__comment" : "Wind Model : lawならべき法則　constantなら一定風速 multiモードなら自動でlawになる",
+		"Wind Model":"law",
 		"Wind Power Law Coefficient": 4.5,
 		"Wind Speed [m/s]": 0.0,
-		"Wind Azimuth [deg]": 288.95,
+		"Wind Azimuth [deg]": 280,
 		"Wind Reference Altitude [m]": 5.0
 	},
 
@@ -40,9 +41,9 @@
 
 	"Launch Condition": {
 		"Date": "2021/11/6 8:30",
-		"__comment" : "1:oshima_land , 2:oshima_sea, 3:noshiro_land, 4:noshiro_sea, 5:other",
+		"__comment1" : "1:oshima_land , 2:oshima_sea, 3:noshiro_land, 4:noshiro_sea, 5:other",
 		"Site":"4",
-		"__comment" : "If Site = 5, please enter [Launch lat, Launch lon, Launch height]",
+		"__comment2" : "If Site = 5, please enter [Launch lat, Launch lon, Launch height]",
  		"Launch lat" : 40.242865,
 		"Launch lon" :140.010450,
 		"Launch height" : 10.0,
@@ -50,11 +51,11 @@
 		"Launch Elevation [deg]": 70.0,
 		"Launcher Rail Length [m]": 5.0,
 		"Tip-Off Calculation Exist": true,
-		"__comment" : "保安円を出力したいなら true いらないなら false",
-		"__comment" : "保安円や保安領域の座標設定はQuabla.pyを編集してください",
-		"Safety Area Exist": false,
-		"__comment" : "If you don't cosider magnetic azimuth, please enter 0.0",
-		"__comment" : "運営から配らたもの使ってください",
+		"__comment3" : "保安円を出力したいなら true いらないなら false",
+		"__comment4" : "保安円や保安領域の座標設定はLaunchsiteInformation.pyを編集してください",
+		"Safety Area Exist": true,
+		"__comment5" : "If you don't cosider magnetic azimuth, please enter 0.0",
+		"__comment6" : "運営から配らたもの使ってください",
 		"Input Magnetic Azimuth [deg]": 8.95
 	},
 
@@ -70,7 +71,7 @@
 	},
 
 	"Engine":{
-		"Thrust Curve":"thrust_20210804.csv",
+		"Thrust Curve":"/Users/keiaizawa/Documents/STEP/Simulation/QuablaPy/config/thrust_20210804.csv",
 		"Nozzle Throat Diameter [mm]": 11.45,
 		"Nozzle Expansion Ratio": 2.6951,
 		"Burn Time [sec]": 3.6,
@@ -90,10 +91,10 @@
 
 	"Parachute": {
 		"1st Parachute CdS [m2]": 0.78,
-		"2nd Parachute Exist": true,
-		"2nd Parachute CdS [m2]": 1.2,
-		"2nd Parachute Opening Altitude [m]": 300,
-		"2nd Parachute Timer Mode": true,
+		"2nd Parachute Exist": false,
+		"2nd Parachute CdS [m2]": 0,
+		"2nd Parachute Opening Altitude [m]": 0,
+		"2nd Parachute Timer Mode": false,
 		"2nd Timer [s]":20.0
 	},
 
