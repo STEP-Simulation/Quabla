@@ -227,12 +227,10 @@ public class Solver {
 			double trajectry_point[] = {eventValue.getPosENUlandingTrajectory()[0], eventValue.getPosENUlandingTrajectory()[1], 0.0};
 			resultTxt.outputLine(String.format("Landing Trajectory Point : [ %.3f , %.3f ]", trajectry_point[0], trajectry_point[1]));
 
-
 			resultTxt.outputLine(String.format("Landing Parachute Time %.3f [sec]", eventValue.getTimeLandingParachute()));
 			resultTxt.outputLine(String.format("Landing Parachute Downrange %.3f [km]", eventValue.getDownrangeLandingParachute()));
 			double parachute_point[] = {eventValue.getPosENUlandingParachute()[0], eventValue.getPosENUlandingParachute()[1], 0.0};
 			resultTxt.outputLine(String.format("Landing Parachute Point : [ %.3f , %.3f ]", parachute_point[0], parachute_point[1]));
-
 
 		}catch(IOException e) {
 			throw new RuntimeException(e) ;

@@ -47,6 +47,7 @@ public class OtherVariableTrajectory {
 	private double lcp;
 	private double IjRoll, IjPitch;
 	private double altitude, downrange;
+	private double altitudebefore = 0;
 	private double[] velAirENU = new double[3];
 	private double[] velAirBODY = new double[3];
 	private double velAirAbs;
@@ -106,7 +107,12 @@ public class OtherVariableTrajectory {
 		}
 
 		Mach = velAirAbs / rocket.atm.getSoundSpeed(altitude);
-		dynamicsPressure = 0.5 * rho * Math.pow(velAirAbs, 2);
+
+		if(altitude - altitudebefore > 0) {
+			dynamicsPressure = 0.5 * rho * Math.pow(velAirAbs, 2);
+		}
+
+		altitudebefore = altitude;
 
 		lcp = rocket.aero.Lcp(Mach);
 		Fst = (lcp - lcg) / rocket.L * 100.0;

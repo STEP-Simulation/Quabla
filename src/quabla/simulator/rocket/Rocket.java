@@ -65,7 +65,7 @@ public class Rocket {
 			wind = new Original(
 					spec.get("Wind").get("Wind File").asText(),
 					launchCond.get("Input Magnetic Azimuth [deg]").asDouble());
-		}else if(spec.get("Wind").get("Wind Model").asText().equals("law")){
+		}else if(spec.get("Wind").get("Wind Model").asText().equals("law") || QUABLA.simulationModeCheck.equals("multi")){
 			wind = new Power(
 					spec.get("Wind").get("Wind Speed [m/s]").asDouble(),
 					spec.get("Wind").get("Wind Azimuth [deg]").asDouble(),
@@ -260,6 +260,5 @@ public class Rocket {
 	public int getSite() {
 		return site;
 	}
-
 
 }

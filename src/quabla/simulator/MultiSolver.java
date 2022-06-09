@@ -75,14 +75,14 @@ public class MultiSolver {
 		double launchElev = spec.get("Launch Condition").get("Launch Elevation [deg]").asDouble();
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
-			trajectory.output(filepathResult + "trajectory"+ launchElev +"[deg].csv",windMapTrajectory, speedArray);
+			trajectory.output(filepathResult + "trajectory"+ launchElev +"[deg].csv",windMapTrajectory, speedArray, base_azimuth);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
-			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray);
+			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray, base_azimuth);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
