@@ -1,6 +1,5 @@
 package quabla.simulator.variable;
 
-import quabla.QUABLA;
 import quabla.simulator.Coordinate;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
@@ -51,7 +50,7 @@ public class VariableTrajectory extends AbstractVariable{
 		//Initial Position_ENU
 		e = (rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0);
 		n = (rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0);
-		u = (rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation0)) + QUABLA.height;
+		u = (rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation0));
 		posENU = new MathematicalVector(e,n,u);
 
 		//Initial Attitude with Quaternion

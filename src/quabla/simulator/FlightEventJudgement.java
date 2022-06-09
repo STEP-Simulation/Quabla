@@ -1,6 +1,5 @@
 package quabla.simulator;
 
-import quabla.QUABLA;
 import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.VariableParachute;
 import quabla.simulator.variable.VariableTrajectory;
@@ -20,7 +19,7 @@ public class FlightEventJudgement {
 	public boolean judgeTipOff(VariableTrajectory variable) {
 		boolean judge;
 
-		if(variable.getDistanceUpperLug() >= rocket.lengthLauncherRail + QUABLA.height) {
+		if(variable.getDistanceUpperLug() >= rocket.lengthLauncherRail) {
 			judge = true;
 		}else {
 			judge = false;
@@ -32,7 +31,7 @@ public class FlightEventJudgement {
 	public boolean judgeLaunchClear(VariableTrajectory  variable) {
 		boolean judge;
 
-		if(variable.getDistanceLowerLug() >= rocket.lengthLauncherRail + QUABLA.height) {
+		if(variable.getDistanceLowerLug() >= rocket.lengthLauncherRail) {
 			judge = true;
 		}else {
 			judge = false;
@@ -54,7 +53,7 @@ public class FlightEventJudgement {
 	public boolean judgeLanding(VariableTrajectory variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= QUABLA.heightlanding)) {
+		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= 0)) {
 			judge = true;
 		}else {
 			judge = false;
@@ -65,7 +64,7 @@ public class FlightEventJudgement {
 	public boolean judgeLanding(VariableParachute variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= QUABLA.heightlanding)) {
+		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getAltitude() <= 0)) {
 			judge = true;
 		}else {
 			judge = false;
