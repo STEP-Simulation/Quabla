@@ -41,7 +41,7 @@ public class Solver {
 
 	public void solveDynamics(Rocket rocket) {
 		int index = 0;
-		int indexTipOff, indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
+		int indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
 		double time = 0.0;
 		double h = rocket.dt;
 		boolean isTipOff = false;
@@ -74,11 +74,12 @@ public class Solver {
 			index ++;
 			time = index * h;
 
-			if(index == 4) {
-				predCorr.setDelta(deltaArray[2], deltaArray[1], deltaArray[0]);
-				// ODE 解法の変更
-				ODEsolver = predCorr;
-			}
+//	        Change ODE solver
+//			if(index == 4) {
+//				predCorr.setDelta(deltaArray[2], deltaArray[1], deltaArray[0]);
+//				// ODE 解法の変更
+//				ODEsolver = predCorr;
+//			}
 
 			// solve ODE
 			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
@@ -92,7 +93,7 @@ public class Solver {
 
 			// Tip-Off -----------------------------------------
 			if(rocket.existTipOff && eventJudgement.judgeTipOff(variableTrajectory) && !isTipOff) {// 1回のみ実行
-				indexTipOff = index;
+//				indexTipOff = index;
 				dynOnLauncher = new DynamicsTipOff(rocket);
 				isTipOff = true;
 			}
@@ -143,7 +144,8 @@ public class Solver {
 		variablePara.set(trajectoryLog, indexApogee);
 
 		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
-		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
+//		Change ODE solver
+//		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
 
 		index = indexApogee; //indexの更新
 		//-------------------  Parachute -------------------
@@ -222,11 +224,15 @@ public class Solver {
 
 			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", eventValue.getTimeLandingTrajectory()));
 			resultTxt.outputLine(String.format("Landing Trajectory Downrange %.3f [km]", eventValue.getDownrangeLandingTrajectory()));
-			resultTxt.outputLine(String.format("Landing Trajectory Point : [ %.3f , %.3f ]", eventValue.getPosENUlandingTrajectory()[0], eventValue.getPosENUlandingTrajectory()[1]));
+			double trajectry_point[] = {eventValue.getPosENUlandingTrajectory()[0], eventValue.getPosENUlandingTrajectory()[1], 0.0};
+			resultTxt.outputLine(String.format("Landing Trajectory Point : [ %.3f , %.3f ]", trajectry_point[0], trajectry_point[1]));
+			resultTxt.outputLine(String.format("Landing Trajectory LLH : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(trajectry_point)[0], ENUtoLLH.ENU2LLH(trajectry_point)[1]));
 
 			resultTxt.outputLine(String.format("Landing Parachute Time %.3f [sec]", eventValue.getTimeLandingParachute()));
 			resultTxt.outputLine(String.format("Landing Parachute Downrange %.3f [km]", eventValue.getDownrangeLandingParachute()));
-			resultTxt.outputLine(String.format("Landing Parachute Point : [ %.3f , %.3f ]", eventValue.getPosENUlandingParachute()[0], eventValue.getPosENUlandingParachute()[1]));
+			double parachute_point[] = {eventValue.getPosENUlandingParachute()[0], eventValue.getPosENUlandingParachute()[1], 0.0};
+			resultTxt.outputLine(String.format("Landing Parachute Point : [ %.3f , %.3f ]", parachute_point[0], parachute_point[1]));
+			resultTxt.outputLine(String.format("Landing Parachute LLH : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(parachute_point)[0], ENUtoLLH.ENU2LLH(parachute_point)[1]));
 
 		}catch(IOException e) {
 			throw new RuntimeException(e) ;
