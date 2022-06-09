@@ -1,9 +1,9 @@
 package quabla.simulator;
 
-import quabla.QUABLA;
 import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.VariableParachute;
 import quabla.simulator.variable.VariableTrajectory;
+import quabla.QUABLA;
 
 /**
  * FlightEventJudgement check rocket flight status and judge flight event.
