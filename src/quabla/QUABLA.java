@@ -29,10 +29,6 @@ public class QUABLA {
 
 		String line = args[0];
 
-		lat = Double.parseDouble(args[2]);
-		lon = Double.parseDouble(args[3]);
-		height = 0.0;
-		heightlanding = 0.0;
 
 		String simulationMode;
 		String filepathResult;
