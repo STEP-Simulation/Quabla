@@ -1,7 +1,9 @@
 package quabla;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,19 +15,55 @@ import quabla.simulator.rocket.Rocket;
 public class QUABLA {
 
 	private static String dirFilepath;
+	public static String simulationModeCheck;
+	public static Double lat;
+	public static Double lon;
+	public static Double height;
+	public static Double heightlanding;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
+
+		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        //System.out.println("Please input path of paramater json file:");
+        //String line = reader.readLine();
+
+		String line = args[0];
+
+		lat = Double.parseDouble(args[2]);
+		lon = Double.parseDouble(args[3]);
+		height = 0.0;
+		heightlanding = 0.0;
+
+		String simulationMode;
+		String filepathResult;
+		while(true) {
+			//System.out.println("Please input simulation mode (single or multi):");
+			//simulationModeCheck = reader.readLine();
+			simulationModeCheck = args[1];
+			if(simulationModeCheck.equals("single")) {
+				simulationMode = "single";
+				break;
+			}
+			else if(simulationModeCheck.equals("multi")) {
+				simulationMode = "multi";
+				break;
+			}
+			else {
+				System.out.println("Please input single or multi.");
+				System.exit(0);
+			}
+		}
 
 		System.out.println("Running Solver...");
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode node = null;
 		try {
-			node = mapper.readTree(new File(args[0]));
+			node = mapper.readTree(new File(line)); //諸元のjsonファイル名を入れる
 		}catch(IOException e) {
 			e.printStackTrace();
 		}
-		String simulationMode = node.get("Solver").get("Simulation Mode").asText();
+
 		String name = node.get("Solver").get("Name").asText();
 		System.out.println("Simulation Mode : " + simulationMode);
 		System.out.println("Model : " + name);
@@ -37,13 +75,19 @@ public class QUABLA {
 			//single condition
 
 			//ディレクトリの作成
-			String filepathResult = node.get("Solver").get("Result Filepath").asText();
-			dirFilepath = filepathResult + "Result_single_" + name;
+			filepathResult = node.get("Solver").get("Result Filepath").asText();
+			//filepathResult = args[2];
+			dirFilepath = filepathResult + File.separator + "Result_single_" + name;
 			makeResultdir(dirFilepath);
-			filepathResult = dirFilepath + File.separator;
+			String filepathResultFinal = dirFilepath + File.separator;
+
+			Resultpath resultpath = new Resultpath();
+			resultpath.mode = "single";
+			resultpath.path = filepathResultFinal;
+			mapper.writeValue(new File(filepathResult + File.separator + "resultpath.json"),resultpath);
 
 			Rocket rocket = new Rocket(node);
-			Solver solver = new Solver(filepathResult);
+			Solver solver = new Solver(filepathResultFinal);
 			solver.solveDynamics(rocket);
 			solver.makeResult();
 			solver.outputResultTxt();
@@ -54,11 +98,16 @@ public class QUABLA {
 
 			//ディレクトリの作成
 			String filepathResultMulti = node.get("Solver").get("Result Filepath").asText();
-			dirFilepath = filepathResultMulti + "Result_multi_" + name;
+			dirFilepath = filepathResultMulti + File.separator + "Result_multi_" + name;
 			makeResultdir(dirFilepath);
-			filepathResultMulti = dirFilepath + File.separator;
+			String filepathResultMultiFinal = dirFilepath + File.separator;
 
-			MultiSolver multi_solver = new MultiSolver(filepathResultMulti, node.get("Multi Solver"));
+			Resultpath resultpath2 = new Resultpath();
+			resultpath2.mode = "multi";
+			resultpath2.path = filepathResultMultiFinal;
+			mapper.writeValue(new File(filepathResultMulti + File.separator + "resultpath.json"),resultpath2);
+
+			MultiSolver multi_solver = new MultiSolver(filepathResultMultiFinal, node.get("Multi Solver"));
 			multi_solver.solveMulti(node);
 			break;
 		}
@@ -89,4 +138,9 @@ public class QUABLA {
 
 	}
 
+}
+
+class Resultpath{
+	public String mode;
+	public String path;
 }

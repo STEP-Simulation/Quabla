@@ -12,7 +12,7 @@ import quabla.simulator.rocket.Rocket;
  * MultiSolver mangages solver and store values in multiple conditions.
  * */
 public class MultiSolver {
-	double speed_min,speed_step;
+	double speed_min,speed_step,base_azimuth;
 	int speed_num,angle_num;
 	private double[] speedArray, azimuthArray;
 	private String filepathResult;
@@ -26,6 +26,7 @@ public class MultiSolver {
 		this.speed_step = multiCond.get("Step Wind Speed [m/s]").asDouble();
 		this.speed_num = multiCond.get("Number of Wind Speed").asInt();
 		this.angle_num = multiCond.get("Number of Wind Azimuth").asInt();
+		this.base_azimuth = multiCond.get("Base Wind Azimuth [deg]").asDouble();
 
 		speedArray = new double[speed_num];
 		azimuthArray = new double[angle_num + 1];
@@ -34,7 +35,11 @@ public class MultiSolver {
 			speedArray[i] = speed_min + i * speed_step;
 		}
 		for(int i = 0; i <= angle_num; i++) {
-			azimuthArray[i] = 360.0 * i / angle_num;
+			if(((360.0 * i / angle_num) + base_azimuth) <= 360) {
+				azimuthArray[i] = (360.0 * i / angle_num) + base_azimuth;
+			}else {
+				azimuthArray[i] = (360.0 * i / angle_num) + base_azimuth - 360;
+			}
 		}
 
 		evm = new EventValueMulti(speedArray, azimuthArray);
@@ -69,14 +74,14 @@ public class MultiSolver {
 		double launchElev = spec.get("Launch Condition").get("Launch Elevation [deg]").asDouble();
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
-			trajectory.output(filepathResult + "trajectory"+ launchElev +"[deg].csv",windMapTrajectory, speedArray);
+			trajectory.output(filepathResult + "trajectory"+ launchElev +"[deg].csv",windMapTrajectory, speedArray, base_azimuth);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
-			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray);
+			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray, base_azimuth);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
