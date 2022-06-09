@@ -2,7 +2,6 @@ package quabla.simulator.logger;
 
 import java.util.ArrayList;
 
-import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.OtherVariableParachute;
 import quabla.simulator.variable.VariableParachute;
@@ -24,8 +23,14 @@ public class LoggerVariableParachute {
 	private int length;
 
 	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
-	private ArrayList<MathematicalVector> posENUlogArrayList = new ArrayList<>();
-	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
+//	private ArrayList<MathematicalVector> posENUlogArrayList = new ArrayList<>();
+//	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
+	private ArrayList<Double> posENUxlogArrayList = new ArrayList<>();
+	private ArrayList<Double> posENUylogArrayList = new ArrayList<>();
+	private ArrayList<Double> posENUzlogArrayList = new ArrayList<>();
+	private ArrayList<Double> velENUxlogArrayList = new ArrayList<>();
+	private ArrayList<Double> velENUylogArrayList = new ArrayList<>();
+	private ArrayList<Double> velENUzlogArrayList = new ArrayList<>();
 	private ArrayList<Double> velDescentLogArrayList = new ArrayList<>();
 
 	private final OtherVariableParachute ovp;
@@ -36,9 +41,15 @@ public class LoggerVariableParachute {
 
 	public void log(VariableParachute variable) {
 		timeLogArrayList.add(variable.getTime());
-		posENUlogArrayList.add(variable.getPosENU());
+//		posENUlogArrayList.add(variable.getPosENU());
+		posENUxlogArrayList.add(variable.getPosENU().toDouble(0));
+		posENUylogArrayList.add(variable.getPosENU().toDouble(1));
+		posENUzlogArrayList.add(variable.getPosENU().toDouble(2));
 		velDescentLogArrayList.add(variable.getVelDescent());
-		velENUlogArrayList.add(variable.getVelENU());
+//		velENUlogArrayList.add(variable.getVelENU());
+		velENUxlogArrayList.add(variable.getVelENU().toDouble(0));
+		velENUylogArrayList.add(variable.getVelENU().toDouble(1));
+		velENUzlogArrayList.add(variable.getVelENU().toDouble(2));
 	}
 
 	public void makeArray() {
@@ -57,8 +68,14 @@ public class LoggerVariableParachute {
 
 		for(int i = 0; i < length; i++) {
 			timeLog[i] = timeLogArrayList.get(i);
-			System.arraycopy(posENUlogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
-			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
+//			System.arraycopy(posENUlogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
+//			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
+			posENUlog[i][0] = posENUxlogArrayList.get(i);
+			posENUlog[i][1] = posENUylogArrayList.get(i);
+			posENUlog[i][2] = posENUzlogArrayList.get(i);
+			velENUlog[i][0] = velENUxlogArrayList.get(i);
+			velENUlog[i][1] = velENUylogArrayList.get(i);
+			velENUlog[i][2] = velENUzlogArrayList.get(i);
 			velDescentLog[i] = velDescentLogArrayList.get(i);
 
 			ovp.calculateOtherVariable(timeLog[i], posENUlog[i], velENUlog[i]);
@@ -129,9 +146,15 @@ public class LoggerVariableParachute {
 	public void copy(int indexLimit, LoggerVariable logdata) {
 		for(int i = 0; i <= indexLimit; i++) {
 			timeLogArrayList.add(logdata.getTimeArrayList(i));
-			posENUlogArrayList.add(logdata.getPosENU(i));
+//			posENUlogArrayList.add(logdata.getPosENU(i));
+			posENUxlogArrayList.add(logdata.getPosENU(i).toDouble(0));
+			posENUylogArrayList.add(logdata.getPosENU(i).toDouble(1));
+			posENUzlogArrayList.add(logdata.getPosENU(i).toDouble(2));
 			velDescentLogArrayList.add(logdata.getVelENU(i).toDouble(2));
-			velENUlogArrayList.add(logdata.getVelENU(i));
+//			velENUlogArrayList.add(logdata.getVelENU(i));
+			velENUxlogArrayList.add(logdata.getVelENU(i).toDouble(0));
+			velENUylogArrayList.add(logdata.getVelENU(i).toDouble(1));
+			velENUzlogArrayList.add(logdata.getVelENU(i).toDouble(2));
 		}
 	}
 }
