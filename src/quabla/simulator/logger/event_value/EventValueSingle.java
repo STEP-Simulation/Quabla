@@ -1,5 +1,7 @@
 package quabla.simulator.logger.event_value;
 
+import java.util.Arrays;
+
 import quabla.simulator.Coordinate;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.logger.LoggerVariableParachute;
@@ -25,10 +27,10 @@ public class EventValueSingle {
 	public EventValueSingle(LoggerVariable lvt) {
 		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
 		// イベント発生時のインデックスを外部から入力する必要があるもの(ランチクリアなど)は値入力時に計算
+		calculateAtApogee(lvt);
 		calculateMachMax(lvt);
 		calculateAtVelAirMax(lvt);
 		calculateAtMaxQ(lvt);
-		calculateAtApogee(lvt);
 	}
 
 	//-------------------- Set Function --------------------
@@ -69,7 +71,8 @@ public class EventValueSingle {
 	}
 
 	private void calculateAtVelAirMax(LoggerVariable lvt) {
-		ArrayAnalysis aa = new ArrayAnalysis(lvt.getVelAirAbsLogArray());
+//		ArrayAnalysis aa = new ArrayAnalysis(lvt.getVelAirAbsLogArray());
+		ArrayAnalysis aa = new ArrayAnalysis(Arrays.copyOf(lvt.getVelAirAbsLogArray(), indexApogee));
 		aa.calculateMaxValue();
 		velAirMax = aa.getMaxValue();
 		indexMaxVelAir = aa.getIndexMaxValue();
@@ -79,7 +82,8 @@ public class EventValueSingle {
 	}
 
 	private void calculateAtMaxQ(LoggerVariable lvt) {
-		ArrayAnalysis aa = new ArrayAnalysis(lvt.getDynamicsPressureLogArray());
+//		ArrayAnalysis aa = new ArrayAnalysis(lvt.getDynamicsPressureLogArray());
+		ArrayAnalysis aa = new ArrayAnalysis(Arrays.copyOf(lvt.getDynamicsPressureLogArray(), indexApogee));
 		aa.calculateMaxValue();
 		dynamicsPressureMax = aa.getMaxValue();
 		indexMaxQ = aa.getIndexMaxValue();
@@ -89,7 +93,8 @@ public class EventValueSingle {
 	}
 
 	private void calculateMachMax(LoggerVariable lvt) {
-		ArrayAnalysis aa = new ArrayAnalysis(lvt.getMachLogArray());
+//		ArrayAnalysis aa = new ArrayAnalysis(lvt.getMachLogArray());
+		ArrayAnalysis aa = new ArrayAnalysis(Arrays.copyOf(lvt.getMachLogArray(), indexApogee));
 		aa.calculateMaxValue();
 		machMax = aa.getMaxValue();
 		indexMaxMach = aa.getIndexMaxValue();
