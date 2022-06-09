@@ -34,8 +34,25 @@ public class DynamicsParachute extends AbstractDynamics{
 		double rho = rocket.atm.getAirDensity(altitude);
 
 		double CdS;
-		if(rocket.para2Exist && altitude <= rocket.alt_para2) {
-			CdS = rocket.CdS1 + rocket.CdS2;
+//		if(rocket.para2Exist && altitude <= rocket.alt_para2) {
+//			CdS = rocket.CdS1 + rocket.CdS2;
+//		}else {
+//			CdS = rocket.CdS1;
+//		}
+		if (rocket.para2Exist) {
+			if (rocket.para2Timer) {
+				if(t >= rocket.time_para2) {
+					CdS = rocket.CdS1 + rocket.CdS2;
+				}else {
+					CdS = rocket.CdS1;
+				}
+			}else {
+				if (altitude <= rocket.alt_para2) {
+					CdS = rocket.CdS1 + rocket.CdS2;
+				}else {
+					CdS = rocket.CdS1;
+				}
+			}
 		}else {
 			CdS = rocket.CdS1;
 		}

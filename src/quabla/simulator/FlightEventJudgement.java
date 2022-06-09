@@ -75,10 +75,30 @@ public class FlightEventJudgement {
 	public boolean judge2ndPara(VariableParachute variable) {
 		boolean judge;
 
-		if(rocket.para2Exist &&
-				(variable.getVelDescent() <= 0.0) &&
-				(variable.getAltitude() >= rocket.alt_para2)) {
-			judge = true;
+//		if(rocket.para2Exist &&
+//				(variable.getVelDescent() <= 0.0) &&
+//				(variable.getAltitude() >= rocket.alt_para2)) {
+//			judge = true;
+//		}else {
+//			judge = false;
+//		}
+		
+		if(rocket.para2Exist) {
+			if(rocket.para2Timer) {
+				if((variable.getVelDescent() <= 0.0) &&
+				   (variable.getTime() <= rocket.time_para2)) {
+					judge = true;
+				}else{
+					judge = false;
+				}
+			}else {
+				if((variable.getVelDescent() <= 0.0) &&
+				   (variable.getAltitude() >= rocket.alt_para2)) {
+					judge = true;
+				}else {
+					judge = false;
+				}
+			}
 		}else {
 			judge = false;
 		}
