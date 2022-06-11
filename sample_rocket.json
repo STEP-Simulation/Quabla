@@ -13,14 +13,14 @@
 	"Solver": {
 		"Name": "sample",
 		"Result Filepath":"result",
-		"Time Step [sec]": 0.001
+		"Time Step [sec]": 0.01
 	},
 
 	"Multi Solver": {
 		"Minimum Wind Speed [m/s]": 1.0,
 		"Step Wind Speed [m/s]": 1.0,
 		"Number of Wind Speed": 7,
-		"Number of Wind Azimuth": 16,
+		"Number of Wind Azimuth": 8,
 		"Base Wind Azimuth [deg]" : 288.95
 	},
 
