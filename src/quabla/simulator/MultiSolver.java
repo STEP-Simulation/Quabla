@@ -1,7 +1,6 @@
 package quabla.simulator;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -94,28 +93,20 @@ public class MultiSolver {
 	private void displayProcess(int numSpeed) {
 		String process = "";
 		double processDouble = (double)(numSpeed + 1) / (double)speed_num ;
-		for(int i = 0; i < 10; i++) {
-			if(i < (int)(processDouble * 10)) {
+
+		for(int i = 0; i < 30; i++) {
+			if(i < (int)(processDouble * 30)) {
 				process += "*";
 			}else {
 				process += " ";
 			}
 		}
-		byte[] bytes = null;
-		try {
-			bytes = process.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
+
+		if (processDouble == 1.0) {
+			System.out.println(String.format("%3d", (int)(processDouble * 100)) + "%" + "|" + process + "|");
+		}else {
+			System.out.print(String.format("%3d", (int)(processDouble * 100)) + "%" + "|" + process + "|" + "\r");
 		}
-		String processUTF8 = null;
-		try {
-			processUTF8 = new String(bytes, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// TODO 自動生成された catch ブロック
-			e.printStackTrace();
-		}
-		System.out.println("|" + processUTF8 + "|" + String.format("%d", (int)(processDouble * 100)) + "%");
 
 	}
 
