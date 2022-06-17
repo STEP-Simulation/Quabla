@@ -93,8 +93,11 @@ elif launch_site == '5' :
     launch_site_info.center_circle_LLH = launch_site_info.launch_LLH
 
 # Execute Quabla.jar
-subprocess.call(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, \
-                str(launch_site_info.launch_LLH[0]), str(launch_site_info.launch_LLH[1]), str(launch_site_info.launch_LLH[2])])
+# subprocess.call(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, \
+#                 str(launch_site_info.launch_LLH[0]), str(launch_site_info.launch_LLH[1]), str(launch_site_info.launch_LLH[2])])
+subprocess.run(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, \
+                str(launch_site_info.launch_LLH[0]), str(launch_site_info.launch_LLH[1]), str(launch_site_info.launch_LLH[2])],\
+                check=True)
 
 #グラフの出力に使う結果の入ったフォルダの場所が書いてあるjsonファイルを参照する
 #結果ファイルの後ろに01とかついちゃうので逐一取得する
