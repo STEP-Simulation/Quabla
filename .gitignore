@@ -1,8 +1,10 @@
 .project
+.pydevproject
 .eclipse
 .classpath
 .settings
 bin/
-result/
+result/*
 lightus/
+__pycache__/
 *.jar

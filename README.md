@@ -5,7 +5,11 @@ coding UTF-8
 
 <img src="./Quabla_logo.png" width="400px">
 
+## 作業環境
+* [Eclipse](https://mergedoc.osdn.jp/) <br>
+
 ## Libraries
+### Java
 Jsonファイルを読み込むために，以下のライブラリが必要。
 Jacksonで読み込んでいる。
 * jacson-core
@@ -14,25 +18,90 @@ Jacksonで読み込んでいる。
 
 ダウンロードは[こちらのサイト](https://www.sejuku.net/blog/39599)を参照のこと。
 
+### Python
+
 ## Reference
 * 戸川隼人，石黒登美子；スピンを伴うロケットの運動を計算するプログラム，航空宇宙技術研究所資料 NAL TM-145，1968
 * 嶋田有三，佐々修一；飛行力学，森北出版，2017
 
 ## Useage
-1. 実行時のコマンドラインで機体の諸元を入力したjsonファイルを指定。<br>
+1. 最新のEclipseをインストールする。JavaのFull Editionでよい。（すでにEclipseをインストールしてる場合は飛ばす。）
+2. 本レポジトリをクローン&インポートする。
+[こちらのサイト](https://rainbow-engine.com/github-eclipse-connect/)を参考にするとよい。クローンするとき，「クローン終了後，すべての既存Eclipseプロジェクトをインポート」にチェックを入れることを忘れない。また，クローン後にプロジェクトをインポートしないとJavaのパースペクティブに表示されない。
+3. `src/quabla/QUABLA.java`を右クリックし，`実行>実行の構成`を選ぶ。Javaアプリケーションを選択し，引数のタブから`プログラムの引数`に`config\sample_rocket.json single`を入力して実行する。
+4. Javaプロジェクト上で（Quablaフォルダを）右クリックし，`エクスポート`を選択し，`Java>実行可能JARファイル`を選択し，`次へ`を選択。起動構成は先ほど実行した，`QUABLA - Quabla`を選択し，エクスポート先は`Quabla.py`と同じ階層にする。`完了`を押すとコンパイルが行われる。警告がいっぱい出るけど気にしない。
+5. `Quabla.jar`が指定した場所に生成されていればコンパイル成功。
+6. あとはanacondaとかで適当に`Quabla.py`を実行すればいい。
+Eclipseを使用して編集したい場合はPyDevとPythonをインストールする。
+<!-- 1. 実行時のコマンドラインで機体の諸元を入力したjsonファイルを指定。<br>
 パスの指定方法は相対パスでも絶対パスでもどちらでもよい。
 例えば，あらかじめ入っている`sample_rocket.json`を相対パスで指定する場合，
 コマンドライン引数は`sample_rocket.json`となる。<br>
 `C:\hoge`にある`rocket_config.json`を絶対パスで指定する場合，
 コマンドライン引数は`C:\hoge\rocket_config.json`となる。
-2. `QUABLA.java`を実行。
+2. `QUABLA.java`を実行。 -->
+
+### anacondaの使用方法
+  以下のサイトからダウンロード。  
+  https://www.anaconda.com/products/individual  
+
+  さらにanacondaに含まれないライブラリとしてsimplekmlおよびPolycirclesを使用するのでそれもダウンロードする。  
+  この際にWindowsとMacでは少々方法が異なる。
+
+  ・ Windows  
+  anaconda promptを起動。  
+  `conda install -c conda-forge simplekml`と入力。  
+  `conda install -c conda-forge polycircles`と入力。  
+
+  ・Mac  
+  ターミナルを起動。  
+  `conda activate`と入力。  
+  `conda install -c conda-forge simplekml`と入力。  
+  `conda install -c conda-forge polycircles`と入力。
+
+  なお，Macにおいて終了後に以下のコマンドを入力することでanacondaを終了する。  
+  `conda deactivate`  
+  `conda config --set auto_activate_base False`
+
+## Execute
+
+0. anaconda promptを起動し，`Quabla.py`がある階層まで移動する(Windows)。
+Macの場合は，ターミナルで`conda activate`と入力。
+
+1. `Quabla.py`を実行する。
+```
+$ python Quabla.py
+```
+
+2. 以下のようにRocket configファイルを聞かれるので，計算したい機体のconfigファイルを指定する。
+```
+Rocket configuration files
+-------------------- Configuration Files --------------------
+sample_rocket.json
+-------------------- Configuration Files --------------------
+Enter the path of rocket paramater file (...json):
+```
+`config/`フォルダ内の`.json`ファイルのみ一覧に表示される。
+機体のconfigファイルは`conifg`フォルダ内に格納する。
+例えば，上の`sample_rocket.json`を指定する場合，`sample_rocket.json`と入力して，Enterキーを押す。
+
+3. 次に，以下のようにシミュレーションモードを聞かれるので指定する。
+```
+Enter simulation mode (single or multi):
+```
+`single`か`multi`を指定する。
+`single`,  `multi`の各モードについては以下の通り。<br>
+|項目|説明|
+|---|---|
+|`single`|単一条件での計算。位置や姿勢角の時間履歴などを見たい場合はこのモードを選択。|
+|`multi`|複数条件での計算。落下分散を計算したい場合に選択。singleモードと異なり位置などの時間履歴は出力されず，落下地点や最高高度などの表のみ出力。|
 
 ## Rocket Configurations
 ### Caution
-* jsonの文法にの取って記入すること。
+* jsonの文法に従って記入すること。
 例えば，
-	* 負の値を入力している（特に減衰モーメント係数。プログラム内で自動で修正してくれる）
-	* コロンが無い，逆にコロンが必要ない<br>
+	<!-- * 負の値を入力している（特に減衰モーメント係数。プログラム内で自動で修正してくれる） -->
+	* コロンが無い，逆にコロンが必要ない <br>
 などの文法ミスに注意。
 
 * jsonファイルをUTF-8で編集しているか必ず確認
@@ -45,14 +114,7 @@ Jacksonで読み込んでいる。
 |---|---|
 |Name|プロジェクト名や機体名など|
 |Result Filepath|結果の出力先。|
-|Simulation Mode|'single'か'multi'を指定。|
 |Time Step|シミュレーションの時間刻み。|
-
-`'single'` `'multi'`の各モードについては以下の通り。<br>
-|項目|説明|
-|---|---|
-|'single'|単一条件での計算。位置や姿勢角の時間履歴などを見たい場合はこのモードを選択。|
-|'multi'|複数条件での計算。落下分散を計算したい場合に選択。singleモードと異なり位置などの時間履歴は出力されず，落下地点や最高高度などの表のみ出力。|
 
 ### Multi Solver
 複数条件のシミュレーション時の設定。
@@ -62,17 +124,22 @@ Jacksonで読み込んでいる。
 |Step Wind Speed | m/s || 風速の時間刻み。|
 |Number of Wind Speed | - | 計算する風速の数。|
 |Number of Wind Azimuth | -  | 計算する風向の数。基本的に4の倍数にすること。|
+|Base Wind Azimuth [deg]| -  | 風向の基準。例えば，打上方位角と同じ場合，向かい風基準で，風向が適用される。 |
 
 ### Launch
 ランチャなどの打上げ条件に関する設定。<br>
 |項目|単位|備考|
 |---|---|---|
 |Date|N/A|打上げ日時。現状このパラメータは使用していない。|
-|Site|N/A|射点のLLH系における位置座標。`[緯度，経度，高度]`の順で入力すること。現状，使用していない。|
+|Site|N/A|射場の選択。`1:大島_陸，1:大島_海，1:能代_陸，1:能代_海，5:任意の射場`。 `5`を選んだ場合，射点の絶対座標（緯度，経度，高度）を指定する。|
+|Launch lat|deg|緯度|
+|Launch lon|deg|経度|
+|Launch height|deg|高度|
 |Launch Azimuth|deg|打上げ方位角。磁北から反時計回りを正。|
 |Launch Elevation|deg|打上げ仰角。|
 |Launcher Rail Length |m|ランチャ有効レール長。|
 |Tip-Off Calculation Exist|N/A|チップオフを考慮するかどうか。ガントリー式の場合，`false`にする。|
+|Safety Area Exist|N/A|落下分散の出力に保安円を表示させたい場合`true`，いらない場合`false`|
 |Input Magnetic Azimuth|deg|磁気偏角。磁北と真北のずれ。|
 
 ### Structure
@@ -122,8 +189,8 @@ Jacksonで読み込んでいる。
 |CNa File|N/A|法線力係数傾斜（法線力傾斜。OpenRocketでいうところの法線力係数。）カーブ。|
 |CNa File Exist|N/A|法線力係数傾斜カーブを使用するかどうか。|
 |Constant CNa|1/rad|一定法線力係数傾斜。|
-|Roll Dumping Moment Coefficient Clp|1/rad|ロール減衰モーメント係数。本来，負の値だがJsonの文法エラーになるので，入力時は正の値で入力すること。|
-|Pitch Dumping Moment Coefficient Cmq|1/rad|ピッチ・ヨー減衰モーメント係数。本来，負の値だがJsonの文法エラーになるので，入力時は正の値で入力すること。|
+|Roll Dumping Moment Coefficient Clp|1/rad|ロール減衰モーメント係数。|
+|Pitch Dumping Moment Coefficient Cmq|1/rad|ピッチ・ヨー減衰モーメント係数。|
 
 ### Parachute
 パラシュート，ドローグシュートについてのパラメータ。<br>
@@ -133,6 +200,8 @@ Jacksonで読み込んでいる。
 |2nd Parachute Exist|N/A|2段分離を行うかどうか。|
 |2nd Parachute CdS|m2|2段目パラシュートのCdS|
 |2nd Parachute Opening Altitude|m|2段目開傘の高度。|
+|2nd Parachute Timer Mode|N/A|2団目パラシュートの開傘条件を時間で指定する場合`true`|
+|2nd Timer [s]|sec|2団目パラシュート開傘時間。|
 
 ### Wind
 風についての設定。<br>
@@ -140,7 +209,7 @@ Jacksonで読み込んでいる。
 |---|---|---|
 |Wind File Exist|N/A|上空風データ（csvファイル）を用いてシミュレーションを行うかどうか。|
 |Wind File|N/A|上空風データのパス。|
-|Wind Model|N/A|風モデルの指定。`Wind File Exist`が`false`の場合，有効となる。'law','constant'の中から選択。モデルの指定に誤りがあるか，指定なしの場合'constant'になる。|
+|Wind Model|N/A|風モデルの指定。`Wind File Exist`が`false`の場合，有効となる。`law`,`constant`の中から選択。モデルの指定に誤りがあるか，指定なしの場合`constant`になる。|
 |Wind Power Law Coefficient|-|高度分布係数。陸打ちは4.5，海打ちは6.0とする。運営から指定がある場合，そちらに従う。|
 |Wind Speed|m/s|基準高度（風速計設置高度）での基準風速。`Simulation Mode`が`single`の場合のみ有効。|
 |Wind Azimuth|deg|風向。北を0 deg，時計回り正。|
@@ -154,5 +223,4 @@ Jacksonで読み込んでいる。
 
 ## Future Works
 * 変数が発散したときの例外処理
-* gui化 → 現状，CUIを検討
 * マルチスレッド化（現状のコードでも速度自体は十分。今後計算条件が増えるなら実装の必要あり）
