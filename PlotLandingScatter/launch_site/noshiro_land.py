@@ -88,5 +88,5 @@ class NoshiroLand(LaunchSite):
         pd.DataFrame(judge_list, index=self.wind_array, columns=angle_array).to_csv(self.trajectory.result_dir + '/judge.csv')
 
     def output_kml(self):
-        self.trajectory.output_kml(self.launch_LLH, self.magnetic_dec, simplekml.Color.teal, 0, 0, 0, 0, self.safety_LLH, self.safety_exist)
-        self.parachute.output_kml(self.launch_LLH, self.magnetic_dec, simplekml.Color.indianred, 0, 0, 0, 0, self.safety_LLH, self.safety_exist)
+        self.trajectory.output_kml(self.launch_LLH, self.magnetic_dec, cm.winter, 0, 0, 0, 0, self.safety_LLH, self.safety_exist)
+        self.parachute.output_kml(self.launch_LLH, self.magnetic_dec, cm.Wistia, 0, 0, 0, 0, self.safety_LLH, self.safety_exist)

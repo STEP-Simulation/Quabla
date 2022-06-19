@@ -65,18 +65,26 @@ class PlotGraph:
         self.ax.legend()
         self.fig.savefig(self.result_dir + '/' + self.title + '.jpg')
 
-    def output_kml(self, launch_LLH, magnetic_dec, kml_color, radius, safety_line1, safety_line2, safety_circle, safety_area, safety_exist):
+    def output_kml(self, launch_LLH, magnetic_dec, color_cm, radius, safety_line1, safety_line2, safety_circle, safety_area, safety_exist):
         kml = simplekml.Kml()
         matrix = trans_matrix(- np.deg2rad(magnetic_dec))
         #pos_ENU_array = np.array([matrix.dot(pos_ENU) for pos_ENU in pos_ENU_row for pos_ENU_row in self.pos_ENU_array])
         #pos_ENU_array = np.array([matrix.dot(pos_ENU) for pos_ENU in self.pos_ENU_array])
         
+        i = 0
         for pos_ENU in self.pos_ENU_array:
             pos_ENU = np.array([matrix.dot(point) for point in pos_ENU])
             pos_LLH = [cd.ENU2LLHforKml(launch_LLH, point) for point in pos_ENU]
-            linestring = kml.newlinestring()
-            linestring.style.linestyle.color = kml_color
+            linestring = kml.newlinestring(name=str(self.wind_array[i]))
+            r = int(color_cm(i/len(self.pos_ENU_array))[0] * 255)
+            g = int(color_cm(i/len(self.pos_ENU_array))[1] * 255)
+            b = int(color_cm(i/len(self.pos_ENU_array))[2] * 255)
+            # r, g, b = int(color_cm(i/len(self.pos_ENU_array)) * 255)
+            # linestring.style.linestyle.color = kml_color
+            linestring.style.linestyle.color = simplekml.Color.rgb(r, g, b)
+            linestring.style.linestyle.width = 2
             linestring.coords = pos_LLH
+            i += 1
         #kml.save(self.result_dir + '/' + self.title + '.kml')
 
         if safety_exist == True:
