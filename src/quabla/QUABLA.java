@@ -78,6 +78,7 @@ public class QUABLA {
 			mapper.writeValue(new File(filepathResult + File.separator + "resultpath.json"),resultpath);
 
 			Rocket rocket = new Rocket(node);
+			rocket.outputSpec(filepathResultFinal, simulationMode);
 			Solver solver = new Solver(filepathResultFinal);
 			solver.solveDynamics(rocket);
 			solver.makeResult();

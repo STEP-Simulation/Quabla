@@ -27,4 +27,24 @@ public class Constant extends AbstractWind{
 		this.speed = speed;
 		this.azimuthDeg = azimuth;
 	}
+	
+	@Override
+	public double getRefWindSpeed() {
+		return speed;
+	}
+	
+	@Override
+	public double getRefWindAzimuth() {
+		return azimuthDeg;
+	}
+	
+	@Override
+	public double getExponent() {
+		return 0.0;
+	}
+	
+	@Override
+	public String getFilePath() {
+		return null;
+	}
 }

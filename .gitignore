@@ -4,7 +4,7 @@
 .classpath
 .settings
 bin/
-result/*
+results/*
 lightus/
 __pycache__/
 *.jar

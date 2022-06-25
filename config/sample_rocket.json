@@ -12,8 +12,8 @@
 
 	"Solver": {
 		"Name": "sample",
-		"Result Filepath":"result",
-		"Time Step [sec]": 0.01
+		"Result Filepath":"results",
+		"Time Step [sec]": 0.001
 	},
 
 	"Multi Solver": {

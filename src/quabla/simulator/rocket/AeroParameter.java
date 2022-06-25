@@ -84,7 +84,10 @@ public class AeroParameter {
 			return lcpConst;
 		}
 	}
-
+	
+	public boolean getLcpFileExist() {
+		return lcpFileExist;
+	}
 
 	public double Cd(double Mach) {
 		if(CdFileExist) {
@@ -94,6 +97,9 @@ public class AeroParameter {
 		}
 	}
 
+	public boolean getCdFileExist() {
+		return CdFileExist;
+	}
 
 	public double CNa(double Mach) {
 		if(CNaFileExist) {
@@ -102,6 +108,11 @@ public class AeroParameter {
 			return CNaConst;
 		}
 	}
+	
+	public boolean getCNaFileExist() {
+		return CNaFileExist;
+	}
+
 
 
 }
