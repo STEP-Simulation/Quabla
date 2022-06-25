@@ -53,6 +53,9 @@ public class MultiSolver {
 			int j = 0;
 			for(double azimuth: azimuthArray) {
 				Rocket rocket = new Rocket(spec);
+				if(i==0 && j==0) {
+					rocket.outputSpec(filepathResult, "multi");
+				}
 				rocket.wind.setRefWind(speed, azimuth);;
 				//solverのインスタンスの生成
 				Solver single_solver = new Solver(filepathResult);//Multi_solverでは各フライトでのlogは保存しない
