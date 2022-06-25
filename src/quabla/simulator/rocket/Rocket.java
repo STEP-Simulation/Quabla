@@ -278,6 +278,7 @@ public class Rocket {
 			specTxt.outputLine(format("Structure Length-G.G. from Nosetip: ", 40) + String.format("%.4f [m]", lcgSt));
 			specTxt.outputLine(format("Length-G.G. @ before burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgBef));
 			specTxt.outputLine(format("Length-G.G. @ after burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgAft));
+			specTxt.outputLine(format("Propellant Length-G.G. @ before burn from Nosetip: ", 52) + String.format("%.4f [m]", getLcgProp(0.0)));
 			specTxt.outputLine("");
 			
 			specTxt.outputLine("---------------- Moment of Inertia (MOI) ---------------");
