@@ -130,7 +130,7 @@ public class Solver {
 		}
 		trajectoryLog.makeArray();
 
-		// store Ivent Value
+		// store Event Value
 		eventValue = new EventValueSingle(trajectoryLog);
 		eventValue.setIndexLaunchClear(indexLaunchClear);
 		eventValue.setIndexLandingTrajectory(indexLandingTrajectory);
@@ -186,7 +186,7 @@ public class Solver {
 	}
 
 	/**
-	 * outputResultTxt writes txt file about ivent values.
+	 * outputResultTxt writes txt file about event values.
 	 * */
 	public void outputResultTxt() {
 		OutputTxt resultTxt = null;
@@ -219,6 +219,14 @@ public class Solver {
 			resultTxt.outputLine(String.format("Max Mach Time : %.3f [sec]", eventValue.getTimeMaxMach()));
 			resultTxt.outputLine(String.format("Max Mach : %.3f [-]", eventValue.getMachMax()));
 			resultTxt.outputLine(String.format("Max Mach Altitude : %.3f [km]", eventValue.getAltitudeMaxMach()));
+			
+			resultTxt.outputLine(String.format("Max Normal Force Time : %.3f [sec]", eventValue.getTimeNormalMax()));
+			resultTxt.outputLine(String.format("Max Normal Force : %.3f [N]", eventValue.getNormalMax()));
+			resultTxt.outputLine(String.format("Max Normal Force Altitude : %.3f [km]", eventValue.getAltitudeNormalMax()));
+			
+			resultTxt.outputLine(String.format("Max Side Force Time : %.3f [sec]", eventValue.getTimeSideMach()));
+			resultTxt.outputLine(String.format("Max Side Force : %.3f [N]", eventValue.getSideMax()));
+			resultTxt.outputLine(String.format("Max Side Force Altitude : %.3f [km]", eventValue.getAltitudeSideMax()));
 
 			resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", eventValue.getTime2ndPara()));
 

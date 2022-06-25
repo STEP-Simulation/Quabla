@@ -116,34 +116,6 @@ if json_load['Launch Condition']['Input Magnetic Azimuth [deg]'] == '0.0':
 else:
     magneticdec = 'y'
 
-#最大法線力をresutl.txtに追加する
-if simulationmode == 'single':  #singleモードでしか最大法線力の載っているcsvが出力されないため
-    resulttxt_path = resultpath + os.sep + 'result.txt' #resutl.txtのpath
-    trajectry_result_path = resultpath + os.sep + 'flightlog_trajectory.csv' #法線力の載っている計算結果csvのpath
-
-    #最大法線力を弾道の計算結果csvから取得する
-    with open (trajectry_result_path , 'r',  encoding = "utf-8") as f :
-      reader = csv.reader(f)
-      line = [row for row in reader]
-
-    item_list = line[0] #一行目の項目名を格納
-
-    #法線力が何列目かを取得
-    for a in range(len(item_list)):
-        if item_list[a] == 'Normal Force [N]':
-          column_normalforce = a #a列目が法線力
-
-    max_noramlforce = 0 #最大法線力を格納
-    #法線力を比較していって最大値を求める
-    for a in range(len(line) - 1):
-        if max_noramlforce < float(line[a + 1][column_normalforce]):
-            max_noramlforce = float(line[a + 1][column_normalforce])
-
-    #result.txtの最後の行に上で求めた最大法線力を載せる
-    f = open(resulttxt_path, 'a')
-    f.write("Max Normal Force : " + str(round(max_noramlforce,2)) + " [N]\n")
-    f.close
-
 #グラフの描画
 if simulationmode == "single":
     
