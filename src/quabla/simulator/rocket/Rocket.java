@@ -269,6 +269,7 @@ public class Rocket {
 			specTxt.outputLine("------------------------- Mass -------------------------");
 			specTxt.outputLine(format("Dry mass: ", 20) + String.format("%.4f [kg]", mDry));
 			specTxt.outputLine(format("Structure mass: ", 20) + String.format("%.4f [kg]", mSt));
+			specTxt.outputLine(format("Propellant mass: ", 20) + String.format("%.4f [kg]", mBef - mSt));
 			specTxt.outputLine(format("Mass @ before burn: ", 20) + String.format("%.4f [kg]", mBef));
 			specTxt.outputLine(format("Mass @ after burn: ", 20) + String.format("%.4f [kg]", mAft));
 			specTxt.outputLine("");
