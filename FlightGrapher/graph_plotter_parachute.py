@@ -60,7 +60,7 @@ class GraphPlotterParachute:
         fig2 = plt.figure('Trajectory'+ flightType)
         trajectory = fig2.add_subplot()
         trajectory.set_title('Trajectory')
-        trajectory.plot(self.downrange_log / 1000.0 ,self.altitude_log / 1000.0)
+        trajectory.plot(self.downrange_log ,self.altitude_log)
         trajectory.set_xlabel('Downrange [km]')
         trajectory.set_ylabel('Altitude [km]')
         trajectory.set_ylim(ymin = 0.0)
