@@ -8,6 +8,15 @@ coding UTF-8
 ## 作業環境
 * [Eclipse](https://mergedoc.osdn.jp/) <br>
 
+## Installation
+gitからcloneしたらQuablaのフォルダに移動する。
+```
+cd lib
+python setup_jackson.py
+cd ..
+python setup.py
+```
+
 ## Libraries
 ### Java
 Jsonファイルを読み込むために，以下のライブラリが必要。
