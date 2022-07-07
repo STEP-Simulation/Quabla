@@ -5,6 +5,8 @@
 .settings
 bin/
 results/*
-lightus/
 __pycache__/
 *.jar
+lib/*
+!lib/setup_jackson.py
+quabla/
