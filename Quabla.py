@@ -9,16 +9,6 @@ import csv
 from launch_site_info import OshimaLand, OshimaSea, NoshiroLand, NoshiroSea, OtherSite
 
 print("\n6DoF Rocket Simulator QUABLA by STEP... \n")
-#--------------------更新内容-------------------------#
-print("最終更新日：2022/05/17\n")
-#2022/01/24 諸元ファイルに"がついていてもそれを自動で取り除けるようにした
-#2022/03/14 最大法線力をresutl.txtに表示できるようにした
-#2022/05/02 グラフの描画をするかどうかを聞かないで絶対に描画するようにした
-#2022/05/10 Quabla_JAVAとjsonファイルにてmultiモードの基準風向を任意に変更できるようにした
-#2022/05/17 保安円の出力をON OFFできるようにした
-#更新：相沢(何かあればkeidxb610{@}gmail.comまで {@}を@に置き換えてください)
-#---------------------------------------------------#
-
 print("-----------\n")
 
 # Get launch site information
