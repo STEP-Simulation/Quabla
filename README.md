@@ -91,7 +91,7 @@ sample_rocket.json
 Enter the path of rocket paramater file (...json):
 ```
 `config/`フォルダ内の`.json`ファイルのみ一覧に表示される。
-機体のconfigファイルは`conifg`フォルダ内に格納する。
+機体のconfigファイルは`config`フォルダ内に格納する。
 例えば，上の`sample_rocket.json`を指定する場合，`sample_rocket.json`と入力して，Enterキーを押す。
 
 3. 次に，以下のようにシミュレーションモードを聞かれるので指定する。
