@@ -11,10 +11,10 @@ coding UTF-8
 ## Installation
 gitからcloneしたらQuablaのフォルダに移動する。
 ```
-cd lib
-python setup_jackson.py
-cd ..
-python setup.py
+$ cd lib
+$ python setup_jackson.py
+$ cd ..
+$ python setup.py
 ```
 
 ## Libraries
