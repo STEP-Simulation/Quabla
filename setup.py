@@ -3,11 +3,11 @@ import os
 import shutil
 
 if __name__=="__main__":
-    lib1="lib/jackson-annotations-2.13.3.jar"
-    lib2="lib/jackson-core-2.13.3.jar"
-    lib3="lib/jackson-databind-2.13.3.jar"
-    src="src/quabla"
-    target="src/quabla/QUABLA.java"
+    lib1="lib" + os.sep + "jackson-annotations-2.13.3.jar"
+    lib2="lib" + os.sep + "jackson-core-2.13.3.jar"
+    lib3="lib" + os.sep + "jackson-databind-2.13.3.jar"
+    src="src" + os.sep + "quabla"
+    target="src"+ os.sep + "quabla" + os.sep + "QUABLA.java"
     jarfile="Quabla.jar"
     manifest="Quabla.mani"
 
@@ -15,11 +15,11 @@ if __name__=="__main__":
     if os.path.exists(jarfile):
         os.remove(jarfile)
 
-    if os.path.exists('quabla/'):
-        shutil.rmtree('quabla/')
+    if os.path.exists('quabla'+os.sep):
+        shutil.rmtree('quabla'+os.sep)
     # Compile
     sp.run(["javac", "-encoding", "UTF-8", \
-            "-cp", ".:"+lib1+";"+lib2+";"+lib3+";"+src, \
+            "-cp", ".;"+lib1+";"+lib2+";"+lib3+";"+src, \
             "-sourcepath", "src",\
             "-d", ".", target])
     # Make  jar file and add manifest file
