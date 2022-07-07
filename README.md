@@ -5,8 +5,69 @@ coding UTF-8
 
 <img src="./Quabla_logo.png" width="400px">
 
+## Reference
+* 戸川隼人，石黒登美子；スピンを伴うロケットの運動を計算するプログラム，航空宇宙技術研究所資料 NAL TM-145，1968
+* 嶋田有三，佐々修一；飛行力学，森北出版，2017
+
 ## 作業環境
 * [Eclipse](https://mergedoc.osdn.jp/) <br>
+
+## 前提環境
+### Java
+  以下のサイトから最新のjdkをインストール  
+  https://www.oracle.com/java/technologies/javase-jdk16-downloads.html  
+  その後，以下のサイトを参考に環境変数を通す(Windowsのみ)  
+  https://www.javadrive.jp/start/install/index4.html  
+
+  以下のコマンドでJavaのバージョンが表示されることを確認する。
+  ```
+  $ java -version
+  java version "17.0.1" 2021-10-19 LTS
+  Java(TM) SE Runtime Environment (build 17.0.1+12-LTS-39)
+  Java HotSpot(TM) 64-Bit Server VM (build 17.0.1+12-LTS-39, mixed mode, sharing)
+  ```
+  また，コンパイルに`javac`と`jar`を使用するのでこちらもパスが通っているかを確認する。
+  ```
+  $ javac -version
+  javac 17.0.1
+  $ jar
+  使用方法: jar [OPTION...] [ [--release VERSION] [-C dir] files] ...
+  詳細は、`jar --help'を実行してください。
+  ```
+   (Macはターミナルで`java --version`)  
+
+### Python
+PythonもJavaと同様にインストールを行い，パスを通す。
+以下のコマンドでパスが通ってるか確認する。
+```
+$ python -V
+Python 3.9.7
+```
+
+Pythonを使用する場合，あらかじめライブラリがそろっているAnacondaが便利である。
+Anacondaを用いる場合，使用法は以下の通り。
+#### anacondaの使用方法
+  以下のサイトからダウンロード。  
+  https://www.anaconda.com/products/individual  
+
+  さらにanacondaに含まれないライブラリとしてsimplekmlおよびPolycirclesを使用するのでそれもダウンロードする。  
+  この際にWindowsとMacでは少々方法が異なる。
+
+  * Windows  
+  anaconda promptを起動。  
+  `conda install -c conda-forge simplekml`と入力。  
+  `conda install -c conda-forge polycircles`と入力。  
+
+  * Mac  
+  ターミナルを起動。  
+  `conda activate`と入力。  
+  `conda install -c conda-forge simplekml`と入力。  
+  `conda install -c conda-forge polycircles`と入力。
+
+  なお，Macにおいて終了後に以下のコマンドを入力することでanacondaを終了する。  
+  `conda deactivate`  
+  `conda config --set auto_activate_base False`
+
 
 ## Installation
 gitからcloneしたらQuablaのフォルダに移動する。
@@ -25,15 +86,11 @@ Jacksonで読み込んでいる。
 * jackson-annotations
 * jackson-databind
 
-ダウンロードは[こちらのサイト](https://www.sejuku.net/blog/39599)を参照のこと。
-
 ### Python
 
-## Reference
-* 戸川隼人，石黒登美子；スピンを伴うロケットの運動を計算するプログラム，航空宇宙技術研究所資料 NAL TM-145，1968
-* 嶋田有三，佐々修一；飛行力学，森北出版，2017
-
-## Useage
+## Useage(Eclipseを用いて実行可能jarを作る場合)
+Eclipseを用いて実行可能jarを作る場合，以下の手順に従う。
+開発者以外は読み飛ばして問題ない。
 1. 最新のEclipseをインストールする。JavaのFull Editionでよい。（すでにEclipseをインストールしてる場合は飛ばす。）
 2. 本レポジトリをクローン&インポートする。
 [こちらのサイト](https://rainbow-engine.com/github-eclipse-connect/)を参考にするとよい。クローンするとき，「クローン終了後，すべての既存Eclipseプロジェクトをインポート」にチェックを入れることを忘れない。また，クローン後にプロジェクトをインポートしないとJavaのパースペクティブに表示されない。
@@ -49,28 +106,6 @@ Eclipseを使用して編集したい場合はPyDevとPythonをインストー�
 `C:\hoge`にある`rocket_config.json`を絶対パスで指定する場合，
 コマンドライン引数は`C:\hoge\rocket_config.json`となる。
 2. `QUABLA.java`を実行。 -->
-
-### anacondaの使用方法
-  以下のサイトからダウンロード。  
-  https://www.anaconda.com/products/individual  
-
-  さらにanacondaに含まれないライブラリとしてsimplekmlおよびPolycirclesを使用するのでそれもダウンロードする。  
-  この際にWindowsとMacでは少々方法が異なる。
-
-  ・ Windows  
-  anaconda promptを起動。  
-  `conda install -c conda-forge simplekml`と入力。  
-  `conda install -c conda-forge polycircles`と入力。  
-
-  ・Mac  
-  ターミナルを起動。  
-  `conda activate`と入力。  
-  `conda install -c conda-forge simplekml`と入力。  
-  `conda install -c conda-forge polycircles`と入力。
-
-  なお，Macにおいて終了後に以下のコマンドを入力することでanacondaを終了する。  
-  `conda deactivate`  
-  `conda config --set auto_activate_base False`
 
 ## Execute
 
