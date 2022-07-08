@@ -10,6 +10,13 @@ if __name__=="__main__":
     target="src"+ os.sep + "quabla" + os.sep + "QUABLA.java"
     jarfile="Quabla.jar"
     manifest="Quabla.mani"
+    
+    if os.name == 'nt':
+        cp_sep = ";"
+        
+    else :
+        cp_sep = ":"
+    
 
     print('Hello world!')
     if os.path.exists(jarfile):
@@ -19,7 +26,7 @@ if __name__=="__main__":
         shutil.rmtree('quabla'+os.sep)
     # Compile
     sp.run(["javac", "-encoding", "UTF-8", \
-            "-cp", ".:"+lib1+":"+lib2+";"+lib3+":"+src, \
+            "-cp", "."+cp_sep+lib1+cp_sep+lib2+cp_sep+lib3+cp_sep+src, \
             "-sourcepath", "src",\
             "-d", ".", target])
     # Make  jar file and add manifest file
