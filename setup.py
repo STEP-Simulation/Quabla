@@ -19,7 +19,7 @@ if __name__=="__main__":
         shutil.rmtree('quabla'+os.sep)
     # Compile
     sp.run(["javac", "-encoding", "UTF-8", \
-            "-cp", ".;"+lib1+";"+lib2+";"+lib3+";"+src, \
+            "-cp", ".:"+lib1+":"+lib2+";"+lib3+":"+src, \
             "-sourcepath", "src",\
             "-d", ".", target])
     # Make  jar file and add manifest file
