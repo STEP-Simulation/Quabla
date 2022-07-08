@@ -32,9 +32,9 @@ public class OutputLandingScatter {
 				for (int xy = 0; xy < 2; xy++) {
 					StringBuilder stb = new StringBuilder();
 					if (xy == 0) {
-						stb.append(speed + "m/s,x,");
+						stb.append(speed + " m/s,x,");
 					} else {
-						stb.append(speed + "m/s,y,");
+						stb.append(speed + " m/s,y,");
 					}
 
 					for (int i = 0; i < wind_map[0].length; i++) {
