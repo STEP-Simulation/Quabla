@@ -63,7 +63,7 @@ def plotlandingscatter(path, launch_elevation, number, magneticflag, launch_LLH,
         launch_site = LaunchSiteNone(elevation, magnetic_dec_exist, launch_LLH, dir_path, glp_list)
 
     launch_site.plot_landing_scatter()
-    #launch_site.judge_inside()
+    launch_site.judge_inside()
     launch_site.output_kml()
 
     print('Done!\n')
