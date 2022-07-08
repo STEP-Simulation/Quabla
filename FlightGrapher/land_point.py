@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
+from cProfile import label
 
 class LandPoint:
     def __init__(self, filepath):
@@ -56,7 +57,7 @@ def plot_graph(filepath, img, pos_trajectory, pos_parachute, xlim, ylim):
     ax = fig.add_subplot()
     ax.set_title(title)
 
-    ax.scatter(0.0, 0.0, color='r', marker='o')
+    ax.scatter(0.0, 0.0, color='r', marker='o', label='Launch point')
     # ax.plot(pos_trajectory[0], pos_trajectory[1], label='Trajectory', color='b', marker='o')
     # ax.plot(pos_parachute[0], pos_parachute[1], label='Parachute', color='orange', marker='o')
     ax.scatter(pos_trajectory[0], pos_trajectory[1], label='Trajectory', color='b', marker='o')

@@ -28,7 +28,8 @@ class PlotGraph:
 
     def plot_scatter(self, img, xlim, ylim, color_cm, magnetic_dec):
 
-        self.ax.plot(0.0, 0.0, color='r', marker='o', markersize=3)
+        # self.ax.plot(0.0, 0.0, color='r', marker='o', markersize=3)
+        self.ax.scatter(0.0, 0.0, color='r', marker='o', label='Launch point')
         i = 0
         for x, y in zip(self.x_array, self.y_array):
             self.ax.plot(x, y,label=str(self.wind_array[i]), color=color_cm(i / self.row), marker='o')
