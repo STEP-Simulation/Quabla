@@ -5,7 +5,7 @@ from mpl_toolkits.mplot3d import proj3d
 import numpy as np
 from matplotlib.pyplot import subplot
 from PlotLandingScatter.coordinate import ENU2LLH
-from FlightGrapher.make_kml import gettrajectorypoint
+from FlightGrapher.make_kml import gettrajectorypoint, post_kml
 
 class GraphPlotterTrajectory:
 
@@ -275,8 +275,11 @@ class GraphPlotterTrajectory:
         plt.legend()
         plt.savefig(self.filepath + '/' + flightType + '/Acceleration_BODY.png')
 
+        vENU2LLH = np.vectorize(ENU2LLH, excluded=['launch_LLH'], signature="(1),(3)->(3)")
+        log_LLH = vENU2LLH(self.Launch_LLH, self.pos_ENU_log)
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
         gettrajectorypoint(point_LLH)
+        post_kml(log_LLH, self.filepath, 'hard')
         land_point.get_point_trajectory(self.point)
 
 

@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from PlotLandingScatter.coordinate import ENU2LLH
-from FlightGrapher.make_kml import getparachutepoint
+from FlightGrapher.make_kml import getparachutepoint, post_kml
 import os
 
 class GraphPlotterParachute:
@@ -90,8 +90,11 @@ class GraphPlotterParachute:
         plt.legend()
         plt.savefig(self.filepath + os.sep + flightType + os.sep + 'Vel_ENU.png')
 
+        vENU2LLH = np.vectorize(ENU2LLH, excluded=['launch_LLH'], signature="(1),(3)->(3)")
+        log_LLH = vENU2LLH(self.Launch_LLH, self.pos_ENU_log)
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
         getparachutepoint(point_LLH)
+        post_kml(log_LLH, self.filepath, 'soft')
         land_point.get_point_parachute(self.point)
         
 

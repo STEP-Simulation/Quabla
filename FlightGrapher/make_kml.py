@@ -43,3 +43,23 @@ def makekml(flightlog_path, safety_circle, radius, safety_area, safety_line1, sa
                     simplekml.Color.changealphaint(255, simplekml.Color.aqua)
 
     kml.save(flightlog_path + os.sep + '落下地点.kml')
+
+def post_kml(log_LLH, result_dir, name):
+    lat_log = log_LLH[:, 0]
+    lon_log = log_LLH[:, 1]
+    height_log = log_LLH[:, 2]
+    kml = simplekml.Kml(open=1)
+    line = kml.newlinestring()
+    line.style.linestyle.width = 5
+    line.style.linestyle.color = simplekml.Color.red
+    line.extrude = 1
+    line.altitudemode = simplekml.AltitudeMode.absolute
+    coords = []
+    i = 0
+    for lat, lon, height in zip(lat_log, lon_log, height_log):
+        if i%10 == 0:
+            coords.append([lon, lat, height])
+        i = i+1
+    line.coords = coords
+    line.style.linestyle.colormode = simplekml.ColorMode.random
+    kml.save(result_dir + '/' + name + '_trajectory.kml')
