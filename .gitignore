@@ -3,5 +3,6 @@
 .classpath
 .settings
 bin/
-result/
+results/
 lightus/
+Quabla.jar
