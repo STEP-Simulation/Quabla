@@ -45,4 +45,24 @@ public class Power extends AbstractWind{
 		this.speedRef = speed;
 		this.azimuthRef = azimuth;
 	}
+	
+	@Override
+	public double getRefWindSpeed() {
+		return speedRef;
+	}
+	
+	@Override
+	public double getRefWindAzimuth() {
+		return azimuthRef;
+	}
+	
+	@Override
+	public double getExponent() {
+		return exponent;
+	}
+	
+	@Override
+	public String getFilePath() {
+		return null;
+	}
 }

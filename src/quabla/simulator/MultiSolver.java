@@ -53,6 +53,9 @@ public class MultiSolver {
 			int j = 0;
 			for(double azimuth: azimuthArray) {
 				Rocket rocket = new Rocket(spec);
+				if(i==0 && j==0) {
+					rocket.outputSpec(filepathResult, "multi");
+				}
 				rocket.wind.setRefWind(speed, azimuth);;
 				//solverのインスタンスの生成
 				Solver single_solver = new Solver(filepathResult);//Multi_solverでは各フライトでのlogは保存しない
@@ -74,14 +77,14 @@ public class MultiSolver {
 		double launchElev = spec.get("Launch Condition").get("Launch Elevation [deg]").asDouble();
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
-			trajectory.output(filepathResult + "trajectory"+ launchElev +"[deg].csv",windMapTrajectory, speedArray, base_azimuth);
+			trajectory.output(filepathResult + "trajectory"+ launchElev +"[deg].csv",windMapTrajectory, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
-			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray, base_azimuth);
+			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

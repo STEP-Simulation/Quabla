@@ -1,8 +1,12 @@
 package quabla.simulator.rocket;
 
+import java.io.IOException;
+import java.nio.charset.Charset;
+
 import com.fasterxml.jackson.databind.JsonNode;
 
 import quabla.QUABLA;
+import quabla.output.OutputTxt;
 import quabla.simulator.rocket.wind.AbstractWind;
 import quabla.simulator.rocket.wind.Constant;
 import quabla.simulator.rocket.wind.Original;
@@ -65,7 +69,7 @@ public class Rocket {
 			wind = new Original(
 					spec.get("Wind").get("Wind File").asText(),
 					launchCond.get("Input Magnetic Azimuth [deg]").asDouble());
-		}else if(spec.get("Wind").get("Wind Model").asText().equals("law") || QUABLA.simulationModeCheck.equals("multi")){
+		}else if(spec.get("Wind").get("Wind Model").asText().equals("law")){
 			wind = new Power(
 					spec.get("Wind").get("Wind Speed [m/s]").asDouble(),
 					spec.get("Wind").get("Wind Azimuth [deg]").asDouble(),
@@ -79,7 +83,7 @@ public class Rocket {
 					launchCond.get("Input Magnetic Azimuth [deg]").asDouble());
 		}
 
-		//--------------- Geometory ---------------
+		//--------------- Geometry ---------------
 		L = structure.get("Length [m]").asDouble();
 		D = structure.get("Diameter [m]").asDouble();
 		S = 0.25 * Math.PI * Math.pow(D, 2);
@@ -105,7 +109,7 @@ public class Rocket {
 		IjRollDry = structure.get("Dry Moment of Inertia Roll-Axis [kg*m^2]").asDouble();
 
 		// @ Before Burn
-		// Pitch, Yaw Axsis
+		// Pitch, Yaw Axis
 		IjStPitchUnit =
 				(IjPitchDry - (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgDry - (L - engine.lcgFuel), 2))) // 乾燥重心回りの構造Pitch慣性モーメント
 				- mSt * Math.pow(lcgDry - lcgSt, 2); // 平行軸の定理で構造重心回りの慣性モーメントに直す
@@ -114,7 +118,7 @@ public class Rocket {
 				+ (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgBef - (L - engine.lcgFuel), 2)) // 燃焼前全機重心回り燃料Pitch慣性モーメント
 				+ (engine.IjOxPitchBef + engine.mOxBef * Math.pow(lcgBef - (L - engine.lcgOxBef), 2)); // 燃焼前全機重心回り酸化剤Pitch慣性モーメント
 
-		// Roll Axsis
+		// Roll Axis
 		IjStRollUnit = IjRollDry - engine.IjFuelRollBef;
 		IjRollBef = IjRollDry + engine.IjOxRollBef;
 
@@ -240,6 +244,139 @@ public class Rocket {
 			return 0.0;
 		}
 	}
+	
+	public void outputSpec(String resultDir, String simulationMode) {
+		OutputTxt specTxt = null;
+		
+		try {
+			specTxt = new OutputTxt(resultDir + "rocket_param.txt");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
+		try {
+			
+			specTxt.outputLine("----------------------- Structure ----------------------");
+			specTxt.outputLine(format("Length: ", 20) + String.format("%.3f [m]", L));
+			specTxt.outputLine(format("Diameter: ", 20) + String.format("%.3f [m]", D));
+			specTxt.outputLine(format("Area: ", 20) + String.format("%.3f [m^2]", S));
+			if(existTipOff) {
+				specTxt.outputLine(format("Upper Launch Lug: ", 20) + String.format("%.3f [m]", upperLug));
+				specTxt.outputLine(format("Lower Launch Lug: ", 20) + String.format("%.3f [m]", lowerLug));
+			}
+			specTxt.outputLine("");
+			
+			specTxt.outputLine("------------------------- Mass -------------------------");
+			specTxt.outputLine(format("Dry mass: ", 20) + String.format("%.4f [kg]", mDry));
+			specTxt.outputLine(format("Structure mass: ", 20) + String.format("%.4f [kg]", mSt));
+			specTxt.outputLine(format("Propellant mass: ", 20) + String.format("%.4f [kg]", mBef - mSt));
+			specTxt.outputLine(format("Mass @ before burn: ", 20) + String.format("%.4f [kg]", mBef));
+			specTxt.outputLine(format("Mass @ after burn: ", 20) + String.format("%.4f [kg]", mAft));
+			specTxt.outputLine("");
+			
+			specTxt.outputLine("--------------- Center of Gravity (C.G.) ---------------");
+			specTxt.outputLine(format("Dry Length-G.G. from Nosetip: ", 40) + String.format("%.4f [m]", lcgDry));
+			specTxt.outputLine(format("Structure Length-G.G. from Nosetip: ", 40) + String.format("%.4f [m]", lcgSt));
+			specTxt.outputLine(format("Length-G.G. @ before burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgBef));
+			specTxt.outputLine(format("Length-G.G. @ after burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgAft));
+			specTxt.outputLine(format("Propellant Length-G.G. @ before burn from Nosetip: ", 52) + String.format("%.4f [m]", getLcgProp(0.0)));
+			specTxt.outputLine("");
+			
+			specTxt.outputLine("---------------- Moment of Inertia (MOI) ---------------");
+			specTxt.outputLine(format("Dry MOI Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjRollDry));
+			specTxt.outputLine(format("Dry MOI Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchDry));
+			specTxt.outputLine(format("MOI @ before burn Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjRollBef));
+			specTxt.outputLine(format("MOI @ before burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchBef));
+			specTxt.outputLine(format("MOI @ after burn Roll-Axis:", 45) + String.format("%.4f [kg*m^2]", IjRollAft));
+			specTxt.outputLine(format("MOI @ after burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchAft));
+			specTxt.outputLine(format("Propellant MOI @ before burn Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", getIjPropRoll(0.0)));
+			specTxt.outputLine(format("Propellant MOI @ before burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", getIjPropPitch(0.0)));
+			specTxt.outputLine("");
+			
+			specTxt.outputLine("--------------------- Aero Parameter -------------------");
+			if(!aero.getLcpFileExist()) {
+				specTxt.outputLine(format("Constant Length-C.P. from Nosetip: ", 40) + String.format("%.3f [m]", aero.Lcp(0.0)));
+			}
+			if(!aero.getCdFileExist()) {
+				specTxt.outputLine(format("Constant Cd: ", 40) + String.format("%.3f [-]", aero.Cd(0.0)));
+			}
+			if(!aero.getCNaFileExist()) {
+				specTxt.outputLine(format("Constant CNa: ", 40) + String.format("%.3f [1/rad]", aero.CNa(0.0)));
+			}
+			specTxt.outputLine(format("Constant Clp: ", 40) + String.format("%.3f [1/rad]", aero.Clp));
+			specTxt.outputLine(format("Constant Cmq: ", 40) + String.format("%.3f [1/rad]", aero.Cmq));
+			specTxt.outputLine(format("Constant Cnr: ", 40) + String.format("%.3f [1/rad]", aero.Cnr));
+			specTxt.outputLine("");
+			
+			specTxt.outputLine("----------------------- Parachute ----------------------");
+			specTxt.outputLine(format("1st Parachute CdS: ", 35) + String.format("%.3f [m^2]", CdS1));
+			if(para2Exist) {
+				specTxt.outputLine(format("2nd Parachute CdS: ", 35) + String.format("%.3f [m^2]", CdS2));
+				if(para2Timer) {
+					specTxt.outputLine(format("2nd Timer: ", 35) + String.format("%.1f [s]", time_para2));
+				}else {
+					specTxt.outputLine(format("2nd Parachute Opening Altitude: ", 35) + String.format("%.3f [m]", alt_para2));
+				}
+			}
+			specTxt.outputLine("");
+			
+			specTxt.outputLine("-------------------- Launch Condition ------------------");
+			specTxt.outputLine(format("Launcher Rail Length: ", 30) + String.format("%.1f [m]", lengthLauncherRail));
+			specTxt.outputLine(format("Launch Elevation: ", 30) + String.format("%.1f [deg]", elevationLauncher));
+			specTxt.outputLine(format("Launch Magnetic Azimuth: ", 30) + String.format("%.1f [deg]", azimuthLauncher));
+			specTxt.outputLine(format("Launch True Azimuth: ", 30) + String.format("%.1f [deg]", azimuthLauncher - magneticDec));
+			specTxt.outputLine("");
+			
+			specTxt.outputLine("--------------------- Wind Condition -------------------");
+			switch (simulationMode) {
+			
+			case "single":
+				if(wind instanceof Original) {
+					specTxt.outputLine(format("Wind Model: ", 20) + "Original");
+					specTxt.outputLine(format("Wind File: ", 20) + wind.getFilePath());
+				}else if(wind instanceof Power) {
+					specTxt.outputLine(format("Wind Model: ", 30) + "Power Law");
+					specTxt.outputLine(format("Wind Speed: ", 30) + String.format("%.1f [m/s]", wind.getRefWindSpeed()));
+					specTxt.outputLine(format("Wind Azimuth: ", 30) + String.format("%.1f [deg]", wind.getRefWindAzimuth()));
+					specTxt.outputLine(format("Wind Power Law Coefficient: ", 30) + String.format("%.1f [-]", wind.getExponent()));
+				}else if(wind instanceof Constant) {
+					specTxt.outputLine(format("Wind Model: ", 20) + "Constant");
+					specTxt.outputLine(format("Wind Speed: ", 20) + String.format("%.1f [m/s]", wind.getRefWindSpeed()));
+					specTxt.outputLine(format("Wind Azimuth: ", 20) + String.format("%.1f [deg]", wind.getRefWindAzimuth()));
+				}
+				break;
+
+			case "multi":
+				if(wind instanceof Power) {
+					specTxt.outputLine(format("Wind Model: ", 30) + "Power Law");
+					specTxt.outputLine(format("Wind Power Law Coefficient: ", 30) + String.format("%.1f [-]", wind.getExponent()));
+				}else if(wind instanceof Constant) {
+					specTxt.outputLine(format("Wind Model: ", 20) + "Constant");
+				}
+				break;
+			}
+			specTxt.outputLine("");
+			
+		} catch (IOException e) {
+			 throw new RuntimeException(e);
+		}
+		
+		try {
+			specTxt.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+    // 文字列の整形用の関数
+	private static String format(String target, int length){
+        int byteDiff = (getByteLength(target, Charset.forName("UTF-8"))-target.length())/2;
+        return String.format("%-"+(length-byteDiff)+"s", target);
+    }
+
+    private static int getByteLength(String string, Charset charset) {
+        return string.getBytes(charset).length;
+    }
 
 	public double getIjDotRoll(double t) {
 		if(t < engine.timeBurnout) {
@@ -260,5 +397,6 @@ public class Rocket {
 	public int getSite() {
 		return site;
 	}
+
 
 }

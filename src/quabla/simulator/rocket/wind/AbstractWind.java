@@ -6,6 +6,10 @@ public abstract class AbstractWind {
 
 	abstract public double[] getWindENU(double alt);
 	abstract public void setRefWind(double speed, double azimuth);
+	abstract public double getRefWindSpeed();
+	abstract public double getRefWindAzimuth();
+	abstract public String getFilePath();
+	abstract public double getExponent();
 
 	/**
 	 * @param speed 風速 [m/s]

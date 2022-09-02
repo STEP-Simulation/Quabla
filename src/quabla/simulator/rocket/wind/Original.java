@@ -13,6 +13,7 @@ public class Original extends AbstractWind{
 
 	private final Interpolation speedAnaly, azimuthAnaly;
 	private double azimuthFix;// 落下分散計算時に使用
+	private String filepath;
 
 	/**
 	 * @param filepath 風データのファイルパス
@@ -22,6 +23,7 @@ public class Original extends AbstractWind{
 		 * 2nd Column : wind speed [m/s]
 		 * 3rd Column : wnd azimuth [deg]
 		 * **/
+		this.filepath = filepath;
 		double[][] windData = GetCsv.get3ColumnArray(filepath);
 		double[] altArray = new double[windData.length];
 		double[] speedArray = new double[windData.length];
@@ -63,4 +65,23 @@ public class Original extends AbstractWind{
 		azimuthFix = azimuth;
 	}
 
+	@Override
+	public double getRefWindSpeed() {
+		return 0.0;
+	}
+	
+	@Override
+	public double getRefWindAzimuth() {
+		return 0.0;
+	}
+	
+	@Override
+	public double getExponent() {
+		return 0.0;
+	}
+	
+	@Override
+	public String getFilePath() {
+		return filepath;
+	}
 }

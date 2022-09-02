@@ -13,16 +13,17 @@ import quabla.simulator.numerical_analysis.ArrayAnalysis;
 public class EventValueSingle {
 
 	private double velLaunchClear;
-	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeApogee, time2ndPara, timeLandingTrajectory, timeLandingParachute;
-	private double altApogee, altMaxQ, altVelAirMax, altMachMax, alt2ndPara;
+	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeNormalMax, timeSideMax, timeApogee, time2ndPara, timeLandingTrajectory, timeLandingParachute;
+	private double altApogee, altMaxQ, altVelAirMax, altMachMax, altNormalMax, altSideMax, alt2ndPara;
 	private double accLaunchClear;
 	private double dynamicsPressureMax;
 	private double velAirMax, velAirApogee;
 	private double machMax;
+	private double normalMax, sideMax;
 	private double downrangeApogee, downrangeLandingTrajectory, downrangeLandingParachute;
 	private double[] posENUlandingTrajectory = new double[2];
 	private double[] posENUlandingParachute = new double[2];
-	private int indexLaunchClear, indexMaxQ, index2ndPara, indexMaxVelAir, indexMaxMach, indexApogee, indexLandingTrajectory, indexLandingParachute;
+	private int indexLaunchClear, indexMaxQ, index2ndPara, indexMaxVelAir, indexMaxMach, indexNormalMax, indexSideMax, indexApogee, indexLandingTrajectory, indexLandingParachute;
 
 	public EventValueSingle(LoggerVariable lvt) {
 		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
@@ -31,6 +32,8 @@ public class EventValueSingle {
 		calculateMachMax(lvt);
 		calculateAtVelAirMax(lvt);
 		calculateAtMaxQ(lvt);
+		calculateNormalMax(lvt);
+		calculateSideMax(lvt);
 	}
 
 	//-------------------- Set Function --------------------
@@ -101,6 +104,26 @@ public class EventValueSingle {
 
 		timeMaxMach = lvt.getTime(indexMaxMach);
 		altMachMax = lvt.getAltitudeLogArray()[indexMaxMach];
+	}
+	
+	private void calculateNormalMax(LoggerVariable lvt) {
+		ArrayAnalysis aa = new ArrayAnalysis(Arrays.copyOf(lvt.getNormalLogArray(), indexApogee));
+		aa.calculateMaxValue();
+		normalMax = aa.getMaxValue();
+		indexNormalMax = aa.getIndexMaxValue();
+
+		timeNormalMax = lvt.getTime(indexNormalMax);
+		altNormalMax = lvt.getAltitudeLogArray()[indexNormalMax];
+	}
+	
+	private void calculateSideMax(LoggerVariable lvt) {
+		ArrayAnalysis aa = new ArrayAnalysis(Arrays.copyOf(lvt.getSideLogArray(), indexApogee));
+		aa.calculateMaxValue();
+		sideMax = aa.getMaxValue();
+		indexSideMax= aa.getIndexMaxValue();
+
+		timeSideMax = lvt.getTime(indexSideMax);
+		altSideMax = lvt.getAltitudeLogArray()[indexSideMax];
 	}
 
 	private void compute2ndPara(LoggerVariableParachute lvp) {
@@ -216,6 +239,40 @@ public class EventValueSingle {
 
 	public int getIndexMaxMach() {
 		return indexMaxMach;
+	}
+	
+	// Max Normal Force
+	public double getNormalMax() {
+		return normalMax;
+	}
+
+	public double getTimeNormalMax() {
+		return timeNormalMax;
+	}
+
+	public double getAltitudeNormalMax() {
+		return altNormalMax;
+	}
+
+	public int getIndexNormalMax() {
+		return indexNormalMax;
+	}
+	
+	// Max Side Force
+	public double getSideMax() {
+		return sideMax;
+	}
+
+	public double getTimeSideMach() {
+		return timeSideMax;
+	}
+
+	public double getAltitudeSideMax() {
+		return altSideMax;
+	}
+
+	public int getIndexSideMax() {
+		return indexSideMax;
 	}
 
 	// Landing Trajctory

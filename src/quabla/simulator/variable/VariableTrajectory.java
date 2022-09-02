@@ -24,7 +24,6 @@ public class VariableTrajectory extends AbstractVariable{
 	private MathematicalVector velENU;
 	private MathematicalVector omegaBODY;
 	private MathematicalVector quat;
-	private double e,n,u,q;
 
 	private double[] quat0;
 
@@ -48,10 +47,10 @@ public class VariableTrajectory extends AbstractVariable{
 		roll0 = Math.PI;
 
 		//Initial Position_ENU
-		e = (rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0);
-		n = (rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0);
-		u = (rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation0));
-		posENU = new MathematicalVector(e,n,u);
+		posENU = new MathematicalVector(
+				(rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
+				(rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0),
+				(rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation0)));
 
 		//Initial Attitude with Quaternion
 		quat0 = Coordinate.getQuatFromEuler(azimuth0, elevation0, roll0);

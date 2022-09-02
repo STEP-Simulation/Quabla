@@ -15,17 +15,13 @@ public class OutputLandingScatter {
 	 * @param wind_map 落下位置を保存した配列
 	 * @throws IOException
 	 * */
-	public void output(String filepath, double[][] wind_map, double[] speed_array, double base_azimuth) throws IOException {
+	public void output(String filepath, double[][] wind_map, double[] speed_array) throws IOException {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(filepath))) {
 			double angle_step = 360.0 / (wind_map[0].length - 1);
 
 			StringBuilder stb_first = new StringBuilder(",,");
 			for (int i = 0; i < wind_map[0].length; i++) {
-				if(i * angle_step + base_azimuth <= 360) {
-					stb_first.append(i * angle_step + base_azimuth + ",");
-				}else if(i * angle_step + base_azimuth > 360){
-					stb_first.append(i * angle_step + base_azimuth - 360 + ",");
-				}
+				stb_first.append(i * angle_step + ",");
 			}
 			writer.write(stb_first.toString());
 			writer.newLine();
@@ -36,9 +32,9 @@ public class OutputLandingScatter {
 				for (int xy = 0; xy < 2; xy++) {
 					StringBuilder stb = new StringBuilder();
 					if (xy == 0) {
-						stb.append(speed + "m/s,x,");
+						stb.append(speed + " m/s,x,");
 					} else {
-						stb.append(speed + "m/s,y,");
+						stb.append(speed + " m/s,y,");
 					}
 
 					for (int i = 0; i < wind_map[0].length; i++) {

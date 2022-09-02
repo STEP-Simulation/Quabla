@@ -176,14 +176,14 @@ public class EventValueMulti {
 		}
 
 		try {
-			resultTxt.outputLine(String.format("Minimum Launch Clear Velocity : %.3f [m/s](%.1f m/s, %.2f deg)", velLaunchClearMin, speedVelLCmin, azimuthVelLCmin));
-			resultTxt.outputLine(String.format("Max Altitude : %.3f [km](%.1f m/s, %.2f deg)", altMax, speedMaxAlt, azimuthMaxAlt));
-			resultTxt.outputLine(String.format("Max Air Speed : %.3f [m/s](%.1f m/s, %.2f deg)", velAirMax, speedMaxVelAir, azimuthMaxVelAir));
-			resultTxt.outputLine(String.format("Max Mach Number : %.3f [-](%.1f m/s, %.2f deg)", machMax, speedMaxMach, azimuthMaxMach));
-			resultTxt.outputLine(String.format("Max Time Apogee : %.3f [sec](%.1f m/s, %.2f deg)", timeApogeeMax, speedMaxTimeApogee, azimuthMaxTimeApogee));
-			resultTxt.outputLine(String.format("Max Time 2nd Parachute Separation : %.3f [sec](%.1f m/s, %.2f deg)", time2ndParaMax, speedMaxTime2ndPara, azimuthMaxTime2ndPara));
-			resultTxt.outputLine(String.format("Max Time LandingTrajectory : %.3f [sec](%.1f m/s, %.2f deg)", timeLandingTrajectoryMax, speedMaxTimeLandingTrajectory, azimuthMaxTimeLandingTrajectory));
-			resultTxt.outputLine(String.format("Max Time LandingParachute : %.3f [sec](%.1f m/s, %.2f deg)", timeLandingParachuteMax, speedMaxTimeLandingParachute, azimuthMaxTimeLandingParachute));
+			resultTxt.outputLine(String.format("Minimum Launch Clear Velocity : %.3f [m/s](%.1f m/s, %.1f deg)", velLaunchClearMin, speedVelLCmin, azimuthVelLCmin));
+			resultTxt.outputLine(String.format("Max Altitude : %.3f [km](%.1f m/s, %.1f deg)", altMax, speedMaxAlt, azimuthMaxAlt));
+			resultTxt.outputLine(String.format("Max Air Speed : %.3f [m/s](%.1f m/s, %.1f deg)", velAirMax, speedMaxVelAir, azimuthMaxVelAir));
+			resultTxt.outputLine(String.format("Max Mach Number : %.3f [-](%.1f m/s, %.1f deg)", machMax, speedMaxMach, azimuthMaxMach));
+			resultTxt.outputLine(String.format("Max Time Apogee : %.3f [sec](%.1f m/s, %.1f deg)", timeApogeeMax, speedMaxTimeApogee, azimuthMaxTimeApogee));
+			resultTxt.outputLine(String.format("Max Time 2nd Parachute Separation : %.3f [sec](%.1f m/s, %.1f deg)", time2ndParaMax, speedMaxTime2ndPara, azimuthMaxTime2ndPara));
+			resultTxt.outputLine(String.format("Max Time LandingTrajectory : %.3f [sec](%.1f m/s, %.1f deg)", timeLandingTrajectoryMax, speedMaxTimeLandingTrajectory, azimuthMaxTimeLandingTrajectory));
+			resultTxt.outputLine(String.format("Max Time LandingParachute : %.3f [sec](%.1f m/s, %.1f deg)", timeLandingParachuteMax, speedMaxTimeLandingParachute, azimuthMaxTimeLandingParachute));
 		}catch(IOException e) {
 			throw new RuntimeException(e) ;
 		}
