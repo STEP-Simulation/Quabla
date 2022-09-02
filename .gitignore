@@ -1,8 +1,12 @@
 .project
 .eclipse
+.pydevproject
 .classpath
 .settings
 bin/
 results/
-lightus/
-Quabla.jar
+__pycache__/
+*.jar
+lib/*
+!lib/setup_jackson.py
+quabla/
