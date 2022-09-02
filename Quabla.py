@@ -18,13 +18,13 @@ launch_site_json = json.load(open('./input/launch_site.json', 'r', encoding='utf
 while(1):
     files = os.listdir("./config/")
     print('Rocket configuration files')
-    print("-------------------- Configuration Files --------------------")
-    for f in files:
-        if f.endswith('.json'):
-            print(f)
-    print("-------------------- Configuration Files --------------------")
+    # print("-------------------- Configuration Files --------------------")
+    # for f in files:
+    #     if f.endswith('.json'):
+    #         print(f)
+    # print("-------------------- Configuration Files --------------------")
     paramaterpath = input("Enter the path of rocket paramater file (...json):\n")
-    paramaterpath = 'config/' + paramaterpath
+    # paramaterpath = 'config/' + paramaterpath
     #windowsのときにエクスプローラーからpathをコピーすると"がpathの前後につくのでそれを削除する
     # paramaterpath = paramaterpath.replace('\"','') 
     if os.path.exists(paramaterpath) == True and paramaterpath.endswith('.json') == True:

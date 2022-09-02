@@ -12,7 +12,7 @@
 
 	"Solver": {
 		"Name": "sample",
-		"Result Filepath":"",
+		"Result Filepath":"results",
 		"Time Step [sec]": 0.001
 	},
 
