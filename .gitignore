@@ -9,8 +9,5 @@ __pycache__/
 *.jar
 lib/*
 !lib/setup_jackson.py
-quabla/
 .DS_Store
-!src
-!src/quabla/simulator/ENUtoLLH.java
-!*.java
+src/quabla/gui
