@@ -35,13 +35,14 @@ public class VariableParachute extends AbstractVariable{
 		velDescent = variable.getVelDescent();
 	}
 	
-	public VariableParachute(Rocket rocket) {
+	public VariableParachute(Rocket rocket, double dt) {
 		time = 0.0;
 		posENU = new MathematicalVector(0.0, 0.0, 0.0);
 		velENU = new MathematicalVector(0.0, 0.0, 0.0);
 		velDescent = 0.0;
 		wind = rocket.wind;
-		h = rocket.dt;
+//		h = rocket.dt;
+		h = dt;
 	}
 
 	public void set(VariableParachute variable) {

@@ -42,8 +42,9 @@ public class Solver {
 
 	public void solveDynamics(Rocket rocket) {
 		int index = 0;
-		int indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0;
+		int indexLaunchClear, indexApogee, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0, index1stPara;
 		double time = 0.0;
+		double time1stPara;
 		double h = rocket.dt;
 		boolean isTipOff = false;
 
@@ -137,27 +138,32 @@ public class Solver {
 		eventValue.setIndexLandingTrajectory(indexLandingTrajectory);
 
 		indexApogee = eventValue.getIndexApogee();
-		parachuteLog.copy(indexApogee, trajectoryLog);
+		index1stPara = indexApogee;
+		time1stPara = trajectoryLog.getTimeArrayList(index1stPara);
+		parachuteLog.copy(index1stPara, trajectoryLog);
 		trajectoryLog.dumpArrayList();
-
-		//頂点時のvariableを渡す
-		VariableParachute variablePara = new VariableParachute(rocket);
-		variablePara.set(trajectoryLog, indexApogee);
 
 //		Change ODE solver
 //		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
 //		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
+		h = 0.1;
 		ODEsolver = new RK4(h);
 		predCorr = new PredictorCorrector(h);
+		
+		//頂点時のvariableを渡す
+		VariableParachute variablePara = new VariableParachute(rocket, h);
+		variablePara.set(trajectoryLog, index1stPara);
 
-		index = indexApogee; //indexの更新
+//		index = indexApogee; //indexの更新
+		index = index1stPara;
 		int index_para = 0;
 		deltaArray = new DynamicsMinuteChangeParachute[3];
 		//-------------------  Parachute -------------------
 		for( ; ; ) {
 			index ++;
 			index_para ++;
-			time = index * h;
+//			time = index * h;
+			time = time1stPara + index_para * h;
 			
 //			Change ODE solver
 			if(index_para == 4) {
