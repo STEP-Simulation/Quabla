@@ -81,7 +81,7 @@ public class Solver {
 				ODEsolver = predCorr;
 			}
 
-			// solve ODE
+//			 solve ODE
 			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
 			if(index <= 3) {
 				deltaArray[index - 1] = delta;
@@ -143,16 +143,33 @@ public class Solver {
 		VariableParachute variablePara = new VariableParachute(rocket);
 		variablePara.set(trajectoryLog, indexApogee);
 
-		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
 //		Change ODE solver
-		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
+//		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
+//		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
+		ODEsolver = new RK4(h);
+		predCorr = new PredictorCorrector(h);
 
 		index = indexApogee; //indexの更新
+		int index_para = 0;
 		//-------------------  Parachute -------------------
 		for( ; ; ) {
 			index ++;
+			index_para ++;
 			time = index * h;
-			variablePara.update(time, ODEsolver.compute(variablePara, dynParachute));
+			
+//			Change ODE solver
+			if(index_para == 4) {
+				predCorr.setDelta(deltaArray[2], deltaArray[1], deltaArray[0]);
+				ODEsolver = predCorr;
+			}
+			
+//			solve ODE
+			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
+			if(index <= 3) {
+				deltaArray[index - 1] = delta;
+			}
+			
+			variablePara.update(time, delta);
 			parachuteLog.log(variablePara);
 
 			if(eventJudgement.judge2ndPara(variablePara)) {
