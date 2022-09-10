@@ -75,11 +75,11 @@ public class Solver {
 			time = index * h;
 
 //	        Change ODE solver
-//			if(index == 4) {
-//				predCorr.setDelta(deltaArray[2], deltaArray[1], deltaArray[0]);
-//				// ODE 解法の変更
-//				ODEsolver = predCorr;
-//			}
+			if(index == 4) {
+				predCorr.setDelta(deltaArray[2], deltaArray[1], deltaArray[0]);
+				// ODE 解法の変更
+				ODEsolver = predCorr;
+			}
 
 			// solve ODE
 			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
@@ -145,7 +145,7 @@ public class Solver {
 
 		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
 //		Change ODE solver
-//		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
+		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
 
 		index = indexApogee; //indexの更新
 		//-------------------  Parachute -------------------
