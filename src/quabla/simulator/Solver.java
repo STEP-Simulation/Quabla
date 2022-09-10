@@ -7,6 +7,7 @@ import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
 import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
+import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
@@ -151,6 +152,7 @@ public class Solver {
 
 		index = indexApogee; //indexの更新
 		int index_para = 0;
+		deltaArray = new DynamicsMinuteChangeParachute[3];
 		//-------------------  Parachute -------------------
 		for( ; ; ) {
 			index ++;
