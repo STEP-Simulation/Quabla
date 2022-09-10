@@ -164,7 +164,7 @@ public class Solver {
 			}
 			
 //			solve ODE
-			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
+			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variablePara, dynParachute);
 			if(index_para <= 3) {
 				deltaArray[index_para - 1] = delta;
 			}
