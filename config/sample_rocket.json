@@ -36,7 +36,7 @@
 	},
 
 	"Atmosphere":{
-		"Temperture at 0 m [℃]":15.0
+		"Temperature at 0 m [℃]":15.0
 	},
 
 	"Launch Condition": {
@@ -54,7 +54,7 @@
 		"__comment3" : "保安円を出力したいなら true いらないなら false",
 		"__comment4" : "各射場の射点情報や保安域の情報はinput/launch_site.jsonに記述されているので，そこをいじる。",
 		"Safety Area Exist": false,
-		"__comment5" : "If you don't cosider magnetic azimuth, please enter 0.0",
+		"__comment5" : "If you don't consider magnetic azimuth, please enter 0.0",
 		"__comment6" : "運営から配らたもの使ってください",
 		"Input Magnetic Azimuth [deg]": 8.95
 	},
@@ -83,7 +83,7 @@
 		"Fuel Mass Before [kg]": 0.3800,
 		"Fuel Mass After [kg]": 0.295,
 		"Fuel Outside Diameter [mm]": 50.00,
-		"Fuel Inside Diamter [mm]": 25.50,
+		"Fuel Inside Diameter [mm]": 25.50,
 		"Tank Diameter [mm]": 54.00,
 		"Fuel Length [m]": 0.2794,
 		"Tank Length [m]": 0.541

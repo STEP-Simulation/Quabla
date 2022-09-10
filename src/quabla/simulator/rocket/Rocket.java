@@ -61,7 +61,7 @@ public class Rocket {
 	public Rocket(JsonNode spec) {
 		engine = new Engine(spec.get("Engine"));
 		aero = new AeroParameter(spec.get("Aero"));
-		atm = new Atmosphere(spec.get("Atmosphere").get("Temperture at 0 m [℃]").asDouble());
+		atm = new Atmosphere(spec.get("Atmosphere").get("Temperature at 0 m [℃]").asDouble());
 		JsonNode structure = spec.get("Structure");
 		JsonNode parachute = spec.get("Parachute");
 		JsonNode launchCond = spec.get("Launch Condition");

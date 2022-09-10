@@ -101,7 +101,7 @@ public class Engine {
 		de = Math.sqrt(Ae * 4 / Math.PI);
 
 		// Fuel(grain)
-		dFuelInBef = engine.get("Fuel Inside Diamter [mm]").asDouble() * Math.pow(10, -3);
+		dFuelInBef = engine.get("Fuel Inside Diameter [mm]").asDouble() * Math.pow(10, -3);
 		//燃料は密度分布が一様であると仮定して,燃焼前後の重量比を用いて算出
 		dFuelInAft = Math.sqrt((1 - mFuelAft / mFuelBef) * Math.pow(dFuelOut, 2) + (mFuelAft / mFuelBef) * Math.pow(dFuelInBef, 2));
 
