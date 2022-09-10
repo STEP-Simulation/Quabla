@@ -91,6 +91,7 @@
 
 	"Parachute": {
 		"1st Parachute CdS [m2]": 0.1888,
+		"Parachute Opening Lag [sec]": 1.0,
 		"2nd Parachute Exist": true,
 		"2nd Parachute CdS [m2]": 0.6306,
 		"2nd Parachute Opening Altitude [m]": 100,

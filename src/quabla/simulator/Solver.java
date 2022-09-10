@@ -130,8 +130,10 @@ public class Solver {
 		eventValue.setIndexLandingTrajectory(indexLandingTrajectory);
 
 		indexApogee = eventValue.getIndexApogee();
-		index1stPara = indexApogee;
+		int indexParaLag = (int) (rocket.timeParaLag / h);
+		index1stPara = indexApogee + indexParaLag;
 		time1stPara = trajectoryLog.getTimeArrayList(index1stPara);
+		eventValue.setIndex1stPara(index1stPara);
 		parachuteLog.copy(index1stPara, trajectoryLog);
 		trajectoryLog.dumpArrayList();
 
@@ -243,6 +245,7 @@ public class Solver {
 			resultTxt.outputLine(String.format("Max Side Force : %.3f [N]", eventValue.getSideMax()));
 			resultTxt.outputLine(String.format("Max Side Force Altitude : %.3f [km]", eventValue.getAltitudeSideMax()));
 
+			resultTxt.outputLine(String.format("1st Parachute Open Time : %.3f [sec]", eventValue.getTime1stPara()));
 			resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", eventValue.getTime2ndPara()));
 
 			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", eventValue.getTimeLandingTrajectory()));

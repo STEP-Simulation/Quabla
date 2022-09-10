@@ -246,6 +246,7 @@ Enter simulation mode (single or multi):
 |項目|単位|備考|
 |---|---|---|
 |1st Parachute CdS|m^2|1段目のパラシュート（単段分離ならメインシュート，2段分離ならドローグシュート）の抗力係数とパラシュート面積の積。|
+|Parachute Opening Lag|sec|1段目パラシュートの開傘ラグ．開傘ラグを考慮しない場合，0.0にする．|
 |2nd Parachute Exist|N/A|2段分離を行うかどうか。|
 |2nd Parachute CdS|m2|2段目パラシュートのCdS|
 |2nd Parachute Opening Altitude|m|2段目開傘の高度。|

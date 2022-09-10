@@ -13,8 +13,8 @@ import quabla.simulator.numerical_analysis.ArrayAnalysis;
 public class EventValueSingle {
 
 	private double velLaunchClear;
-	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeNormalMax, timeSideMax, timeApogee, time2ndPara, timeLandingTrajectory, timeLandingParachute;
-	private double altApogee, altMaxQ, altVelAirMax, altMachMax, altNormalMax, altSideMax, alt2ndPara;
+	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeNormalMax, timeSideMax, timeApogee, time1stPara, time2ndPara, timeLandingTrajectory, timeLandingParachute;
+	private double altApogee, altMaxQ, altVelAirMax, altMachMax, altNormalMax, altSideMax, alt1stPara, alt2ndPara;
 	private double accLaunchClear;
 	private double dynamicsPressureMax;
 	private double velAirMax, velAirApogee;
@@ -23,7 +23,7 @@ public class EventValueSingle {
 	private double downrangeApogee, downrangeLandingTrajectory, downrangeLandingParachute;
 	private double[] posENUlandingTrajectory = new double[2];
 	private double[] posENUlandingParachute = new double[2];
-	private int indexLaunchClear, indexMaxQ, index2ndPara, indexMaxVelAir, indexMaxMach, indexNormalMax, indexSideMax, indexApogee, indexLandingTrajectory, indexLandingParachute;
+	private int indexLaunchClear, indexMaxQ, index1stPara, index2ndPara, indexMaxVelAir, indexMaxMach, indexNormalMax, indexSideMax, indexApogee, indexLandingTrajectory, indexLandingParachute;
 
 	public EventValueSingle(LoggerVariable lvt) {
 		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
@@ -50,6 +50,10 @@ public class EventValueSingle {
 		this.indexLandingParachute = indexLandingParachute;
 	}
 
+	public void setIndex1stPara(int index1stPara) {
+		this.index1stPara = index1stPara;
+	}
+	
 	public void setIndex2ndPara(int index2ndPara) {
 		this.index2ndPara = index2ndPara;
 	}
@@ -126,6 +130,11 @@ public class EventValueSingle {
 		altSideMax = lvt.getAltitudeLogArray()[indexSideMax];
 	}
 
+	private void compute1stPara(LoggerVariableParachute lvp) {
+		time1stPara = lvp.getTime(index1stPara);
+		alt1stPara = lvp.getAltitudeArray()[index1stPara];
+	}
+	
 	private void compute2ndPara(LoggerVariableParachute lvp) {
 		time2ndPara = lvp.getTime(index2ndPara);
 		alt2ndPara = lvp.getAltitudeArray()[index2ndPara];
@@ -146,6 +155,7 @@ public class EventValueSingle {
 	// index入力後に実行する
 	public void calculate(LoggerVariable lvt, LoggerVariableParachute lvp) {
 		calculateLaunchClear(lvt);
+		compute1stPara(lvp);
 		compute2ndPara(lvp);
 		calculateLandingTrajectory(lvt);
 		calculateLandingParachute(lvp);
@@ -292,6 +302,19 @@ public class EventValueSingle {
 		return indexLandingTrajectory;
 	}
 
+	// 1st Para Open
+	public double getTime1stPara() {
+		return time1stPara;
+	}
+
+	public int getIndex1stPara() {
+		return index1stPara;
+	}
+
+	public double getAlt1stPara() {
+		return alt1stPara;
+	}
+	
 	// 2nd Para Open
 	public double getTime2ndPara() {
 		return time2ndPara;

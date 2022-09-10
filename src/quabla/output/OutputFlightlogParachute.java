@@ -29,13 +29,13 @@ public class OutputFlightlogParachute {
 	private Interpolation
 	posENUanaly,
 	velENUanaly,
-	windENUanaly,
+//	windENUanaly,
 	altitudeAnaly,
 	downrangeAnaly,
 	velAirENUanaly,
 	velAirAbsAnaly;
 
-	private double timeApogee, timeLandingParachute;
+	private double timeLandingParachute;
 
 	/**
 	 * @param filename 出力するcsvのfile名
@@ -43,12 +43,12 @@ public class OutputFlightlogParachute {
 	 * */
 	public OutputFlightlogParachute(LoggerVariableParachute lv, EventValueSingle ivs) {
 
-		timeApogee = ivs.getTimeApogee();
+//		time1stPara = ivs.getTime1stPara();
 		timeLandingParachute = ivs.getTimeLandingParachute();
 
 		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
 		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
-		windENUanaly = new Interpolation(lv.getTimeArray(), lv.getWindENUarray());
+//		windENUanaly = new Interpolation(lv.getTimeArray(), lv.getWindENUarray());
 		altitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAltitudeArray());
 		downrangeAnaly = new Interpolation(lv.getTimeArray(), lv.getDownrangeArray());
 		velAirENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirENUArray());
@@ -78,12 +78,12 @@ public class OutputFlightlogParachute {
 
 			result[0] = time;
 			System.arraycopy(posENUanaly.linearInterpPluralColumns(time), 0, result, 1, 3);
-			if(time <= timeApogee) {
-				System.arraycopy(velENUanaly.linearInterpPluralColumns(time), 0, result, 4, 3);
-			}else {
-				System.arraycopy(windENUanaly.linearInterpPluralColumns(time), 0, result, 4, 2);
-				result[6] = velENUanaly.linearInterpPluralColumns(time)[2];
-			}
+//			if(time <= time1stPara) {
+			System.arraycopy(velENUanaly.linearInterpPluralColumns(time), 0, result, 4, 3);
+//			}else {
+//				System.arraycopy(windENUanaly.linearInterpPluralColumns(time), 0, result, 4, 2);
+//				result[6] = velENUanaly.linearInterpPluralColumns(time)[2];
+//			}
 			result[7] = altitudeAnaly.linearInterp1column(time);
 			result[8] = downrangeAnaly.linearInterp1column(time);
 			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 9, 3);

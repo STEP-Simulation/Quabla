@@ -51,6 +51,7 @@ public class Rocket {
 	public final double
 	CdS1,
 	CdS2;
+	public final double timeParaLag;
 	public final boolean para2Exist, para2Timer;
 	public final double alt_para2, time_para2;
 	public final double dt;
@@ -131,6 +132,7 @@ public class Rocket {
 
 		//-------------------- Parachute --------------------
 		CdS1 = parachute.get("1st Parachute CdS [m2]").asDouble();
+		timeParaLag = parachute.get("Parachute Opening Lag [sec]").asDouble();
 		para2Exist = parachute.get("2nd Parachute Exist").asBoolean();
 		if (para2Exist) {
 			CdS2 = parachute.get("2nd Parachute CdS [m2]").asDouble();
