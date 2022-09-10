@@ -1,5 +1,11 @@
 package quabla.simulator;
 
+import java.io.File;
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import quabla.simulator.rocket.Rocket;
 
 public class ENUtoLLH {
@@ -105,34 +111,43 @@ public class ENUtoLLH {
 
 	public static double[] ENU2LLH(double point_ENU[]) {
 
+		String launchSiteInfo = "input" + File.separator + "launch_site.json";
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode node = null;
+		try {
+			node = mapper.readTree(new File(launchSiteInfo));
+		}catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		
 		int launchsite = Rocket.site;
+		JsonNode nodeSite = null;
 		double launch_LLH[] = {0,0,0};
 		switch (launchsite) {
 		case 1:
-			launch_LLH[0] = 34.735972;
-			launch_LLH[1] = 139.420944;
-			launch_LLH[2] = 0.0;
+			nodeSite = node.get("oshima_land");
 			break;
 		case 2:
-			launch_LLH[0] = 34.679730;
-			launch_LLH[1] = 139.438373;
-			launch_LLH[2] = 0.0;
+			nodeSite = node.get("oshima_sea");
 			break;
 		case 3:
-			launch_LLH[0] = 40.138633;
-			launch_LLH[1] = 139.984850;
-			launch_LLH[2] = 0.0;
+			nodeSite = node.get("noshiro_land");
 			break;
 		case 4:
-			launch_LLH[0] = 40.242865;
-			launch_LLH[1] = 140.010450;
-			launch_LLH[2] = 0.0;
+			nodeSite = node.get("noshiro_sea");
 			break;
 		case 5:
 			launch_LLH[0] = Rocket.point[0];
 			launch_LLH[1] = Rocket.point[1];
 			launch_LLH[1] = Rocket.point[2];
 			break;
+		}
+		
+		if (launchsite < 5) {
+			for (int i = 0; i < 3; i++) {
+				launch_LLH[i] = nodeSite.get("launch_LLH").get(i).asDouble();
+			}
 		}
 
 	    double east = point_ENU[0];
