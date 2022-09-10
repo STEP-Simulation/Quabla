@@ -37,15 +37,16 @@ coding UTF-8
    (Macはターミナルで`java --version`)  
 
 ### Python
-PythonもJavaと同様にインストールを行い，パスを通す。
-以下のコマンドでパスが通ってるか確認する。
-```
-$ python -V
-Python 3.9.7
-```
+  PythonもJavaと同様にインストールを行い，パスを通す。
+  以下のコマンドでパスが通ってるか確認する。
+  ```
+  $ python -V
+  Python 3.9.7
+  ```
 
 Pythonを使用する場合，あらかじめライブラリがそろっているAnacondaが便利である。
 Anacondaを用いる場合，使用法は以下の通り。
+
 #### anacondaの使用方法
   以下のサイトからダウンロード。  
   https://www.anaconda.com/products/individual  
@@ -68,6 +69,15 @@ Anacondaを用いる場合，使用法は以下の通り。
   `conda deactivate`  
   `conda config --set auto_activate_base False`
 
+## Libraries
+### Java
+Jsonファイルを読み込むために，以下のライブラリが必要。
+Jacksonで読み込んでいる。
+* jacson-core
+* jackson-annotations
+* jackson-databind
+以上のJava用のライブラリは`setup_jackson.py`実行時にダウンロードされるため，
+後述のInstallationのコマンドをすべて実行している場合はインストール不要である．
 
 ## Installation
 gitからcloneしたらQuablaのフォルダに移動する。
@@ -76,17 +86,10 @@ $ cd lib
 $ python setup_jackson.py
 $ cd ..
 $ python setup.py
+$ mkdir results
 ```
-
-## Libraries
-### Java
-Jsonファイルを読み込むために，以下のライブラリが必要。
-Jacksonで読み込んでいる。
-* jacson-core
-* jackson-annotations
-* jackson-databind
-
-### Python
+`results`フォルダは`sample_rocket.json`でデフォルトで指定されてる計算結果格納フォルダである．
+後述の`Result Filepath`に`results`以外のフォルダを指定した場合，別途指定したフォルダを作成する必要がある．
 
 ## Useage(Eclipseを用いて実行可能jarを作る場合)
 Eclipseを用いて実行可能jarを作る場合，以下の手順に従う。
@@ -120,14 +123,16 @@ $ python Quabla.py
 2. 以下のようにRocket configファイルを聞かれるので，計算したい機体のconfigファイルを指定する。
 ```
 Rocket configuration files
--------------------- Configuration Files --------------------
-sample_rocket.json
--------------------- Configuration Files --------------------
 Enter the path of rocket paramater file (...json):
 ```
-`config/`フォルダ内の`.json`ファイルのみ一覧に表示される。
+<!-- `config/`フォルダ内の`.json`ファイルのみ一覧に表示される。
 機体のconfigファイルは`config`フォルダ内に格納する。
-例えば，上の`sample_rocket.json`を指定する場合，`sample_rocket.json`と入力して，Enterキーを押す。
+例えば，上の`sample_rocket.json`を指定する場合，`sample_rocket.json`と入力して，Enterキーを押す。 -->
+計算したい機体データの`**.json`ファイルをanaconda prompt（Macはterminal）にドラッグ&ドロップし，Enterキーを押す．
+（Macの場合，ファイル末尾に半角スペースが追加されてしまうため，末尾の半角スペースを消す．）
+`**.json`ファイルの絶対パスまたは相対パスを直接入力しても問題ない．
+`**.json`ファイルの各パラメータの説明は後述．
+サンプルの機体データとして，`config/`フォルダ内に`sample_rocket.json`が格納されている．
 
 3. 次に，以下のようにシミュレーションモードを聞かれるので指定する。
 ```
