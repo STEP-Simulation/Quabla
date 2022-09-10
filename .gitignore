@@ -4,10 +4,11 @@
 .classpath
 .settings
 bin/
-results/
+/results/*
+/src/quabla/gui
+/src/quabla/output
 __pycache__/
 *.jar
 lib/*
 !lib/setup_jackson.py
 .DS_Store
-src/quabla/gui
