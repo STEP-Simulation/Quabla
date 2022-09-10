@@ -31,6 +31,7 @@ if __name__=="__main__":
             "-d", ".", target])
     # Make  jar file and add manifest file
     sp.run(["jar", "cvfm", jarfile, manifest, "quabla"])
+    shutil.rmtree('quabla'+os.sep)
 
     print()
     print('Have a good day!!')
