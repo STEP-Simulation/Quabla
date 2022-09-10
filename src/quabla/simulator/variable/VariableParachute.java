@@ -21,13 +21,6 @@ public class VariableParachute extends AbstractVariable{
 	/**
 	 * @param variable 開傘時のvariable
 	 * */
-	/*
-	public VariableParachute(VariableTrajectory variable) {
-		time = variable.getTime();
-		posENU.set(variable.getPosENU());
-		velDescent = variable.getVelDescent();
-	}*/
-
 	public VariableParachute(VariableParachute variable) {
 		wind = variable.wind;
 		time = variable.getTime();
@@ -127,14 +120,13 @@ public class VariableParachute extends AbstractVariable{
 	}
 
 	public void update(double time, AbstractDynamicsMinuteChange delta) {
-//		this.time = time;
+
 		setTime(time);
-//		posENU = posENU.add(delta.getDeltaPosENU().multiply(h));
 		setPosENU(posENU.add(delta.getDeltaPosENU().multiply(h)));
-//		velDescent = velDescent + delta.getDeltaVelDescent() * h;
 		setVelDescent(velDescent + delta.getDeltaVelDescent() * h);
 		double altitude = getAltitude();
 		System.arraycopy(wind.getWindENU(altitude), 0, windENU, 0, 2);
 		velENU.set(windENU[0], windENU[1], velDescent);
+
 	}
 }

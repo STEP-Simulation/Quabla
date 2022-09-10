@@ -71,7 +71,7 @@ public class Solver {
 		// log Initial Variable
 		trajectoryLog.log(variableTrajectory);
 
-		//------------------- on Launcher -------------------
+//		 ------------------------------------- on Launcher --------------------------------------
 		for(;;) {
 			index ++;
 			time = index * h;
@@ -85,6 +85,8 @@ public class Solver {
 
 //			 solve ODE
 			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
+			
+			// 最初の3回はRunge-Kuttaで解く
 			if(index <= 3) {
 				deltaArray[index - 1] = delta;
 			}
@@ -93,7 +95,7 @@ public class Solver {
 			// store flightlog
 			trajectoryLog.log(variableTrajectory);
 
-			// Tip-Off -----------------------------------------
+			// Tip-Off ----------------------------------------------------------------------------
 			if(rocket.existTipOff && eventJudgement.judgeTipOff(variableTrajectory) && !isTipOff) {// 1回のみ実行
 //				indexTipOff = index;
 				dynOnLauncher = new DynamicsTipOff(rocket);
@@ -107,23 +109,13 @@ public class Solver {
 		}
 
 
-		//------------------- Trajectory -------------------
-		int countTrajectory = 0;// 何回Trajectory開始からループしたかのカウント
+//		 -------------------------------------- Trajectory --------------------------------------
 		for(;;) {
 			index ++;
 			time = index * h;
 			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
 			variableTrajectory.update(time, delta);
 			trajectoryLog.log(variableTrajectory);
-
-			// Predictor-Corrector用の過去の微分値を逐次保存
-			if(countTrajectory < 3) {
-				deltaArray[countTrajectory] = delta;
-			}else {
-				deltaArray[0] = deltaArray[1];
-				deltaArray[1] = deltaArray[2];
-				deltaArray[2] = delta;
-			}
 
 			if(eventJudgement.judgeLanding(variableTrajectory)) {
 				indexLandingTrajectory = index;
@@ -144,21 +136,19 @@ public class Solver {
 		trajectoryLog.dumpArrayList();
 
 //		Change ODE solver
-//		predCorr.setDelta(deltaArray[2].toDeltaPara(), deltaArray[1].toDeltaPara(), deltaArray[0].toDeltaPara()); // Predicto-Correctorのための準備
-//		ODEsolver = predCorr; //Shallow copyだからpredCorrだけ変更すれば，ODEsolverも変更が反映されてるはずだけど一応代入しておく
 		h = 0.1;
 		ODEsolver = new RK4(h);
 		predCorr = new PredictorCorrector(h);
 		
-		//頂点時のvariableを渡す
+		// Parachute 用の変数にパラシュート放出時の変数を渡す
 		VariableParachute variablePara = new VariableParachute(rocket, h);
 		variablePara.set(trajectoryLog, index1stPara);
 
-//		index = indexApogee; //indexの更新
+//		indexの更新
 		index = index1stPara;
 		int index_para = 0;
 		deltaArray = new DynamicsMinuteChangeParachute[3];
-		//-------------------  Parachute -------------------
+//		 -------------------------------------- Parachute ---------------------------------------
 		for( ; ; ) {
 			index ++;
 			index_para ++;
