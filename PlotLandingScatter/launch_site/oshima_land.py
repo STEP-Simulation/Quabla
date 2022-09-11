@@ -16,7 +16,8 @@ from PlotLandingScatter.launch_site.launch_site import magnetic_declination
 class OshimaLand(LaunchSite):
 
     def __init__(self, elevation, magnetic_dec_exist, result_dir, glp_list, launch_LLH, safety_are, headquarters_LLH, fire_LLH, safety_exist):
-        self.img = 'PlotLandingScatter/oshima_land.png'
+        # self.img = 'PlotLandingScatter/oshima_land.png'
+        self.img = 'PlotLandingScatter/oshima_land_ver2.png'
 
         self.glp_tra = glp_list[0]
         self.glp_par = glp_list[1]
@@ -43,8 +44,12 @@ class OshimaLand(LaunchSite):
             x_offset = -6.0
             y_offset = 2.0
         matrix = trans_matrix(np.deg2rad(self.magnetic_dec))
-        self.xlim = np.array([-819 + x_offset, 795 + x_offset])
-        self.ylim = np.array([-825 + y_offset, 705 + y_offset])
+        # version 1.0
+        # self.xlim = np.array([-819 + x_offset, 795 + x_offset])
+        # self.ylim = np.array([-825 + y_offset, 705 + y_offset])
+        # version 2.0
+        self.xlim = np.array([-700 + x_offset, 800 + x_offset])
+        self.ylim = np.array([-800 + y_offset, 700 + y_offset])
 
         # 磁気偏角が存在する場合,回転行列で座標変換
         self.headquarters_ENU = matrix.dot(headquarters_ENU)
