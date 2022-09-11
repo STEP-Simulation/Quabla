@@ -1,3 +1,4 @@
+import json
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
@@ -6,7 +7,7 @@ from FlightGrapher.make_kml import getparachutepoint, post_kml
 import os
 
 class GraphPlotterParachute:
-    def __init__(self, logdata, filepath, launch_LLH):
+    def __init__(self, logdata, filepath, config_file, launch_LLH):
         self.filepath = filepath
 
         self.time_array = logdata[:,0]
@@ -22,7 +23,11 @@ class GraphPlotterParachute:
         self.point = [logdata[len(self.time_array)-1, 1], logdata[len(self.time_array)-1, 2], logdata[len(self.time_array)-1, 3]]
         self.Launch_LLH = launch_LLH
 
-        self.index_apogee = np.argmax(self.pos_ENU_log[:,2])
+        index_apogee = np.argmax(self.pos_ENU_log[:,2])
+        time_apogee = self.time_array[index_apogee]
+        time_para_open_lag = config_file.get('Parachute').get('Parachute Opening Lag [sec]')
+        time_1st_para = time_apogee + time_para_open_lag
+        self.index_1st_para = np.argmax(time_1st_para <= self.time_array[:])
 
     def plot_graph(self,index_coast,land_point):
         flightType = 'Parachute'
@@ -43,17 +48,29 @@ class GraphPlotterParachute:
 
         fig1 = plt.figure('Flightlog' + flightType)
         origin = np.array([0.0, 0.0, 0.0])
-        ax = fig1.gca(projection = '3d')
+        # ax = fig1.gca(projection = '3d')
+        ax = fig1.add_subplot(projection='3d')
         ax.set_xlabel('East [m]')
         ax.set_ylabel('North [m]')
         ax.set_zlabel('Up [m]')
         ax.set_title('Trajectory')
         ax.plot(self.pos_ENU_log[:index_coast,0],self.pos_ENU_log[:index_coast,1],self.pos_ENU_log[:index_coast,2], label='Powered')
-        ax.plot(self.pos_ENU_log[index_coast:self.index_apogee,0], self.pos_ENU_log[index_coast:self.index_apogee,1], self.pos_ENU_log[index_coast:self.index_apogee,2], label='Coasting')
-        ax.plot(self.pos_ENU_log[self.index_apogee:,0], self.pos_ENU_log[self.index_apogee:,1], self.pos_ENU_log[self.index_apogee:,2], label='Parachute')
+        ax.plot(self.pos_ENU_log[index_coast:self.index_1st_para,0], self.pos_ENU_log[index_coast:self.index_1st_para,1], self.pos_ENU_log[index_coast:self.index_1st_para,2], label='Coasting')
+        ax.plot(self.pos_ENU_log[self.index_1st_para:,0], self.pos_ENU_log[self.index_1st_para:,1], self.pos_ENU_log[self.index_1st_para:,2], label='Parachute')
+        # xmin, xmax = ax.get_xlim()
+        # ymin, ymax = ax.get_ylim()
+        # zmin, zmax = ax.get_zlim()
+        # minbound = min((xmin, ymin, zmin))
+        # maxbound = max((xmax, ymax, zmax))
+        # ax.auto_scale_xyz([minbound, maxbound], [minbound, maxbound], [0., maxbound])
+        # ax.set_xlim(minbound, maxbound)
+        # ax.set_ylim(minbound, maxbound)
+        # ax.pbaspect = [1.0, 1.0, maxbound/(maxbound+abs(minbound))]
+        # plt.figaspect(maxbound/(maxbound+abs(minbound)))
         ax.scatter(origin[0], origin[1], origin[2], marker='o', label='Launch Point', color='r')
         ax.scatter(self.pos_ENU_log[-1,0],self.pos_ENU_log[-1,1],self.pos_ENU_log[-1,2],label='Landing Point', s=30, marker='*',color='y')
         ax.legend()
+        # ax.set_aspect('equal')
         ax.set_zlim(bottom=0.0)
         fig1.savefig(self.filepath + os.sep + flightType + os.sep + 'Flightlog.png')
 

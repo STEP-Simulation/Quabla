@@ -109,7 +109,7 @@ else:
 #グラフの描画
 if simulationmode == "single":
     
-    flightgrapher(resultpath, launch_site, launch_site_info.launch_LLH, launch_site_info.center_circle_LLH, launch_site_info.radius, \
+    flightgrapher(resultpath, json_load, launch_site, launch_site_info.launch_LLH, launch_site_info.center_circle_LLH, launch_site_info.radius, \
                   launch_site_info.safety_area_LLH, launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
 
 elif simulationmode == "multi":

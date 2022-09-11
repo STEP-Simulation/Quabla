@@ -18,7 +18,7 @@ Args
     safety_line2  : edge 2 of safety line
     safety_exsist : True or false of safety area
 '''
-def flightgrapher(path, launch_site, launch_LLH, safety_circle, radius, safety_area, safety_line1, safety_line2, safety_exist):
+def flightgrapher(path, config_file, launch_site, launch_LLH, safety_circle, radius, safety_area, safety_line1, safety_line2, safety_exist):
     print("\nFlightGrapher start...")
 
     filepath_trajectory = path + os.sep +'flightlog_trajectory.csv'
@@ -42,7 +42,7 @@ def flightgrapher(path, launch_site, launch_LLH, safety_circle, radius, safety_a
 
         # インスタンスの生成
         graph_trajectory = GraphPlotterTrajectory(logdata_array_trajectory, path, launch_LLH)
-        graph_parachute = GraphPlotterParachute(logdata_array_parachute, path,launch_LLH)
+        graph_parachute = GraphPlotterParachute(logdata_array_parachute, path, config_file, launch_LLH)
 
         land_point = LandPoint(path)
 

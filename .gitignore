@@ -3,6 +3,7 @@
 .pydevproject
 .classpath
 .settings
+.vscode/
 bin/
 /results/*
 /src/quabla/gui
