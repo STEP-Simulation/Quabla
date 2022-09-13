@@ -212,7 +212,7 @@ Enter simulation mode (single or multi):
 |Nozzle Throat Diameter|mm|ノズルスロートの直径|
 |Nozzle Expansion Ratio|-|ノズル開口比。ノズルの出口面積とスロートの面積比とすること。|
 |Burn Time|sec|燃焼時間。作動時間とは異なる。|
-|Isp|sec|平均比推力。現状，比推力はシミュレーションに用いていない。|
+|Isp|sec|平均比推力。|
 |Tank Volume|cc|酸化剤タンクの容量。|
 |Oxidizer Density|kg/m^3|酸化剤密度。
 |Length Fuel-C.G. from End|m|機体後端から燃料（グレイン，固形燃料）重心までの距離。インジェクターベルは燃料重心に含めない。|
