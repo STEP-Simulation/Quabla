@@ -5,8 +5,9 @@ from PIL import Image
 from cProfile import label
 
 class LandPoint:
-    def __init__(self, filepath):
+    def __init__(self, filepath, img):
         self.filepath = filepath
+        self.img = img
 
     def get_point_parachute(self,point_ENU):
         self.point_ENU_parachute = point_ENU
@@ -14,38 +15,32 @@ class LandPoint:
     def get_point_trajectory(self,point_ENU):
         self.point_ENU_trajectory = point_ENU
         
-    def make_land_point(self, launch_site):
-        if launch_site == '1':
-            x_offset = 0.0
-            y_offset = 0.0
-            xlim = np.array([-819 + x_offset, 795 + x_offset])
-            ylim = np.array([-825 + y_offset, 705 + y_offset])
-            img = 'PlotLandingScatter/oshima_land.png'
-            plot_graph(self.filepath, img, self.point_ENU_trajectory, self.point_ENU_parachute, xlim, ylim)
+    def make_land_point(self, site_name, xlim, ylim, safety_exsist):
+        x_offset = 0.
+        y_offset = 0.
+        self.xlim = x_offset + np.array(xlim)
+        self.ylim = y_offset + np.array(ylim)
 
-        elif launch_site == '2':
-            x_offset = 0.0
-            y_offset = 0.0
-            xlim = np.array([-2015 + x_offset, 4810 + x_offset])
-            ylim = np.array([-4860 + y_offset, 1050 + y_offset])
-            img = 'PlotLandingScatter/oshima_sea.png'
-            plot_graph(self.filepath, img, self.point_ENU_trajectory, self.point_ENU_parachute, xlim, ylim)
+        title = 'landing_point'
+        fig = plt.figure(title, figsize=(8, 8))
+        ax = fig.add_subplot()
+        ax.set_title(title)
+        ax.scatter(0.0, 0.0, color='r', marker='o', label='Launch point')
+        ax.scatter(self.point_ENU_trajectory[0], self.point_ENU_trajectory[1], label='Trajectory', color='b', marker='o')
+        ax.scatter(self.point_ENU_parachute[0], self.point_ENU_parachute[1], label='Parachute', color='orange', marker='o')
+        if safety_exsist:
+            if site_name == 'oshima_land' or site_name == 'noshiro_land':
+                pass
+            elif site_name == 'oshima_sea' or site_name == 'noshiro_sea':
+                pass
+        ax.set_aspect('equal')
+        ax.set_xlim(self.xlim[0], self.xlim[1])
+        ax.set_ylim(self.ylim[0], self.ylim[1])
+        ax.imshow(Image.open(self.img), extent=(self.xlim[0], self.xlim[1], self.ylim[0], self.ylim[1]), aspect='equal')
+        ax.grid(ls='--', alpha=0.6)
+        ax.legend()
         
-        elif launch_site == '3':
-            x_offset = 0.0
-            y_offset = 0.0
-            xlim = np.array([-495 + x_offset, 205 + x_offset])
-            ylim = np.array([-512 + y_offset, 198 + y_offset])
-            img = 'PlotLandingScatter/noshiro_land.png'
-            plot_graph(self.filepath, img, self.point_ENU_trajectory, self.point_ENU_parachute, xlim, ylim)
-        
-        elif launch_site == '4':
-            x_offset = 0.0
-            y_offset = 0.0
-            xlim = np.array([-3500 + x_offset, 500 + x_offset])
-            ylim = np.array([-1500 + y_offset, 2000 + y_offset])
-            img = 'PlotLandingScatter/noshiro_sea.png'
-            plot_graph(self.filepath, img, self.point_ENU_trajectory, self.point_ENU_parachute, xlim, ylim)
+        fig.savefig(self.filepath + '/' + title + '.jpg')
 
 
 

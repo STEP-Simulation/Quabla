@@ -64,8 +64,8 @@ model_name = json_load['Solver']['Name']
 launch_site = json_load["Launch Condition"]["Site"]
 safety_exist = json_load["Launch Condition"]["Safety Area Exist"]
 
-if not resultrootpath:
-    resultrootpath = '.'
+# Resultフォラウダに何も指定されていない時，デフォルトで直下のフォルダを指定
+if not resultrootpath: resultrootpath = '.' 
 
 # Make Result directory
 if simulationmode == 'single':
@@ -107,19 +107,9 @@ elif launch_site == '5' :
     launch_site_info.center_circle_LLH = launch_site_info.launch_LLH
 
 # Execute Quabla.jar
-# subprocess.call(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, \
-#                 str(launch_site_info.launch_LLH[0]), str(launch_site_info.launch_LLH[1]), str(launch_site_info.launch_LLH[2])])
-subprocess.run(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, result_dir, \
-                str(launch_site_info.launch_LLH[0]), str(launch_site_info.launch_LLH[1]), str(launch_site_info.launch_LLH[2])],\
+subprocess.run(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, result_dir], \
                 check=True)
 
-#グラフの出力に使う結果の入ったフォルダの場所が書いてあるjsonファイルを参照する
-#結果ファイルの後ろに01とかついちゃうので逐一取得する
-# json_open2 = open(resultrootpath + os.sep + "resultpath.json")
-# json_load2 = json.load(json_open2)
-
-#グラフをプロットするために今出力した結果ファイルのpathをjsonから読み取り
-# resultpath = json_load2["path"]
 resultpath = result_dir + os.sep
 
 #射角を諸元ファイルから取得
@@ -134,14 +124,9 @@ else:
 #グラフの描画
 if simulationmode == "single":
     
-    flightgrapher(resultpath, json_load, launch_site, launch_site_info.launch_LLH, launch_site_info.center_circle_LLH, launch_site_info.radius, \
-                  launch_site_info.safety_area_LLH, launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
+    flightgrapher(resultpath, json_load, launch_site_info, safety_exist)
 
 elif simulationmode == "multi":
     
-    plotlandingscatter(resultpath, launcher_elevation, launch_site, magneticdec, \
-                       launch_site_info.launch_LLH, launch_site_info.safety_area_LLH, \
-                       launch_site_info.headquarters_LLH, launch_site_info.fire_LLH, \
-                       launch_site_info.center_circle_LLH, launch_site_info.radius, \
-                       launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
+    plotlandingscatter(resultpath, launcher_elevation, launch_site, launch_site_info, magneticdec, safety_exist)
 

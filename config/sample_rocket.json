@@ -53,7 +53,7 @@
 		"Tip-Off Calculation Exist": true,
 		"__comment3" : "保安円を出力したいなら true いらないなら false",
 		"__comment4" : "各射場の射点情報や保安域の情報はinput/launch_site.jsonに記述されているので，そこをいじる。",
-		"Safety Area Exist": false,
+		"Safety Area Exist": true,
 		"__comment5" : "If you don't consider magnetic azimuth, please enter 0.0",
 		"__comment6" : "運営から配らたもの使ってください",
 		"Input Magnetic Azimuth [deg]": 8.95

@@ -15,8 +15,8 @@ from PlotLandingScatter.launch_site.launch_site import magnetic_declination
 
 class NoshiroLand(LaunchSite):
 
-    def __init__(self, elevation, magnetic_dec_exist, result_dir, glp_list, launch_LLH, safety_area, safety_exist):
-        self.img = 'PlotLandingScatter/noshiro_land.png'
+    def __init__(self, elevation, magnetic_dec_exist, result_dir, glp_list, launch_site_info, safety_exist):
+        self.img = launch_site_info.img
 
         self.glp_tra = glp_list[0]
         self.glp_par = glp_list[1]
@@ -27,7 +27,7 @@ class NoshiroLand(LaunchSite):
         self.parachute = PlotGraph("Parachute " + elevation + "[deg]", result_dir, self.glp_par)
 
         # 射点
-        self.launch_LLH = launch_LLH
+        self.launch_LLH = launch_site_info.launch_LLH
 
         self.magnetic_dec = 0.0
         x_offset = 0.0
@@ -37,11 +37,11 @@ class NoshiroLand(LaunchSite):
             x_offset = -22.0
             y_offset = 25.0
         matrix = trans_matrix(np.deg2rad(self.magnetic_dec))
-        self.xlim = np.array([-495 + x_offset, 205 + x_offset])
-        self.ylim = np.array([-512 + y_offset, 198 + y_offset])
+        self.xlim = x_offset + np.array(launch_site_info.xlim)
+        self.ylim = y_offset + np.array(launch_site_info.ylim)
 
         # 落下保安域
-        self.safety_LLH = safety_area
+        self.safety_LLH = launch_site_info.safety_area_LLH
         # 本部
         # headquarters_ENU = cd.LLH2ENU(launch_LLH, np.array([34.731230, 139.423150, 0.0]))
         # 点火点
@@ -63,9 +63,9 @@ class NoshiroLand(LaunchSite):
         color_cm = [cm.winter, cm.Wistia]
 
         for index, obj in enumerate(flight_mode):
-            #if self.safety_exist == True:
-                #obj.plot_polygon(self.safety_ENU)
-            # obj.plot_circle(np.array([0.0, 0.0, 0.0]), 50.0)
+            if self.safety_exist == True:
+                obj.plot_polygon(self.safety_ENU)
+            obj.plot_circle(np.array([0.0, 0.0, 0.0]), 50.0)
             # obj.plot_circle(self.headquarters_ENU, 50.0)
             # obj.plot_circle(self.fire_ENU, 50.0)
             # obj.plot_circle(self.wait_ENU, 50.0)

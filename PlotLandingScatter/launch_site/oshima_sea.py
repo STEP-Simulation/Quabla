@@ -1,4 +1,3 @@
-from ast import Global
 from PlotLandingScatter.launch_site.launch_site import LaunchSite
 
 import numpy as np
@@ -15,27 +14,27 @@ from PlotLandingScatter.judge_inside.judge_inside_border import JudgeInsideBorde
 from PlotLandingScatter.launch_site.launch_site import magnetic_declination
 
 class OshimaSea(LaunchSite):
-    def __init__(self, elevation, magnetic_dec_exist, result_dir, glp_list, launch_LLH, safety_circle, radius, safety_line1, safety_line2, safety_exist):
-        self.img = 'PlotLandingScatter/oshima_sea.png'
+    def __init__(self, elevation, magnetic_dec_exist, result_dir, glp_list, launch_site_info, safety_exist):
+        self.img = launch_site_info.img
 
         self.glp_tra = glp_list[0]
         self.glp_par = glp_list[1]
         self.wind_array = self.glp_tra.get_wind_name()
-        self.radius = radius
-        self.safety_line1 = safety_line1
-        self.safety_line2 = safety_line2
+        self.radius = launch_site_info.radius
+        self.safety_line1 = launch_site_info.edge1_LLH
+        self.safety_line2 = launch_site_info.edge2_LLH
         self.safety_exist = safety_exist
 
         self.trajectory = PlotGraph("Trajectory " + elevation + "[deg]", result_dir, self.glp_tra)
         self.parachute = PlotGraph("Parachute " + elevation + "[deg]", result_dir, self.glp_par)
 
         # 射点
-        self.launch_LLH = launch_LLH
+        self.launch_LLH = launch_site_info.launch_LLH
         # 保安円の中心
-        self.center_circle_LLH = safety_circle
+        self.center_circle_LLH = launch_site_info.center_circle_LLH
         # 境界線端点
-        edge1_LLH = safety_line1
-        edge2_LLH = safety_line2
+        edge1_LLH = launch_site_info.edge1_LLH
+        edge2_LLH = launch_site_info.edge2_LLH
 
         self.magnetic_dec = 0.0
         x_offset = 0.0
@@ -46,8 +45,8 @@ class OshimaSea(LaunchSite):
             y_offset = -180.0
             print(self.magnetic_dec)
         matrix = trans_matrix(np.deg2rad(self.magnetic_dec))
-        self.xlim = np.array([-2015 + x_offset, 4810 + x_offset])
-        self.ylim = np.array([-4860 + y_offset, 1050 + y_offset])
+        self.xlim = x_offset + np.array(launch_site_info.xlim)
+        self.ylim = y_offset + np.array(launch_site_info.ylim)
 
         point_LLH_array = [self.center_circle_LLH, edge1_LLH, edge2_LLH]
         point_ENU_array = []

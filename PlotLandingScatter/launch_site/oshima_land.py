@@ -15,9 +15,8 @@ from PlotLandingScatter.launch_site.launch_site import magnetic_declination
 
 class OshimaLand(LaunchSite):
 
-    def __init__(self, elevation, magnetic_dec_exist, result_dir, glp_list, launch_LLH, safety_are, headquarters_LLH, fire_LLH, safety_exist):
-        # self.img = 'PlotLandingScatter/oshima_land.png'
-        self.img = 'PlotLandingScatter/oshima_land_ver2.png'
+    def __init__(self, elevation, magnetic_dec_exist, result_dir, glp_list, launch_site_info, safety_exist):
+        self.img = launch_site_info.img
 
         self.glp_tra = glp_list[0]
         self.glp_par = glp_list[1]
@@ -28,13 +27,13 @@ class OshimaLand(LaunchSite):
         self.parachute = PlotGraph("Parachute " + elevation + "[deg]", result_dir, glp_list[1])
 
         # 射点
-        self.launch_LLH = launch_LLH
+        self.launch_LLH = launch_site_info.launch_LLH
         # 落下保安域
-        self.safety_LLH = safety_are
+        self.safety_LLH = launch_site_info.safety_area_LLH
         # 本部
-        headquarters_ENU = cd.LLH2ENU(self.launch_LLH, headquarters_LLH)
+        headquarters_ENU = cd.LLH2ENU(self.launch_LLH, launch_site_info.headquarters_LLH)
         # 点火点
-        fire_ENU = cd.LLH2ENU(self.launch_LLH, fire_LLH)
+        fire_ENU = cd.LLH2ENU(self.launch_LLH, launch_site_info.fire_LLH)
 
         self.magnetic_dec = 0.0
         x_offset = 0.0
@@ -44,12 +43,8 @@ class OshimaLand(LaunchSite):
             x_offset = -6.0
             y_offset = 2.0
         matrix = trans_matrix(np.deg2rad(self.magnetic_dec))
-        # version 1.0
-        # self.xlim = np.array([-819 + x_offset, 795 + x_offset])
-        # self.ylim = np.array([-825 + y_offset, 705 + y_offset])
-        # version 2.0
-        self.xlim = np.array([-700 + x_offset, 800 + x_offset])
-        self.ylim = np.array([-800 + y_offset, 700 + y_offset])
+        self.xlim = x_offset + np.array(launch_site_info.xlim)
+        self.ylim = y_offset + np.array(launch_site_info.ylim)
 
         # 磁気偏角が存在する場合,回転行列で座標変換
         self.headquarters_ENU = matrix.dot(headquarters_ENU)

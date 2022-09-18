@@ -8,6 +8,7 @@ bin/
 /results/*
 /src/quabla/gui
 /src/quabla/parameter
+/Result_*
 __pycache__/
 *.jar
 lib/*
