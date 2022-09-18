@@ -33,7 +33,7 @@ class LandPoint:
         ax.scatter(self.point_ENU_parachute[0], self.point_ENU_parachute[1], label='Parachute', color='orange', marker='o')
         if safety_exsist:
             if launch_site_info.site_name == 'oshima_land' or launch_site_info.site_name == 'noshiro_land':
-                safety_ENU = [cd.LLH2ENU(launch_site_info.launch_LLH, LLH) for LLH in launch_site_info.safety_area_LLH]
+                safety_ENU = [cd.LLH2ENU(launch_site_info.launch_LLH, LLH).tolist() for LLH in launch_site_info.safety_area_LLH]
                 if not safety_ENU[-1] == safety_ENU[0]:
                     safety_ENU.append(safety_ENU[0])
                 apex = np.array(safety_ENU)
