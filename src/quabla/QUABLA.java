@@ -47,10 +47,6 @@ public class QUABLA {
 			e.printStackTrace();
 		}
 
-//		String name = node.get("Solver").get("Name").asText();
-//		System.out.println("Simulation Mode : " + simulationMode);
-//		System.out.println("Model           : " + name);
-
 		long startTime = System.currentTimeMillis();
 
 		switch(simulationMode) {
@@ -80,7 +76,7 @@ public class QUABLA {
 		}
 
 		long endTime = System.currentTimeMillis();
-		System.out.println("Calculate Time : " + (endTime - startTime) * 1e-03 + " sec");
+		System.out.println(String.format("Calculate Time : %.3f sec", (endTime - startTime) * 1e-03));
 		System.out.println("Completed!!");
 	}
 }
