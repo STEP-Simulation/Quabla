@@ -1,9 +1,7 @@
 package quabla;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,22 +12,16 @@ import quabla.simulator.rocket.Rocket;
 
 public class QUABLA {
 
-	private static String dirFilepath;
 	public static String simulationModeCheck;
 
 	public static void main(String[] args) throws IOException {
-
-		BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        //System.out.println("Please input path of paramater json file:");
-        //String line = reader.readLine();
 
 		String line = args[0];
 
 		String simulationMode;
 		String filepathResult;
+
 		while(true) {
-			//System.out.println("Please input simulation mode (single or multi):");
-			//simulationModeCheck = reader.readLine();
 			simulationModeCheck = args[1];
 			if(simulationModeCheck.equals("single")) {
 				simulationMode = "single";
@@ -55,9 +47,9 @@ public class QUABLA {
 			e.printStackTrace();
 		}
 
-		String name = node.get("Solver").get("Name").asText();
-		System.out.println("Simulation Mode : " + simulationMode);
-		System.out.println("Model : " + name);
+//		String name = node.get("Solver").get("Name").asText();
+//		System.out.println("Simulation Mode : " + simulationMode);
+//		System.out.println("Model           : " + name);
 
 		long startTime = System.currentTimeMillis();
 
@@ -65,17 +57,8 @@ public class QUABLA {
 		case "single":
 			//single condition
 
-			//ディレクトリの作成
-			filepathResult = node.get("Solver").get("Result Filepath").asText();
-			//filepathResult = args[2];
-			dirFilepath = filepathResult + File.separator + "Result_single_" + name;
-			makeResultdir(dirFilepath);
-			String filepathResultFinal = dirFilepath + File.separator;
-
-			Resultpath resultpath = new Resultpath();
-			resultpath.mode = "single";
-			resultpath.path = filepathResultFinal;
-			mapper.writeValue(new File(filepathResult + File.separator + "resultpath.json"),resultpath);
+			filepathResult = args[2];
+			String filepathResultFinal = filepathResult + File.separator;
 
 			Rocket rocket = new Rocket(node);
 			rocket.outputSpec(filepathResultFinal, simulationMode);
@@ -88,16 +71,8 @@ public class QUABLA {
 		case "multi":
 			//multiple condition
 
-			//ディレクトリの作成
-			String filepathResultMulti = node.get("Solver").get("Result Filepath").asText();
-			dirFilepath = filepathResultMulti + File.separator + "Result_multi_" + name;
-			makeResultdir(dirFilepath);
-			String filepathResultMultiFinal = dirFilepath + File.separator;
-
-			Resultpath resultpath2 = new Resultpath();
-			resultpath2.mode = "multi";
-			resultpath2.path = filepathResultMultiFinal;
-			mapper.writeValue(new File(filepathResultMulti + File.separator + "resultpath.json"),resultpath2);
+			String filepathResultMulti = args[2];
+			String filepathResultMultiFinal = filepathResultMulti + File.separator;
 
 			MultiSolver multi_solver = new MultiSolver(filepathResultMultiFinal, node.get("Multi Solver"));
 			multi_solver.solveMulti(node);
@@ -105,34 +80,7 @@ public class QUABLA {
 		}
 
 		long endTime = System.currentTimeMillis();
-		System.out.println("Calculate Time : " + (endTime - startTime) + " [ms]");
+		System.out.println("Calculate Time : " + (endTime - startTime) * 1e-03 + " sec");
 		System.out.println("Completed!!");
 	}
-
-	public static void makeResultdir(String filepath) {
-		String dirFilepathOrg = filepath;
-		String dirFilepath_ = filepath;
-
-		File resultDir = new File(dirFilepath_);
-		int i = 0;
-		while((resultDir = new File(dirFilepath_)).exists()){
-			dirFilepath_ = dirFilepathOrg +"_"+ String.format("%02d", i + 1);
-			i ++;
-		}
-
-		if( resultDir.mkdir()) {
-			System.out.println("Make Directory : success");
-		}else {
-			System.out.println("Make Directroy : false");//TODO ディレクトリ作成失敗の時の例外処理
-		}
-
-		dirFilepath = dirFilepath_;
-
-	}
-
-}
-
-class Resultpath{
-	public String mode;
-	public String path;
 }

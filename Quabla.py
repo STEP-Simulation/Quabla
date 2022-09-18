@@ -60,8 +60,30 @@ print('Quabla Start...\n')
 json_open = open(paramaterpath, 'r', encoding="utf-8")
 json_load = json.load(json_open)
 resultrootpath = json_load['Solver']["Result Filepath"]
+model_name = json_load['Solver']['Name']
 launch_site = json_load["Launch Condition"]["Site"]
 safety_exist = json_load["Launch Condition"]["Safety Area Exist"]
+
+print('Config File:     ', os.path.basename(paramaterpath))
+print('Model Name:      ', model_name)
+print('Simulation Mode: ', simulationmode)
+
+# Make Result directory
+if simulationmode == 'single':
+    result_dir = resultrootpath + os.sep + 'Result_single_' + model_name
+
+elif simulationmode == 'multi':
+    result_dir = resultrootpath + os.sep + 'Result_multi_' + model_name
+    
+if os.path.exists(result_dir):
+    resultdir_org = result_dir
+    i = 1
+    while os.path.exists(result_dir):
+        result_dir = resultdir_org + '_%02d' % (i)
+        i += 1
+os.mkdir(result_dir)
+
+print('Result File:     ' + os.path.basename(result_dir) + '\n')
 
 if launch_site == '1':
     launch_site_info = OshimaLand(launch_site_json.get('oshima_land'))
@@ -85,17 +107,18 @@ elif launch_site == '5' :
 # Execute Quabla.jar
 # subprocess.call(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, \
 #                 str(launch_site_info.launch_LLH[0]), str(launch_site_info.launch_LLH[1]), str(launch_site_info.launch_LLH[2])])
-subprocess.run(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, \
+subprocess.run(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, result_dir, \
                 str(launch_site_info.launch_LLH[0]), str(launch_site_info.launch_LLH[1]), str(launch_site_info.launch_LLH[2])],\
                 check=True)
 
 #グラフの出力に使う結果の入ったフォルダの場所が書いてあるjsonファイルを参照する
 #結果ファイルの後ろに01とかついちゃうので逐一取得する
-json_open2 = open(resultrootpath + os.sep + "resultpath.json")
-json_load2 = json.load(json_open2)
+# json_open2 = open(resultrootpath + os.sep + "resultpath.json")
+# json_load2 = json.load(json_open2)
 
 #グラフをプロットするために今出力した結果ファイルのpathをjsonから読み取り
-resultpath = json_load2["path"]
+# resultpath = json_load2["path"]
+resultpath = result_dir + os.sep
 
 #射角を諸元ファイルから取得
 launcher_elevation = str(json_load['Launch Condition']['Launch Elevation [deg]'])
@@ -120,4 +143,3 @@ elif simulationmode == "multi":
                        launch_site_info.center_circle_LLH, launch_site_info.radius, \
                        launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
 
-print("result file:" + os.path.basename(resultpath[:-1]) + "\n")
