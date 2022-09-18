@@ -68,7 +68,8 @@ class GraphPlotterTrajectory:
 
         fig1 = plt.figure('Flightlog' + flightType)
         origin = np.zeros(3)
-        ax = fig1.gca(projection='3d')
+        # ax = fig1.gca(projection='3d')
+        ax = fig1.add_subplot(projection='3d')
         ax.set_xlabel('East [m]')
         ax.set_ylabel('North [m]')
         ax.set_zlabel('Up [m]')
