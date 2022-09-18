@@ -54,6 +54,6 @@ def flightgrapher(path, config_file, launch_site_info, safety_exist):
 
         makekml(path, launch_site_info.center_circle_LLH, launch_site_info.radius, launch_site_info.safety_area_LLH, \
                 launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
-        land_point.make_land_point(launch_site_info.site_name, launch_site_info.xlim, launch_site_info.ylim, safety_exist)
+        land_point.make_land_point(launch_site_info, safety_exist)
 
         print('Done!\n')
