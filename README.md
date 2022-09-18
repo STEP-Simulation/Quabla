@@ -86,10 +86,9 @@ $ cd lib
 $ python setup_jackson.py
 $ cd ..
 $ python setup.py
-$ mkdir results
 ```
-`results`フォルダは`sample_rocket.json`でデフォルトで指定されてる計算結果格納フォルダである．
-後述の`Result Filepath`に`results`以外のフォルダを指定した場合，別途指定したフォルダを作成する必要がある．
+<!-- `results`フォルダは`sample_rocket.json`でデフォルトで指定されてる計算結果格納フォルダである．
+後述の`Result Filepath`に`results`以外のフォルダを指定した場合，別途指定したフォルダを作成する必要がある． -->
 
 ## Useage(Eclipseを用いて実行可能jarを作る場合)
 Eclipseを用いて実行可能jarを作る場合，以下の手順に従う。
