@@ -64,9 +64,8 @@ model_name = json_load['Solver']['Name']
 launch_site = json_load["Launch Condition"]["Site"]
 safety_exist = json_load["Launch Condition"]["Safety Area Exist"]
 
-print('Config File:     ', os.path.basename(paramaterpath))
-print('Model Name:      ', model_name)
-print('Simulation Mode: ', simulationmode)
+if not resultrootpath:
+    resultrootpath = '.'
 
 # Make Result directory
 if simulationmode == 'single':
@@ -83,7 +82,10 @@ if os.path.exists(result_dir):
         i += 1
 os.mkdir(result_dir)
 
-print('Result File:     ' + os.path.basename(result_dir) + '\n')
+print('Config File:     ', os.path.basename(paramaterpath))
+print('Model Name:      ', model_name)
+print('Simulation Mode: ', simulationmode)
+print('Result File:      ' + os.path.basename(result_dir) + '\n')
 
 if launch_site == '1':
     launch_site_info = OshimaLand(launch_site_json.get('oshima_land'))
