@@ -21,7 +21,12 @@ public class LoggerVariable {
 
 	private double[][] attitudeLog;
 	private double[] massLog;
+	private double[] massFuelLog;
+	private double[] massOxLog;
+	private double[] massPropLog;
 	private double[] lcgLog;
+	private double[] lcgFuelLog;
+	private double[] lcgOxLog;
 	private double[] lcgPropLog;
 	private double[] lcpLog;
 	private double[] IjRollLog;
@@ -82,7 +87,12 @@ public class LoggerVariable {
 
 		attitudeLog = new double[length][3];
 		massLog = new double[length];
+		massFuelLog = new double[length];
+		massOxLog = new double[length];
+		massPropLog = new double[length];
 		lcgLog = new double[length];
+		lcgFuelLog = new double[length];
+		lcgOxLog = new double[length];
 		lcgPropLog = new double[length];
 		lcpLog = new double[length];
 		IjRollLog = new double[length];
@@ -117,7 +127,12 @@ public class LoggerVariable {
 			ovt.setOtherVariable(timeArray[i], posENUlog[i], velENUlog[i], quatLog[i]);
 			System.arraycopy(ovt.getAttitude(), 0, attitudeLog[i], 0, 3);
 			massLog[i] = ovt.getMass();
+			massFuelLog[i] = ovt.getMassFuel();
+			massOxLog[i] = ovt.getMassOx();
+			massPropLog[i] = ovt.getMassProp();
 			lcgLog[i] = ovt.getLcg();
+			lcgFuelLog[i] = ovt.getLcgFuel();
+			lcgOxLog[i] = ovt.getLcgOx();
 			lcgPropLog[i] = ovt.getLcgProp();
 			lcpLog[i] = ovt.getLcp();
 			IjRollLog[i] = ovt.getIjRoll();
@@ -216,9 +231,24 @@ public class LoggerVariable {
 	public double[] getMassLogArray() {
 		return massLog;
 	}
+	public double[] getMassFuelLogArray() {
+		return massFuelLog;
+	}
+	public double[] getMassOxLogArray() {
+		return massOxLog;
+	}
+	public double[] getMassPropLogArray() {
+		return massPropLog;
+	}
 
 	public double[] getLcgLogArray() {
 		return lcgLog;
+	}
+	public double[] getLcgFuelLogArray() {
+		return lcgFuelLog;
+	}
+	public double[] getLcgOxLogArray() {
+		return lcgOxLog;
 	}
 
 	public double[] getLcgPropLogArray() {

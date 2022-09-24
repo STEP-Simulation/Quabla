@@ -42,7 +42,12 @@ public class OtherVariableTrajectory {
 
 	private double[] attitude;
 	private double mass;
+	private double massFuel;
+	private double massOx;
+	private double massProp;
 	private double lcg;
+	private double lcgFuel;
+	private double lcgOx;
 	private double lcgProp;
 	private double lcp;
 	private double IjRoll, IjPitch;
@@ -77,9 +82,14 @@ public class OtherVariableTrajectory {
 		attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
 		mass = rocket.getMass(time);
+		massFuel = rocket.engine.getMassFuel(time);
+		massOx = rocket.engine.getMassOx(time);
+		massProp = massFuel + massOx;
 		IjRoll = rocket.getIjRoll(time);
 		IjPitch = rocket.getIjPitch(time);
 		lcg = rocket.getLcg(time);
+		lcgFuel = rocket.engine.lcgFuel;
+		lcgOx = rocket.engine.getLcgOx(time);
 		lcgProp = rocket.getLcgProp(time);
 
 		altitude = pos_ENU[2];
@@ -146,10 +156,28 @@ public class OtherVariableTrajectory {
 		return mass;
 	}
 
+	public double getMassFuel() {
+		return massFuel;
+	}
+
+	public double getMassOx() {
+		return massOx;
+	}
+
+	public double getMassProp() {
+		return massProp;
+	}
+
 	public double getLcg() {
 		return lcg;
 	}
 
+	public double getLcgFuel() {
+		return rocket.L - lcgFuel;
+	}
+	public double getLcgOx() {
+		return rocket.L - lcgOx;
+	}
 	public double getLcgProp() {
 		return lcgProp;
 	}
