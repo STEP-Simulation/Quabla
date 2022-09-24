@@ -7,20 +7,33 @@ from FlightGrapher.make_kml import getparachutepoint, post_kml
 import os
 
 class GraphPlotterParachute:
-    def __init__(self, logdata, filepath, config_file, launch_LLH):
+    def __init__(self, df, filepath, config_file, launch_LLH):
         self.filepath = filepath
 
-        self.time_array = logdata[:,0]
-        self.pos_ENU_log = logdata[:, 1:4]
-        self.vel_ENU_log = logdata[:, 4:7]
-        self.altitude_log = logdata[:, 7]
-        self.downrange_log = logdata[:, 8]
-        self.vel_air_ENU_log = logdata[:,9:12]
-        self.vel_air_abs_log = logdata[:,12]
+        self.time_array = np.array(df['time [sec]'])
+        self.pos_ENU_log = np.array([[east, north, up] 
+                                     for east, north, up 
+                                     in zip(df['pos_east [m]'], 
+                                            df['pos_north [m]'], 
+                                            df['pos_up [m]'])])
+        self.vel_ENU_log = np.array([[v_east, v_north, v_up] 
+                                     for v_east, v_north, v_up 
+                                     in zip(df['vel_east [m/s]'], 
+                                            df['vel_north [m/s]'], 
+                                            df['vel_up [m/s]'])])
+        self.altitude_log = np.array(df['altitude [km]'])
+        self.downrange_log = np.array(df['downrange [km]'])
+        self.vel_air_ENU_log = np.array([[vair_east, vair_north, vair_up] 
+                                         for vair_east, vair_north, vair_up 
+                                         in zip(df['vel_air_east [m/s]'], 
+                                                df['vel_air_north [m/s]'], 
+                                                df['vel_air_up [m/s]'])])
+        self.vel_air_abs_log = np.array(df['vel_air_abs [m/s]'])
 
         self.flighType = 'Parachute'
 
-        self.point = [logdata[len(self.time_array)-1, 1], logdata[len(self.time_array)-1, 2], logdata[len(self.time_array)-1, 3]]
+        # self.point = [logdata[len(self.time_array)-1, 1], logdata[len(self.time_array)-1, 2], logdata[len(self.time_array)-1, 3]]
+        self.point = [self.pos_ENU_log[-1, 0], self.pos_ENU_log[-1, 1], self.pos_ENU_log[-1, 2]]
         self.Launch_LLH = launch_LLH
 
         index_apogee = np.argmax(self.pos_ENU_log[:,2])

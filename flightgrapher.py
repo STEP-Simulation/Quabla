@@ -39,12 +39,12 @@ def flightgrapher(path, config_file, launch_site_info, safety_exist):
         os.mkdir(path + '/Parachute')
 
         # 指定されたcsvファイルから飛翔履歴の取得
-        logdata_array_trajectory = FileReader(filepath_trajectory).get_logdata()
-        logdata_array_parachute = FileReader(filepath_parachute).get_logdata()
+        df_trajectory = FileReader(filepath_trajectory).get_df()
+        df_parachute = FileReader(filepath_parachute).get_df()
 
         # インスタンスの生成
-        graph_trajectory = GraphPlotterTrajectory(logdata_array_trajectory, path, launch_site_info.launch_LLH)
-        graph_parachute = GraphPlotterParachute(logdata_array_parachute, path, config_file, launch_site_info.launch_LLH)
+        graph_trajectory = GraphPlotterTrajectory(df_trajectory, path, launch_site_info.launch_LLH)
+        graph_parachute = GraphPlotterParachute(df_parachute, path, config_file, launch_site_info.launch_LLH)
 
         land_point = LandPoint(path, launch_site_info.img)
 

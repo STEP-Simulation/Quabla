@@ -9,44 +9,90 @@ from FlightGrapher.make_kml import gettrajectorypoint, post_kml
 
 class GraphPlotterTrajectory:
 
-    def __init__(self, logdata, filepath, launch_LLH):
+    def __init__(self, df, filepath, launch_LLH):
         self.filepath = filepath
 
-        self.time_array = logdata[:, 0]
-        self.pos_ENU_log = logdata[:, 1:4]
-        self.vel_ENU_log = logdata[:, 4:7]
-        self.omega_Body_log = logdata[:, 7:10]
-        self.quat_log = logdata[:, 10:14]
-        self.attitude_log = logdata[:,14:17]
-        self.mass_log = logdata[:, 17]
-        self.Lcg_log = logdata[:, 18]
-        self.Lcg_prop_log = logdata[:, 19]
-        self.Lcp_log = logdata[:, 20]
-        self.Ij_roll_log = logdata[:,21]
-        self.Ij_pitch_log = logdata[:,22]
-        self.altitude_log = logdata[:, 23]
-        self.downrange_log = logdata[:, 24]
-        self.vel_air_ENU_log = logdata[:,25:28]
-        self.vel_air_BODY_log = logdata[:,28:31]
-        self.Vel_air_abs_log = logdata[:, 31]
-        self.alpha_log = logdata[:, 32]
-        self.beta_log = logdata[:, 33]
-        self.Mach_log = logdata[:, 34]
-        self.dynamics_perssure_log = logdata[:, 35]
-        self.Fst_log = logdata[:, 36]
-        self.drag_log = logdata[:, 37]
-        self.normal_log = logdata[:, 38]
-        self.side_log = logdata[:, 39]
-        self.thrust_log = logdata[:, 40]
-        self.force_log = logdata[:, 41:44]
-        self.acc_ENU_log = logdata[:, 44:47]
-        self.acc_BODY_log = logdata[:, 47:50]
-        self.acc_abs_log = logdata[:, 50]
+        self.time_array = np.array(df['time [sec]'])
+        self.pos_ENU_log = np.array([[east, north, up] 
+                                    for east, north, up 
+                                    in zip(df['pos_east [m]'], 
+                                           df['pos_north [m]'], 
+                                           df['pos_up [m]'])])
+        self.vel_ENU_log = np.array([[v_east, v_north, v_up] 
+                                     for v_east, v_north, v_up 
+                                     in zip(df['vel_east [m/s]'], 
+                                            df['vel_north [m/s]'], 
+                                            df['vel_up [m/s]'])])
+        self.omega_Body_log = np.array([[p, q, r]
+                                        for p, q, r
+                                        in zip(df['omega_roll [rad/s]'], 
+                                               df['omega_pitch [rad/s]'], 
+                                               df['omega_yaw [rad/s]'])])
+        self.quat_log = np.array([[q0, q1, q2, q3]
+                                  for q0, q1, q2, q3
+                                  in zip(df['quat0'],
+                                         df['quat1'],
+                                         df['quat2'],
+                                         df['quat3'])])
+        self.attitude_log = np.array([[yaw, pitch, roll]
+                                      for yaw, pitch, roll
+                                      in zip(df['yaw [deg]'],
+                                             df['pitch [deg]'],
+                                             df['roll [deg]'])])
+        self.mass_log = np.array(df['Mass [kg]'])
+        self.mass_fuel_log = np.array(df['Mass_fuel [kg]'])
+        self.mass_ox_log = np.array(df['Mass_ox [kg]'])
+        self.mass_prop_log = np.array(df['Mass_prop [kg]'])
+        self.Lcg_log = np.array(df['Lcg [m]'])
+        self.Lcg_fuel_log = np.array(df['Lcg_fuel [m]'])
+        self.Lcg_ox_log = np.array(df['Lcg_ox [m]'])
+        self.Lcg_prop_log = np.array(df['Lcg_prop [m]'])
+        self.Lcp_log = np.array(df['Lcp [m]'])
+        self.Ij_roll_log = np.array(df['Ij_roll [kg m2]'])
+        self.Ij_pitch_log = np.array(df['Ij_pitch [kg m2]'])
+        self.altitude_log = np.array(df['Altitude [km]'])
+        self.downrange_log = np.array(df['Downrange [km]'])
+        self.vel_air_ENU_log = np.array([[vair_east, vair_north, vair_up] 
+                                         for vair_east, vair_north, vair_up 
+                                         in zip(df['vel_air_east [m/s]'], 
+                                                df['vel_air_north [m/s]'], 
+                                                df['vel_air_up [m/s]'])])
+        self.vel_air_BODY_log = np.array([[vair_x, vair_y, vair_z] 
+                                         for vair_x, vair_y, vair_z 
+                                         in zip(df['vel_air_BODY_x [m/s]'], 
+                                                df['vel_air_BODY_y [m/s]'], 
+                                                df['vel_air_BODY_z [m/s]'])])
+        self.Vel_air_abs_log = np.array(df['vel_air_abs [m/s]'])
+        self.alpha_log = np.array(df['alpha [deg]'])
+        self.beta_log = np.array(df['beta [deg]'])
+        self.Mach_log = np.array(df['Mach'])
+        self.dynamics_perssure_log = np.array(df['Dynamics Pressure [kPa]'])
+        self.Fst_log = np.array(df['Fst'])
+        self.drag_log = np.array(df['Drag [N]'])
+        self.normal_log = np.array(df['Normal Force [N]'])
+        self.side_log = np.array(df['Side Force [N]'])
+        self.thrust_log = np.array(df['Thrust [N]'])
+        self.force_log = np.array([[Fx, Fy, Fz] 
+                                   for Fx, Fy, Fz 
+                                   in zip(df['Force_BODY_x [N]'], 
+                                          df['Force_BODY_y [N]'], 
+                                          df['Force_BODY_z [N]'])])
+        self.acc_ENU_log = np.array([[acc_east, acc_north, acc_up] 
+                                     for acc_east, acc_north, acc_up
+                                     in zip(df['Acc_east [m/s2]'], 
+                                            df['Acc_north [m/s2]'], 
+                                            df['Acc_up [m/s2]'])])
+        self.acc_BODY_log = np.array([[acc_x, acc_y, acc_z] 
+                                     for acc_x, acc_y, acc_z
+                                     in zip(df['Acc_BODY_x [m/s2]'], 
+                                            df['Acc_BODY_y [m/s2]'], 
+                                            df['Acc_BODY_z [m/s2]'])])
+        self.acc_abs_log = np.array(df['Acc_abs [m/s2]'])
 
         self.index_apogee = np.argmax(self.pos_ENU_log[:,2])
         self.index_coast = np.argmin(self.thrust_log[1:])
 
-        self.point = [logdata[len(self.time_array)-1, 1], logdata[len(self.time_array)-1, 2], logdata[len(self.time_array)-1, 3]]
+        self.point = [self.pos_ENU_log[-1, 0], self.pos_ENU_log[-1, 1], self.pos_ENU_log[-1, 2]]
         self.Launch_LLH = launch_LLH
 
     def plot_graph(self,land_point):
@@ -123,11 +169,15 @@ class GraphPlotterTrajectory:
 
         plt.figure('Mass' + flightType)
         plt.title('Mass')
-        plt.plot(self.time_array , self.mass_log)
+        plt.plot(self.time_array , self.mass_log, label='Mass')
+        plt.plot(self.time_array , self.mass_fuel_log, label='Fuel Mass')
+        plt.plot(self.time_array , self.mass_ox_log, label='Oxidizer Mass')
+        plt.plot(self.time_array , self.mass_prop_log, label='Propellant Mass')
         plt.xlabel('Time [sec]')
         plt.ylabel('Mass [kg]')
         plt.xlim(xmin=0.0)
         plt.grid()
+        plt.legend()
         plt.savefig(self.filepath + '/' + flightType + '/Mass.png')
 
         plt.figure('Moment of Inertia' + flightType)
@@ -138,6 +188,7 @@ class GraphPlotterTrajectory:
         plt.ylabel('Moment of Inertia [kg * m^2]')
         plt.xlim(xmin=0.0)
         plt.grid()
+        plt.legend()
         plt.savefig(self.filepath + '/' + flightType + '/MomentOfInertia.png')
 
         fig2 = plt.figure('Trajectory' + flightType)
@@ -200,6 +251,8 @@ class GraphPlotterTrajectory:
         plt.figure('Center of Gravity' + flightType)
         plt.title('Center of Gravity')
         plt.plot(self.time_array , self.Lcg_log, label='C.G.')
+        plt.plot(self.time_array , self.Lcg_fuel_log, label='Fuel C.G.')
+        plt.plot(self.time_array , self.Lcg_ox_log, label='Oxidizer C.G.')
         plt.plot(self.time_array, self.Lcg_prop_log, label='Propellant C.G.')
         plt.plot(self.time_array , self.Lcp_log, label='C.P.')
         plt.xlabel('Time [sec]')
