@@ -155,8 +155,8 @@ public class Engine {
 
 	public double getMassOx(double t) {
 		if(t < timeBurnout) {
-			//return mOxAnaly.linearInterp1column(t);
-			return mOxBef *(1 -  t / timeBurnout);
+			return mOxAnaly.linearInterp1column(t);
+			// return mOxBef *(1 -  t / timeBurnout);
 		}else {
 			return 0.0;
 		}
@@ -177,7 +177,8 @@ public class Engine {
 
 	private double getLengthOx(double t) {
 		if(t < timeBurnout) {
-			return lTank * (t / timeBurnout);
+			// return lTank * (t / timeBurnout);
+			return lTank * (1.0 - t / timeBurnout);
 		}else {
 			return 0.0;
 		}
