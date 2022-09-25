@@ -99,6 +99,11 @@ public class OutputFlightlogTrajectory {
 	accENUanaly,
 	accBODYanaly,
 	accAbsAnaly,
+	momentAeroAnaly,
+	momentAeroDampingAnaly,
+	momentJetDampingAnaly,
+	momentGyroAnaly,
+	momentAnaly,
 	pAirAnaly;
 
 	private double timeLandingTrajectory;
@@ -162,6 +167,21 @@ public class OutputFlightlogTrajectory {
 			"Acc_BODY_y [m/s2]",
 			"Acc_BODY_z [m/s2]",
 			"Acc_abs [m/s2]",
+			"moment_aero_x [N*m]",
+			"moment_aero_y [N*m]",
+			"moment_aero_z [N*m]",
+			"moment_aero_damping_x [N*m]",
+			"moment_aero_damping_y [N*m]",
+			"moment_aero_damping_z [N*m]",
+			"moment_jet_damping_x [N*m]",
+			"moment_jet_damping_y [N*m]",
+			"moment_jet_damping_z [N*m]",
+			"moment_gyro_x [N*m]",
+			"moment_gyro_y [N*m]",
+			"moment_gyro_z [N*m]",
+			"moment_x [N*m]",
+			"moment_y [N*m]",
+			"moment_z [N*m]",
 			"Atomospheric Pressure [Pa]"
 	};
 
@@ -206,6 +226,11 @@ public class OutputFlightlogTrajectory {
 		accENUanaly = new Interpolation(lv.getTimeArray(), lv.getAccENUlogArray());
 		accBODYanaly = new Interpolation(lv.getTimeArray(), lv.getAccBODYlogArray());
 		accAbsAnaly = new Interpolation(lv.getTimeArray(), lv.getAccAbsLogArray());
+		momentAeroAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentAeroLogArray());
+		momentAeroDampingAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentAeroDamipingLogArray());
+		momentJetDampingAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentJetDampingLogArray());
+		momentGyroAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentGyroLogArray());
+		momentAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentLogArray());
 		pAirAnaly = new Interpolation(lv.getTimeArray(), lv.getPairLogArray());
 	}
 
@@ -267,7 +292,12 @@ public class OutputFlightlogTrajectory {
 			System.arraycopy(accENUanaly.linearInterpPluralColumns(time), 0, result, 49, 3);
 			System.arraycopy(accBODYanaly.linearInterpPluralColumns(time), 0, result, 52, 3);
 			result[55] = accAbsAnaly.linearInterp1column(time);
-			result[56] = pAirAnaly.linearInterp1column(time);
+			System.arraycopy(momentAeroAnaly.linearInterpPluralColumns(time), 0, result, 56, 3);
+			System.arraycopy(momentAeroDampingAnaly.linearInterpPluralColumns(time), 0, result, 59, 3);
+			System.arraycopy(momentJetDampingAnaly.linearInterpPluralColumns(time), 0, result, 62, 3);
+			System.arraycopy(momentGyroAnaly.linearInterpPluralColumns(time), 0, result, 65, 3);
+			System.arraycopy(momentAnaly.linearInterpPluralColumns(time), 0, result, 68, 3);
+			result[71] = pAirAnaly.linearInterp1column(time);
 
 			try {
 				flightlog.outputLine(result);

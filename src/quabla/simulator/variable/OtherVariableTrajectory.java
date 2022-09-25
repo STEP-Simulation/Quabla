@@ -45,12 +45,14 @@ public class OtherVariableTrajectory {
 	private double massFuel;
 	private double massOx;
 	private double massProp;
+	private double mDot;
 	private double lcg;
 	private double lcgFuel;
 	private double lcgOx;
 	private double lcgProp;
 	private double lcp;
 	private double IjRoll, IjPitch;
+	private double[] IjDot = new double[3];
 	private double altitude, downrange;
 	private double[] velAirENU = new double[3];
 	private double[] velAirBODY = new double[3];
@@ -65,6 +67,11 @@ public class OtherVariableTrajectory {
 	private double[] accENU = new double[3];
 	private double[] accBODY = new double[3];
 	private double accAbs;
+	private double[] momentAero = new double[3];
+	private double[] momentAeroDamping = new double[3];
+	private double[] momentJetDamping = new double[3];
+	private double[] momentGyro = new double[3];
+	private double[] moment = new double[3];
 
 	private double P_air, P_air0, gravity,rho;
 
@@ -74,7 +81,7 @@ public class OtherVariableTrajectory {
 		P_air0 = rocket.atm.getAtomosphericPressure(0.0);
 	}
 
-	public void setOtherVariable(double time, double[] pos_ENU, double[] vel_ENU, double[] quat) {
+	public void setOtherVariable(double time, double[] pos_ENU, double[] vel_ENU, double[] omega_BODY, double[] quat) {
 
 		double[][] dcm_ENU2BODY = Coordinate.getDCM_ENU2BODYfromQuat(quat);
 		double[][] dcm_BODY2ENU = Coordinate.getDCM_BODY2ENUFromDCM_ENU2BODY(dcm_ENU2BODY);
@@ -85,8 +92,12 @@ public class OtherVariableTrajectory {
 		massFuel = rocket.engine.getMassFuel(time);
 		massOx = rocket.engine.getMassOx(time);
 		massProp = massFuel + massOx;
+		mDot = rocket.mdot(time);
 		IjRoll = rocket.getIjRoll(time);
 		IjPitch = rocket.getIjPitch(time);
+		IjDot[0] = rocket.getIjDotRoll(time);
+		IjDot[1] = rocket.getIjDotPitch(time);
+		IjDot[2] = rocket.getIjDotPitch(time);
 		lcg = rocket.getLcg(time);
 		lcgFuel = rocket.engine.lcgFuel;
 		lcgOx = rocket.engine.getLcgOx(time);
@@ -136,9 +147,14 @@ public class OtherVariableTrajectory {
 			thrust += pressureThrust;
 		}
 
-		forceBODY[0] = thrust - drag;
-		forceBODY[1] = - side;
-		forceBODY[2] = - normal;
+		// forceBODY[0] = thrust - drag;
+		// forceBODY[1] = - side;
+		// forceBODY[2] = - normal;
+
+		double[] forceAero = {- drag, - side, - normal};
+		forceBODY[0] = thrust + forceAero[0];
+		forceBODY[1] = forceAero[1];
+		forceBODY[2] = forceAero[2];
 
 		accENU = Coordinate.vec_trans(dcm_BODY2ENU, forceBODY);
 		for(int i = 0; i < 3; i++) {
@@ -146,6 +162,31 @@ public class OtherVariableTrajectory {
 		}
 		accBODY = Coordinate.vec_trans(dcm_ENU2BODY, accENU);
 		accAbs = Math.sqrt(Math.pow(accENU[0], 2) + Math.pow(accENU[1], 2) + Math.pow(accENU[2], 2));
+
+		double[] armMoment = {lcg - lcp, 0.0, 0.0};
+		for (int i = 0; i < 3; i++) {
+			int j = (i + 1) % 3;
+			int k = (i + 2) % 3;
+			momentAero[i] = armMoment[j] * forceAero[k] - armMoment[k] * forceAero[j];
+		}
+
+		momentAeroDamping[0] = dynamicsPressure * rocket.aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * omega_BODY[0];
+		momentAeroDamping[1] = dynamicsPressure * rocket.aero.Cmq * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omega_BODY[1];
+		momentAeroDamping[2] = dynamicsPressure * rocket.aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omega_BODY[2];
+
+		momentJetDamping[0] = (- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.engine.de, 2))) * omega_BODY[0];
+		momentJetDamping[1] = (- IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[1];
+		momentJetDamping[2] = (- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[2];
+
+		double[] Ij = {IjRoll, IjPitch, IjPitch};
+		momentGyro[0] = (Ij[1] - Ij[2]) * omega_BODY[1] * omega_BODY[2];
+		momentGyro[1] = (Ij[2] - Ij[0]) * omega_BODY[0] * omega_BODY[2];
+		momentGyro[2] = (Ij[0] - Ij[1]) * omega_BODY[0] * omega_BODY[1];
+
+		for (int i = 0; i < 3; i++) {
+			moment[i] = momentGyro[i] + momentAero[i] + momentAeroDamping[i] + momentJetDamping[i];
+		}
+
 	}
 
 	public double[] getAttitude() {
@@ -266,6 +307,26 @@ public class OtherVariableTrajectory {
 		return accAbs;
 	}
 
+	public double[] getMomentAero() {
+		return momentAero;
+	}
+
+	public double[] getMomentAeroDamiping() {
+		return momentAeroDamping;
+	}
+
+	public double[] getMomentJetDamping() {
+		return momentJetDamping;
+	}
+
+	public double[] getMomentGyro() {
+		return momentGyro;
+	}
+
+	public double[] getMoment() {
+		return moment;
+	}
+	
 	public double getPair() {
 		return P_air;
 	}

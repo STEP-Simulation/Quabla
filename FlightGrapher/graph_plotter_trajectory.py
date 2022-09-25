@@ -87,6 +87,31 @@ class GraphPlotterTrajectory:
                                      in zip(df['Acc_BODY_x [m/s2]'], 
                                             df['Acc_BODY_y [m/s2]'], 
                                             df['Acc_BODY_z [m/s2]'])])
+        self.moment_aero_log = np.array([[moment_aero_x, moment_aero_y, moment_aero_z]
+                                         for moment_aero_x, moment_aero_y, moment_aero_z
+                                         in zip(df['moment_aero_x [N*m]'],
+                                                df['moment_aero_y [N*m]'],
+                                                df['moment_aero_z [N*m]'])])
+        self.moment_aero_damping_log = np.array([[moment_aero_damping_x, moment_aero_damping_y, moment_aero_damping_z]
+                                                 for moment_aero_damping_x, moment_aero_damping_y, moment_aero_damping_z
+                                                 in zip(df['moment_aero_damping_x [N*m]'],
+                                                        df['moment_aero_damping_y [N*m]'],
+                                                        df['moment_aero_damping_z [N*m]'])])
+        self.moment_jet_damping_log = np.array([[moment_jet_damping_x, moment_jet_damping_y, moment_jet_damping_z]
+                                                for moment_jet_damping_x, moment_jet_damping_y, moment_jet_damping_z
+                                                in zip(df['moment_jet_damping_x [N*m]'],
+                                                       df['moment_jet_damping_y [N*m]'],
+                                                       df['moment_jet_damping_z [N*m]'])])
+        self.moment_gyro_log = np.array([[moment_gyro_x, moment_gyro_y, moment_gyro_z]
+                                                for moment_gyro_x, moment_gyro_y, moment_gyro_z
+                                                in zip(df['moment_gyro_x [N*m]'],
+                                                       df['moment_gyro_y [N*m]'],
+                                                       df['moment_gyro_z [N*m]'])])
+        self.moment_log = np.array([[moment_x, moment_y, moment_z]
+                                                for moment_x, moment_y, moment_z
+                                                in zip(df['moment_x [N*m]'],
+                                                       df['moment_y [N*m]'],
+                                                       df['moment_z [N*m]'])])
         self.acc_abs_log = np.array(df['Acc_abs [m/s2]'])
 
         self.index_apogee = np.argmax(self.pos_ENU_log[:,2])
@@ -328,6 +353,47 @@ class GraphPlotterTrajectory:
         plt.grid()
         plt.legend()
         plt.savefig(self.filepath + '/' + flightType + '/Acceleration_BODY.png')
+
+        plt.close('all')
+
+        plt.figure('Moment Body X-Axis' + flightType)
+        plt.title('Moment Body X-Axis')
+        plt.plot(self.time_array, self.moment_aero_log[:, 0], label='Aero')
+        plt.plot(self.time_array, self.moment_aero_damping_log[:, 0], label='Aero Damping')
+        plt.plot(self.time_array, self.moment_jet_damping_log[:, 0], label='Jet Damping')
+        plt.plot(self.time_array, self.moment_gyro_log[:, 0], label='Gyro')
+        plt.xlabel('Time [sec]')
+        plt.ylabel('Moment [N*m]')
+        plt.xlim(xmin=0.0)
+        plt.grid()
+        plt.legend()
+        plt.savefig(self.filepath + '/' + flightType + '/Moment_Body_X-Axis.png')
+
+        plt.figure('Moment Body Y-Axis' + flightType)
+        plt.title('Moment Body Y-Axis')
+        plt.plot(self.time_array, self.moment_aero_log[:, 1], label='Aero')
+        plt.plot(self.time_array, self.moment_aero_damping_log[:, 1], label='Aero Damping')
+        plt.plot(self.time_array, self.moment_jet_damping_log[:, 1], label='Jet Damping')
+        plt.plot(self.time_array, self.moment_gyro_log[:, 1], label='Gyro')
+        plt.xlabel('Time [sec]')
+        plt.ylabel('Moment [N*m]')
+        plt.xlim(xmin=0.0)
+        plt.grid()
+        plt.legend()
+        plt.savefig(self.filepath + '/' + flightType + '/Moment_Body_Y-Axis.png')
+
+        plt.figure('Moment Body Z-Axis' + flightType)
+        plt.title('Moment Body Z-Axis')
+        plt.plot(self.time_array, self.moment_aero_log[:, 2], label='Aero')
+        plt.plot(self.time_array, self.moment_aero_damping_log[:, 2], label='Aero Damping')
+        plt.plot(self.time_array, self.moment_jet_damping_log[:, 2], label='Jet Damping')
+        plt.plot(self.time_array, self.moment_gyro_log[:, 2], label='Gyro')
+        plt.xlabel('Time [sec]')
+        plt.ylabel('Moment [N*m]')
+        plt.xlim(xmin=0.0)
+        plt.grid()
+        plt.legend()
+        plt.savefig(self.filepath + '/' + flightType + '/Moment_Body_Z-Axis.png')
 
         vENU2LLH = np.vectorize(ENU2LLH, excluded=['launch_LLH'], signature="(1),(3)->(3)")
         log_LLH = vENU2LLH(self.Launch_LLH, self.pos_ENU_log)

@@ -49,6 +49,11 @@ public class LoggerVariable {
 	private double[][] accENUlog;
 	private double[][] accBODYlog;
 	private double[] accAbsLog;
+	private double[][] momentAeroLog;
+	private double[][] momentAeroDampingLog;
+	private double[][] momentJetDampingLog;
+	private double[][] momentGyroLog;
+	private double[][] momentLog;
 	private double[] pAirLog;
 
 	private int length;
@@ -115,6 +120,11 @@ public class LoggerVariable {
 		accENUlog = new double[length][3];
 		accBODYlog = new double[length][3];
 		accAbsLog = new double[length];
+		momentAeroLog = new double[length][3];
+		momentAeroDampingLog = new double[length][3];
+		momentJetDampingLog = new double[length][3];
+		momentGyroLog = new double[length][3];
+		momentLog = new double[length][3];
 		pAirLog = new double[length];
 
 		for(int i = 0; i < length; i++) {
@@ -124,7 +134,7 @@ public class LoggerVariable {
 			System.arraycopy(omegaBODYlogArraylist.get(i).toDouble(), 0, omegaBODYlog[i], 0, 3);
 			System.arraycopy(quatLogArrayList.get(i).toDouble(), 0, quatLog[i], 0, 4);
 
-			ovt.setOtherVariable(timeArray[i], posENUlog[i], velENUlog[i], quatLog[i]);
+			ovt.setOtherVariable(timeArray[i], posENUlog[i], velENUlog[i], omegaBODYlog[i], quatLog[i]);
 			System.arraycopy(ovt.getAttitude(), 0, attitudeLog[i], 0, 3);
 			massLog[i] = ovt.getMass();
 			massFuelLog[i] = ovt.getMassFuel();
@@ -155,6 +165,11 @@ public class LoggerVariable {
 			System.arraycopy(ovt.getAccENU(), 0, accENUlog[i], 0, 3);
 			System.arraycopy(ovt.getAccBODY(), 0, accBODYlog[i], 0, 3);
 			accAbsLog[i] = ovt.getAccAbs();
+			System.arraycopy(ovt.getMomentAero(), 0, momentAeroLog[i], 0, 3);
+			System.arraycopy(ovt.getMomentAeroDamiping(), 0, momentAeroDampingLog[i], 0, 3);
+			System.arraycopy(ovt.getMomentJetDamping(), 0, momentJetDampingLog[i], 0, 3);
+			System.arraycopy(ovt.getMomentGyro(), 0, momentGyroLog[i], 0, 3);
+			System.arraycopy(ovt.getMoment(), 0, momentLog[i], 0, 3);
 			pAirLog[i] = ovt.getPair();
 
 		}
@@ -337,6 +352,26 @@ public class LoggerVariable {
 
 	public double[] getAccAbsLogArray() {
 		return accAbsLog;
+	}
+
+	public double[][] getMomentAeroLogArray() {
+		return momentAeroLog;
+	}
+
+	public double[][] getMomentAeroDamipingLogArray() {
+		return momentAeroDampingLog;
+	}
+
+	public double[][] getMomentJetDampingLogArray() {
+		return momentJetDampingLog;
+	}
+
+	public double[][] getMomentGyroLogArray() {
+		return momentGyroLog;
+	}
+
+	public double[][] getMomentLogArray() {
+		return momentLog;
 	}
 
 	public double[] getPairLogArray() {
