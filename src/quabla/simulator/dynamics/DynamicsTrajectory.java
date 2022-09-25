@@ -132,6 +132,10 @@ public class DynamicsTrajectory extends AbstractDynamics {
 				(- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.engine.de, 2))) * p,
 				(- IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * q,
 				(- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * r);
+		// momentJetDamping.set(
+		// 		(- IjDot[0]) * p,
+		// 		(- IjDot[1]) * q,
+		// 		(- IjDot[2]) * r);
 
 		momentGyro.set(
 				(Ij[1] - Ij[2])*q*r,
