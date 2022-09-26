@@ -174,9 +174,12 @@ public class OtherVariableTrajectory {
 		momentAeroDamping[1] = dynamicsPressure * rocket.aero.Cmq * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omega_BODY[1];
 		momentAeroDamping[2] = dynamicsPressure * rocket.aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omega_BODY[2];
 
-		momentJetDamping[0] = (- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.engine.de, 2))) * omega_BODY[0];
-		momentJetDamping[1] = (- IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[1];
-		momentJetDamping[2] = (- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[2];
+		// momentJetDamping[0] = (- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.engine.de, 2))) * omega_BODY[0];
+		// momentJetDamping[1] = (- IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[1];
+		// momentJetDamping[2] = (- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[2];
+		momentJetDamping[0] = (- IjDot[0]) * omega_BODY[0];
+		momentJetDamping[1] = (- IjDot[1]) * omega_BODY[1];
+		momentJetDamping[2] = (- IjDot[2]) * omega_BODY[2];
 
 		double[] Ij = {IjRoll, IjPitch, IjPitch};
 		momentGyro[0] = (Ij[1] - Ij[2]) * omega_BODY[1] * omega_BODY[2];
@@ -326,7 +329,7 @@ public class OtherVariableTrajectory {
 	public double[] getMoment() {
 		return moment;
 	}
-	
+
 	public double getPair() {
 		return P_air;
 	}

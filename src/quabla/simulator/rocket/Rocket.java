@@ -240,7 +240,8 @@ public class Rocket {
 			if( t == 0.0) {
 				return 0.0;
 			}else {
-				return (getIjPropPitch(t) - getIjPropPitch(t - dt)) / dt;
+				// return (getIjPropPitch(t) - getIjPropPitch(t - dt)) / dt;
+				return (getIjPitch(t) - getIjPitch(t - dt)) / dt;
 			}
 		}else {
 			return 0.0;
