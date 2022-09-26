@@ -181,7 +181,7 @@ public class Rocket {
 	}
 
 	public double getLcg(double t) {
-		if(t < engine.timeBurnout) {
+		if(t < engine.timeActuate) {
 			double mFuel = engine.getMassFuel(t);
 			double mOx = engine.getMassOx(t);
 			return (lcgSt * mSt + (L - engine.lcgFuel) * mFuel + (L - engine.getLcgOx(t))* mOx) / (mSt + mFuel + mOx);
@@ -191,7 +191,7 @@ public class Rocket {
 	}
 
 	public double getLcgProp(double t) {
-		if(t < engine.timeBurnout) {
+		if(t < engine.timeActuate) {
 			double massFuel = engine.getMassFuel(t);
 			double massOx = engine.getMassOx(t);
 			return ((L - engine.lcgFuel) * massFuel + (L - engine.getLcgOx(t)) * massOx) / (massFuel + massOx);
