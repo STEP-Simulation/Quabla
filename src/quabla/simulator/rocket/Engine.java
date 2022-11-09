@@ -193,9 +193,9 @@ public class Engine {
 	}
 
 	private double getLengthOx(double t) {
-		if(t < timeBurnout) {
+		if(t < timeActuate) {
 			// return lTank * (t / timeBurnout);
-			return lTank * (1.0 - t / timeBurnout);
+			return lTank * (1.0 - t / timeActuate);
 		}else {
 			return 0.0;
 		}
@@ -247,7 +247,7 @@ public class Engine {
 	 * @return 酸化剤重心回りの酸化剤のPitch慣性モーメント
 	 * */
 	public double getIjOxPitch(double t) {
-		if(t < timeBurnout) {
+		if(t < timeActuate) {
 			/* 中実円筒の慣性モーメント
 			 * Iyy = m * (d^2 / 16 + L^2 / 12)
 			 * **/
@@ -263,7 +263,7 @@ public class Engine {
 	 * @return 酸化剤重心回りの酸化剤のPitch慣性モーメント
 	 * */
 	public double getIjOxRoll(double t) {
-		if(t < timeBurnout) {
+		if(t < timeActuate) {
 			/* 中実円筒の慣性モーメント
 			 * Ixx = m * d^2 / 8
 			 * **/
