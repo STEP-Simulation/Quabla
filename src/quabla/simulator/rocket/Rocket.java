@@ -114,9 +114,12 @@ public class Rocket {
 		IjStPitchUnit =
 				(IjPitchDry - (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgDry - (L - engine.lcgFuel), 2))) // 乾燥重心回りの構造Pitch慣性モーメント
 				- mSt * Math.pow(lcgDry - lcgSt, 2); // 平行軸の定理で構造重心回りの慣性モーメントに直す
+		// IjPitchBef =
+		// 		(IjStPitchUnit + mSt * Math.pow(lcgBef - lcgSt, 2)) // 全機重心回り構造Pitch慣性モーメント
+		// 		+ (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgBef - (L - engine.lcgFuel), 2)) // 燃焼前全機重心回り燃料Pitch慣性モーメント
+		// 		+ (engine.IjOxPitchBef + engine.mOxBef * Math.pow(lcgBef - (L - engine.lcgOxBef), 2)); // 燃焼前全機重心回り酸化剤Pitch慣性モーメント
 		IjPitchBef =
-				(IjStPitchUnit + mSt * Math.pow(lcgBef - lcgSt, 2)) // 全機重心回り構造Pitch慣性モーメント
-				+ (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgBef - (L - engine.lcgFuel), 2)) // 燃焼前全機重心回り燃料Pitch慣性モーメント
+				IjPitchDry + mDry * Math.pow(lcgDry - lcgBef, 2)
 				+ (engine.IjOxPitchBef + engine.mOxBef * Math.pow(lcgBef - (L - engine.lcgOxBef), 2)); // 燃焼前全機重心回り酸化剤Pitch慣性モーメント
 
 		// Roll Axis
@@ -124,8 +127,12 @@ public class Rocket {
 		IjRollBef = IjRollDry + engine.IjOxRollBef;
 
 		// @ After Burnout
+		// IjPitchAft =
+		// 		(IjStPitchUnit + mSt * Math.pow(lcgAft - lcgSt, 2))
+		// 		+ (engine.IjFuelPitchAft + engine.mFuelAft * Math.pow(lcgAft - (L - engine.lcgFuel), 2));
 		IjPitchAft =
-				(IjStPitchUnit + mSt * Math.pow(lcgAft - lcgSt, 2))
+				IjPitchDry + mDry * Math.pow(lcgDry - lcgAft, 2)
+				- ((engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgBef - (L - engine.lcgFuel), 2)))
 				+ (engine.IjFuelPitchAft + engine.mFuelAft * Math.pow(lcgAft - (L - engine.lcgFuel), 2));
 		IjRollAft = IjStRollUnit + engine.IjFuelRollAft;
 		//-------------------------------------------------
@@ -201,8 +208,11 @@ public class Rocket {
 	}
 
 	public double getIjPitch(double t) {
-		if(t < engine.timeBurnout) {
-			return (IjStPitchUnit + mSt * Math.pow(getLcg(t) - lcgSt, 2))
+		if(t < engine.timeActuate) {
+			// return (IjStPitchUnit + mSt * Math.pow(getLcg(t) - lcgSt, 2))
+			// 		+ getIjPropPitch(t);
+			return (IjPitchDry + mDry * Math.pow(lcgDry - getLcg(t), 2))
+					- ((engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgBef - (L - engine.lcgFuel), 2)))
 					+ getIjPropPitch(t);
 		}else {
 			return IjPitchAft;
@@ -210,7 +220,7 @@ public class Rocket {
 	}
 
 	public double getIjRoll(double t) {
-		if(t < engine.timeBurnout) {
+		if(t < engine.timeActuate) {
 			return IjStRollUnit + getIjPropRoll(t);
 		}else {
 			return IjRollAft;
@@ -218,7 +228,7 @@ public class Rocket {
 	}
 
 	private double getIjPropPitch(double t) {
-		if(t < engine.timeBurnout) {
+		if(t < engine.timeActuate) {
 			double lcg = getLcg(t);
 			return engine.getIjFuelPitch(t) + engine.getMassFuel(t) * Math.pow((L - engine.lcgFuel) - lcg, 2)
 					+ engine.getIjOxPitch(t) + engine.getMassOx(t) * Math.pow((L - engine.getLcgOx(t)) - lcg, 2);
@@ -228,7 +238,7 @@ public class Rocket {
 	}
 
 	private double getIjPropRoll(double t) {
-		if(t < engine.timeBurnout) {
+		if(t < engine.timeActuate) {
 			return engine.getIjFuelRoll(t) + engine.getIjOxRoll(t);
 		}else {
 			return engine.IjFuelRollAft;
@@ -236,7 +246,7 @@ public class Rocket {
 	}
 
 	public double getIjDotPitch(double t) {
-		if(t < engine.timeBurnout) {
+		if(t < engine.timeActuate) {
 			if( t == 0.0) {
 				return 0.0;
 			}else {
