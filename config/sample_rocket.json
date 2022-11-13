@@ -30,7 +30,7 @@
 		"__comment" : "Wind Model : lawならべき法則　constantなら一定風速 multiモードなら自動でlawになる",
 		"Wind Model":"law",
 		"Wind Power Law Coefficient": 4.5,
-		"Wind Speed [m/s]": 0.0,
+		"Wind Speed [m/s]": 3.0,
 		"Wind Azimuth [deg]": 280,
 		"Wind Reference Altitude [m]": 5.0
 	},
@@ -91,11 +91,11 @@
 
 	"Parachute": {
 		"1st Parachute CdS [m2]": 0.1888,
-		"Parachute Opening Lag [sec]": 1.0,
+		"Parachute Opening Lag [sec]": 0.0,
 		"2nd Parachute Exist": true,
 		"2nd Parachute CdS [m2]": 0.6306,
-		"2nd Parachute Opening Altitude [m]": 100,
-		"2nd Parachute Timer Mode": true,
+		"2nd Parachute Opening Altitude [m]": 300,
+		"2nd Parachute Timer Mode": false,
 		"2nd Timer [s]":20.0
 	},
 

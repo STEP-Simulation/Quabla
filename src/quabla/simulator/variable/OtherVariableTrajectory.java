@@ -108,7 +108,7 @@ public class OtherVariableTrajectory {
 
 		gravity = rocket.atm.getGravity(altitude);
 		double[] g = {0.0, 0.0, - gravity};
-		 P_air = rocket.atm.getAtomosphericPressure(altitude);
+		P_air = rocket.atm.getAtomosphericPressure(altitude);
 		rho = rocket.atm.getAirDensity(altitude);
 
 		// velAir , alpha , beta
@@ -122,7 +122,8 @@ public class OtherVariableTrajectory {
 			alphaRad = 0.0;
 			betaRad = 0.0;
 		}else {
-			alphaRad = Math.asin(velAirBODY[2] / velAirAbs);
+			// alphaRad = Math.asin(velAirBODY[2] / velAirAbs);
+			alphaRad = Math.atan2(velAirBODY[2], velAirBODY[0]);
 			betaRad = Math.asin(velAirBODY[1] / velAirAbs);
 		}
 

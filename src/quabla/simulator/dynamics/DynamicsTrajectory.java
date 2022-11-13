@@ -62,6 +62,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		velAirENU = velENU.sub(windENU);
 		velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
+		double u = velAirBODY.toDouble(0);
 		double v = velAirBODY.toDouble(1);
 		double w = velAirBODY.toDouble(2);
 
@@ -70,7 +71,8 @@ public class DynamicsTrajectory extends AbstractDynamics {
 			alpha = 0.0;
 			beta = 0.0;
 		}else {
-			alpha = Math.asin(w / velAirAbs);
+			// alpha = Math.asin(w / velAirAbs);
+			alpha = Math.atan2(w, u);
 			beta = Math.asin(v / velAirAbs);
 		}
 
