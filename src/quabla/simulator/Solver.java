@@ -218,7 +218,7 @@ public class Solver {
 
 			resultTxt.outputLine(String.format("Launch Clear Time : %.3f [sec]", eventValue.getTimeLaunchClear()));
 			resultTxt.outputLine(String.format("Launch Clear Velocity : %.3f [m/s]", eventValue.getVelLaunchClear()));
-			resultTxt.outputLine(String.format("Launch Clear Accelaration : %.3f G", eventValue.getAccLaunchClear() / 9.80665));
+			resultTxt.outputLine(String.format("Launch Clear Acceleration : %.3f G", eventValue.getAccLaunchClear() / 9.80665));
 
 			resultTxt.outputLine(String.format("Apogee Time : %.3f [sec]", eventValue.getTimeApogee()));
 			resultTxt.outputLine(String.format("Apogee Altitude : %.3f [km]", eventValue.getAltApogee()));
