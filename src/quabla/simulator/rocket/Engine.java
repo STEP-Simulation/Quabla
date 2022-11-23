@@ -51,11 +51,14 @@ public class Engine {
 	timeBurnout,
 	timeActuate;
 	private double IspAve;
+	private double totalImpulse;
+	private double thrustAve;
+	private double mDotPropAve;
 
 	public Engine(JsonNode engine) {
 
 		// Specific thrust
-		IspAve = engine.get("Isp [sec]").asDouble();
+		// IspAve = engine.get("Isp [sec]").asDouble();
 		timeBurnout = engine.get("Burn Time [sec]").asDouble();
 
 		mOxBef = (engine.get("Tank Volume [cc]").asDouble() * Math.pow(10, -6)) * engine.get("Oxidizer Density [kg/m^3]").asDouble();
@@ -75,18 +78,19 @@ public class Engine {
 		for (int i = 0; i < thrust_data.length; i++) {
 			time_array[i] = thrust_data[i][0];
 			thrust_array[i] = thrust_data[i][1];
-			mDotPropLog[i] = thrust_array[i] / (IspAve * 9.80665);
-			if(time_array[i] < timeBurnout) {
-				mDotFuelLog[i] = mDotFuel;
-				// mDotPropLog[i] = thrust_array[i] / (IspAve * 9.80665);
-				// mDotOxLog[i] = mDotPropLog[i] - mDotFuel;
-				// mDotOxLog[i] = Math.max(0.0, mDotPropLog[i] - mDotFuel);
-			}else {
-				mDotFuelLog[i] = 0.0;
-				// mDotPropLog[i] = 0.0;
-				// mDotOxLog[i] = 0.0;
-			}
-			mDotOxLog[i] = Math.max(0.0, mDotPropLog[i] - mDotFuelLog[i]);
+		}
+		totalImpulse = getSum(time_array, thrust_array);
+		thrustAve = totalImpulse / timeBurnout;
+		mDotPropAve = mDotFuel + mOxBef / timeBurnout;
+		IspAve = thrustAve / (mDotPropAve * 9.80665);
+		for (int i = 0; i < mDotOxLog.length; i++) {
+				mDotPropLog[i] = thrust_array[i] / (IspAve * 9.80665);
+				if(time_array[i] < timeBurnout) {
+					mDotFuelLog[i] = mDotFuel;
+				}else {
+					mDotFuelLog[i] = 0.0;
+				}
+				mDotOxLog[i] = Math.max(0.0, mDotPropLog[i] - mDotFuelLog[i]);
 		}
 		thrustAnaly = new Interpolation(time_array, thrust_array);
 		mDotPropAnaly = new Interpolation(time_array, mDotPropLog);
@@ -278,6 +282,18 @@ public class Engine {
 			return thrustAnaly.linearInterp1column(t);
 		}
 		return 0.0;
+	}
+
+	private double getSum(double[] xArray, double[] yArray) {
+
+		double sum = 0.0;
+
+		for (int i = 0; i < xArray.length - 1; i++) {
+			double dx = xArray[i + 1] - xArray[i];
+			sum = sum + 0.5 * (yArray[i + 1] + yArray[i]) * dx;
+		}
+
+		return sum;
 	}
 
 }
