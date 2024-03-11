@@ -89,8 +89,14 @@ print('Result File:      ' + os.path.basename(result_dir) + '\n')
 
 # if launch_site == '0':
 #     launch_site_info = OtherSite()
+if launch_site == '0' :
+    launch_site_info = OtherSite()
+    launch_site_info.launch_LLH[0] = float(json_load['Launch Condition']['Launch lat'])
+    launch_site_info.launch_LLH[1] = float(json_load['Launch Condition']['Launch lon'])
+    launch_site_info.launch_LLH[2] = float(json_load['Launch Condition']['Launch height'])
+    launch_site_info.center_circle_LLH = launch_site_info.launch_LLH
 
-if launch_site == '1':
+elif launch_site == '1':
     launch_site_info = OshimaLand(launch_site_json.get('oshima_land'))
 
 elif launch_site == '2':
@@ -102,12 +108,6 @@ elif launch_site == '3':
 elif launch_site == '4':
     launch_site_info = NoshiroSea(launch_site_json.get('noshiro_sea'))
 
-elif launch_site == '5' :
-    launch_site_info = OtherSite()
-    launch_site_info.launch_LLH[0] = float(json_load['Launch Condition']['Launch lat'])
-    launch_site_info.launch_LLH[1] = float(json_load['Launch Condition']['Launch lon'])
-    launch_site_info.launch_LLH[2] = float(json_load['Launch Condition']['Launch height'])
-    launch_site_info.center_circle_LLH = launch_site_info.launch_LLH
 
 # Execute Quabla.jar
 subprocess.run(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, result_dir], \
