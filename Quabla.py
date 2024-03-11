@@ -87,6 +87,9 @@ print('Model Name:      ', model_name)
 print('Simulation Mode: ', simulationmode)
 print('Result File:      ' + os.path.basename(result_dir) + '\n')
 
+# if launch_site == '0':
+#     launch_site_info = OtherSite()
+
 if launch_site == '1':
     launch_site_info = OshimaLand(launch_site_json.get('oshima_land'))
 
