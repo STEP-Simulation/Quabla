@@ -87,8 +87,6 @@ print('Model Name:      ', model_name)
 print('Simulation Mode: ', simulationmode)
 print('Result File:      ' + os.path.basename(result_dir) + '\n')
 
-# if launch_site == '0':
-#     launch_site_info = OtherSite()
 if launch_site == '0' :
     launch_site_info = OtherSite()
     launch_site_info.launch_LLH[0] = float(json_load['Launch Condition']['Launch lat'])
