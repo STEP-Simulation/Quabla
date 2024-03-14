@@ -46,7 +46,7 @@ public class Engine {
 	mDotPropAnaly,
 	// mFuelAnaly,
 	mOxAnaly,
-	lgcOxAnaly;
+	lcgOxAnaly;
 	public final double
 	timeBurnout,
 	timeActuate;
@@ -75,6 +75,15 @@ public class Engine {
 		double[] mDotPropLog = new double[thrust_data.length];
 		double[] mDotFuelLog = new double[thrust_data.length];
 		double[] mDotOxLog = new double[thrust_data.length];
+		
+		// Thin out of thrust data
+		int lengthInterpRaw = Math.min(thrust_data.length, 100);
+		int stepInterpRaw = Math.max(1, thrust_data.length / 100);
+		double[] timeInterpRaw = new double[lengthInterpRaw];
+		double[] mDotPropInterpRaw = new double[lengthInterpRaw];
+		double[] mOxInterpRaw = new double[lengthInterpRaw];
+		double[] lcgOxInterpRaw = new double[lengthInterpRaw];
+
 		for (int i = 0; i < thrust_data.length; i++) {
 			time_array[i] = thrust_data[i][0];
 			thrust_array[i] = thrust_data[i][1];
@@ -83,21 +92,32 @@ public class Engine {
 		thrustAve = totalImpulse / timeBurnout;
 		mDotPropAve = mDotFuel + mOxBef / timeBurnout;
 		IspAve = thrustAve / (mDotPropAve * 9.80665);
+		int j = 0;
 		for (int i = 0; i < mDotOxLog.length; i++) {
-				mDotPropLog[i] = thrust_array[i] / (IspAve * 9.80665);
-				if(time_array[i] < timeBurnout) {
-					mDotFuelLog[i] = mDotFuel;
-				}else {
-					mDotFuelLog[i] = 0.0;
-				}
-				mDotOxLog[i] = Math.max(0.0, mDotPropLog[i] - mDotFuelLog[i]);
+			mDotPropLog[i] = thrust_array[i] / (IspAve * 9.80665);
+			
+			if (i % stepInterpRaw == 0) {
+				timeInterpRaw[j] = time_array[i];
+				mDotPropInterpRaw[j] = mDotPropLog[i];
+				j ++;
+			}
+
+			if(time_array[i] < timeBurnout) {
+				mDotFuelLog[i] = mDotFuel;
+			}
+			else {
+				mDotFuelLog[i] = 0.0;
+			}
+			mDotOxLog[i] = Math.max(0.0, mDotPropLog[i] - mDotFuelLog[i]);
 		}
+
 		thrustAnaly = new Interpolation(time_array, thrust_array);
-		mDotPropAnaly = new Interpolation(time_array, mDotPropLog);
+		mDotPropAnaly = new Interpolation(timeInterpRaw, mDotPropInterpRaw);
 		timeActuate = time_array[thrust_data.length - 1];
 		double[] mOxLog = new double[thrust_data.length];
 		mOxLog[0] = mOxBef;
 		Interpolation mDotOxAnaly = new Interpolation(time_array, mDotOxLog);
+		j = 0;
 		for (int i = 0; i < time_array.length - 1; i++) {
 			double t = time_array[i];
 			double dt = time_array[i+1] - time_array[i];
@@ -106,8 +126,14 @@ public class Engine {
 			double k3 = - mDotOxAnaly.linearInterp1column(t + 0.5 * dt);
 			double k4 = - mDotOxAnaly.linearInterp1column(t + dt);
 			mOxLog[i + 1] = Math.max(0.0, mOxLog[i] + (dt / 6.0) * (k1 + 2.0 * k2 + 2.0 * k3 + k4));
+
+			if (i % stepInterpRaw == 0) {
+				timeInterpRaw[j] = time_array[i + 1];
+				mOxInterpRaw[j] = mOxLog[i + 1];
+				j ++;
+			}
 		}
-		mOxAnaly = new Interpolation(time_array, mOxLog);
+		mOxAnaly = new Interpolation(timeInterpRaw, mOxInterpRaw);
 
 		//--------------- Length, Diameter ---------------
 		dth = engine.get("Nozzle Throat Diameter [mm]").asDouble() * Math.pow(10, -3);// [mm] => [m]
@@ -136,10 +162,17 @@ public class Engine {
 		lcgOxBef = distanceTank + 0.5 * lTank;
 		lcgOxAft = distanceTank;
 		double[] lcgOxLog = new double[thrust_data.length];
+		j = 0;
 		for (int i = 0; i < lcgOxLog.length; i++) {
-			lcgOxLog[i] = lcgOxAft - (mOxLog[i] / mOxBef) * (lcgOxAft - lcgOxBef);			
+			lcgOxLog[i] = lcgOxAft - (mOxLog[i] / mOxBef) * (lcgOxAft - lcgOxBef);
+			
+			if (i % stepInterpRaw == 0) {
+				timeInterpRaw[j] = time_array[i];
+				lcgOxInterpRaw[j] = lcgOxLog[i];
+				j ++;
+			}
 		}
-		lgcOxAnaly = new Interpolation(time_array, lcgOxLog);
+		lcgOxAnaly = new Interpolation(timeInterpRaw, lcgOxInterpRaw);
 		//-------------------------------------------------
 
 		// -------------- Moment of Inertia --------------
@@ -211,7 +244,7 @@ public class Engine {
 	public double getLcgOx(double t) {
 		if(t < timeActuate) {
 			// return distanceTank + 0.5 * getLengthOx(t);
-			return lgcOxAnaly.linearInterp1column(t);
+			return lcgOxAnaly.linearInterp1column(t);
 		}else {
 			return lcgOxAft;
 		}
