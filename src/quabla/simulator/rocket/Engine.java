@@ -77,8 +77,11 @@ public class Engine {
 		double[] mDotOxLog = new double[thrust_data.length];
 		
 		// Thin out of thrust data
-		int lengthInterpRaw = Math.min(thrust_data.length, 100);
+		int lengthInterpRaw = Math.min(thrust_data.length, 101);
 		int stepInterpRaw = Math.max(1, thrust_data.length / 100);
+		if (thrust_data.length - stepInterpRaw * 100 == 0) {
+			lengthInterpRaw -= 1;
+		}
 		double[] timeInterpRaw = new double[lengthInterpRaw];
 		double[] mDotPropInterpRaw = new double[lengthInterpRaw];
 		double[] mOxInterpRaw = new double[lengthInterpRaw];
