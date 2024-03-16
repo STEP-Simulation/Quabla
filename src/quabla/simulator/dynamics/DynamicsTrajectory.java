@@ -86,9 +86,10 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		double pressureDynamics = 0.5 * rho * Math.pow(velAirAbs, 2);
 
 		// Thrust
-		if(rocket.engine.thrust(t) > 0.0) {
+		double thrustMomentum = rocket.engine.thrust(t);
+		if(thrustMomentum > 0.0) {
 			double thrustPressure = (P0 - P)* rocket.engine.Ae;
-			thrust.set(rocket.engine.thrust(t) + thrustPressure, 0.0, 0.0);
+			thrust.set(thrustMomentum + thrustPressure, 0.0, 0.0);
 		}else {
 			thrust.set(MathematicalVector.ZERO);
 		}
