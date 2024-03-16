@@ -12,7 +12,7 @@ from PlotLandingScatter.launch_site.noshiro_land import NoshiroLand
 from PlotLandingScatter.launch_site.launch_site_none import LaunchSiteNone
 
 def plotlandingscatter(path, launch_elevation, number, launch_site_info, magneticflag, safety_exist):
-    print("\nPlotLandingScatter start...")
+    print("\n[Post Proc.] Start...")
 
     elevation = launch_elevation
     dir_path = path
@@ -55,4 +55,4 @@ def plotlandingscatter(path, launch_elevation, number, launch_site_info, magneti
     launch_site.judge_inside()
     launch_site.output_kml()
 
-    print('Done!\n')
+    print('[Post Proc.] Done!\n')

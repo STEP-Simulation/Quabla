@@ -82,10 +82,12 @@ if os.path.exists(result_dir):
         i += 1
 os.mkdir(result_dir)
 
-print('Config File:     ', os.path.basename(paramaterpath))
-print('Model Name:      ', model_name)
-print('Simulation Mode: ', simulationmode)
-print('Result File:      ' + os.path.basename(result_dir) + '\n')
+print('-------------------- INFORMATION --------------------')
+print('  Config File:     ', os.path.basename(paramaterpath))
+print('  Model Name:      ', model_name)
+print('  Simulation Mode: ', simulationmode)
+print('  Result File:      ' + os.path.basename(result_dir))
+print('-----------------------------------------------------\n')
 
 if launch_site == '0' :
     launch_site_info = OtherSite()

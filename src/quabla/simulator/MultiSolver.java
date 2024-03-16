@@ -49,6 +49,7 @@ public class MultiSolver {
 	public void solveMulti(JsonNode spec) {
 
 		int i = 0;
+		displayProcess(-1);
 		for(double speed: speedArray) {
 			int j = 0;
 			for(double azimuth: azimuthArray) {
@@ -91,14 +92,14 @@ public class MultiSolver {
 	}
 
 	/**
-	 * This fanction display progress bar.
+	 * This function display progress bar.
 	 * */
 	private void displayProcess(int numSpeed) {
 		String process = "";
 		double processDouble = (double)(numSpeed + 1) / (double)speed_num ;
 
-		for(int i = 0; i < 30; i++) {
-			if(i < (int)(processDouble * 30)) {
+		for(int i = 0; i < 40; i++) {
+			if(i < (int)(processDouble * 40)) {
 				process += "*";
 			}else {
 				process += " ";
@@ -106,9 +107,9 @@ public class MultiSolver {
 		}
 
 		if (processDouble == 1.0) {
-			System.out.println(String.format("%3d", (int)(processDouble * 100)) + "%" + "|" + process + "|");
+			System.out.println(String.format("[Solver] %3d", (int)(processDouble * 100)) + "%" + "|" + process + "|");
 		}else {
-			System.out.print(String.format("%3d", (int)(processDouble * 100)) + "%" + "|" + process + "|" + "\r");
+			System.out.print(String.format("[Solver] %3d", (int)(processDouble * 100)) + "%" + "|" + process + "|" + "\r");
 		}
 
 	}

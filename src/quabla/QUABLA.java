@@ -37,7 +37,7 @@ public class QUABLA {
 			}
 		}
 
-		System.out.println("Running Solver...");
+		System.out.println("[Solver] Running...");
 
 		ObjectMapper mapper = new ObjectMapper();
 		JsonNode node = null;
@@ -76,7 +76,7 @@ public class QUABLA {
 		}
 
 		long endTime = System.currentTimeMillis();
-		System.out.println(String.format("Calculate Time : %.3f sec", (endTime - startTime) * 1e-03));
-		System.out.println("Completed!!");
+		System.out.println(String.format("[Solver] Calculate Time : %.3f sec", (endTime - startTime) * 1e-03));
+		System.out.println("[Solver] Done!");
 	}
 }

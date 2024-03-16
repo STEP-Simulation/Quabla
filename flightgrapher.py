@@ -21,7 +21,7 @@ Args
     safety_exsist : True or false of safety area
 '''
 def flightgrapher(path, config_file, launch_site_info, safety_exist):
-    print("\nFlightGrapher start...")
+    print("\n[Post Proc.] Start...")
 
     filepath_trajectory = path + os.sep +'flightlog_trajectory.csv'
     filepath_parachute = path + os.sep + 'flightlog_parachute.csv'
@@ -56,4 +56,4 @@ def flightgrapher(path, config_file, launch_site_info, safety_exist):
                 launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
         land_point.make_land_point(launch_site_info, safety_exist)
 
-        print('Done!\n')
+        print('[Post Proc.] Done!\n')
