@@ -16,9 +16,9 @@ public class AeroParameter {
 
 	public AeroParameter(JsonNode aero){
 
-		lcpFileExist = aero.get("Length-C.P. File").asBoolean();
-		CdFileExist = aero.get("Cd File").asBoolean();
-		CNaFileExist = aero.get("CNa File").asBoolean();
+		lcpFileExist = aero.get("Length-C.P. File Exist").asBoolean();
+		CdFileExist = aero.get("Cd File Exist").asBoolean();
+		CNaFileExist = aero.get("CNa File Exist").asBoolean();
 
 		if(lcpFileExist) {
 			double[][] lcpData = GetCsv.get2ColumnArray(aero.get("Length-C.P. File").asText());
