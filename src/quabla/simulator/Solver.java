@@ -216,49 +216,75 @@ public class Solver {
 
 		try {
 
-			resultTxt.outputLine(String.format("Launch Clear Time : %.3f [sec]", eventValue.getTimeLaunchClear()));
-			resultTxt.outputLine(String.format("Launch Clear Velocity : %.3f [m/s]", eventValue.getVelLaunchClear()));
+			resultTxt.outputLine(" ----------------------- * Static Margin * ---------------------- ");
+			
+			resultTxt.outputLine(String.format("Minimum Static Margin, Fst : %.3f [-]", eventValue.getFstMin()));
+			resultTxt.outputLine(String.format("Max Static Margin, Fst     : %.3f [-]", eventValue.getFstMax()));
+			
+			resultTxt.outputLine("\n ----------------------- * Launch Clear * ----------------------- ");
+			
+			resultTxt.outputLine(String.format("Launch Clear Time         : %.3f [sec]", eventValue.getTimeLaunchClear()));
+			resultTxt.outputLine(String.format("Launch Clear Velocity     : %.3f [m/s]", eventValue.getVelLaunchClear()));
 			resultTxt.outputLine(String.format("Launch Clear Acceleration : %.3f G", eventValue.getAccLaunchClear() / 9.80665));
-
-			resultTxt.outputLine(String.format("Apogee Time : %.3f [sec]", eventValue.getTimeApogee()));
-			resultTxt.outputLine(String.format("Apogee Altitude : %.3f [km]", eventValue.getAltApogee()));
+			
+			resultTxt.outputLine("\n -------------------------- * Apogee * -------------------------- ");
+			
+			resultTxt.outputLine(String.format("Apogee Time      : %.3f [sec]", eventValue.getTimeApogee()));
+			resultTxt.outputLine(String.format("Apogee Altitude  : %.3f [km]", eventValue.getAltApogee()));
 			resultTxt.outputLine(String.format("Apogee Downrange : %.3f [km]", eventValue.getDownrangeApogee()));
 			resultTxt.outputLine(String.format("Apogee Air Speed : %.3f [m/s]", eventValue.getVelAirApogee()));
-
-			resultTxt.outputLine(String.format("Max Air Speed Time : %.3f [sec]", eventValue.getTimeMaxVelAir()));
-			resultTxt.outputLine(String.format("Max Air Speed : %.3f [m/s]", eventValue.getVelAirMax()));
+			
+			resultTxt.outputLine("\n ----------------------- * Max Air Speed * ---------------------- ");
+			
+			resultTxt.outputLine(String.format("Max Air Speed Time     : %.3f [sec]", eventValue.getTimeMaxVelAir()));
+			resultTxt.outputLine(String.format("Max Air Speed          : %.3f [m/s]", eventValue.getVelAirMax()));
 			resultTxt.outputLine(String.format("Max Air Speed Altitude : %.3f [km]", eventValue.getAltitudeMaxVelAir()));
-
-			resultTxt.outputLine(String.format("Max-Q Time : %.3f [sec]", eventValue.getTimeMaxQ()));
+			
+			resultTxt.outputLine("\n --------------------------- * Max-Q * -------------------------- ");
+			
+			resultTxt.outputLine(String.format("Max-Q Time              : %.3f [sec]", eventValue.getTimeMaxQ()));
 			resultTxt.outputLine(String.format("Max-Q Dynamics Pressure : %.3f [kPa]", eventValue.getDynamicsPressureMax()));
-			resultTxt.outputLine(String.format("Max-Q Altitude : %.3f [km]", eventValue.getAltitudeMaxQ()));
-
-			resultTxt.outputLine(String.format("Max Mach Time : %.3f [sec]", eventValue.getTimeMaxMach()));
-			resultTxt.outputLine(String.format("Max Mach : %.3f [-]", eventValue.getMachMax()));
+			resultTxt.outputLine(String.format("Max-Q Altitude          : %.3f [km]", eventValue.getAltitudeMaxQ()));
+			
+			resultTxt.outputLine("\n ------------------------- * Max Mach * ------------------------- ");
+			
+			resultTxt.outputLine(String.format("Max Mach Time     : %.3f [sec]", eventValue.getTimeMaxMach()));
+			resultTxt.outputLine(String.format("Max Mach          : %.3f [-]", eventValue.getMachMax()));
 			resultTxt.outputLine(String.format("Max Mach Altitude : %.3f [km]", eventValue.getAltitudeMaxMach()));
 			
-			resultTxt.outputLine(String.format("Max Normal Force Time : %.3f [sec]", eventValue.getTimeNormalMax()));
-			resultTxt.outputLine(String.format("Max Normal Force : %.3f [N]", eventValue.getNormalMax()));
+			resultTxt.outputLine("\n --------------------- * Max Normal Force * --------------------- ");
+			
+			resultTxt.outputLine(String.format("Max Normal Force Time     : %.3f [sec]", eventValue.getTimeNormalMax()));
+			resultTxt.outputLine(String.format("Max Normal Force          : %.3f [N]", eventValue.getNormalMax()));
 			resultTxt.outputLine(String.format("Max Normal Force Altitude : %.3f [km]", eventValue.getAltitudeNormalMax()));
 			
-			resultTxt.outputLine(String.format("Max Side Force Time : %.3f [sec]", eventValue.getTimeSideMach()));
-			resultTxt.outputLine(String.format("Max Side Force : %.3f [N]", eventValue.getSideMax()));
+			resultTxt.outputLine("\n ---------------------- * Max Side Force * ---------------------- ");
+			
+			resultTxt.outputLine(String.format("Max Side Force Time     : %.3f [sec]", eventValue.getTimeSideMach()));
+			resultTxt.outputLine(String.format("Max Side Force          : %.3f [N]", eventValue.getSideMax()));
 			resultTxt.outputLine(String.format("Max Side Force Altitude : %.3f [km]", eventValue.getAltitudeSideMax()));
-
+			
+			resultTxt.outputLine("\n ---------------------- * Parachute Open * ---------------------- ");
+			
 			resultTxt.outputLine(String.format("1st Parachute Open Time : %.3f [sec]", eventValue.getTime1stPara()));
 			resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", eventValue.getTime2ndPara()));
-
-			resultTxt.outputLine(String.format("Landing Trajectory Time %.3f [sec]", eventValue.getTimeLandingTrajectory()));
-			resultTxt.outputLine(String.format("Landing Trajectory Downrange %.3f [km]", eventValue.getDownrangeLandingTrajectory()));
+			
+			resultTxt.outputLine("\n -------------------- * Landing Trajectory * -------------------- ");
+			
+			resultTxt.outputLine(String.format("Landing Trajectory Time      : %.3f [sec]", eventValue.getTimeLandingTrajectory()));
+			resultTxt.outputLine(String.format("Landing Trajectory Downrange : %.3f [km]", eventValue.getDownrangeLandingTrajectory()));
 			double trajectry_point[] = {eventValue.getPosENUlandingTrajectory()[0], eventValue.getPosENUlandingTrajectory()[1], 0.0};
-			resultTxt.outputLine(String.format("Landing Trajectory Point : [ %.3f , %.3f ]", trajectry_point[0], trajectry_point[1]));
-			resultTxt.outputLine(String.format("Landing Trajectory LLH : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(trajectry_point)[0], ENUtoLLH.ENU2LLH(trajectry_point)[1]));
-
-			resultTxt.outputLine(String.format("Landing Parachute Time %.3f [sec]", eventValue.getTimeLandingParachute()));
-			resultTxt.outputLine(String.format("Landing Parachute Downrange %.3f [km]", eventValue.getDownrangeLandingParachute()));
+			resultTxt.outputLine(String.format("Landing Trajectory Point     : [ %.3f , %.3f ]", trajectry_point[0], trajectry_point[1]));
+			resultTxt.outputLine(String.format("Landing Trajectory LLH       : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(trajectry_point)[0], ENUtoLLH.ENU2LLH(trajectry_point)[1]));
+			
+			resultTxt.outputLine("\n -------------------- * Landing Parachute * -------------------- ");
+			
+			resultTxt.outputLine(String.format("Landing Parachute Time             : %.3f [sec]", eventValue.getTimeLandingParachute()));
+			resultTxt.outputLine(String.format("Landing Parachute Velocity Descent : %.3f [m/s]", eventValue.getVelDescentLandingParachute()));
+			resultTxt.outputLine(String.format("Landing Parachute Downrange        : %.3f [km]", eventValue.getDownrangeLandingParachute()));
 			double parachute_point[] = {eventValue.getPosENUlandingParachute()[0], eventValue.getPosENUlandingParachute()[1], 0.0};
-			resultTxt.outputLine(String.format("Landing Parachute Point : [ %.3f , %.3f ]", parachute_point[0], parachute_point[1]));
-			resultTxt.outputLine(String.format("Landing Parachute LLH : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(parachute_point)[0], ENUtoLLH.ENU2LLH(parachute_point)[1]));
+			resultTxt.outputLine(String.format("Landing Parachute Point            : [ %.3f , %.3f ]", parachute_point[0], parachute_point[1]));
+			resultTxt.outputLine(String.format("Landing Parachute LLH              : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(parachute_point)[0], ENUtoLLH.ENU2LLH(parachute_point)[1]));
 
 		}catch(IOException e) {
 			throw new RuntimeException(e) ;

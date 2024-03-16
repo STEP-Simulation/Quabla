@@ -12,12 +12,14 @@ import quabla.simulator.numerical_analysis.ArrayAnalysis;
  * */
 public class EventValueSingle {
 
+	private double fstMin, fstMax;
 	private double velLaunchClear;
 	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeNormalMax, timeSideMax, timeApogee, time1stPara, time2ndPara, timeLandingTrajectory, timeLandingParachute;
 	private double altApogee, altMaxQ, altVelAirMax, altMachMax, altNormalMax, altSideMax, alt1stPara, alt2ndPara;
 	private double accLaunchClear;
 	private double dynamicsPressureMax;
 	private double velAirMax, velAirApogee;
+	private double velDescent;
 	private double machMax;
 	private double normalMax, sideMax;
 	private double downrangeApogee, downrangeLandingTrajectory, downrangeLandingParachute;
@@ -28,6 +30,7 @@ public class EventValueSingle {
 	public EventValueSingle(LoggerVariable lvt) {
 		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
 		// イベント発生時のインデックスを外部から入力する必要があるもの(ランチクリアなど)は値入力時に計算
+		calculateFstMinMax(lvt);
 		calculateAtApogee(lvt);
 		calculateMachMax(lvt);
 		calculateAtVelAirMax(lvt);
@@ -75,6 +78,14 @@ public class EventValueSingle {
 		timeApogee = lvt.getTime(indexApogee);
 		downrangeApogee = lvt.getDownrangeLogArray()[indexApogee];
 		velAirApogee = lvt.getVelAirAbsLogArray()[indexApogee];
+	}
+
+	private void calculateFstMinMax(LoggerVariable lvt){
+		ArrayAnalysis aa = new ArrayAnalysis(lvt.getFstLogArray());
+		aa.calculateMinimumValue();
+		aa.calculateMaxValue();
+		fstMin = aa.getMinValue();
+		fstMax = aa.getMaxValue();
 	}
 
 	private void calculateAtVelAirMax(LoggerVariable lvt) {
@@ -150,6 +161,7 @@ public class EventValueSingle {
 		timeLandingParachute = lvp.getTime(indexLandingParachute);
 		System.arraycopy(lvp.getPosENUlog(indexLandingParachute), 0, posENUlandingParachute, 0, 2);
 		downrangeLandingParachute = lvp.getDownrangeArray()[indexLandingParachute];
+		velDescent = Math.abs(lvp.getVelDescentArray()[indexLandingParachute]);
 	}
 
 	// index入力後に実行する
@@ -162,6 +174,15 @@ public class EventValueSingle {
 	}
 
 	//-------------------- Get Function --------------------
+	// Fst
+	public double getFstMin(){
+		return fstMin;
+	}
+
+	public double getFstMax(){
+		return fstMax;
+	}
+	
 	// Launch Clear
 	public double getVelLaunchClear() {
 		return velLaunchClear;
@@ -285,7 +306,7 @@ public class EventValueSingle {
 		return indexSideMax;
 	}
 
-	// Landing Trajctory
+	// Landing Trajectory
 	public double getTimeLandingTrajectory() {
 		return timeLandingTrajectory;
 	}
@@ -340,7 +361,11 @@ public class EventValueSingle {
 	public double getDownrangeLandingParachute() {
 		return downrangeLandingParachute;
 	}
-
+	
+	public double getVelDescentLandingParachute(){
+		return velDescent;
+	}
+	
 	public int getIndexLandingParachute() {
 		return indexLandingParachute;
 	}
