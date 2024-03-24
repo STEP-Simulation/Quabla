@@ -79,9 +79,14 @@ public class Engine {
 		// Thin out of thrust data
 		int lengthInterpRaw = Math.min(thrust_data.length, 101);
 		int stepInterpRaw = Math.max(1, thrust_data.length / 100);
-		if (thrust_data.length - stepInterpRaw * 100 == 0) {
-			lengthInterpRaw -= 1;
+		lengthInterpRaw = thrust_data.length / stepInterpRaw;
+		// int idum = thrust_data.length % stepInterpRaw;
+		if (thrust_data.length % stepInterpRaw != 0){
+			lengthInterpRaw ++;
 		}
+		// if (thrust_data.length - stepInterpRaw * 100 == 0) {
+		// 	lengthInterpRaw -= 1;
+		// }
 		double[] timeInterpRaw = new double[lengthInterpRaw];
 		double[] mDotPropInterpRaw = new double[lengthInterpRaw];
 		double[] mOxInterpRaw = new double[lengthInterpRaw];
