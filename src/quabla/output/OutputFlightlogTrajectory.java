@@ -189,8 +189,8 @@ public class OutputFlightlogTrajectory {
 	 * @param filepath 出力先のファイルパス
 	 * @throws IOException
 	 * */
-	public OutputFlightlogTrajectory(LoggerVariable lv, EventValueSingle ivs) {
-		timeLandingTrajectory = ivs.getTimeLandingTrajectory();
+	public OutputFlightlogTrajectory(LoggerVariable lv, EventValueSingle evs) {
+		timeLandingTrajectory = evs.getTimeLandingTrajectory();
 
 		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
 		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
@@ -308,7 +308,6 @@ public class OutputFlightlogTrajectory {
 				break;
 			}
 		}
-
 
 		//ファイルのクローズ
 		try {
