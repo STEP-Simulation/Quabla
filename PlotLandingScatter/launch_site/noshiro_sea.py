@@ -53,8 +53,8 @@ class NoshiroSea(LaunchSite):
             point_ENU = cd.LLH2ENU(self.launch_LLH, point_LLH)
             point_ENU_array.append(matrix.dot(point_ENU))
         self.center_circle_ENU, self.edge1_ENU, self.edge2_ENU = point_ENU_array
-        self.xlim = x_offset + np.array(launch_site_info.xlim)
-        self.ylim = y_offset + np.array(launch_site_info.ylim)
+        self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
+        self.ylim = launch_site_info.y_offset + np.array(launch_site_info.ylim)
 
     def plot_landing_scatter(self):
         flight_mode = [self.trajectory, self.parachute]

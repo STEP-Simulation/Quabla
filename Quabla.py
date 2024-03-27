@@ -6,7 +6,7 @@ import os
 from flightgrapher import flightgrapher
 from plotlandingscatter import plotlandingscatter
 import csv
-from launch_site_info import OshimaLand, OshimaSea, NoshiroLand, NoshiroSea, OtherSite
+from PlotLandingScatter.launch_site.launch_site_info import OshimaLand, OshimaSea, NoshiroLand, NoshiroSea, OtherSite
 
 print("\n6DoF Rocket Simulator QUABLA by STEP... \n")
 print("-----------\n")
@@ -119,10 +119,12 @@ resultpath = result_dir + os.sep
 launcher_elevation = str(json_load['Launch Condition']['Launch Elevation [deg]'])
 
 #磁気偏角を考慮しているかどうかを取得 考慮されてたら下のパラメータは0でないはずなのでそこを参照
-if json_load['Launch Condition']['Input Magnetic Azimuth [deg]'] == '0.0':
-    magneticdec = 'n'
-else:
-    magneticdec = 'y'
+# if json_load['Launch Condition']['Input Magnetic Azimuth [deg]'] == '0.0':
+#     magneticdec = 'n'
+# else:
+#     magneticdec = 'y'
+# 地図そのものを回転させて対処する機能は廃止
+magneticdec = 'y'
 
 #グラフの描画
 if simulationmode == "single":

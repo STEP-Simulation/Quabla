@@ -19,10 +19,8 @@ class LandPoint:
         self.point_ENU_trajectory = point_ENU
         
     def make_land_point(self, launch_site_info, safety_exsist):
-        x_offset = 0.
-        y_offset = 0.
-        self.xlim = x_offset + np.array(launch_site_info.xlim)
-        self.ylim = y_offset + np.array(launch_site_info.ylim)
+        self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
+        self.ylim = launch_site_info.y_offset + np.array(launch_site_info.ylim)
 
         title = 'landing_point'
         fig = plt.figure(title, figsize=(8, 8))

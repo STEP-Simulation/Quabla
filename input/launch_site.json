@@ -12,7 +12,9 @@
         "fire_LLH":[34.735722, 139.421917, 0.0],
         "xlim_ENU":[-700, 800],
         "ylim_ENU":[-800, 700],
-        "img":"PlotLandingScatter/oshima_land_ver2.png"
+        "x_offset":-5.0,
+        "y_offset":0.0,
+        "img":"PlotLandingScatter/launch_site/img/oshima_land_ver2.png"
     },
 
     "oshima_sea": {
@@ -23,23 +25,25 @@
         "edge2_LLH":[34.667917, 139.428718, 1.0],
         "xlim_ENU":[-2015, 4810],
         "ylim_ENU":[-4860, 1050],
-        "img":"PlotLandingScatter/oshima_sea.png"
+        "x_offset":0.0,
+        "y_offset":0.0,
+        "img":"PlotLandingScatter/launch_site/img/oshima_sea.png"
     },
 
     "noshiro_land": {
         "launch_LLH": [40.138633, 139.984850, 0.0],
-        "safety_area_LLH":[[40.139725, 139.983939, 20.0],
-                           [40.136127, 139.982133, 20.0],
-                           [40.135607, 139.981753, 20.0],
-                           [40.134911, 139.981451, 20.0],
-                           [40.134821, 139.981692, 20.0],
-                           [40.135639, 139.983324, 20.0],
-                           [40.137052, 139.984608, 20.0],
-                           [40.138053, 139.985781, 20.0],
-                           [40.139075, 139.986297, 20.0]],
-        "xlim_ENU":[-495, 205],
-        "ylim_ENU":[-512, 198],
-        "img":"PlotLandingScatter/noshiro_land.png"
+        "safety_area_LLH":[[40.1349508, 139.981351, 20.0],
+                           [40.1347478, 139.981871, 20.0],
+                           [40.1356390, 139.983324, 20.0],
+                           [40.1380530, 139.985781, 20.0],
+                           [40.1400941, 139.986823, 20.0],
+                           [40.1411762, 139.988142, 20.0],
+                           [40.1420251, 139.985234, 20.0]],
+        "xlim_ENU":[-365, 335],
+        "ylim_ENU":[-500, 400],
+        "x_offset":20.0,
+        "y_offset":0.0,
+        "img":"PlotLandingScatter/launch_site/img/noshiro_land_ver2.png"
     },
 
     "noshiro_sea": {
@@ -50,6 +54,8 @@
         "edge2_LLH":[40.235585, 140.005619, 1.0],
         "xlim_ENU":[-3500, 500],
         "ylim_ENU":[-1500, 2000],
-        "img":"PlotLandingScatter/noshiro_sea.png"
+        "x_offset":0.0,
+        "y_offset":0.0,
+        "img":"PlotLandingScatter/launch_site/img/noshiro_sea.png"
     }
 }

@@ -96,11 +96,12 @@ class PlotGraph:
                 pol = kml.newpolygon(name="Safety Circle",
                                             outerboundaryis=polycircle.to_kml())
                 pol.style.polystyle.color = \
-                        simplekml.Color.changealphaint(60, simplekml.Color.aqua) # ここをいじることで円の色を変更できる
+                        simplekml.Color.changealphaint(60, simplekml.Color.white) # ここをいじることで円の色を変更できる
+                pol.style.linestyle.color = simplekml.Color.gold
                 lin.style.linestyle.width = 3
                 lin.altitudemode = simplekml.AltitudeMode.relativetoground
                 lin.style.linestyle.color = \
-                    simplekml.Color.changealphaint(255, simplekml.Color.aqua)
+                    simplekml.Color.changealphaint(255, simplekml.Color.gold)
             elif safety_circle == 0:
                 safety_area = np.vstack([safety_area,safety_area[0]])
                 lin = kml.newlinestring(name="breakwater line")
@@ -108,7 +109,7 @@ class PlotGraph:
                 lin.style.linestyle.width = 3
                 lin.altitudemode = simplekml.AltitudeMode.relativetoground
                 lin.style.linestyle.color = \
-                        simplekml.Color.changealphaint(255, simplekml.Color.aqua)
+                        simplekml.Color.changealphaint(255, simplekml.Color.gold)
 
 
         kml.save(self.result_dir + '/' + self.title + '.kml')

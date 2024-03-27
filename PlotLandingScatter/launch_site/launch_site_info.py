@@ -8,12 +8,14 @@ class LaunchSiteInfo(object):
         self.headquarters_LLH = np.zeros(3)
         self.fire_LLH = np.zeros(3)
         self.center_circle_LLH = np.zeros(3)
-        self.radius = 0
+        self.radius = 0.
         self.edge1_LLH = np.zeros(3)
         self.edge2_LLH = np.zeros(3)
         self.img = ''
         self.xlim = np.zeros(2)
         self.ylim = np.zeros(2)
+        self.x_offset = 0.
+        self.y_offset = 0.
 
 class OshimaLand(LaunchSiteInfo):
     def __init__(self, config):
@@ -26,6 +28,8 @@ class OshimaLand(LaunchSiteInfo):
         self.img = config.get('img')
         self.xlim = config.get('xlim_ENU')
         self.ylim = config.get('ylim_ENU')
+        self.x_offset = config.get('x_offset')
+        self.y_offset = config.get('y_offset')
 
 class OshimaSea(LaunchSiteInfo):
     def __init__(self, config):
@@ -39,6 +43,8 @@ class OshimaSea(LaunchSiteInfo):
         self.img = config.get('img')
         self.xlim = config.get('xlim_ENU')
         self.ylim = config.get('ylim_ENU')
+        self.x_offset = config.get('x_offset')
+        self.y_offset = config.get('y_offset')
 
 class NoshiroLand(LaunchSiteInfo):
     def __init__(self, config):
@@ -49,6 +55,8 @@ class NoshiroLand(LaunchSiteInfo):
         self.img = config.get('img')
         self.xlim = config.get('xlim_ENU')
         self.ylim = config.get('ylim_ENU')
+        self.x_offset = config.get('x_offset')
+        self.y_offset = config.get('y_offset')
 
 class NoshiroSea(LaunchSiteInfo):
     def __init__(self, config):
@@ -62,6 +70,8 @@ class NoshiroSea(LaunchSiteInfo):
         self.img = config.get('img')
         self.xlim = config.get('xlim_ENU')
         self.ylim = config.get('ylim_ENU')
+        self.x_offset = config.get('x_offset')
+        self.y_offset = config.get('y_offset')
 
 class OtherSite(LaunchSiteInfo):
     def __init__(self):

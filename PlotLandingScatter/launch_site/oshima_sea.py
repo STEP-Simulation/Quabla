@@ -45,8 +45,8 @@ class OshimaSea(LaunchSite):
             y_offset = -180.0
             print(self.magnetic_dec)
         matrix = trans_matrix(np.deg2rad(self.magnetic_dec))
-        self.xlim = x_offset + np.array(launch_site_info.xlim)
-        self.ylim = y_offset + np.array(launch_site_info.ylim)
+        self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
+        self.ylim = launch_site_info.y_offset + np.array(launch_site_info.ylim)
 
         point_LLH_array = [self.center_circle_LLH, edge1_LLH, edge2_LLH]
         point_ENU_array = []

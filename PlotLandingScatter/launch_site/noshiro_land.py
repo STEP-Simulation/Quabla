@@ -30,15 +30,13 @@ class NoshiroLand(LaunchSite):
         self.launch_LLH = launch_site_info.launch_LLH
 
         self.magnetic_dec = 0.0
-        x_offset = 0.0
-        y_offset = 0.0
         if magnetic_dec_exist:
             self.magnetic_dec = - magnetic_declination(self.launch_LLH[0], self.launch_LLH[1])
             x_offset = -22.0
             y_offset = 25.0
         matrix = trans_matrix(np.deg2rad(self.magnetic_dec))
-        self.xlim = x_offset + np.array(launch_site_info.xlim)
-        self.ylim = y_offset + np.array(launch_site_info.ylim)
+        self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
+        self.ylim = launch_site_info.y_offset + np.array(launch_site_info.ylim)
 
         # 落下保安域
         self.safety_LLH = launch_site_info.safety_area_LLH

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="1">
+        <Style id="4">
+            <LineStyle id="5">
+                <color>ff000000</color>
+                <colorMode>normal</colorMode>
+            </LineStyle>
+        </Style>
+        <Style id="8">
+            <IconStyle id="9">
+                <color>ff0000ff</color>
+                <colorMode>normal</colorMode>
+                <scale>1</scale>
+                <heading>0</heading>
+                <Icon id="10">
+                    <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+                </Icon>
+            </IconStyle>
+        </Style>
+        <Style id="13">
+            <LineStyle id="14">
+                <color>ff00d7ff</color>
+                <colorMode>normal</colorMode>
+            </LineStyle>
+        </Style>
+        <Placemark id="3">
+            <name>Area Range</name>
+            <styleUrl>#4</styleUrl>
+            <LineString id="2">
+                <coordinates>139.98074329805826,40.13412993401673,0.0 139.9889567019417,40.13412993401673,0.0 139.9889571899268,40.142235319173956,0.0 139.98074281007317,40.142235319173956,0.0 139.98074329805826,40.13412993401673,0.0</coordinates>
+            </LineString>
+        </Placemark>
+        <Placemark id="7">
+            <name>Launch</name>
+            <styleUrl>#8</styleUrl>
+            <Point id="6">
+                <coordinates>139.98485,40.138633,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="12">
+            <name>Safety Area</name>
+            <styleUrl>#13</styleUrl>
+            <LineString id="11">
+                <coordinates>139.981351,40.1349508,0.0 139.981871,40.1347478,0.0 139.983324,40.135639,0.0 139.985781,40.138053,0.0 139.986823,40.1400941,0.0 139.988142,40.1411762,0.0 139.985234,40.1420251,0.0 139.981351,40.1349508,0.0</coordinates>
+            </LineString>
+        </Placemark>
+    </Document>
+</kml>

@@ -43,8 +43,8 @@ class OshimaLand(LaunchSite):
             x_offset = -6.0
             y_offset = 2.0
         matrix = trans_matrix(np.deg2rad(self.magnetic_dec))
-        self.xlim = x_offset + np.array(launch_site_info.xlim)
-        self.ylim = y_offset + np.array(launch_site_info.ylim)
+        self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
+        self.ylim = launch_site_info.y_offset + np.array(launch_site_info.ylim)
 
         # 磁気偏角が存在する場合,回転行列で座標変換
         self.headquarters_ENU = matrix.dot(headquarters_ENU)

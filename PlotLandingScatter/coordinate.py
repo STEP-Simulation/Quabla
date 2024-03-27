@@ -114,6 +114,76 @@ def ENU2LLHforKml(launch_LLH, point_ENU):
 
 if __name__ == '__main__':
 
+    import sys
+    import json
+    import simplekml
+    from launch_site.launch_site_info import OshimaLand, OshimaSea, NoshiroLand, NoshiroSea, OtherSite
+
+    launch_site_json = json.load(open('./input/launch_site.json', 'r', encoding='utf-8'))
+
+    launch_site = '3'
+
+    if launch_site == '1':
+        launch_site_info = OshimaLand(launch_site_json.get('oshima_land'))
+        file_name = 'oshima_land'
+
+    elif launch_site == '2':
+        launch_site_info = OshimaSea(launch_site_json.get('oshima_sea'))
+        file_name = 'oshima_sea'
+
+    elif launch_site == '3':
+        launch_site_info = NoshiroLand(launch_site_json.get('noshiro_land'))
+        file_name = 'noshiro_land'
+
+    elif launch_site == '4':
+        launch_site_info = NoshiroSea(launch_site_json.get('noshiro_sea'))
+        file_name = 'noshiro_sea'
+
+    area_range_ENU = [[launch_site_info.xlim[0], launch_site_info.ylim[0], 0.],
+                      [launch_site_info.xlim[1], launch_site_info.ylim[0], 0.],
+                      [launch_site_info.xlim[1], launch_site_info.ylim[1], 0.],
+                      [launch_site_info.xlim[0], launch_site_info.ylim[1], 0.],
+                      [launch_site_info.xlim[0], launch_site_info.ylim[0], 0.]]
+    area_range_LLH = []
+    for pos in area_range_ENU:
+        area_range_LLH.append(ENU2LLHforKml(launch_site_info.launch_LLH, pos))
+
+    kml = simplekml.Kml()
+    linestring = kml.newlinestring(name='Area Range')
+    linestring.style.linestyle.color = simplekml.Color.black
+    linestring.coords = area_range_LLH
+
+    point_launch = kml.newpoint(name='Launch')
+    point_launch.style.iconstyle.color = simplekml.Color.red
+    point_launch.coords = [(launch_site_info.launch_LLH[1],
+                           launch_site_info.launch_LLH[0])]
+
+    if launch_site == '1' or launch_site == '3':
+        linestring_safety = kml.newlinestring(name='Safety Area')
+        linestring_safety.style.linestyle.color = simplekml.Color.gold
+        safety_area_LLH_kml = []
+        for llh in launch_site_info.safety_area_LLH:
+            safety_area_LLH_kml.append([llh[1], llh[0]])
+        safety_area_LLH_kml.append(safety_area_LLH_kml[0])
+        linestring_safety.coords = safety_area_LLH_kml
+
+    elif launch_site == '2' or launch_site == '4':
+        point_center = kml.newpoint(name='Center of Circle')
+        point_edge1 = kml.newpoint(name='Edge 1')
+        point_edge2 = kml.newpoint(name='Edge 2')
+        point_center.style.iconstyle.color = simplekml.Color.black
+        point_edge1.style.iconstyle.color = simplekml.Color.gold
+        point_edge2.style.iconstyle.color = simplekml.Color.gold
+        point_edge1.coords = [(launch_site_info.center_circle_LLH[1],
+                               launch_site_info.center_circle_LLH[0])]
+        point_edge1.coords = [(launch_site_info.edge1_LLH[1],
+                               launch_site_info.edge1_LLH[0])]
+        point_edge2.coords = [(launch_site_info.edge2_LLH[1],
+                               launch_site_info.edge2_LLH[0])]
+
+    kml.save('PlotLandingScatter/launch_site/kml/' + file_name + '.kml')
+    sys.exit()
+
     launch_LLH = np.array([0.0, 0.0, 0.0])
     pos_ENU = np.array([0.0, 0.0, 0.0])
     while(1):
