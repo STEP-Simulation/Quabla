@@ -1,3 +1,4 @@
+import os
 from turtle import color
 import matplotlib.pyplot as plt
 import numpy as np
@@ -22,7 +23,7 @@ class LandPoint:
         self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
         self.ylim = launch_site_info.y_offset + np.array(launch_site_info.ylim)
 
-        title = 'landing_point'
+        title = '_03_landing_point'
         fig = plt.figure(title, figsize=(8, 8))
         ax = fig.add_subplot()
         ax.set_title(title)
@@ -50,7 +51,7 @@ class LandPoint:
         ax.grid(ls='--', alpha=0.6)
         ax.legend()
         
-        fig.savefig(self.filepath + '/' + title + '.jpg')
+        fig.savefig(self.filepath + os.sep + title + '.jpg')
 
 
 

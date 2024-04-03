@@ -2,6 +2,7 @@ package quabla.simulator;
 
 import java.io.IOException;
 
+import quabla.output.OutputCsv;
 import quabla.output.OutputFlightlogParachute;
 import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
@@ -35,6 +36,9 @@ public class Solver {
 	private LoggerVariable trajectoryLog;
 	private LoggerVariableParachute parachuteLog;
 
+	private boolean is2ndPara;
+	private double timeBurnAct;
+
 	public Solver(String resultDir) {
 		this.resultDir = resultDir;
 	}
@@ -47,6 +51,8 @@ public class Solver {
 		double time1stPara;
 		double h = rocket.dt;
 		boolean isTipOff = false;
+		is2ndPara = rocket.para2Exist;
+		timeBurnAct = rocket.engine.timeActuate;
 
 		VariableTrajectory variableTrajectory = new VariableTrajectory(rocket);
 
@@ -267,7 +273,9 @@ public class Solver {
 			resultTxt.outputLine("\n ---------------------- * Parachute Open * ---------------------- ");
 			
 			resultTxt.outputLine(String.format("1st Parachute Open Time : %.3f [sec]", eventValue.getTime1stPara()));
-			resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", eventValue.getTime2ndPara()));
+			if (is2ndPara) {
+				resultTxt.outputLine(String.format("2nd Parachute Open Time : %.3f [sec]", eventValue.getTime2ndPara()));
+			}
 			
 			resultTxt.outputLine("\n -------------------- * Landing Trajectory * -------------------- ");
 			
@@ -295,6 +303,53 @@ public class Solver {
 		}catch(IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void outputResultSummary(){
+
+		OutputCsv summary = null;
+
+		String[] name = {
+			"Time Launch Clear [sec]",
+			"Time Engine Actuate [sec]",
+			"Time Apogee [sec]",
+			"Time 1st Parachute Open [sec]",
+			"Time 2nd Parachute Open [sec]"
+		};
+
+		try {
+			summary = new OutputCsv(resultDir + "summary.csv", name);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		try {
+			summary.outputFirstLine();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		double[] results = {
+			eventValue.getTimeLaunchClear(),
+			timeBurnAct,
+			eventValue.getTimeApogee(),
+			eventValue.getTime1stPara(),
+			eventValue.getTime2ndPara()
+		};
+
+
+		try {
+			summary.outputLine(results);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		try {
+			summary.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 
 }

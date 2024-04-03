@@ -20,40 +20,29 @@ Args
     img           : File path of lauch site image
     safety_exsist : True or false of safety area
 '''
-def flightgrapher(path, config_file, launch_site_info, safety_exist):
+def flightgrapher(path, launch_site_info, safety_exist):
+
     print("\n[Post Proc.] Start...")
 
-    filepath_trajectory = path + os.sep +'flightlog_trajectory.csv'
-    filepath_parachute = path + os.sep + 'flightlog_parachute.csv'
+    os.mkdir(path + os.sep +'_01_trajectory')
+    os.mkdir(path + os.sep +'_01_parachute')
 
-    # make directory
-    # ゴミコード
-    if os.path.exists(path + '/Trajectory'):
-        pass
-    else :
-        os.mkdir(path + '/Trajectory')
+    # 指定されたcsvファイルから飛翔履歴の取得
+    df_log_traj, df_summary_traj = FileReader(path, 'flightlog_trajectory.csv').get_df()
+    df_log_para, df_summary_para = FileReader(path, 'flightlog_parachute.csv').get_df()
 
-    if os.path.exists(path + '/Parachute'):
-        pass
-    else:
-        os.mkdir(path + '/Parachute')
+    # インスタンスの生成
+    graph_trajectory = GraphPlotterTrajectory(df_log_traj, df_summary_traj, path, launch_site_info.launch_LLH)
+    graph_parachute = GraphPlotterParachute(df_log_para, df_summary_para, path, launch_site_info.launch_LLH)
 
-        # 指定されたcsvファイルから飛翔履歴の取得
-        df_trajectory = FileReader(filepath_trajectory).get_df()
-        df_parachute = FileReader(filepath_parachute).get_df()
+    land_point = LandPoint(path, launch_site_info.img)
 
-        # インスタンスの生成
-        graph_trajectory = GraphPlotterTrajectory(df_trajectory, path, launch_site_info.launch_LLH)
-        graph_parachute = GraphPlotterParachute(df_parachute, path, config_file, launch_site_info.launch_LLH)
+    # グラフのプロット
+    graph_trajectory.plot_graph(land_point)
+    graph_parachute.plot_graph(land_point)
 
-        land_point = LandPoint(path, launch_site_info.img)
+    makekml(path, launch_site_info.center_circle_LLH, launch_site_info.radius, launch_site_info.safety_area_LLH, \
+            launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
+    land_point.make_land_point(launch_site_info, safety_exist)
 
-        # グラフのプロット
-        graph_trajectory.plot_graph(land_point)
-        graph_parachute.plot_graph(graph_trajectory.get_index_coast(),land_point)
-
-        makekml(path, launch_site_info.center_circle_LLH, launch_site_info.radius, launch_site_info.safety_area_LLH, \
-                launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
-        land_point.make_land_point(launch_site_info, safety_exist)
-
-        print('[Post Proc.] Done!\n')
+    print('[Post Proc.] Done!\n')

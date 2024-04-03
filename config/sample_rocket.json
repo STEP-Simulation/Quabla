@@ -25,8 +25,8 @@
 	},
 
 	"Wind":{
-		"Wind File Exist": false,
-		"Wind File": "config/wind_noshiro_2022.csv",
+		"Wind File Exist": true,
+		"Wind File": "config/wind.csv",
 		"__comment" : "Wind Model : lawならべき法則　constantなら一定風速 multiモードなら自動でlawになる",
 		"Wind Model":"law",
 		"Wind Power Law Coefficient": 4.5,
@@ -40,7 +40,7 @@
 	},
 
 	"Launch Condition": {
-		"Date": "2021/11/6 8:30",
+		"Date": "2021/11/6 8:30:00.0",
 		"__comment1" : "1:oshima_land , 2:oshima_sea, 3:noshiro_land, 4:noshiro_sea, 5:other",
 		"Site":"4",
 		"__comment2" : "If Site = 5, please enter [Launch lat, Launch lon, Launch height]",
@@ -71,7 +71,7 @@
 	},
 
 	"Engine":{
-		"Thrust Curve":"config/thrust_20210804.csv",
+		"Thrust Curve":"config/thrust.csv",
 		"Nozzle Throat Diameter [mm]": 11.45,
 		"Nozzle Expansion Ratio": 2.6951,
 		"Burn Time [sec]": 3.6,
@@ -90,7 +90,7 @@
 
 	"Parachute": {
 		"1st Parachute CdS [m2]": 0.1888,
-		"Parachute Opening Lag [sec]": 0.0,
+		"Parachute Opening Lag [sec]": 1.0,
 		"2nd Parachute Exist": true,
 		"2nd Parachute CdS [m2]": 0.6306,
 		"2nd Parachute Opening Altitude [m]": 300,

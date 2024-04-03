@@ -129,7 +129,7 @@ magneticdec = 'y'
 #グラフの描画
 if simulationmode == "single":
     
-    flightgrapher(resultpath, json_load, launch_site_info, safety_exist)
+    flightgrapher(resultpath, launch_site_info, safety_exist)
 
 elif simulationmode == "multi":
     

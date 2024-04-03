@@ -62,6 +62,7 @@ public class QUABLA {
 			solver.solveDynamics(rocket);
 			solver.makeResult();
 			solver.outputResultTxt();
+			solver.outputResultSummary();
 			break;
 
 		case "multi":
