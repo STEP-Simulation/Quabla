@@ -1,3 +1,4 @@
+import os
 import matplotlib.pyplot as plt
 from cProfile import label
 from mpl_toolkits.mplot3d import Axes3D
@@ -152,7 +153,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/Position_ENU.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Position_ENU.png')
 
         fig1 = plt.figure('Flightlog' + flightType)
         origin = np.zeros(3)
@@ -170,7 +171,7 @@ class GraphPlotterTrajectory:
         ax.grid()
         ax.legend()
         ax.set_zlim(bottom=0.0)
-        fig1.savefig(self.filepath + '/' + flightType + '/Flightlog.png')
+        fig1.savefig(self.filepath + os.sep + flightType + os.sep + 'Flightlog.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Velocity ENU')
@@ -189,7 +190,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/VelocityENU.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'VelocityENU.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Angular Speed BODY')
@@ -208,7 +209,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/omegaBODY.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'omegaBODY.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Quaternion')
@@ -229,7 +230,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/Quaternion.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Quaternion.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Mass')
@@ -250,7 +251,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/Mass.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Mass.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Moment of Inertia')
@@ -267,7 +268,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/MomentOfInertia.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'MomentOfInertia.png')
 
         fig2, trajectory = plt.subplots()
         trajectory.set_title('Trajectory')
@@ -283,7 +284,7 @@ class GraphPlotterTrajectory:
         trajectory.imshow(img_logo, extent=(get_extent_values(fig2, trajectory, aspect_logo)), alpha=0.5)
         trajectory.grid()
         trajectory.set_aspect('equal')
-        fig2.savefig(self.filepath + '/' + flightType + '/Trajectory.png')
+        fig2.savefig(self.filepath + os.sep + flightType + os.sep + 'Trajectory.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Downrange')
@@ -300,7 +301,7 @@ class GraphPlotterTrajectory:
         ax.set_ylabel('North [km]')
         ax.grid()
         ax.set_aspect('equal')
-        fig.savefig(self.filepath + '/' + flightType + '/Downrange.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Downrange.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Air Speed')
@@ -319,7 +320,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/AirSpeed.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'AirSpeed.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Mach Number')
@@ -333,7 +334,7 @@ class GraphPlotterTrajectory:
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
         ax.set_aspect('auto')
         ax.grid()
-        fig.savefig(self.filepath + '/' + flightType + '/MachNumber.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'MachNumber.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Attitude')
@@ -352,7 +353,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/Attitude.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Attitude.png')
         
         fig, ax = plt.subplots()
         ax.set_title('AoA AoS')
@@ -369,7 +370,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/AoA_AoS.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'AoA_AoS.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Center of Gravity')
@@ -392,7 +393,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/CenterOfGravity.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'CenterOfGravity.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Fst')
@@ -408,7 +409,7 @@ class GraphPlotterTrajectory:
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
         ax.set_aspect('auto')
         ax.grid()
-        fig.savefig(self.filepath + '/' + flightType + '/Fst.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Fst.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Dynamics Pressure')
@@ -423,7 +424,7 @@ class GraphPlotterTrajectory:
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
         ax.set_aspect('auto')
         ax.grid()
-        fig.savefig(self.filepath + '/' + flightType + '/DynamicsPressure.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'DynamicsPressure.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Force Aero')
@@ -442,7 +443,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/ForceAero.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'ForceAero.png')
         
         fig, ax = plt.subplots()
         ax.set_title('Force Thrust')
@@ -456,7 +457,7 @@ class GraphPlotterTrajectory:
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
         ax.set_aspect('auto')
         ax.grid()
-        fig.savefig(self.filepath + '/' + flightType + '/ForceThrust.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'ForceThrust.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Force Body')
@@ -475,7 +476,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/ForceBODY.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'ForceBODY.png')
 
        #  plt.figure('Acceleration ENU' + flightType)
        #  plt.title('Acceleration ENU')
@@ -487,7 +488,7 @@ class GraphPlotterTrajectory:
        #  plt.xlim(xmin=0.0)
        #  plt.grid()
        #  plt.legend()
-       #  plt.savefig(self.filepath + '/' + flightType + '/AccelerationENU.png')
+       #  plt.savefig(self.filepath + os.sep + flightType + os.sep + 'AccelerationENU.png')
 
         plt.close('all')
 
@@ -508,7 +509,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/AccelerationBODY.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'AccelerationBODY.png')
 
         plt.close('all')
 
@@ -531,7 +532,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/MomentBODY_X-Axis.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'MomentBODY_X-Axis.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Moment Body Y-Axis')
@@ -552,7 +553,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/MomentBODY_Y-Axis.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'MomentBODY_Y-Axis.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Moment Body Z-Axis')
@@ -573,7 +574,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + '/' + flightType + '/MomentBODY_Z-Axis.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'MomentBODY_Z-Axis.png')
 
         vENU2LLH = np.vectorize(ENU2LLH, excluded=['launch_LLH'], signature="(1),(3)->(3)")
         log_LLH = vENU2LLH(self.Launch_LLH, self.pos_ENU_log)
