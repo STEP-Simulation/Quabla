@@ -130,6 +130,9 @@ Enter the path of rocket paramater file (...json):
 計算したい機体データの`**.json`ファイルをanaconda prompt（Macはterminal）にドラッグ&ドロップし，Enterキーを押す．
 （Macの場合，ファイル末尾に半角スペースが追加されてしまうため，末尾の半角スペースを消す．）
 `**.json`ファイルの絶対パスまたは相対パスを直接入力しても問題ない．
+ここで相対パスを用いた場合，jsonファイル内でパスを使用しているファイルのパスも相対パスで指定する必要がある。
+絶対パスを用いた場合は、jsonファイル内でも推力履歴等のファイルの場所を絶対パスで指定する必要がある。
+絶対パスで統一することを強く推奨する。
 `**.json`ファイルの各パラメータの説明は後述．
 サンプルの機体データとして，`config/`フォルダ内に`sample_rocket.json`が格納されている．
 
@@ -211,7 +214,6 @@ Enter simulation mode (single or multi):
 |Nozzle Throat Diameter|mm|ノズルスロートの直径|
 |Nozzle Expansion Ratio|-|ノズル開口比。ノズルの出口面積とスロートの面積比とすること。|
 |Burn Time|sec|燃焼時間。作動時間とは異なる。|
-<!-- |Isp|sec|平均比推力。平均比推力の算出に用いる平均推力と推進剤質量の算出には燃焼時間を用いること。| -->
 |Tank Volume|cc|酸化剤タンクの容量。|
 |Oxidizer Density|kg/m^3|酸化剤密度。
 |Length Fuel-C.G. from End|m|機体後端から燃料（グレイン，固形燃料）重心までの距離。インジェクターベルは燃料重心に含めない。|
