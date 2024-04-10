@@ -4,6 +4,8 @@ import numpy as np
 import sys
 import json
 import os
+import matplotlib.pyplot as plt
+import numpy as np
 from flightgrapher import flightgrapher
 from plotlandingscatter import plotlandingscatter
 import csv
@@ -152,9 +154,30 @@ def copy_config_files(json_config, path_config, path_result):
     shutil.copy(json_config["Engine"]["Thrust Curve"], dir_config + os.sep + model_name + '_thrust.csv')
     json_copy["Engine"]["Thrust Curve"] = dir_config + os.sep + model_name + '_thrust.csv'
 
+    fig, ax = plt.subplots()
+    ax.set_title('Thrust vs. Time')
+    thrust_array = np.loadtxt(json_config["Engine"]["Thrust Curve"], delimiter=',', skiprows=1)
+    ax.plot(thrust_array[:, 0], thrust_array[:, 1], color='#FF4B00')
+    ax.set_xlim(xmin=0., xmax=thrust_array[-1, 0])
+    ax.set_ylim(ymin=0.)
+    ax.set_xlabel('Time [sec]')
+    ax.set_ylabel('Thrust [N]')
+    ax.grid()
+    fig.savefig(dir_config + os.sep + '_thrust.png')
+
     if json_copy["Wind"]["Wind File Exist"]:
         shutil.copy(json_config["Wind"]["Wind File"], dir_config + os.sep + model_name + '_wind.csv')
         json_copy["Wind"]["Wind File"] = dir_config + os.sep + model_name + '_wind.csv'
+
+        fig, ax = plt.subplots()
+        ax.set_title('Wind Speed vs. Altitude')
+        wind_array = np.loadtxt(json_config["Wind"]["Wind File"], delimiter=',', skiprows=1)
+        ax.plot(wind_array[:, 1], wind_array[:, 0], color='#FF4B00', marker='o')
+        ax.set_ylim(ymin=0.)
+        ax.set_xlabel('Wind Speed [m/s]')
+        ax.set_ylabel('Altitude [m]')
+        ax.grid()
+        fig.savefig(dir_config + os.sep + '_wind.png')
 
     else:
         json_copy["Wind"]["Wind File"] = ''
@@ -163,6 +186,17 @@ def copy_config_files(json_config, path_config, path_result):
         shutil.copy(json_config["Aero"]["Cd File"], dir_config + os.sep + model_name + '_Cd.csv')
         json_copy["Aero"]["Cd File"] = dir_config + os.sep + model_name + '_Cd.csv'
 
+        fig, ax = plt.subplots()
+        ax.set_title('$C_D$ vs. Mach')
+        Cd_array = np.loadtxt(json_config["Aero"]["Cd File"], delimiter=',', skiprows=1)
+        ax.plot(Cd_array[:, 0], Cd_array[:, 1], color='#FF4B00', marker='o')
+        ax.set_xlim(xmin=0.)
+        # ax.set_ylim(ymin=0.)
+        ax.set_xlabel('Mach Number [-]')
+        ax.set_ylabel('$C_D$ [-]')
+        ax.grid()
+        fig.savefig(dir_config + os.sep + '_Cd.png')
+
     else:
         json_copy["Aero"]["Cd File"] = ''
 
@@ -170,12 +204,34 @@ def copy_config_files(json_config, path_config, path_result):
         shutil.copy(json_config["Aero"]["Length-C.P. File"], dir_config + os.sep + model_name + '_Lcp.csv')
         json_copy["Aero"]["Length-C.P. File"] = dir_config + os.sep + model_name + '_Lcp.csv'
 
+        fig, ax = plt.subplots()
+        ax.set_title('$L_{C.P.}$ vs. Mach')
+        lcp_array = np.loadtxt(json_config["Aero"]["Length-C.P. File"], delimiter=',', skiprows=1)
+        ax.plot(lcp_array[:, 0], lcp_array[:, 1], color='#FF4B00', marker='o')
+        ax.set_xlim(xmin=0.)
+        # ax.set_ylim(ymin=0.)
+        ax.set_xlabel('Mach Number [-]')
+        ax.set_ylabel('$L_{C.P.}$ [m]')
+        ax.grid()
+        fig.savefig(dir_config + os.sep + '_Lcp.png')
+
     else:
         json_copy["Aero"]["Length-C.P. File"] = ''
 
     if json_copy["Aero"]["CNa File Exist"]:
         shutil.copy(json_config["Aero"]["CNa File"], dir_config + os.sep + model_name + '_CNa.csv')
         json_copy["Aero"]["CNa File"] = dir_config + os.sep + model_name + '_CNa.csv'
+
+        fig, ax = plt.subplots()
+        ax.set_title('$C_{Na}$ vs. Mach')
+        CNa_array = np.loadtxt(json_config["Aero"]["CNa File"], delimiter=',', skiprows=1)
+        ax.plot(CNa_array[:, 0], CNa_array[:, 1], color='#FF4B00', marker='o')
+        ax.set_xlim(xmin=0.)
+        # ax.set_ylim(ymin=0.)
+        ax.set_xlabel('Mach Number [-]')
+        ax.set_ylabel('$C_{Na}$ [-]')
+        ax.grid()
+        fig.savefig(dir_config + os.sep + '_CNa.png')
 
     else:
         json_copy["Aero"]["CNa File"] = ''
