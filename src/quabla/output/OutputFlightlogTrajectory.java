@@ -81,6 +81,8 @@ public class OutputFlightlogTrajectory {
 	lcpAnaly,
 	IjRollAnaly,
 	IjPitchAnaly,
+	CdAnaly,
+	CNaAnaly,
 	altitudeAnaly,
 	downrangeAnaly,
 	velAirENUanaly,
@@ -139,6 +141,8 @@ public class OutputFlightlogTrajectory {
 			"Lcp [m]",
 			"Ij_roll [kg m2]",
 			"Ij_pitch [kg m2]",
+			"C_D [-]",
+			"C_Na [1/rad]",
 			"Altitude [km]",
 			"Downrange [km]",
 			"vel_air_east [m/s]",
@@ -208,6 +212,8 @@ public class OutputFlightlogTrajectory {
 		lcpAnaly = new Interpolation(lv.getTimeArray(), lv.getLcpLogArray());
 		IjRollAnaly = new Interpolation(lv.getTimeArray(), lv.getIjRollLogArray());
 		IjPitchAnaly = new Interpolation(lv.getTimeArray(), lv.getIjPitchLogArray());
+		CdAnaly = new Interpolation(lv.getTimeArray(), lv.getCdLog());
+		CNaAnaly = new Interpolation(lv.getTimeArray(), lv.getCNaLog());
 		altitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAltitudeLogArray());
 		downrangeAnaly = new Interpolation(lv.getTimeArray(), lv.getDownrangeLogArray());
 		velAirENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirENUlogArray());
@@ -274,30 +280,32 @@ public class OutputFlightlogTrajectory {
 			result[25] = lcpAnaly.linearInterp1column(time);
 			result[26] = IjRollAnaly.linearInterp1column(time);
 			result[27] = IjPitchAnaly.linearInterp1column(time);
-			result[28] = altitudeAnaly.linearInterp1column(time);
-			result[29] = downrangeAnaly.linearInterp1column(time);
-			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 30, 3);
-			System.arraycopy(velAirBODYanaly.linearInterpPluralColumns(time), 0, result, 33, 3);
-			result[36] = velAirAbsAnaly.linearInterp1column(time);
-			result[37] = alphaAnaly.linearInterp1column(time);
-			result[38] = betaAnaly.linearInterp1column(time);
-			result[39] = machAnaly.linearInterp1column(time);
-			result[40] = dynamicsPressureAnaly.linearInterp1column(time);
-			result[41] = fstAnaly.linearInterp1column(time);
-			result[42] = dragAnaly.linearInterp1column(time);
-			result[43] = normalAnaly.linearInterp1column(time);
-			result[44] = sideAnaly.linearInterp1column(time);
-			result[45] = thrustAnaly.linearInterp1column(time);
-			System.arraycopy(forceBODYanaly.linearInterpPluralColumns(time), 0, result, 46, 3);
-			System.arraycopy(accENUanaly.linearInterpPluralColumns(time), 0, result, 49, 3);
-			System.arraycopy(accBODYanaly.linearInterpPluralColumns(time), 0, result, 52, 3);
-			result[55] = accAbsAnaly.linearInterp1column(time);
-			System.arraycopy(momentAeroAnaly.linearInterpPluralColumns(time), 0, result, 56, 3);
-			System.arraycopy(momentAeroDampingAnaly.linearInterpPluralColumns(time), 0, result, 59, 3);
-			System.arraycopy(momentJetDampingAnaly.linearInterpPluralColumns(time), 0, result, 62, 3);
-			System.arraycopy(momentGyroAnaly.linearInterpPluralColumns(time), 0, result, 65, 3);
-			System.arraycopy(momentAnaly.linearInterpPluralColumns(time), 0, result, 68, 3);
-			result[71] = pAirAnaly.linearInterp1column(time);
+			result[28] = CdAnaly.linearInterp1column(time);
+			result[29] = CNaAnaly.linearInterp1column(time);
+			result[30] = altitudeAnaly.linearInterp1column(time);
+			result[31] = downrangeAnaly.linearInterp1column(time);
+			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 32, 3);
+			System.arraycopy(velAirBODYanaly.linearInterpPluralColumns(time), 0, result, 35, 3);
+			result[38] = velAirAbsAnaly.linearInterp1column(time);
+			result[39] = alphaAnaly.linearInterp1column(time);
+			result[40] = betaAnaly.linearInterp1column(time);
+			result[41] = machAnaly.linearInterp1column(time);
+			result[42] = dynamicsPressureAnaly.linearInterp1column(time);
+			result[43] = fstAnaly.linearInterp1column(time);
+			result[44] = dragAnaly.linearInterp1column(time);
+			result[45] = normalAnaly.linearInterp1column(time);
+			result[46] = sideAnaly.linearInterp1column(time);
+			result[47] = thrustAnaly.linearInterp1column(time);
+			System.arraycopy(forceBODYanaly.linearInterpPluralColumns(time), 0, result, 48, 3);
+			System.arraycopy(accENUanaly.linearInterpPluralColumns(time), 0, result, 51, 3);
+			System.arraycopy(accBODYanaly.linearInterpPluralColumns(time), 0, result, 54, 3);
+			result[57] = accAbsAnaly.linearInterp1column(time);
+			System.arraycopy(momentAeroAnaly.linearInterpPluralColumns(time), 0, result, 58, 3);
+			System.arraycopy(momentAeroDampingAnaly.linearInterpPluralColumns(time), 0, result, 61, 3);
+			System.arraycopy(momentJetDampingAnaly.linearInterpPluralColumns(time), 0, result, 64, 3);
+			System.arraycopy(momentGyroAnaly.linearInterpPluralColumns(time), 0, result, 67, 3);
+			System.arraycopy(momentAnaly.linearInterpPluralColumns(time), 0, result, 70, 3);
+			result[73] = pAirAnaly.linearInterp1column(time);
 
 			try {
 				flightlog.outputLine(result);

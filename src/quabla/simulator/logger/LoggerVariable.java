@@ -31,6 +31,8 @@ public class LoggerVariable {
 	private double[] lcpLog;
 	private double[] IjRollLog;
 	private double[] IjPitchLog;
+	private double[] CdLog;
+	private double[] CNaLog;
 	private double[] altitudeLog;
 	private double[] downrangeLog;
 	private double[][] velAirENUlog;
@@ -102,6 +104,8 @@ public class LoggerVariable {
 		lcpLog = new double[length];
 		IjRollLog = new double[length];
 		IjPitchLog = new double[length];
+		CdLog = new double[length];
+		CNaLog = new double[length];
 		altitudeLog = new double[length];
 		downrangeLog = new double[length];
 		velAirENUlog = new double[length][3];
@@ -147,6 +151,8 @@ public class LoggerVariable {
 			lcpLog[i] = ovt.getLcp();
 			IjRollLog[i] = ovt.getIjRoll();
 			IjPitchLog[i] = ovt.getIjPitch();
+			CdLog[i] = ovt.getCd();
+			CNaLog[i] = ovt.getCNa();
 			altitudeLog[i] = ovt.getAltitude();
 			downrangeLog[i] = ovt.getDownrange();
 			System.arraycopy(ovt.getVelAirENU(), 0, velAirENUlog[i], 0, 3);
@@ -278,8 +284,16 @@ public class LoggerVariable {
 		return IjRollLog;
 	}
 
-	public double[] getIjPitchLogArray	() {
+	public double[] getIjPitchLogArray() {
 		return IjPitchLog;
+	}
+
+	public double[] getCdLog(){
+		return CdLog;
+	}
+
+	public double[] getCNaLog(){
+		return CNaLog;
 	}
 
 	public double[] getAltitudeLogArray() {

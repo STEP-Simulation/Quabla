@@ -53,6 +53,8 @@ public class OtherVariableTrajectory {
 	private double lcp;
 	private double IjRoll, IjPitch;
 	private double[] IjDot = new double[3];
+	private double Cd;
+	private double CNa;
 	private double altitude, downrange;
 	private double[] velAirENU = new double[3];
 	private double[] velAirBODY = new double[3];
@@ -134,9 +136,11 @@ public class OtherVariableTrajectory {
 		Fst = (lcp - lcg) / rocket.L * 100.0;
 
 		// force
-		drag = dynamicsPressure * rocket.aero.Cd(Mach) * rocket.S;
-		normal = dynamicsPressure * rocket.aero.CNa(Mach) * rocket.S * alphaRad;
-		side = dynamicsPressure * rocket.aero.CNa(Mach) * rocket.S * betaRad;
+		Cd = rocket.aero.Cd(Mach);
+		CNa = rocket.aero.CNa(Mach);
+		drag = dynamicsPressure * Cd * rocket.S;
+		normal = dynamicsPressure * CNa * rocket.S * alphaRad;
+		side = dynamicsPressure * CNa * rocket.S * betaRad;
 
 		double pressureThrust;
 		thrust = rocket.engine.thrust(time);
@@ -237,6 +241,14 @@ public class OtherVariableTrajectory {
 
 	public double getIjPitch() {
 		return IjPitch;
+	}
+
+	public double getCd(){
+		return Cd;
+	}
+
+	public double getCNa(){
+		return CNa;
 	}
 
 	public double getAltitude() {
