@@ -43,20 +43,22 @@ public class DynamicsTrajectory extends AbstractDynamics {
 	@Override
 	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
 
-		// Import variable
+		// ----------------------------------------------------------------
+		//  Import variable
+		// ----------------------------------------------------------------
 		velENU = variable.getVelENU();
 		omegaBODY = variable.getOmegaBODY();
 		MathematicalVector quat = new MathematicalVector(Coordinate.nomalizeQuat(variable.getQuat().toDouble()));
 		double altitude = variable.getAltitude();
 		double t = variable.getTime();
+		// ----------------------------------------------------------------
 
 		double m = rocket.getMass(t);
-		double mDot = rocket.mdot(t);
 		double p = omegaBODY.toDouble(0);
 		double q = omegaBODY.toDouble(1);
 		double r = omegaBODY.toDouble(2);
 
-		// Translation coodinate
+		// Translation coordinate
 		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.toDouble()));
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
@@ -69,7 +71,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		double v = velAirBODY.toDouble(1);
 		double w = velAirBODY.toDouble(2);
 
-		double alpha , beta; //angle of atack , angle of side-slip
+		double alpha , beta; //angle of attack , angle of side-slip
 		if(velAirAbs <= 0.0) {
 			alpha = 0.0;
 			beta = 0.0;
@@ -113,7 +115,6 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		// Center of Gravity , Pressure
 		double lcg = rocket.getLcg(t);
-		// double lcgProp = rocket.getLcgProp(t);
 		double lcp = rocket.aero.Lcp(Mach);
 
 		// Momento of Inertia
@@ -161,6 +162,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		MathematicalMatrix tensor = new MathematicalMatrix(Coordinate.Omega_tensor(p, q, r));
 		MathematicalVector quatdot = tensor.dot(quat).multiply(0.5);
 
+		// Store Minute Change
 		delta.setDeltaPosENU(velENU);
 		delta.setDeltaVelENU(accENU);
 		delta.setDeltaOmegaBODY(omegadot);
