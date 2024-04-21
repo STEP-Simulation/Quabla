@@ -3,15 +3,15 @@ package quabla.output;
 import java.io.IOException;
 
 import quabla.simulator.logger.LoggerVariableParachute;
-import quabla.simulator.logger.event_value.EventValueSingle;
-import quabla.simulator.numerical_analysis.Interpolation;
 
 public class OutputFlightlogParachute {
 
-	private final double TIME_STEP_OUTPUT = 0.01;
+	private int index;
+	private double[] result;
 
 	private final String[] nameList = {
 			"time [sec]",
+			"time_step [sec]",
 			"pos_east [m]",
 			"pos_north [m]",
 			"pos_up [m]",
@@ -26,33 +26,30 @@ public class OutputFlightlogParachute {
 			"vel_air_abs [m/s]"
 	};
 
-	private Interpolation
-	posENUanaly,
-	velENUanaly,
-//	windENUanaly,
-	altitudeAnaly,
-	downrangeAnaly,
-	velAirENUanaly,
-	velAirAbsAnaly;
-
-	private double timeLandingParachute;
-
+	private double[]   timeArray;
+	private double[]   timeStepArray;
+	private double[][] posENUArray;
+	private double[][] velENUArray;
+	private double[]   altitudeArray;
+	private double[]   downrangeArray;
+	private double[][] velAirENUArray;
+	private double[]   velAirAbsArray;
+	
 	/**
 	 * @param filename 出力するcsvのfile名
 	 * @throws IOException
 	 * */
-	public OutputFlightlogParachute(LoggerVariableParachute lv, EventValueSingle ivs) {
+	public OutputFlightlogParachute(LoggerVariableParachute lv) {
 
-//		time1stPara = ivs.getTime1stPara();
-		timeLandingParachute = ivs.getTimeLandingParachute();
+		timeArray = lv.getTimeArray().clone();
+		timeStepArray = lv.getTimeStepArray();
+		posENUArray = lv.getPosENUArray().clone();
+		velENUArray = lv.getVelENUArray().clone();
+		altitudeArray = lv.getAltitudeArray().clone();
+		downrangeArray = lv.getDownrangeArray().clone();
+		velAirENUArray = lv.getVelAirENUArray().clone();
+		velAirAbsArray = lv.getVelAirAbsArray().clone();
 
-		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
-		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
-//		windENUanaly = new Interpolation(lv.getTimeArray(), lv.getWindENUarray());
-		altitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAltitudeArray());
-		downrangeAnaly = new Interpolation(lv.getTimeArray(), lv.getDownrangeArray());
-		velAirENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirENUArray());
-		velAirAbsAnaly = new Interpolation(lv.getTimeArray(), lv.getVelAirAbsArray());
 	}
 
 	public void runOutputLine(String filepath) {
@@ -69,34 +66,24 @@ public class OutputFlightlogParachute {
 			throw new RuntimeException(e);
 		}
 
-		double time;
+		for(int i = 0; i < timeArray.length; i++) {
 
-		for(int i = 0; ; i++) {
-			time = i * TIME_STEP_OUTPUT;
+			result = new double[nameList.length];
+			index = 0;
 
-			double[] result = new double[13];
-
-			result[0] = time;
-			System.arraycopy(posENUanaly.linearInterpPluralColumns(time), 0, result, 1, 3);
-//			if(time <= time1stPara) {
-			System.arraycopy(velENUanaly.linearInterpPluralColumns(time), 0, result, 4, 3);
-//			}else {
-//				System.arraycopy(windENUanaly.linearInterpPluralColumns(time), 0, result, 4, 2);
-//				result[6] = velENUanaly.linearInterpPluralColumns(time)[2];
-//			}
-			result[7] = altitudeAnaly.linearInterp1column(time);
-			result[8] = downrangeAnaly.linearInterp1column(time);
-			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 9, 3);
-			result[12] = velAirAbsAnaly.linearInterp1column(time);
+			storeResultArray(timeArray[i]);
+			storeResultArray(timeStepArray[i]);
+			storeResultArray(posENUArray[i]);
+			storeResultArray(velENUArray[i]);
+			storeResultArray(altitudeArray[i]);
+			storeResultArray(downrangeArray[i]);
+			storeResultArray(velAirENUArray[i]);
+			storeResultArray(velAirAbsArray[i]);
 
 			try {
 				flightlog.outputLine(result);
 			} catch (IOException e) {
 				throw new RuntimeException(e);
-			}
-
-			if(time >= timeLandingParachute) {
-				break;
 			}
 
 		}
@@ -107,5 +94,15 @@ public class OutputFlightlogParachute {
 		}
 
 	}
+	private void storeResultArray(double var){
 
+		result[index] = var;
+		index ++;
+	}
+
+	private void storeResultArray(double[] var){
+
+		System.arraycopy(var, 0, result, index, var.length);
+		index += var.length;
+	}
 }

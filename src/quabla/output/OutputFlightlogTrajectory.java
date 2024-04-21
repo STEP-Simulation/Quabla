@@ -3,117 +3,63 @@ package quabla.output;
 import java.io.IOException;
 
 import quabla.simulator.logger.LoggerVariable;
-import quabla.simulator.logger.event_value.EventValueSingle;
-import quabla.simulator.numerical_analysis.Interpolation;
 
 /**
  * OutputFlightlogTrajectory makes csv file and writes value about flightlog(e.g. time, position, velocity, etc.).
  * */
 public class OutputFlightlogTrajectory {
 
-	/* 出力するもの
-	 * 時間 time,
-	 * 位置局所水平座標軸成分x_ENU,
-	 * 位置局所水平座標軸成分y_ENU,
-	 * 位置局所水平座標軸成分z_ENU,
-	 * 対地速度局所水平座標軸成分Vel_x_ENU,
-	 * 対地速度局所水平座標軸成分Vel_y_ENU,
-	 * 対地速度局所水平座標軸成分Vel_z_ENU,
-	 * 角速度機体軸成分 p
-	 * 角速度機体軸成分 q
-	 * 角速度機体軸成分 r
-	 * クォータニオン q0
-	 * クォータニオン q1
-	 * クォータニオン q2
-	 * クォータニオン q3
-	 * 全機質量 m
-	 * 燃料質量 mFuel
-	 * 酸化剤質量 mOx
-	 * 推進剤質量 mProp
-	 * 高さalttitude
-	 * 水平距離downrange
-	 * 対気速度絶対値Vel_air_abs
-	 * マッハ数Mach
-	 * 迎角alpha
-	 * 横滑り角beta
-	 * 方位角azimuth
-	 * 仰角elevation
-	 * ロール角roll
-	 * 重心位置Lcg
-	 * 圧力中心位置Lcp
-	 * 全長安定比Fst
-	 * 動圧dynamics_pressure
-	 * 抗力drag
-	 * 法線力normal
-	 * 横力side
-	 * 推力thrust
-	 * 力Force_x_Body
-	 * 力Force_y_Body
-	 * 力Force_z_Body
-	 * 加速度局所水平座標軸成分Acc_x_ENU
-	 * 加速度局所水平座標軸成分Acc_y_ENU
-	 * 加速度局所水平座標軸成分Acc_z_ENU
-	 * 加速度機体軸成分Acc_x_Body
-	 * 加速度機体軸成分Acc_y_Body
-	 * 加速度機体軸成分Acc_z_Body
-	 * 加速度絶対値Acc_abs
-	 * */
-/*
-	private String filepath;
-	private InputParam spec;
-	private LoggerVariable lv;
-	private LoggerOtherVariableTrajectory lov;*/
+	private double[]   timeArray;
+	private double[]   timeStepArray;
+	private double[][] posENUArray;
+	private double[][] velENUArray;
+	private double[][] omegaBODYArray;
+	private double[][] quatArray;
+	private double[][] attitudeArray;
+	private double[]   massArray;
+	private double[]   massFuelArray;
+	private double[]   massOxArray;
+	private double[]   massPropArray;
+	private double[]   lcgArray;
+	private double[]   lcgFuelArray;
+	private double[]   lcgOxArray;
+	private double[]   lcgPropArray;
+	private double[]   lcpArray;
+	private double[]   IjRollArray;
+	private double[]   IjPitchArray;
+	private double[]   CdArray;
+	private double[]   CNaArray;
+	private double[]   altitudeArray;
+	private double[]   downrangeArray;
+	private double[][] velAirENUArray;
+	private double[][] velAirBODYArray;
+	private double[]   velAirAbsArray;
+	private double[]   alphaArray;
+	private double[]   betaArray;
+	private double[]   machArray;
+	private double[]   dynamicsPressureArray;
+	private double[]   fstArray;
+	private double[]   dragArray;
+	private double[]   normalArray;
+	private double[]   sideArray;
+	private double[]   thrustArray;
+	private double[][] forceBODYArray;
+	private double[][] accENUArray;
+	private double[][] accBODYArray;
+	private double[]   accAbsArray;
+	private double[][] momentAeroArray;
+	private double[][] momentAeroDampingArray;
+	private double[][] momentJetDampingArray;
+	private double[][] momentGyroArray;
+	private double[][] momentArray;
+	private double[]   pAirArray;
 
-	private Interpolation
-	posENUanaly,
-	velENUanaly,
-	omegaBODYanaly,
-	quatAnaly,
-	attitudeAnaly,
-	massAnaly,
-	massFuelAnaly,
-	massOxAnaly,
-	massPropAnaly,
-	lcgAnaly,
-	lcgFuelAnaly,
-	lcgOxAnaly,
-	lcgPropAnaly,
-	lcpAnaly,
-	IjRollAnaly,
-	IjPitchAnaly,
-	CdAnaly,
-	CNaAnaly,
-	altitudeAnaly,
-	downrangeAnaly,
-	velAirENUanaly,
-	velAirBODYanaly,
-	velAirAbsAnaly,
-	alphaAnaly,
-	betaAnaly,
-	machAnaly,
-	dynamicsPressureAnaly,
-	fstAnaly,
-	dragAnaly,
-	normalAnaly,
-	sideAnaly,
-	thrustAnaly,
-	forceBODYanaly,
-	accENUanaly,
-	accBODYanaly,
-	accAbsAnaly,
-	momentAeroAnaly,
-	momentAeroDampingAnaly,
-	momentJetDampingAnaly,
-	momentGyroAnaly,
-	momentAnaly,
-	pAirAnaly;
-
-	private double timeLandingTrajectory;
-
-	private final double TIME_STEP_OUTPUT = 0.01;
+	private int index;
+	private double[] result;
 
 	private final String[] nameList = {
 			"time [sec]",
+			"time_step [sec]",
 			"pos_east [m]",
 			"pos_north [m]",
 			"pos_up [m]",
@@ -186,58 +132,60 @@ public class OutputFlightlogTrajectory {
 			"moment_x [N*m]",
 			"moment_y [N*m]",
 			"moment_z [N*m]",
-			"Atomospheric Pressure [Pa]"
+			"Atmospheric Pressure [Pa]"
 	};
 
 	/**
 	 * @param filepath 出力先のファイルパス
 	 * @throws IOException
 	 * */
-	public OutputFlightlogTrajectory(LoggerVariable lv, EventValueSingle evs) {
-		timeLandingTrajectory = evs.getTimeLandingTrajectory();
+	public OutputFlightlogTrajectory(LoggerVariable lv) {
 
-		posENUanaly = new Interpolation(lv.getTimeArray(), lv.getPosENUArray());
-		velENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelENUArray());
-		omegaBODYanaly = new Interpolation(lv.getTimeArray(), lv.getOmegaBODYArray());
-		quatAnaly = new Interpolation(lv.getTimeArray(), lv.getQuatArray());
-		attitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAttitudeLogArray());
-		massAnaly = new Interpolation(lv.getTimeArray(), lv.getMassLogArray());
-		massFuelAnaly = new Interpolation(lv.getTimeArray(), lv.getMassFuelLogArray());
-		massOxAnaly = new Interpolation(lv.getTimeArray(), lv.getMassOxLogArray());
-		massPropAnaly = new Interpolation(lv.getTimeArray(), lv.getMassPropLogArray());
-		lcgAnaly = new Interpolation(lv.getTimeArray(), lv.getLcgLogArray());
-		lcgFuelAnaly = new Interpolation(lv.getTimeArray(), lv.getLcgFuelLogArray());
-		lcgOxAnaly = new Interpolation(lv.getTimeArray(), lv.getLcgOxLogArray());
-		lcgPropAnaly = new Interpolation(lv.getTimeArray(), lv.getLcgPropLogArray());
-		lcpAnaly = new Interpolation(lv.getTimeArray(), lv.getLcpLogArray());
-		IjRollAnaly = new Interpolation(lv.getTimeArray(), lv.getIjRollLogArray());
-		IjPitchAnaly = new Interpolation(lv.getTimeArray(), lv.getIjPitchLogArray());
-		CdAnaly = new Interpolation(lv.getTimeArray(), lv.getCdLog());
-		CNaAnaly = new Interpolation(lv.getTimeArray(), lv.getCNaLog());
-		altitudeAnaly = new Interpolation(lv.getTimeArray(), lv.getAltitudeLogArray());
-		downrangeAnaly = new Interpolation(lv.getTimeArray(), lv.getDownrangeLogArray());
-		velAirENUanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirENUlogArray());
-		velAirBODYanaly = new Interpolation(lv.getTimeArray(), lv.getVelAirBODYlogArray());
-		velAirAbsAnaly = new Interpolation(lv.getTimeArray(), lv.getVelAirAbsLogArray());
-		alphaAnaly = new Interpolation(lv.getTimeArray(), lv.getAlphaLogArray());
-		betaAnaly = new Interpolation(lv.getTimeArray(), lv.getBetaLogArray());
-		machAnaly = new Interpolation(lv.getTimeArray(), lv.getMachLogArray());
-		dynamicsPressureAnaly = new Interpolation(lv.getTimeArray(), lv.getDynamicsPressureLogArray());
-		fstAnaly = new Interpolation(lv.getTimeArray(), lv.getFstLogArray());
-		dragAnaly = new Interpolation(lv.getTimeArray(), lv.getDragLogArray());
-		normalAnaly = new Interpolation(lv.getTimeArray(), lv.getNormalLogArray());
-		sideAnaly = new Interpolation(lv.getTimeArray(), lv.getSideLogArray());
-		thrustAnaly = new Interpolation(lv.getTimeArray(), lv.getThrustLogArray());
-		forceBODYanaly = new Interpolation(lv.getTimeArray(), lv.getForceBODYlogArray());
-		accENUanaly = new Interpolation(lv.getTimeArray(), lv.getAccENUlogArray());
-		accBODYanaly = new Interpolation(lv.getTimeArray(), lv.getAccBODYlogArray());
-		accAbsAnaly = new Interpolation(lv.getTimeArray(), lv.getAccAbsLogArray());
-		momentAeroAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentAeroLogArray());
-		momentAeroDampingAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentAeroDamipingLogArray());
-		momentJetDampingAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentJetDampingLogArray());
-		momentGyroAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentGyroLogArray());
-		momentAnaly = new Interpolation(lv.getTimeArray(), lv.getMomentLogArray());
-		pAirAnaly = new Interpolation(lv.getTimeArray(), lv.getPairLogArray());
+		timeArray = lv.getTimeArray().clone();
+		timeStepArray = lv.getTimeStepArray().clone();
+		posENUArray = lv.getPosENUArray().clone();
+		velENUArray = lv.getVelENUArray().clone();
+		omegaBODYArray = lv.getOmegaBODYArray().clone();
+		quatArray = lv.getQuatArray().clone();
+		attitudeArray = lv.getAttitudeLogArray().clone();
+		massArray = lv.getMassLogArray().clone();
+		massFuelArray = lv.getMassFuelLogArray().clone();
+		massOxArray = lv.getMassOxLogArray().clone();
+		massPropArray = lv.getMassPropLogArray().clone();
+		lcgArray = lv.getLcgLogArray().clone();
+		lcgFuelArray = lv.getLcgFuelLogArray().clone();
+		lcgOxArray = lv.getLcgOxLogArray().clone();
+		lcgPropArray = lv.getLcgPropLogArray().clone();
+		lcpArray = lv.getLcpLogArray().clone();
+		IjRollArray = lv.getIjRollLogArray().clone();
+		IjPitchArray = lv.getIjPitchLogArray().clone();
+		CdArray = lv.getCdLog().clone();
+		CNaArray = lv.getCNaLog().clone();
+		altitudeArray = lv.getAltitudeLogArray().clone();
+		downrangeArray = lv.getDownrangeLogArray().clone();
+		velAirENUArray = lv.getVelAirENUlogArray().clone();
+		velAirBODYArray = lv.getVelAirBODYlogArray().clone();
+		velAirAbsArray = lv.getVelAirAbsLogArray().clone();
+		alphaArray = lv.getAlphaLogArray().clone();
+		betaArray = lv.getBetaLogArray().clone();
+		machArray = lv.getMachLogArray().clone();
+		dynamicsPressureArray = lv.getDynamicsPressureLogArray().clone();
+		fstArray = lv.getFstLogArray().clone();
+		dragArray = lv.getDragLogArray().clone();
+		normalArray = lv.getNormalLogArray().clone();
+		sideArray = lv.getSideLogArray().clone();
+		thrustArray = lv.getThrustLogArray().clone();
+		forceBODYArray = lv.getForceBODYlogArray().clone();
+		accENUArray = lv.getAccENUlogArray().clone();
+		accBODYArray = lv.getAccBODYlogArray().clone();
+		accAbsArray = lv.getAccAbsLogArray().clone();
+		momentAeroArray = lv.getMomentAeroLogArray().clone();
+		momentAeroDampingArray = lv.getMomentAeroDamipingLogArray().clone();
+		momentJetDampingArray = lv.getMomentJetDampingLogArray().clone();
+		momentGyroArray = lv.getMomentGyroLogArray().clone();
+		momentArray = lv.getMomentLogArray().clone();
+		pAirArray = lv.getPairLogArray().clone();
+
 	}
 
 	public void runOutputLine(String filepath) {
@@ -256,64 +204,61 @@ public class OutputFlightlogTrajectory {
 			throw new RuntimeException(e);
 		}
 
-		double time;
+		for(int i = 0; i < timeArray.length; i++) {
 
-		for(int i = 0; ; i++) {
-			time = i * TIME_STEP_OUTPUT;
+			result = new double[nameList.length];
+			index = 0;
 
-			double[] result = new double[nameList.length];
+			storeResultArray(timeArray[i]);
+			storeResultArray(timeStepArray[i]);
+			storeResultArray(posENUArray[i]);
+			storeResultArray(velENUArray[i]);
+			storeResultArray(omegaBODYArray[i]);
+			storeResultArray(quatArray[i]);
+			storeResultArray(attitudeArray[i]);
+			storeResultArray(massArray[i]);
+			storeResultArray(massFuelArray[i]);
+			storeResultArray(massOxArray[i]);
+			storeResultArray(massPropArray[i]);
+			storeResultArray(lcgArray[i]);
+			storeResultArray(lcgFuelArray[i]);
+			storeResultArray(lcgOxArray[i]);
+			storeResultArray(lcgPropArray[i]);
+			storeResultArray(lcpArray[i]);
+			storeResultArray(IjRollArray[i]);
+			storeResultArray(IjPitchArray[i]);
+			storeResultArray(CdArray[i]);
+			storeResultArray(CNaArray[i]);
+			storeResultArray(altitudeArray[i]);
+			storeResultArray(downrangeArray[i]);
+			storeResultArray(velAirENUArray[i]);
+			storeResultArray(velAirBODYArray[i]);
+			storeResultArray(velAirAbsArray[i]);
+			storeResultArray(alphaArray[i]);
+			storeResultArray(betaArray[i]);
+			storeResultArray(machArray[i]);
+			storeResultArray(dynamicsPressureArray[i]);
+			storeResultArray(fstArray[i]);
+			storeResultArray(dragArray[i]);
+			storeResultArray(normalArray[i]);
+			storeResultArray(sideArray[i]);
+			storeResultArray(thrustArray[i]);
+			storeResultArray(forceBODYArray[i]);
+			storeResultArray(accENUArray[i]);
+			storeResultArray(accBODYArray[i]);
+			storeResultArray(accAbsArray[i]);
+			storeResultArray(momentAeroArray[i]);
+			storeResultArray(momentAeroDampingArray[i]);
+			storeResultArray(momentJetDampingArray[i]);
+			storeResultArray(momentGyroArray[i]);
+			storeResultArray(momentArray[i]);
+			storeResultArray(pAirArray[i]);
 
-			result[0] = time;
-			System.arraycopy(posENUanaly.linearInterpPluralColumns(time), 0, result, 1, 3);
-			System.arraycopy(velENUanaly.linearInterpPluralColumns(time), 0, result, 4, 3);
-			System.arraycopy(omegaBODYanaly.linearInterpPluralColumns(time), 0, result, 7, 3);
-			System.arraycopy(quatAnaly.linearInterpPluralColumns(time), 0, result, 10, 4);
-			System.arraycopy(attitudeAnaly.linearInterpPluralColumns(time), 0, result, 14, 3);
-			result[17] = massAnaly.linearInterp1column(time);
-			result[18] = massFuelAnaly.linearInterp1column(time);
-			result[19] = massOxAnaly.linearInterp1column(time);
-			result[20] = massPropAnaly.linearInterp1column(time);
-			result[21] = lcgAnaly.linearInterp1column(time);
-			result[22] = lcgFuelAnaly.linearInterp1column(time);
-			result[23] = lcgOxAnaly.linearInterp1column(time);
-			result[24] = lcgPropAnaly.linearInterp1column(time);
-			result[25] = lcpAnaly.linearInterp1column(time);
-			result[26] = IjRollAnaly.linearInterp1column(time);
-			result[27] = IjPitchAnaly.linearInterp1column(time);
-			result[28] = CdAnaly.linearInterp1column(time);
-			result[29] = CNaAnaly.linearInterp1column(time);
-			result[30] = altitudeAnaly.linearInterp1column(time);
-			result[31] = downrangeAnaly.linearInterp1column(time);
-			System.arraycopy(velAirENUanaly.linearInterpPluralColumns(time), 0, result, 32, 3);
-			System.arraycopy(velAirBODYanaly.linearInterpPluralColumns(time), 0, result, 35, 3);
-			result[38] = velAirAbsAnaly.linearInterp1column(time);
-			result[39] = alphaAnaly.linearInterp1column(time);
-			result[40] = betaAnaly.linearInterp1column(time);
-			result[41] = machAnaly.linearInterp1column(time);
-			result[42] = dynamicsPressureAnaly.linearInterp1column(time);
-			result[43] = fstAnaly.linearInterp1column(time);
-			result[44] = dragAnaly.linearInterp1column(time);
-			result[45] = normalAnaly.linearInterp1column(time);
-			result[46] = sideAnaly.linearInterp1column(time);
-			result[47] = thrustAnaly.linearInterp1column(time);
-			System.arraycopy(forceBODYanaly.linearInterpPluralColumns(time), 0, result, 48, 3);
-			System.arraycopy(accENUanaly.linearInterpPluralColumns(time), 0, result, 51, 3);
-			System.arraycopy(accBODYanaly.linearInterpPluralColumns(time), 0, result, 54, 3);
-			result[57] = accAbsAnaly.linearInterp1column(time);
-			System.arraycopy(momentAeroAnaly.linearInterpPluralColumns(time), 0, result, 58, 3);
-			System.arraycopy(momentAeroDampingAnaly.linearInterpPluralColumns(time), 0, result, 61, 3);
-			System.arraycopy(momentJetDampingAnaly.linearInterpPluralColumns(time), 0, result, 64, 3);
-			System.arraycopy(momentGyroAnaly.linearInterpPluralColumns(time), 0, result, 67, 3);
-			System.arraycopy(momentAnaly.linearInterpPluralColumns(time), 0, result, 70, 3);
-			result[73] = pAirAnaly.linearInterp1column(time);
 
 			try {
 				flightlog.outputLine(result);
 			}catch(IOException e) {
 				throw new RuntimeException(e);
-			}
-			if(time >= timeLandingTrajectory) {
-				break;
 			}
 		}
 
@@ -325,4 +270,15 @@ public class OutputFlightlogTrajectory {
 		}
 	}
 
+	private void storeResultArray(double var){
+
+		result[index] = var;
+		index ++;
+	}
+
+	private void storeResultArray(double[] var){
+
+		System.arraycopy(var, 0, result, index, var.length);
+		index += var.length;
+	}
 }

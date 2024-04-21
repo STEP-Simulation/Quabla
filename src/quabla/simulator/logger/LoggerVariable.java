@@ -14,6 +14,7 @@ import quabla.simulator.variable.VariableTrajectory;
 public class LoggerVariable {
 
 	private double[] timeArray;
+	private double[] timeStepArray;
 	private double[][] posENUlog;
 	private double[][] velENUlog;
 	private double[][] omegaBODYlog;
@@ -61,6 +62,7 @@ public class LoggerVariable {
 	private int length;
 
 	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
+	private ArrayList<Double> timeStepLogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> posENULogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> omegaBODYlogArraylist = new ArrayList<>();
@@ -72,9 +74,10 @@ public class LoggerVariable {
 		ovt = new OtherVariableTrajectory(rocket);
 	}
 
-	public void log(VariableTrajectory variable) {
+	public void log(VariableTrajectory variable, double timeStep) {
 
 		timeLogArrayList.add(variable.getTime());
+		timeStepLogArrayList.add(timeStep);
 		posENULogArrayList.add(variable.getPosENU());
 		velENUlogArrayList.add(variable.getVelENU());
 		omegaBODYlogArraylist.add(variable.getOmegaBODY());
@@ -87,6 +90,7 @@ public class LoggerVariable {
 		length = timeLogArrayList.size();
 
 		timeArray = new double[length];
+		timeStepArray = new double[length];
 		posENUlog = new double[length][3];
 		velENUlog = new double[length][3];
 		omegaBODYlog = new double[length][3];
@@ -133,6 +137,7 @@ public class LoggerVariable {
 
 		for(int i = 0; i < length; i++) {
 			timeArray[i] = timeLogArrayList.get(i);
+			timeStepArray[i] = timeStepLogArrayList.get(i);
 			System.arraycopy(posENULogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
 			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
 			System.arraycopy(omegaBODYlogArraylist.get(i).toDouble(), 0, omegaBODYlog[i], 0, 3);
@@ -189,6 +194,10 @@ public class LoggerVariable {
 		return timeLogArrayList.get(index);
 	}
 
+	public double getTimeStepArrayList(int index) {
+		return timeStepLogArrayList.get(index);
+	}
+
 	public MathematicalVector getPosENU(int index) {
 		return posENULogArrayList.get(index);
 	}
@@ -201,12 +210,12 @@ public class LoggerVariable {
 		return omegaBODYlogArraylist.get(index);
 	}
 
-	private MathematicalVector getQuat(int index) {
-		return quatLogArrayList.get(index);
-	}
-
 	public double getTime(int index) {
 		return timeArray[index];
+	}
+
+	public double getTimeStep(int index) {
+		return timeStepArray[index];
 	}
 
 	public double[] getPosENUlog(int index) {
@@ -227,6 +236,10 @@ public class LoggerVariable {
 
 	public double[] getTimeArray() {
 		return timeArray;
+	}
+
+	public double[] getTimeStepArray() {
+		return timeStepArray;
 	}
 
 	public double[][] getPosENUArray(){
@@ -252,12 +265,15 @@ public class LoggerVariable {
 	public double[] getMassLogArray() {
 		return massLog;
 	}
+
 	public double[] getMassFuelLogArray() {
 		return massFuelLog;
 	}
+
 	public double[] getMassOxLogArray() {
 		return massOxLog;
 	}
+
 	public double[] getMassPropLogArray() {
 		return massPropLog;
 	}
@@ -397,6 +413,7 @@ public class LoggerVariable {
 	 * */
 	public void dumpArrayList() {
 		timeLogArrayList = null;
+		timeStepLogArrayList = null;
 		posENULogArrayList = null;
 		velENUlogArrayList = null;
 		omegaBODYlogArraylist = null;

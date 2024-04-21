@@ -10,4 +10,6 @@ public abstract class AbstractODEsolver {
 
 	//public abstract DynamicsMinuteChangeParachute compute(VariableParachute variable, DynamicsParachute dyn);
 	public abstract AbstractDynamicsMinuteChange compute(AbstractVariable variable, AbstractDynamics dyn);
+	public abstract double getTimeStep();
+	public abstract void setTimeStep(double timeStep);
 }

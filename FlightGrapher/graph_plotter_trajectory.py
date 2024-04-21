@@ -16,6 +16,7 @@ class GraphPlotterTrajectory:
         self.filepath = filepath
 
         self.time_array = np.array(df_log['time [sec]'])
+        self.time_step_array = np.array(df_log['time_step [sec]'])
         self.pos_ENU_log = np.array([[east, north, up] 
                                     for east, north, up 
                                     in zip(df_log['pos_east [m]'], 
@@ -139,6 +140,22 @@ class GraphPlotterTrajectory:
         plt.close('all')
 
         fig, ax = plt.subplots()
+        ax.set_title('Time Step')
+        ax.plot(self.time_array[:self.index_coast], self.time_step_array[:self.index_coast], color='#FF4B00', linestyle='-')
+        ax.plot(self.time_array[self.index_coast:], self.time_step_array[self.index_coast:], color='#FF4B00', linestyle='--')
+        ax.text(x=self.time_array[self.index_coast], y=self.time_step_array[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.set_xlabel('Time [sec]')
+        ax.set_ylabel('Time Step [sec]')
+        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_ylim(ymin=0.)
+        ymin, ymax = ax.get_ylim()
+        ax.set_ylim(ymin=ymin, ymax=ymax)
+        ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
+        ax.set_aspect('auto')
+        ax.grid()
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'TimeStep.png')
+
+        fig, ax = plt.subplots()
         ax.set_title('Position ENU')
         ax.plot(self.time_array[:self.index_coast], self.pos_ENU_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label='East')
         ax.plot(self.time_array[:self.index_coast], self.pos_ENU_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label='North')
@@ -155,7 +172,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Position_ENU.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'PositionENU.png')
 
         fig1 = plt.figure('Flightlog' + flightType)
         origin = np.zeros(3)
@@ -307,6 +324,8 @@ class GraphPlotterTrajectory:
         trajectory.grid()
         trajectory.set_aspect('equal')
         fig2.savefig(self.filepath + os.sep + flightType + os.sep + 'Trajectory.png')
+
+        plt.close('all')
 
         fig, ax = plt.subplots()
         ax.set_title('Downrange')

@@ -42,7 +42,8 @@ public class FlightEventJudgement {
 	public boolean judgeApogee(VariableTrajectory variable) {
 		boolean judge;
 
-		if((variable.getTime() >= rocket.engine.timeBurnout) && (variable.getVelDescent() >= 0.0)) {
+		if( (variable.getTime() >= rocket.engine.timeBurnout) 
+		&&  (variable.getVelDescent() <= 0.0)) {
 			judge = true;
 		}else {
 			judge = false;

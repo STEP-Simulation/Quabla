@@ -11,7 +11,6 @@ public class VariableParachute extends AbstractVariable{
 	private AbstractWind wind;
 
 	private double time;
-	private double h;
 
 	private MathematicalVector posENU = new MathematicalVector(MathematicalVector.ZERO);
 	private MathematicalVector velENU = new MathematicalVector(MathematicalVector.ZERO);
@@ -28,14 +27,12 @@ public class VariableParachute extends AbstractVariable{
 		velDescent = variable.getVelDescent();
 	}
 	
-	public VariableParachute(Rocket rocket, double dt) {
+	public VariableParachute(Rocket rocket) {
 		time = 0.0;
 		posENU = new MathematicalVector(0.0, 0.0, 0.0);
 		velENU = new MathematicalVector(0.0, 0.0, 0.0);
 		velDescent = 0.0;
 		wind = rocket.wind;
-//		h = rocket.dt;
-		h = dt;
 	}
 
 	public void set(VariableParachute variable) {
@@ -44,6 +41,7 @@ public class VariableParachute extends AbstractVariable{
 	}
 
 	public void set(LoggerVariable logdata, int index) {
+		time = logdata.getTime(index);
 		posENU = new MathematicalVector(logdata.getPosENUlog(index));
 		velDescent = logdata.getVelENUlog(index)[2];
 	}
@@ -119,11 +117,11 @@ public class VariableParachute extends AbstractVariable{
 		return x;
 	}
 
-	public void update(double time, AbstractDynamicsMinuteChange delta) {
+	public void update(double timeStep, AbstractDynamicsMinuteChange delta) {
 
-		setTime(time);
-		setPosENU(posENU.add(delta.getDeltaPosENU().multiply(h)));
-		setVelDescent(velDescent + delta.getDeltaVelDescent() * h);
+		setTime(time + timeStep);
+		setPosENU(posENU.add(delta.getDeltaPosENU().multiply(timeStep)));
+		setVelDescent(velDescent + delta.getDeltaVelDescent() * timeStep);
 		double altitude = getAltitude();
 		System.arraycopy(wind.getWindENU(altitude), 0, windENU, 0, 2);
 		velENU.set(windENU[0], windENU[1], velDescent);

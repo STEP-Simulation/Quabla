@@ -17,7 +17,7 @@ public class VariableTrajectory extends AbstractVariable{
 	private Rocket rocket;
 
 	private double time;
-	private final double h;
+	// private final double h;
 
 	//Main parameters
 	private MathematicalVector posENU;
@@ -30,7 +30,7 @@ public class VariableTrajectory extends AbstractVariable{
 
 	public VariableTrajectory(Rocket rocket) {
 		this.rocket = rocket;
-		h = rocket.dt;
+		// h = rocket.dt;
 		setInitialVariable();
 	}
 
@@ -182,13 +182,13 @@ public class VariableTrajectory extends AbstractVariable{
 
 	//TODO DynamicsMinuteChangeからVariableをセット
 	@Override
-	public void update(double time, AbstractDynamicsMinuteChange delta) {
+	public void update(double timeStep, AbstractDynamicsMinuteChange delta) {
 
-		setTime(time);
-		setPos_ENU(posENU.add(delta.getDeltaPosENU().multiply(h)));
-		setVelENU(velENU.add(delta.getDeltaVelENU().multiply(h)));
-		setOmegaBODY(omegaBODY.add(delta.getDeltaOmegaBODY().multiply(h)));
-		setQuat(quat.add(delta.getDeltaQuat().multiply(h)));
+		setTime(time + timeStep);
+		setPos_ENU(posENU.add(delta.getDeltaPosENU().multiply(timeStep)));
+		setVelENU(velENU.add(delta.getDeltaVelENU().multiply(timeStep)));
+		setOmegaBODY(omegaBODY.add(delta.getDeltaOmegaBODY().multiply(timeStep)));
+		setQuat(quat.add(delta.getDeltaQuat().multiply(timeStep)));
 
 	}
 

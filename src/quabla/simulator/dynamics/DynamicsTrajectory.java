@@ -14,6 +14,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 	private Rocket rocket;
 
 	MathematicalVector velENU = new MathematicalVector();
+	MathematicalVector velBODY = new MathematicalVector();
 	MathematicalVector omegaBODY = new MathematicalVector();
 	MathematicalVector velAirENU = new MathematicalVector();
 	MathematicalVector velAirBODY = new MathematicalVector();
@@ -23,7 +24,9 @@ public class DynamicsTrajectory extends AbstractDynamics {
 	MathematicalVector thrust = new MathematicalVector ();
 	MathematicalVector forceAero = new MathematicalVector ();
 	MathematicalVector forceENU = new MathematicalVector ();
+	MathematicalVector forceBODY = new MathematicalVector ();
 	MathematicalVector accENU = new MathematicalVector ();
+	MathematicalVector accBODY = new MathematicalVector ();
 	MathematicalVector armMoment = new MathematicalVector();
 	MathematicalVector momentAero = new MathematicalVector();
 	MathematicalVector momentAeroDamping = new MathematicalVector();
@@ -102,13 +105,15 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		// Newton Equation
 		forceENU = dcmBODY2ENU.dot(thrust.add(forceAero));
+		// forceBODY = thrust.add(forceAero);
 
 		// Accelaration
 		accENU = forceENU.multiply(1 / m).add(gENU);
+		// accBODY = (forceBODY.multiply(1 / m)).add(dcmENU2BODY.dot(gENU));
 
 		// Center of Gravity , Pressure
 		double lcg = rocket.getLcg(t);
-		double lcgProp = rocket.getLcgProp(t);
+		// double lcgProp = rocket.getLcgProp(t);
 		double lcp = rocket.aero.Lcp(Mach);
 
 		// Momento of Inertia

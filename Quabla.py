@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from flightgrapher import flightgrapher
 from plotlandingscatter import plotlandingscatter
-import csv
 from PlotLandingScatter.launch_site.launch_site_info import OshimaLand, OshimaSea, NoshiroLand, NoshiroSea, OtherSite
 
 def main():
@@ -19,28 +18,22 @@ def main():
     # Get launch site information
     launch_site_json = json.load(open('./input/launch_site.json', 'r', encoding='utf-8'))
 
-    #ロケットの諸元ファイルの絶対pathを入力させる それがPC内に存在するものかつ拡張子が.jsonならば受け取るがそれ以外なら拒否する
+    # ロケットの諸元ファイルの絶対pathを入力させる それがPC内に存在するものかつ拡張子が.jsonならば受け取るがそれ以外なら拒否する
     while(1):
-        files = os.listdir("./config/")
+
+        # files = os.listdir("./config/")
         print('Rocket configuration files')
-        # print("-------------------- Configuration Files --------------------")
-        # for f in files:
-        #     if f.endswith('.json'):
-        #         print(f)
-        # print("-------------------- Configuration Files --------------------")
-        paramaterpath = input("Enter the path of rocket paramater file (...json):\n")
-        # paramaterpath = 'config/' + paramaterpath
-        #windowsのときにエクスプローラーからpathをコピーすると"がpathの前後につくのでそれを削除する
-        # paramaterpath = paramaterpath.replace('\"','') 
-        if os.path.exists(paramaterpath) == True and paramaterpath.endswith('.json') == True:
+        path_parameter = input("Enter the path of rocket parameter file (...json):\n >> ")
+        
+        if os.path.exists(path_parameter) and path_parameter.endswith('.json'):
             break
         else:
             print('\nPlease enter again.\n')
 
-    #シミュレーションモードをsingleかmultiか選ばせる　それ以外の入力を受け付けない
+    # シミュレーションモードをsingleかmultiか選ばせる　それ以外の入力を受け付けない
     while(1):
-        simulationmode = input("\nEnter simulation mode (single or multi):\n")
-        if simulationmode != 'single' and simulationmode != 'multi':
+        mode_simulation = input("\nEnter simulation mode (single or multi):\n >> ")
+        if mode_simulation != 'single' and mode_simulation != 'multi':
             print('\nPlease enter single or multi')
         else:
             break
@@ -62,7 +55,7 @@ def main():
 
 
     #パラメーターのjsonファイルの読み込み
-    json_open = open(paramaterpath, 'r', encoding="utf-8")
+    json_open = open(path_parameter, 'r', encoding="utf-8")
     json_load = json.load(json_open)
     resultrootpath = json_load['Solver']["Result Filepath"]
     model_name = json_load['Solver']['Name']
@@ -73,10 +66,10 @@ def main():
     if not resultrootpath: resultrootpath = '.' 
 
     # Make Result directory
-    if simulationmode == 'single':
+    if mode_simulation == 'single':
         result_dir = resultrootpath + os.sep + 'Result_single_' + model_name
 
-    elif simulationmode == 'multi':
+    elif mode_simulation == 'multi':
         result_dir = resultrootpath + os.sep + 'Result_multi_' + model_name
         
     if os.path.exists(result_dir):
@@ -87,12 +80,12 @@ def main():
             i += 1
     os.mkdir(result_dir)
 
-    copy_config_files(json_load, paramaterpath, result_dir)
+    copy_config_files(json_load, path_parameter, result_dir)
 
     print('-------------------- INFORMATION --------------------')
-    print('  Config File:     ', os.path.basename(paramaterpath))
+    print('  Config File:     ', os.path.basename(path_parameter))
     print('  Model Name:      ', model_name)
-    print('  Simulation Mode: ', simulationmode)
+    print('  Simulation Mode: ', mode_simulation)
     print('  Result File:      ' + os.path.basename(result_dir))
     print('-----------------------------------------------------\n')
 
@@ -117,7 +110,7 @@ def main():
 
 
     # Execute Quabla.jar
-    subprocess.run(["java", "-jar", "Quabla.jar", paramaterpath, simulationmode, result_dir], \
+    subprocess.run(["java", "-jar", "Quabla.jar", path_parameter, mode_simulation, result_dir], \
                     check=True)
 
     resultpath = result_dir + os.sep
@@ -134,11 +127,11 @@ def main():
     magneticdec = 'y'
 
     #グラフの描画
-    if simulationmode == "single":
+    if mode_simulation == "single":
         
         flightgrapher(resultpath, launch_site_info, safety_exist)
 
-    elif simulationmode == "multi":
+    elif mode_simulation == "multi":
         
         plotlandingscatter(resultpath, launcher_elevation, launch_site, launch_site_info, magneticdec, safety_exist)
 

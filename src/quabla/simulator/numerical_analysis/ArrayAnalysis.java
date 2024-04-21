@@ -57,4 +57,20 @@ public class ArrayAnalysis {
 		return indexMinValue;
 	}
 
+	public int serchIndex(double val){
+
+		int index = 0;
+
+		for (int i = 0; i < length - 1; i++) {
+			double left = array1d[i] - val;
+			double right = array1d[i + 1] - val; 
+			if (left * right <= 0.0) {
+				index = i;
+				break;
+			}
+		}
+
+		return index;
+	}
+
 }

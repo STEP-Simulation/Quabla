@@ -9,10 +9,10 @@ import quabla.simulator.variable.VariableParachute;
 public class LoggerVariableParachute {
 
 	private double[] timeLog;
+	private double[] timeStepLog;
 	private double[][] posENUlog;
 	private double[][] velENUlog;
 	private double[] velDescentLog;
-
 	private double[] altitudeLog;
 	private double[] downrangeLog;
 	private double[][] windENUlog;
@@ -23,8 +23,7 @@ public class LoggerVariableParachute {
 	private int length;
 
 	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
-//	private ArrayList<MathematicalVector> posENUlogArrayList = new ArrayList<>();
-//	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
+	private ArrayList<Double> timeStepLogArrayList = new ArrayList<>();
 	private ArrayList<Double> posENUxlogArrayList = new ArrayList<>();
 	private ArrayList<Double> posENUylogArrayList = new ArrayList<>();
 	private ArrayList<Double> posENUzlogArrayList = new ArrayList<>();
@@ -39,14 +38,13 @@ public class LoggerVariableParachute {
 		ovp = new OtherVariableParachute(rocket);
 	}
 
-	public void log(VariableParachute variable) {
+	public void log(VariableParachute variable, double timeStep) {
 		timeLogArrayList.add(variable.getTime());
-//		posENUlogArrayList.add(variable.getPosENU());
+		timeStepLogArrayList.add(timeStep);
 		posENUxlogArrayList.add(variable.getPosENU().toDouble(0));
 		posENUylogArrayList.add(variable.getPosENU().toDouble(1));
 		posENUzlogArrayList.add(variable.getPosENU().toDouble(2));
 		velDescentLogArrayList.add(variable.getVelDescent());
-//		velENUlogArrayList.add(variable.getVelENU());
 		velENUxlogArrayList.add(variable.getVelENU().toDouble(0));
 		velENUylogArrayList.add(variable.getVelENU().toDouble(1));
 		velENUzlogArrayList.add(variable.getVelENU().toDouble(2));
@@ -56,6 +54,7 @@ public class LoggerVariableParachute {
 		length = timeLogArrayList.size();
 
 		timeLog = new double[length];
+		timeStepLog = new double[length];
 		posENUlog = new double[length][3];
 		velENUlog = new double[length][3];
 		velDescentLog = new double[length];
@@ -68,6 +67,7 @@ public class LoggerVariableParachute {
 
 		for(int i = 0; i < length; i++) {
 			timeLog[i] = timeLogArrayList.get(i);
+			timeStepLog[i] = timeStepLogArrayList.get(i);
 //			System.arraycopy(posENUlogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
 //			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
 			posENUlog[i][0] = posENUxlogArrayList.get(i);
@@ -95,6 +95,10 @@ public class LoggerVariableParachute {
 		return timeLog[index];
 	}
 
+	public double getTimeStep(int index) {
+		return timeStepLog[index];
+	}
+
 	public double[] getPosENUlog(int index) {
 		return posENUlog[index];
 	}
@@ -109,6 +113,10 @@ public class LoggerVariableParachute {
 
 	public double[] getTimeArray() {
 		return timeLog;
+	}
+
+	public double[] getTimeStepArray() {
+		return timeStepLog;
 	}
 
 	public double[][] getPosENUArray(){
@@ -146,6 +154,7 @@ public class LoggerVariableParachute {
 	public void copy(int indexLimit, LoggerVariable logdata) {
 		for(int i = 0; i <= indexLimit; i++) {
 			timeLogArrayList.add(logdata.getTimeArrayList(i));
+			timeStepLogArrayList.add(logdata.getTimeStepArrayList(i));
 //			posENUlogArrayList.add(logdata.getPosENU(i));
 			posENUxlogArrayList.add(logdata.getPosENU(i).toDouble(0));
 			posENUylogArrayList.add(logdata.getPosENU(i).toDouble(1));

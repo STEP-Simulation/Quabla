@@ -5,13 +5,17 @@ import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.variable.AbstractVariable;
 
 /**
- * Predictor-Corrector法
+ * Predictor-Corrector Method
  * */
 public class PredictorCorrector extends AbstractODEsolver
 {
 
-	private final double h;
+	private double h;
+	private double h0;
 	private double[] dx1, dx2, dx3;
+	private final double eps = 1e-04;
+	private final double safetyFactor = 0.9;
+	private boolean useATS = false;
 	/**
 	 * dx1 : dx_n-1
 	 * dx2 : dx_n-2
@@ -19,7 +23,8 @@ public class PredictorCorrector extends AbstractODEsolver
 	 * */
 
 	public PredictorCorrector(double timeStep) {
-		h = timeStep;
+		h0 = timeStep;
+		h = h0;
 	}
 
 	public void setDelta(AbstractDynamicsMinuteChange dx1, AbstractDynamicsMinuteChange dx2, AbstractDynamicsMinuteChange dx3) {
@@ -40,7 +45,6 @@ public class PredictorCorrector extends AbstractODEsolver
 			xPred[i] = x[i] + (55.0 * dx[i] - 59.0 * dx1[i] + 37.0 * dx2[i] - 9.0 * dx3[i]) * h / 24.0;
 		}
 
-
 		AbstractVariable variablePred = variable.getClone();
 		variablePred.setVariable(variable.getTime() + h, xPred);
 		double[] dxPred = dyn.calculateDynamics(variablePred).toDouble();
@@ -51,6 +55,20 @@ public class PredictorCorrector extends AbstractODEsolver
 		for(int i = 0; i < length; i++) {
 			dxCorr[i] = (9.0 * dxPred[i] + 19.0 * dx[i] - 5.0 * dx1[i] + dx2[i]) / 24.0;
 		}
+		
+		// Adaptive Time Step
+		if (useATS) {
+			double errMax = - 1.0e+10;
+			for (int i = 0; i < length; i++) {
+				double err = Math.abs(9. * dxPred[i] - 36. * dx[i] + 54. * dx1[i] - 36. * dx2[i] + 9. * dx3[i]) / 24. * h;
+				// double err = Math.abs(dxCorr[i] * h - (xPred[i] - x[i]));
+				errMax = Math.max(err, errMax);
+			} 
+			
+			h *= safetyFactor * Math.pow(eps / errMax, 0.2);
+			h = Math.min(h, h0 * 20.);
+			h = Math.max(h, h0);
+		}
 
 		// dx1, dx2, dx3の値の更新
 		System.arraycopy(dx2, 0, dx3, 0, length);
@@ -59,5 +77,18 @@ public class PredictorCorrector extends AbstractODEsolver
 
 		return dxDmc.generate(dxCorr);// dxDmcを使ってdxCorrを作ることで，子クラスで値を返せる
 	}
+	
+	@Override
+	public double getTimeStep(){
+		return h;
+	}
 
+	@Override
+	public void setTimeStep(double timeStep){
+		h0 = timeStep;
+	}
+
+	public void effectiveATS(){
+		useATS = true;
+	}
 }

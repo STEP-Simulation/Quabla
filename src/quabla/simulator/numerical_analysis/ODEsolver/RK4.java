@@ -6,7 +6,7 @@ import quabla.simulator.variable.AbstractVariable;
 
 public class RK4 extends AbstractODEsolver{
 
-	private final double h;
+	private double h;
 
 	public RK4(double timeStep) {
 		h = timeStep;
@@ -20,19 +20,19 @@ public class RK4 extends AbstractODEsolver{
 		// k1 = f(t, x)
 		k1 = dyn.calculateDynamics(variable);
 
-		// k2 = f(t + h, x + k1* h / 2)
+		// k2 = f(t + h / 2, x + k1* h / 2)
 		variable2 = variable.getClone();
-		variable2.update(variable.getTime()+ 0.5 * h, k1.multiple(0.5 * h));
+		variable2.update(0.5 * h, k1.multiple(0.5 * h));
 		k2 = dyn.calculateDynamics(variable2);
 
 		// k3 = f(t + h / 2, x + k2 * h / 2)
 		variable2 = variable.getClone();
-		variable2.update(variable.getTime() + 0.5 * h, k2.multiple(0.5 * h));
+		variable2.update(0.5 * h, k2.multiple(0.5 * h));
 		k3 = dyn.calculateDynamics(variable2);
 
 		// k4 = f(t + h, x + k3 * h)
 		variable2 = variable.getClone();
-		variable2.update(variable.getTime() + h, k3.multiple(h));
+		variable2.update(h, k3.multiple(h));
 		k4 = dyn.calculateDynamics(variable2);
 
 		// dx/dt = (k1 + 2 * k2 + 2 * k3 + k4) / 6
@@ -49,5 +49,15 @@ public class RK4 extends AbstractODEsolver{
 		}
 
 		return k1.generate(dx);
+	}
+
+	@Override
+	public double getTimeStep(){
+		return h;
+	}
+
+	@Override
+	public void setTimeStep(double timeStep){
+		h = timeStep;
 	}
 }

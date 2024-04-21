@@ -13,6 +13,7 @@ class GraphPlotterParachute:
         self.filepath = filepath
 
         self.time_array = np.array(df_log['time [sec]'])
+        self.time_step_array = np.array(df_log['time_step [sec]'])
         self.pos_ENU_log = np.array([[east, north, up] 
                                      for east, north, up 
                                      in zip(df_log['pos_east [m]'], 
@@ -57,6 +58,30 @@ class GraphPlotterParachute:
         aspect_logo = img_logo.height / img_logo.width
 
         plt.close('all')
+
+        fig, ax = plt.subplots()
+        ax.set_title('Time Step')
+        ax.plot(self.time_array[:self.index_coast], self.time_step_array[:self.index_coast], color='#FF4B00', linestyle='-')
+        ax.plot(self.time_array[self.index_coast:self.index_para1], self.time_step_array[self.index_coast:self.index_para1], color='#FF4B00', linestyle='--')
+        ax.text(x=self.time_array[self.index_coast], y=self.time_step_array[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        if self.index_para2 > self.index_para1:
+            ax.plot(self.time_array[self.index_para1:self.index_para2], self.time_step_array[self.index_para1:self.index_para2], color='#FF4B00', linestyle=':')
+            ax.plot(self.time_array[self.index_para2:], self.time_step_array[self.index_para2:], color='#FF4B00', linestyle='-.')
+            ax.text(x=self.time_array[self.index_para1], y=self.time_step_array[self.index_para1], s='\n+\nDrogue Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+            ax.text(x=self.time_array[self.index_para2], y=self.time_step_array[self.index_para2], s='\n+\nMain Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        else:
+            ax.plot(self.time_array[self.index_para1:], self.time_step_array[self.index_para1:], color='#FF4B00', linestyle=':')
+            ax.text(x=self.time_array[self.index_para1], y=self.time_step_array[self.index_para1], s='\n+\nMain Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.set_xlabel('Time [sec]')
+        ax.set_ylabel('Time Step [sec]')
+        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_ylim(ymin=0.)
+        ymin, ymax = ax.get_ylim()
+        ax.set_ylim(ymin=ymin, ymax=ymax)
+        ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
+        ax.set_aspect('auto')
+        ax.grid()
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'TimeStep.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Position ENU')

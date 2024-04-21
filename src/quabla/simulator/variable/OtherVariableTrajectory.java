@@ -45,7 +45,7 @@ public class OtherVariableTrajectory {
 	private double massFuel;
 	private double massOx;
 	private double massProp;
-	private double mDot;
+	// private double mDot;
 	private double lcg;
 	private double lcgFuel;
 	private double lcgOx;
@@ -94,7 +94,7 @@ public class OtherVariableTrajectory {
 		massFuel = rocket.engine.getMassFuel(time);
 		massOx = rocket.engine.getMassOx(time);
 		massProp = massFuel + massOx;
-		mDot = rocket.mdot(time);
+		// mDot = rocket.mdot(time);
 		IjRoll = rocket.getIjRoll(time);
 		IjPitch = rocket.getIjPitch(time);
 		IjDot[0] = rocket.getIjDotRoll(time);
