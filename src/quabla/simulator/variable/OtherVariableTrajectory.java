@@ -8,36 +8,6 @@ import quabla.simulator.rocket.Rocket;
  * */
 public class OtherVariableTrajectory {
 
-	/**保存したい変数(Trajectory)
-	 * time 時間
-	 * pos_ENU
-	 * vel_ENU
-	 * omega_BODY
-	 * quat
-	 * m
-	 * Ij_roll
-	 * Ij_pitch
-	 * altitude
-	 * downrange
-	 * vel_air_abs
-	 * Mach
-	 * alpha
-	 * beta
-	 * attitude
-	 * lcg
-	 * lcgProp
-	 * lcp
-	 * Fst
-	 * dynamics pressure
-	 * drag
-	 * normal
-	 * side
-	 * thrust
-	 * acc_ENU
-	 * acc_BODY
-	 * acc_abs
-	 * */
-
 	private Rocket rocket;
 
 	private double[] attitude;
@@ -45,7 +15,6 @@ public class OtherVariableTrajectory {
 	private double massFuel;
 	private double massOx;
 	private double massProp;
-	// private double mDot;
 	private double lcg;
 	private double lcgFuel;
 	private double lcgOx;
@@ -83,31 +52,34 @@ public class OtherVariableTrajectory {
 		P_air0 = rocket.atm.getAtomosphericPressure(0.0);
 	}
 
-	public void setOtherVariable(double time, double[] pos_ENU, double[] vel_ENU, double[] omega_BODY, double[] quat) {
+	public void setOtherVariable(double time, double[] posENU, double[] velENU, double[] omegaBODY, double[] quat) {
 
 		double[][] dcm_ENU2BODY = Coordinate.getDCM_ENU2BODYfromQuat(quat);
 		double[][] dcm_BODY2ENU = Coordinate.getDCM_BODY2ENUFromDCM_ENU2BODY(dcm_ENU2BODY);
 
 		attitude = Coordinate.getEulerFromDCM(dcm_ENU2BODY);
 
-		mass = rocket.getMass(time);
+		// Mass
+		mass     = rocket.getMass(time);
 		massFuel = rocket.engine.getMassFuel(time);
-		massOx = rocket.engine.getMassOx(time);
+		massOx   = rocket.engine.getMassOx(time);
 		massProp = massFuel + massOx;
-		// mDot = rocket.mdot(time);
-		IjRoll = rocket.getIjRoll(time);
-		IjPitch = rocket.getIjPitch(time);
+		// MOI (Moment of Inertia)
+		IjRoll   = rocket.getIjRoll(time);
+		IjPitch  = rocket.getIjPitch(time);
 		IjDot[0] = rocket.getIjDotRoll(time);
 		IjDot[1] = rocket.getIjDotPitch(time);
 		IjDot[2] = rocket.getIjDotPitch(time);
-		lcg = rocket.getLcg(time);
-		lcgFuel = rocket.engine.lcgFuel;
-		lcgOx = rocket.engine.getLcgOx(time);
-		lcgProp = rocket.getLcgProp(time);
+		// C.G. (Center of Gravity)
+		lcg      = rocket.getLcg(time);
+		lcgFuel  = rocket.engine.lcgFuel;
+		lcgOx    = rocket.engine.getLcgOx(time);
+		lcgProp  = rocket.getLcgProp(time);
 
-		altitude = pos_ENU[2];
-		downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
+		altitude  = posENU[2];
+		downrange = Math.sqrt(Math.pow(posENU[0], 2) + Math.pow(posENU[1], 2));
 
+		// Atmosphere
 		gravity = rocket.atm.getGravity(altitude);
 		double[] g = {0.0, 0.0, - gravity};
 		P_air = rocket.atm.getAtomosphericPressure(altitude);
@@ -116,17 +88,17 @@ public class OtherVariableTrajectory {
 		// velAir , alpha , beta
 		double[] wind_ENU = rocket.wind.getWindENU(altitude);
 		for(int i = 0; i < 3; i++) {
-			velAirENU[i] = vel_ENU[i] - wind_ENU[i];
+			velAirENU[i] = velENU[i] - wind_ENU[i];
 		}
 		velAirBODY = Coordinate.vec_trans(dcm_ENU2BODY, velAirENU);
 		velAirAbs = Math.sqrt(Math.pow(velAirBODY[0], 2) + Math.pow(velAirBODY[1], 2) + Math.pow(velAirBODY[2], 2));
 		if(velAirAbs <= 0.0) {
 			alphaRad = 0.0;
-			betaRad = 0.0;
+			betaRad  = 0.0;
 		}else {
 			// alphaRad = Math.asin(velAirBODY[2] / velAirAbs);
 			alphaRad = Math.atan2(velAirBODY[2], velAirBODY[0]);
-			betaRad = Math.asin(velAirBODY[1] / velAirAbs);
+			betaRad  = Math.asin(velAirBODY[1] / velAirAbs);
 		}
 
 		Mach = velAirAbs / rocket.atm.getSoundSpeed(altitude);
@@ -135,13 +107,15 @@ public class OtherVariableTrajectory {
 		lcp = rocket.aero.Lcp(Mach);
 		Fst = (lcp - lcg) / rocket.L * 100.0;
 
-		// force
-		Cd = rocket.aero.Cd(Mach);
+		// Aero Force
+		Cd  = rocket.aero.Cd(Mach);
 		CNa = rocket.aero.CNa(Mach);
-		drag = dynamicsPressure * Cd * rocket.S;
+		drag   = dynamicsPressure * Cd  * rocket.S;
 		normal = dynamicsPressure * CNa * rocket.S * alphaRad;
-		side = dynamicsPressure * CNa * rocket.S * betaRad;
+		side   = dynamicsPressure * CNa * rocket.S * betaRad;
+		double[] forceAero = {- drag, - side, - normal};
 
+		// Thrust
 		double pressureThrust;
 		thrust = rocket.engine.thrust(time);
 		if(thrust <= 0.0) {
@@ -152,15 +126,12 @@ public class OtherVariableTrajectory {
 			thrust += pressureThrust;
 		}
 
-		// forceBODY[0] = thrust - drag;
-		// forceBODY[1] = - side;
-		// forceBODY[2] = - normal;
-
-		double[] forceAero = {- drag, - side, - normal};
+		// Force @ BODY-coordinate
 		forceBODY[0] = thrust + forceAero[0];
 		forceBODY[1] = forceAero[1];
 		forceBODY[2] = forceAero[2];
 
+		// Acceleration
 		accENU = Coordinate.vec_trans(dcm_BODY2ENU, forceBODY);
 		for(int i = 0; i < 3; i++) {
 			accENU[i] = accENU[i] / mass + g[i];
@@ -175,21 +146,21 @@ public class OtherVariableTrajectory {
 			momentAero[i] = armMoment[j] * forceAero[k] - armMoment[k] * forceAero[j];
 		}
 
-		momentAeroDamping[0] = dynamicsPressure * rocket.aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * omega_BODY[0];
-		momentAeroDamping[1] = dynamicsPressure * rocket.aero.Cmq * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omega_BODY[1];
-		momentAeroDamping[2] = dynamicsPressure * rocket.aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omega_BODY[2];
+		momentAeroDamping[0] = dynamicsPressure * rocket.aero.Clp * rocket.S * (0.5*Math.pow(rocket.D, 2)/velAirAbs) * omegaBODY[0];
+		momentAeroDamping[1] = dynamicsPressure * rocket.aero.Cmq * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omegaBODY[1];
+		momentAeroDamping[2] = dynamicsPressure * rocket.aero.Cnr * rocket.S * (0.5*Math.pow(rocket.L, 2)/velAirAbs) * omegaBODY[2];
 
 		// momentJetDamping[0] = (- IjDot[0] - mDot * 0.5 * (0.25*Math.pow(rocket.engine.de, 2))) * omega_BODY[0];
 		// momentJetDamping[1] = (- IjDot[1] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[1];
 		// momentJetDamping[2] = (- IjDot[2] - mDot * (Math.pow(lcg - lcgProp, 2) - Math.pow(rocket.L - lcgProp, 2))) * omega_BODY[2];
-		momentJetDamping[0] = (- IjDot[0]) * omega_BODY[0];
-		momentJetDamping[1] = (- IjDot[1]) * omega_BODY[1];
-		momentJetDamping[2] = (- IjDot[2]) * omega_BODY[2];
+		momentJetDamping[0] = - IjDot[0] * omegaBODY[0];
+		momentJetDamping[1] = - IjDot[1] * omegaBODY[1];
+		momentJetDamping[2] = - IjDot[2] * omegaBODY[2];
 
 		double[] Ij = {IjRoll, IjPitch, IjPitch};
-		momentGyro[0] = (Ij[1] - Ij[2]) * omega_BODY[1] * omega_BODY[2];
-		momentGyro[1] = (Ij[2] - Ij[0]) * omega_BODY[0] * omega_BODY[2];
-		momentGyro[2] = (Ij[0] - Ij[1]) * omega_BODY[0] * omega_BODY[1];
+		momentGyro[0] = (Ij[1] - Ij[2]) * omegaBODY[1] * omegaBODY[2];
+		momentGyro[1] = (Ij[2] - Ij[0]) * omegaBODY[0] * omegaBODY[2];
+		momentGyro[2] = (Ij[0] - Ij[1]) * omegaBODY[0] * omegaBODY[1];
 
 		for (int i = 0; i < 3; i++) {
 			moment[i] = momentGyro[i] + momentAero[i] + momentAeroDamping[i] + momentJetDamping[i];

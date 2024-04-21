@@ -17,7 +17,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 
 	@Override
 	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
-		// Import from Varible
+		// Import from Variable
 		MathematicalVector velENU = variable.getVelENU();
 		MathematicalVector quat = variable.getQuat();
 		double altitude = variable.getAltitude();
@@ -25,7 +25,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 
 		double m = rocket.getMass(t);
 
-		//Tronsition Coodinate
+		//Transition Coordinate
 		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.toDouble()));
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
@@ -64,7 +64,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		MathematicalVector forceBODY =  thrust.add(forceAero);
 		MathematicalVector gBODY = new MathematicalVector(Math.abs(g)*Math.sin(elevation), 0.0, 0.0);
 
-		//Accelaration
+		//Acceleration
 		MathematicalVector accBDOY = forceBODY.multiply(1 / m).add(gBODY);
 		MathematicalVector accENU = dcmBODY2ENU.dot(accBDOY);
 

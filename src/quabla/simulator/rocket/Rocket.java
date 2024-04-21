@@ -46,7 +46,7 @@ public class Rocket {
 	IjRollAft,
 	IjPitchDry,
 	IjRollDry,
-	IjStPitchUnit,
+	// IjStPitchUnit,
 	IjStRollUnit;
 	public final double
 	CdS1,
@@ -111,9 +111,9 @@ public class Rocket {
 
 		// @ Before Burn
 		// Pitch, Yaw Axis
-		IjStPitchUnit =
-				(IjPitchDry - (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgDry - (L - engine.lcgFuel), 2))) // 乾燥重心回りの構造Pitch慣性モーメント
-				- mSt * Math.pow(lcgDry - lcgSt, 2); // 平行軸の定理で構造重心回りの慣性モーメントに直す
+		// IjStPitchUnit =
+		// 		(IjPitchDry - (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgDry - (L - engine.lcgFuel), 2))) // 乾燥重心回りの構造Pitch慣性モーメント
+		// 		- mSt * Math.pow(lcgDry - lcgSt, 2); // 平行軸の定理で構造重心回りの慣性モーメントに直す
 		// IjPitchBef =
 		// 		(IjStPitchUnit + mSt * Math.pow(lcgBef - lcgSt, 2)) // 全機重心回り構造Pitch慣性モーメント
 		// 		+ (engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgBef - (L - engine.lcgFuel), 2)) // 燃焼前全機重心回り燃料Pitch慣性モーメント
@@ -269,104 +269,104 @@ public class Rocket {
 		
 		try {
 			
-			specTxt.outputLine("----------------------- Structure ----------------------");
-			specTxt.outputLine(format("Length: ", 20) + String.format("%.3f [m]", L));
-			specTxt.outputLine(format("Diameter: ", 20) + String.format("%.3f [m]", D));
-			specTxt.outputLine(format("Area: ", 20) + String.format("%.3f [m^2]", S));
+			specTxt.outputLine("------------------------- * Structure * ------------------------");
+			specTxt.outputLine(format(" Length: ", 20) + String.format("%.3f [m]", L));
+			specTxt.outputLine(format(" Diameter: ", 20) + String.format("%.3f [m]", D));
+			specTxt.outputLine(format(" Area: ", 20) + String.format("%.3f [m^2]", S));
 			if(existTipOff) {
-				specTxt.outputLine(format("Upper Launch Lug: ", 20) + String.format("%.3f [m]", upperLug));
-				specTxt.outputLine(format("Lower Launch Lug: ", 20) + String.format("%.3f [m]", lowerLug));
+				specTxt.outputLine(format(" Upper Launch Lug: ", 20) + String.format("%.3f [m]", upperLug));
+				specTxt.outputLine(format(" Lower Launch Lug: ", 20) + String.format("%.3f [m]", lowerLug));
 			}
 			specTxt.outputLine("");
 			
-			specTxt.outputLine("------------------------- Mass -------------------------");
-			specTxt.outputLine(format("Dry mass: ", 20) + String.format("%.4f [kg]", mDry));
-			specTxt.outputLine(format("Structure mass: ", 20) + String.format("%.4f [kg]", mSt));
-			specTxt.outputLine(format("Propellant mass: ", 20) + String.format("%.4f [kg]", mBef - mSt));
-			specTxt.outputLine(format("Mass @ before burn: ", 20) + String.format("%.4f [kg]", mBef));
-			specTxt.outputLine(format("Mass @ after burn: ", 20) + String.format("%.4f [kg]", mAft));
+			specTxt.outputLine("--------------------------- * Mass * ---------------------------");
+			specTxt.outputLine(format(" Dry mass: ", 20) + String.format("%.4f [kg]", mDry));
+			specTxt.outputLine(format(" Structure mass: ", 20) + String.format("%.4f [kg]", mSt));
+			specTxt.outputLine(format(" Propellant mass: ", 20) + String.format("%.4f [kg]", mBef - mSt));
+			specTxt.outputLine(format(" Mass @ before burn: ", 20) + String.format("%.4f [kg]", mBef));
+			specTxt.outputLine(format(" Mass @ after burn: ", 20) + String.format("%.4f [kg]", mAft));
 			specTxt.outputLine("");
 			
-			specTxt.outputLine("--------------- Center of Gravity (C.G.) ---------------");
-			specTxt.outputLine(format("Dry Length-G.G. from Nosetip: ", 40) + String.format("%.4f [m]", lcgDry));
-			specTxt.outputLine(format("Structure Length-G.G. from Nosetip: ", 40) + String.format("%.4f [m]", lcgSt));
-			specTxt.outputLine(format("Length-G.G. @ before burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgBef));
-			specTxt.outputLine(format("Length-G.G. @ after burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgAft));
-			specTxt.outputLine(format("Propellant Length-G.G. @ before burn from Nosetip: ", 52) + String.format("%.4f [m]", getLcgProp(0.0)));
+			specTxt.outputLine("----------------- * Center of Gravity (C.G.) * -----------------");
+			specTxt.outputLine(format(" Dry Length-G.G. from Nosetip: ", 40) + String.format("%.4f [m]", lcgDry));
+			specTxt.outputLine(format(" Structure Length-G.G. from Nosetip: ", 40) + String.format("%.4f [m]", lcgSt));
+			specTxt.outputLine(format(" Length-G.G. @ before burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgBef));
+			specTxt.outputLine(format(" Length-G.G. @ after burn from Nosetip: ", 40) + String.format("%.4f [m]", lcgAft));
+			specTxt.outputLine(format(" Propellant Length-G.G. @ before burn from Nosetip: ", 52) + String.format("%.4f [m]", getLcgProp(0.0)));
 			specTxt.outputLine("");
 			
-			specTxt.outputLine("---------------- Moment of Inertia (MOI) ---------------");
-			specTxt.outputLine(format("Dry MOI Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjRollDry));
-			specTxt.outputLine(format("Dry MOI Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchDry));
-			specTxt.outputLine(format("MOI @ before burn Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjRollBef));
-			specTxt.outputLine(format("MOI @ before burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchBef));
-			specTxt.outputLine(format("MOI @ after burn Roll-Axis:", 45) + String.format("%.4f [kg*m^2]", IjRollAft));
-			specTxt.outputLine(format("MOI @ after burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchAft));
-			specTxt.outputLine(format("Propellant MOI @ before burn Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", getIjPropRoll(0.0)));
-			specTxt.outputLine(format("Propellant MOI @ before burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", getIjPropPitch(0.0)));
+			specTxt.outputLine("------------------ * Moment of Inertia (MOI) * -----------------");
+			specTxt.outputLine(format(" Dry MOI Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjRollDry));
+			specTxt.outputLine(format(" Dry MOI Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchDry));
+			specTxt.outputLine(format(" MOI @ before burn Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjRollBef));
+			specTxt.outputLine(format(" MOI @ before burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchBef));
+			specTxt.outputLine(format(" MOI @ after burn Roll-Axis:", 45) + String.format("%.4f [kg*m^2]", IjRollAft));
+			specTxt.outputLine(format(" MOI @ after burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", IjPitchAft));
+			specTxt.outputLine(format(" Propellant MOI @ before burn Roll-Axis: ", 45) + String.format("%.4f [kg*m^2]", getIjPropRoll(0.0)));
+			specTxt.outputLine(format(" Propellant MOI @ before burn Pitch-Axis: ", 45) + String.format("%.4f [kg*m^2]", getIjPropPitch(0.0)));
 			specTxt.outputLine("");
 			
-			specTxt.outputLine("--------------------- Aero Parameter -------------------");
+			specTxt.outputLine("----------------------- * Aero Parameter * ---------------------");
 			if(!aero.getLcpFileExist()) {
-				specTxt.outputLine(format("Constant Length-C.P. from Nosetip: ", 40) + String.format("%.3f [m]", aero.Lcp(0.0)));
+				specTxt.outputLine(format(" Constant Length-C.P. from Nosetip: ", 40) + String.format("%.3f [m]", aero.Lcp(0.0)));
 			}
 			if(!aero.getCdFileExist()) {
-				specTxt.outputLine(format("Constant Cd: ", 40) + String.format("%.3f [-]", aero.Cd(0.0)));
+				specTxt.outputLine(format(" Constant Cd: ", 40) + String.format("%.3f [-]", aero.Cd(0.0)));
 			}
 			if(!aero.getCNaFileExist()) {
-				specTxt.outputLine(format("Constant CNa: ", 40) + String.format("%.3f [1/rad]", aero.CNa(0.0)));
+				specTxt.outputLine(format(" Constant CNa: ", 40) + String.format("%.3f [1/rad]", aero.CNa(0.0)));
 			}
-			specTxt.outputLine(format("Constant Clp: ", 40) + String.format("%.3f [1/rad]", aero.Clp));
-			specTxt.outputLine(format("Constant Cmq: ", 40) + String.format("%.3f [1/rad]", aero.Cmq));
-			specTxt.outputLine(format("Constant Cnr: ", 40) + String.format("%.3f [1/rad]", aero.Cnr));
+			specTxt.outputLine(format(" Constant Clp: ", 40) + String.format("%.3f [1/rad]", aero.Clp));
+			specTxt.outputLine(format(" Constant Cmq: ", 40) + String.format("%.3f [1/rad]", aero.Cmq));
+			specTxt.outputLine(format(" Constant Cnr: ", 40) + String.format("%.3f [1/rad]", aero.Cnr));
 			specTxt.outputLine("");
 			
-			specTxt.outputLine("----------------------- Parachute ----------------------");
-			specTxt.outputLine(format("1st Parachute CdS: ", 35) + String.format("%.3f [m^2]", CdS1));
+			specTxt.outputLine("------------------------- * Parachute * ------------------------");
+			specTxt.outputLine(format(" 1st Parachute CdS: ", 35) + String.format("%.3f [m^2]", CdS1));
 			if(para2Exist) {
-				specTxt.outputLine(format("2nd Parachute CdS: ", 35) + String.format("%.3f [m^2]", CdS2));
+				specTxt.outputLine(format(" 2nd Parachute CdS: ", 35) + String.format("%.3f [m^2]", CdS2));
 				if(para2Timer) {
-					specTxt.outputLine(format("2nd Timer: ", 35) + String.format("%.1f [s]", time_para2));
+					specTxt.outputLine(format(" 2nd Timer: ", 35) + String.format("%.1f [s]", time_para2));
 				}else {
-					specTxt.outputLine(format("2nd Parachute Opening Altitude: ", 35) + String.format("%.3f [m]", alt_para2));
+					specTxt.outputLine(format(" 2nd Parachute Opening Altitude: ", 35) + String.format("%.3f [m]", alt_para2));
 				}
 			}
 			specTxt.outputLine("");
 			
-			specTxt.outputLine("-------------------- Launch Condition ------------------");
-			specTxt.outputLine(format("Launcher Rail Length: ", 30) + String.format("%.1f [m]", lengthLauncherRail));
-			specTxt.outputLine(format("Launch Elevation: ", 30) + String.format("%.1f [deg]", elevationLauncher));
-			specTxt.outputLine(format("Launch Magnetic Azimuth: ", 30) + String.format("%.1f [deg]", azimuthLauncher));
-			specTxt.outputLine(format("Launch True Azimuth: ", 30) + String.format("%.1f [deg]", azimuthLauncher - magneticDec));
+			specTxt.outputLine("---------------------- * Launch Condition * --------------------");
+			specTxt.outputLine(format(" Launcher Rail Length: ", 30) + String.format("%.1f [m]", lengthLauncherRail));
+			specTxt.outputLine(format(" Launch Elevation: ", 30) + String.format("%.1f [deg]", elevationLauncher));
+			specTxt.outputLine(format(" Launch Magnetic Azimuth: ", 30) + String.format("%.1f [deg]", azimuthLauncher));
+			specTxt.outputLine(format(" Launch True Azimuth: ", 30) + String.format("%.1f [deg]", azimuthLauncher - magneticDec));
 			specTxt.outputLine("");
 			
-			specTxt.outputLine("--------------------- Wind Condition -------------------");
+			specTxt.outputLine("----------------------- * Wind Condition * ---------------------");
 			switch (simulationMode) {
 			
-			case "single":
-				if(wind instanceof Original) {
-					specTxt.outputLine(format("Wind Model: ", 20) + "Original");
-					specTxt.outputLine(format("Wind File: ", 20) + wind.getFilePath());
-				}else if(wind instanceof Power) {
-					specTxt.outputLine(format("Wind Model: ", 30) + "Power Law");
-					specTxt.outputLine(format("Wind Speed: ", 30) + String.format("%.1f [m/s]", wind.getRefWindSpeed()));
-					specTxt.outputLine(format("Wind Azimuth: ", 30) + String.format("%.1f [deg]", wind.getRefWindAzimuth()));
-					specTxt.outputLine(format("Wind Power Law Coefficient: ", 30) + String.format("%.1f [-]", wind.getExponent()));
-				}else if(wind instanceof Constant) {
-					specTxt.outputLine(format("Wind Model: ", 20) + "Constant");
-					specTxt.outputLine(format("Wind Speed: ", 20) + String.format("%.1f [m/s]", wind.getRefWindSpeed()));
-					specTxt.outputLine(format("Wind Azimuth: ", 20) + String.format("%.1f [deg]", wind.getRefWindAzimuth()));
-				}
-				break;
+				case "single":
+					if(wind instanceof Original) {
+						specTxt.outputLine(format(" Wind Model: ", 20) + "Original");
+						specTxt.outputLine(format(" Wind File: ", 20) + wind.getFilePath());
+					}else if(wind instanceof Power) {
+						specTxt.outputLine(format(" Wind Model: ", 30) + "Power Law");
+						specTxt.outputLine(format(" Wind Speed: ", 30) + String.format("%.1f [m/s]", wind.getRefWindSpeed()));
+						specTxt.outputLine(format(" Wind Azimuth: ", 30) + String.format("%.1f [deg]", wind.getRefWindAzimuth()));
+						specTxt.outputLine(format(" Wind Power Law Coefficient: ", 30) + String.format("%.1f [-]", wind.getExponent()));
+					}else if(wind instanceof Constant) {
+						specTxt.outputLine(format(" Wind Model: ", 20) + "Constant");
+						specTxt.outputLine(format(" Wind Speed: ", 20) + String.format("%.1f [m/s]", wind.getRefWindSpeed()));
+						specTxt.outputLine(format(" Wind Azimuth: ", 20) + String.format("%.1f [deg]", wind.getRefWindAzimuth()));
+					}
+					break;
 
-			case "multi":
-				if(wind instanceof Power) {
-					specTxt.outputLine(format("Wind Model: ", 30) + "Power Law");
-					specTxt.outputLine(format("Wind Power Law Coefficient: ", 30) + String.format("%.1f [-]", wind.getExponent()));
-				}else if(wind instanceof Constant) {
-					specTxt.outputLine(format("Wind Model: ", 20) + "Constant");
-				}
-				break;
+				case "multi":
+					if(wind instanceof Power) {
+						specTxt.outputLine(format(" Wind Model: ", 30) + "Power Law");
+						specTxt.outputLine(format(" Wind Power Law Coefficient: ", 30) + String.format("%.1f [-]", wind.getExponent()));
+					}else if(wind instanceof Constant) {
+						specTxt.outputLine(format(" Wind Model: ", 20) + "Constant");
+					}
+					break;
 			}
 			specTxt.outputLine("");
 			
