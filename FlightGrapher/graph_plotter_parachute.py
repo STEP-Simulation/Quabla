@@ -186,9 +186,9 @@ class GraphPlotterParachute:
 
         fig, ax = plt.subplots()
         ax.set_title('Velocity ENU')
-        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label = 'Roll')
-        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label = 'Pitch')
-        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 2], color='#03AF7A', linestyle='-', label = 'Yaw')
+        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label = 'East')
+        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label = 'North')
+        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 2], color='#03AF7A', linestyle='-', label = 'Up')
         ax.plot(self.time_array[self.index_coast:self.index_para1], self.vel_ENU_log[self.index_coast:self.index_para1, 0], color='#FF4B00', linestyle='--')
         ax.plot(self.time_array[self.index_coast:self.index_para1], self.vel_ENU_log[self.index_coast:self.index_para1, 1], color='#005AFF', linestyle='--')
         ax.plot(self.time_array[self.index_coast:self.index_para1], self.vel_ENU_log[self.index_coast:self.index_para1, 2], color='#03AF7A', linestyle='--')
