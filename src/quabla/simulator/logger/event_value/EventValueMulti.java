@@ -47,7 +47,7 @@ public class EventValueMulti {
 			timeLandingTrajectoryArray,
 			timeLandingParachuteArray;
 
-	private double[][][] posENUlandingTrajectory, posENUlandingParachute;
+	private double[][][] posNEDlandingTrajectory, posNEDlandingParachute;
 
 	public EventValueMulti(double[] speedArray, double[] azimuthArray) {
 		row = speedArray.length;
@@ -60,29 +60,29 @@ public class EventValueMulti {
 		System.arraycopy(azimuthArray, 0, this.azimuthArray, 0, column - 1);
 		this.azimuthArray[column - 1] = 0.0; //風向の最後の要素は北360degなのでそのための補正
 
-		velLaunchClearArray = new double[row][column];
-		altApogeeArray = new double[row][column];
-		velAirMaxArray = new double[row][column];
-		machMaxArray = new double[row][column];
-		timeApogeeArray = new double[row][column];
-		time2ndParaArray = new double[row][column];
+		velLaunchClearArray        = new double[row][column];
+		altApogeeArray             = new double[row][column];
+		velAirMaxArray             = new double[row][column];
+		machMaxArray               = new double[row][column];
+		timeApogeeArray            = new double[row][column];
+		time2ndParaArray           = new double[row][column];
 		timeLandingTrajectoryArray = new double[row][column];
-		timeLandingParachuteArray = new double[row][column];
-		posENUlandingTrajectory = new double[row][column][2];
-		posENUlandingParachute = new double[row][column][2];
+		timeLandingParachuteArray  = new double[row][column];
+		posNEDlandingTrajectory    = new double[row][column][2];
+		posNEDlandingParachute     = new double[row][column][2];
 	}
 
-	public void setResultArray(int i, int j, EventValueSingle ivs) {
-		velLaunchClearArray[i][j] = ivs.getVelLaunchClear();
-		altApogeeArray[i][j] = ivs.getAltApogee();
-		velAirMaxArray[i][j] = ivs.getVelAirMax();
-		machMaxArray[i][j] = ivs.getMachMax();
-		timeApogeeArray[i][j] = ivs.getTimeApogee();
-		time2ndParaArray[i][j] = ivs.getTime2ndPara();
-		timeLandingTrajectoryArray[i][j] = ivs.getTimeLandingTrajectory();
-		timeLandingParachuteArray[i][j] = ivs.getTimeLandingParachute();
-		System.arraycopy(ivs.getPosENUlandingTrajectory(), 0, posENUlandingTrajectory[i][j], 0, 2);
-		System.arraycopy(ivs.getPosENUlandingParachute(), 0, posENUlandingParachute[i][j], 0, 2);
+	public void setResultArray(int i, int j, EventValueSingle evs) {
+		velLaunchClearArray[i][j] = evs.getVelLaunchClear();
+		altApogeeArray[i][j] = evs.getAltApogee();
+		velAirMaxArray[i][j] = evs.getVelAirMax();
+		machMaxArray[i][j] = evs.getMachMax();
+		timeApogeeArray[i][j] = evs.getTimeApogee();
+		time2ndParaArray[i][j] = evs.getTime2ndPara();
+		timeLandingTrajectoryArray[i][j] = evs.getTimeLandingTrajectory();
+		timeLandingParachuteArray[i][j] = evs.getTimeLandingParachute();
+		System.arraycopy(evs.getPosNEDlandingTrajectory(), 0, posNEDlandingTrajectory[i][j], 0, 2);
+		System.arraycopy(evs.getPosNEDlandingParachute(), 0, posNEDlandingParachute[i][j], 0, 2);
 	}
 
 	public void computeMinVelLaunchClear() {
@@ -149,12 +149,12 @@ public class EventValueMulti {
 		azimuthMaxTimeLandingParachute = azimuthArray[iva.getMaxColumn()];
 	}
 
-	public double[][][] getPosENUlandTrajectory(){
-		return posENUlandingTrajectory;
+	public double[][][] getPosNEDlandTrajectory(){
+		return posNEDlandingTrajectory;
 	}
 
-	public double[][][] getPosENUlandParachute(){
-		return posENUlandingParachute;
+	public double[][][] getPosNEDlandParachute(){
+		return posNEDlandingParachute;
 	}
 
 	public void outputResultTxt(String filepath) {
@@ -197,14 +197,14 @@ public class EventValueMulti {
 	}
 
 	public void outputCsv(String filepath) {
-		OutputCsvMulti ocAltApogee = new OutputCsvMulti(filepath + "altApogee.csv", speedArray, azimuthArray);
-		OutputCsvMulti ocmVelLaunchClear = new OutputCsvMulti(filepath + "velLaunchClear.csv", speedArray, azimuthArray);
-		OutputCsvMulti ocmVelAirMax = new OutputCsvMulti(filepath + "velAirMax.csv", speedArray, azimuthArray);
-		OutputCsvMulti ocmMachMax = new OutputCsvMulti(filepath + "machMax.csv", speedArray, azimuthArray);
-		OutputCsvMulti ocmTimeApogee = new OutputCsvMulti(filepath + "timeApogee.csv", speedArray, azimuthArray);
-		OutputCsvMulti ocmTime2ndPara = new OutputCsvMulti(filepath + "time2ndPara.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocAltApogee              = new OutputCsvMulti(filepath + "altApogee.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmVelLaunchClear        = new OutputCsvMulti(filepath + "velLaunchClear.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmVelAirMax             = new OutputCsvMulti(filepath + "velAirMax.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmMachMax               = new OutputCsvMulti(filepath + "machMax.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmTimeApogee            = new OutputCsvMulti(filepath + "timeApogee.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmTime2ndPara           = new OutputCsvMulti(filepath + "time2ndPara.csv", speedArray, azimuthArray);
 		OutputCsvMulti ocmTimeLandingTrajectory = new OutputCsvMulti(filepath + "timeLandingTrajectory.csv", speedArray, azimuthArray);
-		OutputCsvMulti ocmTimeLandingParachute = new OutputCsvMulti(filepath + "timeLandingParachute.csv", speedArray, azimuthArray);
+		OutputCsvMulti ocmTimeLandingParachute  = new OutputCsvMulti(filepath + "timeLandingParachute.csv", speedArray, azimuthArray);
 
 		ocAltApogee.runOutputLine(altApogeeArray);
 		ocmVelLaunchClear.runOutputLine(velLaunchClearArray);

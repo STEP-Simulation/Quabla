@@ -65,20 +65,26 @@ def main():
     # Resultフォラウダに何も指定されていない時，デフォルトで直下のフォルダを指定
     if not resultrootpath: resultrootpath = '.' 
 
+    def __make_dir_result(result_dir):
+        _dir_result = result_dir
+        if os.path.exists(_dir_result):
+            resultdir_org = _dir_result
+            i = 1
+            while os.path.exists(_dir_result):
+                _dir_result = resultdir_org + '_%02d' % (i)
+                i += 1
+        os.mkdir(_dir_result)
+
+        return _dir_result
+        
     # Make Result directory
     if mode_simulation == 'single':
-        result_dir = resultrootpath + os.sep + 'Result_single_' + model_name
+        result_dir = __make_dir_result(resultrootpath + os.sep + 'Result_single_' + model_name)
 
     elif mode_simulation == 'multi':
-        result_dir = resultrootpath + os.sep + 'Result_multi_' + model_name
-        
-    if os.path.exists(result_dir):
-        resultdir_org = result_dir
-        i = 1
-        while os.path.exists(result_dir):
-            result_dir = resultdir_org + '_%02d' % (i)
-            i += 1
-    os.mkdir(result_dir)
+        result_dir = __make_dir_result(resultrootpath + os.sep + 'Result_multi_' + model_name)
+        dir_summary = result_dir + os.sep + '_01_summary'
+        os.mkdir(dir_summary)
 
     copy_config_files(json_load, path_parameter, result_dir)
 

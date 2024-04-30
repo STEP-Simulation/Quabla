@@ -74,12 +74,13 @@ def LLH2ENU(launch_LLH,point_LLH):
     Pos_graph_range_ENU = np.array([Pos_NED[1], Pos_NED[0], - Pos_NED[2]])
     return Pos_graph_range_ENU
 
-def ENU2LLH(launch_LLH,point_ENU):
-    east = point_ENU[0]
-    north = point_ENU[1]
-    up = point_ENU[2]
+def ENU2LLH(launch_LLH, pos_NED):
+    
+    # east = point_ENU[0]
+    # north = point_ENU[1]
+    # up = point_ENU[2]
 
-    Pos_NED = np.array([north, east, - up])
+    # Pos_NED = np.array([north, east, - up])
 
     lat = np.deg2rad(launch_LLH[0])
     lon = np.deg2rad(launch_LLH[1])
@@ -88,17 +89,17 @@ def ENU2LLH(launch_LLH,point_ENU):
 
     launch_ECEF = LLH2ECEF(launch_LLH)
     DCM_NED2ECEF = ECEF2NED(LLH)
-    point_ECEF = np.dot(Pos_NED,DCM_NED2ECEF) + launch_ECEF
+    point_ECEF = np.dot(pos_NED,DCM_NED2ECEF) + launch_ECEF
 
     point_LLH = ECEF2LLH(point_ECEF)
     return point_LLH
 
-def ENU2LLHforKml(launch_LLH, point_ENU):
-    east = point_ENU[0]
-    north = point_ENU[1]
-    up = point_ENU[2]
+def ENU2LLHforKml(launch_LLH, pos_NED):
+    # east = point_ENU[0]
+    # north = point_ENU[1]
+    # up = point_ENU[2]
 
-    Pos_NED = np.array([north, east, - up])
+    # Pos_NED = np.array([north, east, - up])
 
     lat = np.deg2rad(launch_LLH[0])
     lon = np.deg2rad(launch_LLH[1])
@@ -107,7 +108,7 @@ def ENU2LLHforKml(launch_LLH, point_ENU):
 
     launch_ECEF = LLH2ECEF(launch_LLH)
     DCM_NED2ECEF = ECEF2NED(LLH).transpose()
-    point_ECEF = DCM_NED2ECEF.dot(Pos_NED) + launch_ECEF
+    point_ECEF = DCM_NED2ECEF.dot(pos_NED) + launch_ECEF
 
     point_LLH = ECEF2LLH(point_ECEF)
     return np.array([point_LLH[1], point_LLH[0], 0.0])

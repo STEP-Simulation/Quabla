@@ -43,7 +43,8 @@ public class FlightEventJudgement {
 		boolean judge;
 
 		if( (variable.getTime() >= rocket.engine.timeBurnout) 
-		&&  (variable.getVelDescent() <= 0.0)) {
+		// &&  (variable.getVelDescent() <= 0.0)) {
+		&&  (variable.getQuat().toDouble()[0] <= 0.0)) {
 			judge = true;
 		}else {
 			judge = false;
@@ -86,14 +87,14 @@ public class FlightEventJudgement {
 		
 		if(rocket.para2Exist) {
 			if(rocket.para2Timer) {
-				if((variable.getVelDescent() <= 0.0) &&
+				if((variable.getVelDescent() >= 0.0) &&
 				   (variable.getTime() <= rocket.time_para2)) {
 					judge = true;
 				}else{
 					judge = false;
 				}
 			}else {
-				if((variable.getVelDescent() <= 0.0) &&
+				if((variable.getVelDescent() >= 0.0) &&
 				   (variable.getAltitude() >= rocket.alt_para2)) {
 					judge = true;
 				}else {

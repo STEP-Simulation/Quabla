@@ -131,6 +131,16 @@ public class MathematicalVector {
 		return norm;
 	}
 
+	public void normalize() {
+
+		double norm = this.norm();
+
+		for (int i = 0; i < vector.length; i++) {
+			vector[i] /= norm;
+		}
+		
+	}
+
 	public double[] toDouble() {
 		return vector;
 	}

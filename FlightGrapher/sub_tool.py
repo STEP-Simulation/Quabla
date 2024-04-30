@@ -33,3 +33,24 @@ def update_limits(xlim, ylim, aspect):
         ymin_new = ymin
 
     return xmin_new, xmax_new, ymin_new, ymax_new
+
+def set_limits(ax):
+
+    import numpy as np
+
+    xmin, xmax = ax.get_xlim()
+    ymin, ymax = ax.get_ylim()
+    zmin, zmax = ax.get_zlim()
+    xrange = xmax - xmin
+    yrange = ymax - ymin
+    zrange = zmax - zmin
+    range_max = np.max(np.array([xrange, yrange, zrange]))
+    xmin *= range_max / xrange 
+    xmax *= range_max / xrange
+    ymin *= range_max / yrange 
+    ymax *= range_max / yrange
+    zmin *= range_max / zrange 
+    zmax *= range_max / zrange
+    ax.set_xlim(xmin=xmin, xmax=xmax)
+    ax.set_ylim(ymin=ymin, ymax=ymax)
+    ax.set_zlim(zmin=zmin, zmax=zmax)

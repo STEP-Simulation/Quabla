@@ -127,9 +127,8 @@ public class Solver {
 			variableTrajectory.update(ODEsolver.getTimeStep(), delta);
 			trajectoryLog.log(variableTrajectory, ODEsolver.getTimeStep());
 
-			if (flag && eventJudgement.judgeApogee(variableTrajectory)) {
-				// double timeStepApogee = ODEsolver.getTimeStep();
-				// ODEsolver.setTimeStep(timeStepApogee);
+			// if (flag && eventJudgement.judgeApogee(variableTrajectory)) {
+			if (flag && variableTrajectory.getTime() >= rocket.engine.timeActuate * 1.2) {
 				predCorr.effectiveATS();
 				flag = false;
 			}
@@ -139,7 +138,7 @@ public class Solver {
 				break;
 			}
 		}
-		trajectoryLog.makeArray();
+		trajectoryLog.makeArray(indexLaunchClear);
 
 		// store Event Value
 		eventValue = new EventValueSingle(trajectoryLog, rocket);
@@ -292,7 +291,7 @@ public class Solver {
 			
 			resultTxt.outputLine(String.format(" Landing Trajectory Time      : %.3f [sec]", eventValue.getTimeLandingTrajectory()));
 			resultTxt.outputLine(String.format(" Landing Trajectory Downrange : %.3f [km]", eventValue.getDownrangeLandingTrajectory()));
-			double pointTrajectory[] = {eventValue.getPosENUlandingTrajectory()[0], eventValue.getPosENUlandingTrajectory()[1], 0.0};
+			double pointTrajectory[] = {eventValue.getPosNEDlandingTrajectory()[0], eventValue.getPosNEDlandingTrajectory()[1], 0.0};
 			resultTxt.outputLine(String.format(" Landing Trajectory Point     : [ %.3f , %.3f ]", pointTrajectory[0], pointTrajectory[1]));
 			resultTxt.outputLine(String.format(" Landing Trajectory LLH       : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(pointTrajectory)[0], ENUtoLLH.ENU2LLH(pointTrajectory)[1]));
 			
@@ -301,7 +300,7 @@ public class Solver {
 			resultTxt.outputLine(String.format(" Landing Parachute Time             : %.3f [sec]", eventValue.getTimeLandingParachute()));
 			resultTxt.outputLine(String.format(" Landing Parachute Velocity Descent : %.3f [m/s]", eventValue.getVelDescentLandingParachute()));
 			resultTxt.outputLine(String.format(" Landing Parachute Downrange        : %.3f [km]", eventValue.getDownrangeLandingParachute()));
-			double pointParachute[] = {eventValue.getPosENUlandingParachute()[0], eventValue.getPosENUlandingParachute()[1], 0.0};
+			double pointParachute[] = {eventValue.getPosNEDlandingParachute()[0], eventValue.getPosNEDlandingParachute()[1], 0.0};
 			resultTxt.outputLine(String.format(" Landing Parachute Point            : [ %.3f , %.3f ]", pointParachute[0], pointParachute[1]));
 			resultTxt.outputLine(String.format(" Landing Parachute LLH              : [ %.8f , %.8f ]", ENUtoLLH.ENU2LLH(pointParachute)[0], ENUtoLLH.ENU2LLH(pointParachute)[1]));
 

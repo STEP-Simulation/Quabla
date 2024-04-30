@@ -69,8 +69,8 @@ public class MultiSolver {
 			i++;
 		}
 
-		double[][] windMapTrajectory = getWindMap(evm.getPosENUlandTrajectory());
-		double[][] windMapParachute = getWindMap(evm.getPosENUlandParachute());
+		double[][] windMapTrajectory = getWindMap(evm.getPosNEDlandTrajectory());
+		double[][] windMapParachute = getWindMap(evm.getPosNEDlandParachute());
 
 		evm.outputResultTxt(filepathResult);
 		evm.outputCsv(filepathResult);

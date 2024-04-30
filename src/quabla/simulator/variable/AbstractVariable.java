@@ -7,12 +7,13 @@ public abstract class AbstractVariable {
 
 	public abstract AbstractVariable getClone();
 	public abstract double[] toDouble();
-	public abstract void update(double time, AbstractDynamicsMinuteChange dleta);
+	public abstract void update(double time, AbstractDynamicsMinuteChange delta);
 
 	public abstract void setVariable(double time, double[] x);
 
 	public abstract double getTime();
-	public abstract MathematicalVector getVelENU();
+	public abstract MathematicalVector getPosNED();
+	public abstract MathematicalVector getVelBODY();
 	public abstract MathematicalVector getOmegaBODY();
 	public abstract MathematicalVector getQuat();
 	public abstract double getAltitude();

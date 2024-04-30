@@ -1,24 +1,26 @@
 package quabla.simulator.numerical_analysis;
 
+import java.util.Arrays;
+
 /**
  * Interpolation is a class for function interpolation.
  * */
 public class Interpolation {
 	double xArray[];
+	double yArray1d[];
 	double yArray[][];
 	private int length;
 	private int col; //column
 
 	public Interpolation(double[] xArray, double[] yArray) {
+		
 		length = xArray.length;
-		this.xArray = new double[length];
+		this.xArray   = new double[length];
+		this.yArray1d = new double[length];
 		// Deep Copy
 		System.arraycopy(xArray, 0, this.xArray, 0, length);
+		System.arraycopy(yArray, 0, this.yArray1d, 0, length);
 
-		this.yArray = new double[length][1];
-		for (int i = 0; i < length; i++) {
-			this.yArray[i][0] = yArray[i];
-		}
 	}
 
 	public Interpolation(double[] xArray, double[][] yArray) {
@@ -35,27 +37,19 @@ public class Interpolation {
 
 	/** 1次元の線形補間 */
 	public double linearInterp1column(double x) {
-		double y;
 		int count = 0;
 
-		//xが取得データの範囲外の場合,最大値及び最小値をyの値とする
 		if (x <= xArray[0]) {
-			y = yArray[0][0];
+			return yArray1d[0];
 		} else if (x >= xArray[length - 1]) {
-			y = yArray[length - 1][0];
+			return yArray1d[length - 1];
 		} else {
-			//xが何群目に所属しているかを調べる
-			for (int j = 0; j < length; j++) {
-				if (x >= xArray[j]) {
-					count = j;
-				} else {
-					break;
-				}
-			}
-			y = yArray[count][0] + (yArray[count + 1][0] - yArray[count][0]) * (x - xArray[count])
-					/ (xArray[count + 1] - xArray[count]);
+			count = Arrays.binarySearch(xArray, x);
+			count = Math.min(Math.abs(count), Math.abs(~ count)) - 1;
+
+			return yArray1d[count]
+			    + (yArray1d[count + 1] - yArray1d[count]) * (x - xArray[count]) / (xArray[count + 1] - xArray[count]);
 		}
-		return y;
 	}
 
 	/** 他次元の線形補間 */

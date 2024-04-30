@@ -1,11 +1,9 @@
 import os
-from turtle import color
 import matplotlib.pyplot as plt
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 import PlotLandingScatter.coordinate as cd
-from cProfile import label
 import matplotlib.patches as patches
 
 class LandPoint:
@@ -14,10 +12,10 @@ class LandPoint:
         self.img = img
 
     def get_point_parachute(self,point_ENU):
-        self.point_ENU_parachute = point_ENU
+        self.point_NED_para = point_ENU
         
     def get_point_trajectory(self,point_ENU):
-        self.point_ENU_trajectory = point_ENU
+        self.point_NED_traj = point_ENU
         
     def make_land_point(self, launch_site_info, safety_exsist):
         self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
@@ -28,8 +26,8 @@ class LandPoint:
         ax = fig.add_subplot()
         ax.set_title(title)
         ax.scatter(0.0, 0.0, color='r', marker='o', label='Launch point')
-        ax.scatter(self.point_ENU_trajectory[0], self.point_ENU_trajectory[1], label='Trajectory', color='b', marker='o')
-        ax.scatter(self.point_ENU_parachute[0], self.point_ENU_parachute[1], label='Parachute', color='orange', marker='o')
+        ax.scatter(self.point_NED_traj[1], self.point_NED_traj[0], label='Trajectory', color='b', marker='o')
+        ax.scatter(self.point_NED_para[1], self.point_NED_para[0], label='Parachute', color='orange', marker='o')
         if safety_exsist:
             if launch_site_info.site_name == 'oshima_land' or launch_site_info.site_name == 'noshiro_land':
                 safety_ENU = [cd.LLH2ENU(launch_site_info.launch_LLH, LLH).tolist() for LLH in launch_site_info.safety_area_LLH]

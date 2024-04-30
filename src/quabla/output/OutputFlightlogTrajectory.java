@@ -11,8 +11,9 @@ public class OutputFlightlogTrajectory {
 
 	private double[]   timeArray;
 	private double[]   timeStepArray;
-	private double[][] posENUArray;
-	private double[][] velENUArray;
+	private double[][] posNEDArray;
+	private double[][] velNEDArray;
+	private double[][] velBODYArray;
 	private double[][] omegaBODYArray;
 	private double[][] quatArray;
 	private double[][] attitudeArray;
@@ -31,7 +32,7 @@ public class OutputFlightlogTrajectory {
 	private double[]   CNaArray;
 	private double[]   altitudeArray;
 	private double[]   downrangeArray;
-	private double[][] velAirENUArray;
+	private double[][] velAirNEDArray;
 	private double[][] velAirBODYArray;
 	private double[]   velAirAbsArray;
 	private double[]   alphaArray;
@@ -43,6 +44,8 @@ public class OutputFlightlogTrajectory {
 	private double[]   normalArray;
 	private double[]   sideArray;
 	private double[]   thrustArray;
+	private double[]   thrustMomentumArray;
+	private double[]   thrustPressureArray;
 	private double[][] forceBODYArray;
 	private double[][] accENUArray;
 	private double[][] accBODYArray;
@@ -60,12 +63,15 @@ public class OutputFlightlogTrajectory {
 	private final String[] nameList = {
 			"time [sec]",
 			"time_step [sec]",
-			"pos_east [m]",
 			"pos_north [m]",
-			"pos_up [m]",
-			"vel_east [m/s]",
+			"pos_east [m]",
+			"pos_down [m]",
 			"vel_north [m/s]",
-			"vel_up [m/s]",
+			"vel_east [m/s]",
+			"vel_down [m/s]",
+			"vel_BODY_x [m/s]",
+			"vel_BODY_y [m/s]",
+			"vel_BODY_z [m/s]",
 			"omega_roll [rad/s]",
 			"omega_pitch [rad/s]",
 			"omega_yaw [rad/s]",
@@ -91,9 +97,9 @@ public class OutputFlightlogTrajectory {
 			"C_Na [1/rad]",
 			"Altitude [km]",
 			"Downrange [km]",
-			"vel_air_east [m/s]",
 			"vel_air_north [m/s]",
-			"vel_air_up [m/s]",
+			"vel_air_east [m/s]",
+			"vel_air_down [m/s]",
 			"vel_air_BODY_x [m/s]",
 			"vel_air_BODY_y [m/s]",
 			"vel_air_BODY_z [m/s]",
@@ -107,6 +113,8 @@ public class OutputFlightlogTrajectory {
 			"Normal Force [N]",
 			"Side Force [N]",
 			"Thrust [N]",
+			"Thrust Momentum [N]",
+			"Thrust Pressure [N]",
 			"Force_BODY_x [N]",
 			"Force_BODY_y [N]",
 			"Force_BODY_z [N]",
@@ -143,8 +151,9 @@ public class OutputFlightlogTrajectory {
 
 		timeArray = lv.getTimeArray().clone();
 		timeStepArray = lv.getTimeStepArray().clone();
-		posENUArray = lv.getPosENUArray().clone();
-		velENUArray = lv.getVelENUArray().clone();
+		posNEDArray = lv.getPosNEDArray().clone();
+		velNEDArray = lv.getVelNEDArray().clone();
+		velBODYArray = lv.getVelBODYArray().clone();
 		omegaBODYArray = lv.getOmegaBODYArray().clone();
 		quatArray = lv.getQuatArray().clone();
 		attitudeArray = lv.getAttitudeLogArray().clone();
@@ -163,7 +172,7 @@ public class OutputFlightlogTrajectory {
 		CNaArray = lv.getCNaLog().clone();
 		altitudeArray = lv.getAltitudeLogArray().clone();
 		downrangeArray = lv.getDownrangeLogArray().clone();
-		velAirENUArray = lv.getVelAirENUlogArray().clone();
+		velAirNEDArray = lv.getVelAirNEDlogArray().clone();
 		velAirBODYArray = lv.getVelAirBODYlogArray().clone();
 		velAirAbsArray = lv.getVelAirAbsLogArray().clone();
 		alphaArray = lv.getAlphaLogArray().clone();
@@ -175,6 +184,8 @@ public class OutputFlightlogTrajectory {
 		normalArray = lv.getNormalLogArray().clone();
 		sideArray = lv.getSideLogArray().clone();
 		thrustArray = lv.getThrustLogArray().clone();
+		thrustMomentumArray = lv.getThrustMomentumLogArray();
+		thrustPressureArray = lv.getThrustPressureLogArray();
 		forceBODYArray = lv.getForceBODYlogArray().clone();
 		accENUArray = lv.getAccENUlogArray().clone();
 		accBODYArray = lv.getAccBODYlogArray().clone();
@@ -211,8 +222,9 @@ public class OutputFlightlogTrajectory {
 
 			storeResultArray(timeArray[i]);
 			storeResultArray(timeStepArray[i]);
-			storeResultArray(posENUArray[i]);
-			storeResultArray(velENUArray[i]);
+			storeResultArray(posNEDArray[i]);
+			storeResultArray(velNEDArray[i]);
+			storeResultArray(velBODYArray[i]);
 			storeResultArray(omegaBODYArray[i]);
 			storeResultArray(quatArray[i]);
 			storeResultArray(attitudeArray[i]);
@@ -231,7 +243,7 @@ public class OutputFlightlogTrajectory {
 			storeResultArray(CNaArray[i]);
 			storeResultArray(altitudeArray[i]);
 			storeResultArray(downrangeArray[i]);
-			storeResultArray(velAirENUArray[i]);
+			storeResultArray(velAirNEDArray[i]);
 			storeResultArray(velAirBODYArray[i]);
 			storeResultArray(velAirAbsArray[i]);
 			storeResultArray(alphaArray[i]);
@@ -243,6 +255,8 @@ public class OutputFlightlogTrajectory {
 			storeResultArray(normalArray[i]);
 			storeResultArray(sideArray[i]);
 			storeResultArray(thrustArray[i]);
+			storeResultArray(thrustMomentumArray[i]);
+			storeResultArray(thrustPressureArray[i]);
 			storeResultArray(forceBODYArray[i]);
 			storeResultArray(accENUArray[i]);
 			storeResultArray(accBODYArray[i]);

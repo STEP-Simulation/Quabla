@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
+import quabla.simulator.variable.OtherVariableOnLauncher;
 import quabla.simulator.variable.OtherVariableTrajectory;
 import quabla.simulator.variable.VariableTrajectory;
 
@@ -13,10 +14,13 @@ import quabla.simulator.variable.VariableTrajectory;
  * */
 public class LoggerVariable {
 
+	private final Rocket rocket;
+
 	private double[] timeArray;
 	private double[] timeStepArray;
-	private double[][] posENUlog;
-	private double[][] velENUlog;
+	private double[][] posNEDlog;
+	private double[][] velNEDlog;
+	private double[][] velBODYlog;
 	private double[][] omegaBODYlog;
 	private double[][] quatLog;
 
@@ -36,7 +40,7 @@ public class LoggerVariable {
 	private double[] CNaLog;
 	private double[] altitudeLog;
 	private double[] downrangeLog;
-	private double[][] velAirENUlog;
+	private double[][] velAirNEDlog;
 	private double[][] velAirBODYlog;
 	private double[] velAirAbsLog;
 	private double[] alphaLog;
@@ -48,6 +52,8 @@ public class LoggerVariable {
 	private double[] normalLog;
 	private double[] sideLog;
 	private double[] thrustLog;
+	private double[] thrustMomentumLog;
+	private double[] thrustPressureLog;
 	private double[][] forceBODYlog;
 	private double[][] accENUlog;
 	private double[][] accBODYlog;
@@ -63,36 +69,42 @@ public class LoggerVariable {
 
 	private ArrayList<Double> timeLogArrayList = new ArrayList<>();
 	private ArrayList<Double> timeStepLogArrayList = new ArrayList<>();
-	private ArrayList<MathematicalVector> posENULogArrayList = new ArrayList<>();
-	private ArrayList<MathematicalVector> velENUlogArrayList = new ArrayList<>();
+	private ArrayList<MathematicalVector> posNEDLogArrayList = new ArrayList<>();
+	private ArrayList<MathematicalVector> velBODYlogArrayList = new ArrayList<>();
 	private ArrayList<MathematicalVector> omegaBODYlogArraylist = new ArrayList<>();
 	private ArrayList<MathematicalVector> quatLogArrayList = new ArrayList<>();
 
 	private final OtherVariableTrajectory ovt;
+	private OtherVariableTrajectory ov;
+	// private OtherVariableOnLauncher ovo;
 
 	public LoggerVariable(Rocket rocket) {
 		ovt = new OtherVariableTrajectory(rocket);
+		this.rocket = rocket;
 	}
 
 	public void log(VariableTrajectory variable, double timeStep) {
 
 		timeLogArrayList.add(variable.getTime());
 		timeStepLogArrayList.add(timeStep);
-		posENULogArrayList.add(variable.getPosENU());
-		velENUlogArrayList.add(variable.getVelENU());
+		posNEDLogArrayList.add(variable.getPosNED());
+		velBODYlogArrayList.add(variable.getVelBODY());
 		omegaBODYlogArraylist.add(variable.getOmegaBODY());
 		quatLogArrayList.add(variable.getQuat());
 	}
 	/**
 	 * ArrayListをdouble型の配列へ変換する
 	 * */
-	public void makeArray() {
+	public void makeArray(int indexLaunchClear) {
 		length = timeLogArrayList.size();
+
+		// TODO: store  Flight Condition
 
 		timeArray = new double[length];
 		timeStepArray = new double[length];
-		posENUlog = new double[length][3];
-		velENUlog = new double[length][3];
+		posNEDlog = new double[length][3];
+		velNEDlog = new double[length][3];
+		velBODYlog = new double[length][3];
 		omegaBODYlog = new double[length][3];
 		quatLog = new double[length][4];
 
@@ -112,7 +124,7 @@ public class LoggerVariable {
 		CNaLog = new double[length];
 		altitudeLog = new double[length];
 		downrangeLog = new double[length];
-		velAirENUlog = new double[length][3];
+		velAirNEDlog = new double[length][3];
 		velAirBODYlog = new double[length][3];
 		velAirAbsLog = new double[length];
 		alphaLog = new double[length];
@@ -124,6 +136,8 @@ public class LoggerVariable {
 		normalLog = new double[length];
 		sideLog = new double[length];
 		thrustLog = new double[length];
+		thrustMomentumLog = new double[length];
+		thrustPressureLog = new double[length];
 		forceBODYlog = new double[length][3];
 		accENUlog = new double[length][3];
 		accBODYlog = new double[length][3];
@@ -135,53 +149,64 @@ public class LoggerVariable {
 		momentLog = new double[length][3];
 		pAirLog = new double[length];
 
+		boolean flag = true;
+		ov = new OtherVariableOnLauncher(rocket);
+
 		for(int i = 0; i < length; i++) {
+			if (flag && i > indexLaunchClear) {
+				ov = ovt;
+				flag = false;
+			}
+
 			timeArray[i] = timeLogArrayList.get(i);
 			timeStepArray[i] = timeStepLogArrayList.get(i);
-			System.arraycopy(posENULogArrayList.get(i).toDouble(), 0, posENUlog[i], 0, 3);
-			System.arraycopy(velENUlogArrayList.get(i).toDouble(), 0, velENUlog[i], 0, 3);
+			System.arraycopy(posNEDLogArrayList.get(i).toDouble(), 0, posNEDlog[i], 0, 3);
+			System.arraycopy(velBODYlogArrayList.get(i).toDouble(), 0, velBODYlog[i], 0, 3);
 			System.arraycopy(omegaBODYlogArraylist.get(i).toDouble(), 0, omegaBODYlog[i], 0, 3);
 			System.arraycopy(quatLogArrayList.get(i).toDouble(), 0, quatLog[i], 0, 4);
 
-			ovt.setOtherVariable(timeArray[i], posENUlog[i], velENUlog[i], omegaBODYlog[i], quatLog[i]);
-			System.arraycopy(ovt.getAttitude(), 0, attitudeLog[i], 0, 3);
-			massLog[i] = ovt.getMass();
-			massFuelLog[i] = ovt.getMassFuel();
-			massOxLog[i] = ovt.getMassOx();
-			massPropLog[i] = ovt.getMassProp();
-			lcgLog[i] = ovt.getLcg();
-			lcgFuelLog[i] = ovt.getLcgFuel();
-			lcgOxLog[i] = ovt.getLcgOx();
-			lcgPropLog[i] = ovt.getLcgProp();
-			lcpLog[i] = ovt.getLcp();
-			IjRollLog[i] = ovt.getIjRoll();
-			IjPitchLog[i] = ovt.getIjPitch();
-			CdLog[i] = ovt.getCd();
-			CNaLog[i] = ovt.getCNa();
-			altitudeLog[i] = ovt.getAltitude();
-			downrangeLog[i] = ovt.getDownrange();
-			System.arraycopy(ovt.getVelAirENU(), 0, velAirENUlog[i], 0, 3);
-			System.arraycopy(ovt.getVelAirBODY(), 0, velAirBODYlog[i], 0, 3);
-			velAirAbsLog[i] = ovt.getVelAirAbs();
-			alphaLog[i] = ovt.getAlpha();
-			betaLog[i] = ovt.getBeta();
-			machLog[i] = ovt.getMach();
-			dynamicsPressureLog[i] = ovt.getDynamicsPressure();
-			fstLog[i] = ovt.getFst();
-			dragLog[i] = ovt.getDrag();
-			normalLog[i] = ovt.getNormal();
-			sideLog[i] = ovt.getSide();
-			thrustLog[i] = ovt.getThrust();
-			System.arraycopy(ovt.getForceBODY(), 0, forceBODYlog[i], 0, 3);
-			System.arraycopy(ovt.getAccENU(), 0, accENUlog[i], 0, 3);
-			System.arraycopy(ovt.getAccBODY(), 0, accBODYlog[i], 0, 3);
-			accAbsLog[i] = ovt.getAccAbs();
-			System.arraycopy(ovt.getMomentAero(), 0, momentAeroLog[i], 0, 3);
-			System.arraycopy(ovt.getMomentAeroDamiping(), 0, momentAeroDampingLog[i], 0, 3);
-			System.arraycopy(ovt.getMomentJetDamping(), 0, momentJetDampingLog[i], 0, 3);
-			System.arraycopy(ovt.getMomentGyro(), 0, momentGyroLog[i], 0, 3);
-			System.arraycopy(ovt.getMoment(), 0, momentLog[i], 0, 3);
-			pAirLog[i] = ovt.getPair();
+			ov.setOtherVariable(timeArray[i], posNEDlog[i], velBODYlog[i], omegaBODYlog[i], quatLog[i]);
+			System.arraycopy(ov.getAttitude(), 0, attitudeLog[i], 0, 3);
+			massLog[i] = ov.getMass();
+			massFuelLog[i] = ov.getMassFuel();
+			massOxLog[i] = ov.getMassOx();
+			massPropLog[i] = ov.getMassProp();
+			lcgLog[i] = ov.getLcg();
+			lcgFuelLog[i] = ov.getLcgFuel();
+			lcgOxLog[i] = ov.getLcgOx();
+			lcgPropLog[i] = ov.getLcgProp();
+			lcpLog[i] = ov.getLcp();
+			IjRollLog[i] = ov.getIjRoll();
+			IjPitchLog[i] = ov.getIjPitch();
+			CdLog[i] = ov.getCd();
+			CNaLog[i] = ov.getCNa();
+			altitudeLog[i] = ov.getAltitude();
+			downrangeLog[i] = ov.getDownrange();
+			System.arraycopy(ov.getVelAirENU(), 0, velAirNEDlog[i], 0, 3);
+			System.arraycopy(ov.getVelAirBODY(), 0, velAirBODYlog[i], 0, 3);
+			velAirAbsLog[i] = ov.getVelAirAbs();
+			alphaLog[i] = ov.getAlpha();
+			betaLog[i] = ov.getBeta();
+			machLog[i] = ov.getMach();
+			dynamicsPressureLog[i] = ov.getDynamicsPressure();
+			fstLog[i] = ov.getFst();
+			dragLog[i] = ov.getDrag();
+			normalLog[i] = ov.getNormal();
+			sideLog[i] = ov.getSide();
+			thrustLog[i] = ov.getThrust();
+			thrustMomentumLog[i] = ov.getThrustMomentum();
+			thrustPressureLog[i] = ov.getThrustPressure();
+			System.arraycopy(ov.getForceBODY(), 0, forceBODYlog[i], 0, 3);
+			System.arraycopy(ov.getAccENU(), 0, accENUlog[i], 0, 3);
+			System.arraycopy(ov.getAccBODY(), 0, accBODYlog[i], 0, 3);
+			System.arraycopy(ov.getVelNED(), 0, velNEDlog[i], 0, 3);
+			accAbsLog[i] = ov.getAccAbs();
+			System.arraycopy(ov.getMomentAero(), 0, momentAeroLog[i], 0, 3);
+			System.arraycopy(ov.getMomentAeroDamiping(), 0, momentAeroDampingLog[i], 0, 3);
+			System.arraycopy(ov.getMomentJetDamping(), 0, momentJetDampingLog[i], 0, 3);
+			System.arraycopy(ov.getMomentGyro(), 0, momentGyroLog[i], 0, 3);
+			System.arraycopy(ov.getMoment(), 0, momentLog[i], 0, 3);
+			pAirLog[i] = ov.getPair();
 
 		}
 	}
@@ -198,12 +223,12 @@ public class LoggerVariable {
 		return timeStepLogArrayList.get(index);
 	}
 
-	public MathematicalVector getPosENU(int index) {
-		return posENULogArrayList.get(index);
+	public MathematicalVector getPosNED(int index) {
+		return posNEDLogArrayList.get(index);
 	}
 
-	public MathematicalVector getVelENU(int index) {
-		return velENUlogArrayList.get(index);
+	public MathematicalVector getVelNED(int index) {
+		return velBODYlogArrayList.get(index);
 	}
 
 	public MathematicalVector getOmegaBODY(int index) {
@@ -218,12 +243,12 @@ public class LoggerVariable {
 		return timeStepArray[index];
 	}
 
-	public double[] getPosENUlog(int index) {
-		return posENUlog[index];
+	public double[] getPosNEDlog(int index) {
+		return posNEDlog[index];
 	}
 
-	public double[] getVelENUlog(int index) {
-		return velENUlog[index];
+	public double[] getVelNEDlog(int index) {
+		return velNEDlog[index];
 	}
 
 	public double[] getOmegaBODYlog(int index) {
@@ -242,12 +267,16 @@ public class LoggerVariable {
 		return timeStepArray;
 	}
 
-	public double[][] getPosENUArray(){
-		return posENUlog;
+	public double[][] getPosNEDArray(){
+		return posNEDlog;
 	}
 
-	public double[][] getVelENUArray(){
-		return velENUlog;
+	public double[][] getVelNEDArray(){
+		return velNEDlog;
+	}
+
+	public double[][] getVelBODYArray(){
+		return velBODYlog;
 	}
 
 	public double[][] getOmegaBODYArray(){
@@ -281,9 +310,11 @@ public class LoggerVariable {
 	public double[] getLcgLogArray() {
 		return lcgLog;
 	}
+
 	public double[] getLcgFuelLogArray() {
 		return lcgFuelLog;
 	}
+
 	public double[] getLcgOxLogArray() {
 		return lcgOxLog;
 	}
@@ -320,8 +351,8 @@ public class LoggerVariable {
 		return downrangeLog;
 	}
 
-	public double[][] getVelAirENUlogArray(){
-		return velAirENUlog;
+	public double[][] getVelAirNEDlogArray(){
+		return velAirNEDlog;
 	}
 
 	public double[][] getVelAirBODYlogArray(){
@@ -366,6 +397,14 @@ public class LoggerVariable {
 
 	public double[] getThrustLogArray() {
 		return thrustLog;
+	}
+
+	public double[] getThrustMomentumLogArray() {
+		return thrustMomentumLog;
+	}
+
+	public double[] getThrustPressureLogArray() {
+		return thrustPressureLog;
 	}
 
 	public double[][] getForceBODYlogArray(){
@@ -414,8 +453,8 @@ public class LoggerVariable {
 	public void dumpArrayList() {
 		timeLogArrayList = null;
 		timeStepLogArrayList = null;
-		posENULogArrayList = null;
-		velENUlogArrayList = null;
+		posNEDLogArrayList = null;
+		velBODYlogArrayList = null;
 		omegaBODYlogArraylist = null;
 		quatLogArrayList = null;
 	}

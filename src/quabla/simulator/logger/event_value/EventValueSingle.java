@@ -24,8 +24,8 @@ public class EventValueSingle {
 	private double machMax;
 	private double normalMax, sideMax;
 	private double downrangeApogee, downrangeLandingTrajectory, downrangeLandingParachute;
-	private double[] posENUlandingTrajectory = new double[2];
-	private double[] posENUlandingParachute = new double[2];
+	private double[] posNEDlandingTrajectory = new double[2];
+	private double[] posNEDlandingParachute  = new double[2];
 	private int indexLaunchClear, indexMaxQ, index1stPara, index2ndPara, indexMaxVelAir, indexMaxMach, indexNormalMax, indexSideMax, indexApogee, indexLandingTrajectory, indexLandingParachute;
 
 	public EventValueSingle(LoggerVariable lvt, Rocket rocket) {
@@ -67,8 +67,8 @@ public class EventValueSingle {
 	private void calculateLaunchClear(LoggerVariable lvt) {
 		timeLaunchClear = lvt.getTime(indexLaunchClear);
 		accLaunchClear = lvt.getAccAbsLogArray()[indexLaunchClear];
-		double[][] dcmENUtoBODY = Coordinate.getDCM_ENU2BODYfromQuat(lvt.getQuatLog(indexLaunchClear));
-		velLaunchClear = Coordinate.vec_trans(dcmENUtoBODY, lvt.getVelENUlog(indexLaunchClear))[0]; // 機軸方向対地速度をランチクリア速度とする
+		double[][] dcmNED2BODY = Coordinate.getDcmNED2BODYfromQuat(lvt.getQuatLog(indexLaunchClear));
+		velLaunchClear = Coordinate.transVector(dcmNED2BODY, lvt.getVelNEDlog(indexLaunchClear))[0]; // 機軸方向対地速度をランチクリア速度とする
 	}
 
 	private void calculateAtApogee(LoggerVariable lvt) {
@@ -162,13 +162,13 @@ public class EventValueSingle {
 
 	private void calculateLandingTrajectory(LoggerVariable lvt) {
 		timeLandingTrajectory = lvt.getTime(indexLandingTrajectory);
-		System.arraycopy(lvt.getPosENUlog(indexLandingTrajectory), 0, posENUlandingTrajectory, 0, 2);
+		System.arraycopy(lvt.getPosNEDlog(indexLandingTrajectory), 0, posNEDlandingTrajectory, 0, 2);
 		downrangeLandingTrajectory = lvt.getDownrangeLogArray()[indexLandingTrajectory];
 	}
 
 	private void calculateLandingParachute(LoggerVariableParachute lvp) {
 		timeLandingParachute = lvp.getTime(indexLandingParachute);
-		System.arraycopy(lvp.getPosENUlog(indexLandingParachute), 0, posENUlandingParachute, 0, 2);
+		System.arraycopy(lvp.getPosNEDlog(indexLandingParachute), 0, posNEDlandingParachute, 0, 2);
 		downrangeLandingParachute = lvp.getDownrangeArray()[indexLandingParachute];
 		velDescent = Math.abs(lvp.getVelDescentArray()[indexLandingParachute]);
 	}
@@ -320,8 +320,8 @@ public class EventValueSingle {
 		return timeLandingTrajectory;
 	}
 
-	public double[] getPosENUlandingTrajectory() {
-		return posENUlandingTrajectory;
+	public double[] getPosNEDlandingTrajectory() {
+		return posNEDlandingTrajectory;
 	}
 
 	public double getDownrangeLandingTrajectory() {
@@ -363,8 +363,8 @@ public class EventValueSingle {
 		return timeLandingParachute;
 	}
 
-	public double[] getPosENUlandingParachute() {
-		return posENUlandingParachute;
+	public double[] getPosNEDlandingParachute() {
+		return posNEDlandingParachute;
 	}
 
 	public double getDownrangeLandingParachute() {

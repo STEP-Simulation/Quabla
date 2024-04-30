@@ -27,11 +27,10 @@ public class OtherVariableParachute {
 	}
 
 	public void calculateOtherVariable(double time, double[] pos_ENU, double[] vel_ENU) {
-		altitude = pos_ENU[2];
+		altitude = - pos_ENU[2];
 		downrange = Math.sqrt(Math.pow(pos_ENU[0], 2) + Math.pow(pos_ENU[1], 2));
-		//velDescent = vel_ENU[2];
 
-		windENU = wind.getWindENU(altitude);
+		windENU = wind.getWindNED(altitude);
 		if(vel_ENU[2] <= 0.0) {
 			velAirENU[0] = windENU[0];
 			velAirENU[1] = windENU[1];

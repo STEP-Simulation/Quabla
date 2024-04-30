@@ -8,7 +8,7 @@ from matplotlib.pyplot import subplot
 from PlotLandingScatter.coordinate import ENU2LLH
 from FlightGrapher.make_kml import gettrajectorypoint, post_kml
 from PIL import Image
-from FlightGrapher.sub_tool import get_extent_values, update_limits
+from FlightGrapher.sub_tool import get_extent_values, update_limits, set_limits
 
 class GraphPlotterTrajectory:
 
@@ -17,16 +17,21 @@ class GraphPlotterTrajectory:
 
         self.time_array = np.array(df_log['time [sec]'])
         self.time_step_array = np.array(df_log['time_step [sec]'])
-        self.pos_ENU_log = np.array([[east, north, up] 
-                                    for east, north, up 
-                                    in zip(df_log['pos_east [m]'], 
-                                           df_log['pos_north [m]'], 
-                                           df_log['pos_up [m]'])])
-        self.vel_ENU_log = np.array([[v_east, v_north, v_up] 
+        self.pos_NED_log = np.array([[north, east, down] 
+                                    for north, east, down 
+                                    in zip(df_log['pos_north [m]'], 
+                                           df_log['pos_east [m]'], 
+                                           df_log['pos_down [m]'])])
+        self.vel_NED_log = np.array([[v_east, v_north, v_up] 
                                      for v_east, v_north, v_up 
-                                     in zip(df_log['vel_east [m/s]'], 
-                                            df_log['vel_north [m/s]'], 
-                                            df_log['vel_up [m/s]'])])
+                                     in zip(df_log['vel_north [m/s]'], 
+                                            df_log['vel_east [m/s]'], 
+                                            df_log['vel_down [m/s]'])])
+        self.vel_BODY_log = np.array([[v_roll, v_pitch, v_yaw] 
+                                     for v_roll, v_pitch, v_yaw 
+                                     in zip(df_log['vel_BODY_x [m/s]'], 
+                                            df_log['vel_BODY_y [m/s]'], 
+                                            df_log['vel_BODY_z [m/s]'])])
         self.omega_Body_log = np.array([[p, q, r]
                                         for p, q, r
                                         in zip(df_log['omega_roll [rad/s]'], 
@@ -60,9 +65,9 @@ class GraphPlotterTrajectory:
         self.downrange_log = np.array(df_log['Downrange [km]'])
         self.vel_air_ENU_log = np.array([[vair_east, vair_north, vair_up] 
                                          for vair_east, vair_north, vair_up 
-                                         in zip(df_log['vel_air_east [m/s]'], 
-                                                df_log['vel_air_north [m/s]'], 
-                                                df_log['vel_air_up [m/s]'])])
+                                         in zip(df_log['vel_air_north [m/s]'], 
+                                                df_log['vel_air_east [m/s]'], 
+                                                df_log['vel_air_down [m/s]'])])
         self.vel_air_BODY_log = np.array([[vair_x, vair_y, vair_z] 
                                          for vair_x, vair_y, vair_z 
                                          in zip(df_log['vel_air_BODY_x [m/s]'], 
@@ -78,13 +83,15 @@ class GraphPlotterTrajectory:
         self.normal_log = np.array(df_log['Normal Force [N]'])
         self.side_log = np.array(df_log['Side Force [N]'])
         self.thrust_log = np.array(df_log['Thrust [N]'])
+        self.thrust_momentum_log = np.array(df_log['Thrust Momentum [N]'])
+        self.thrust_pressure_log = np.array(df_log['Thrust Pressure [N]'])
         self.force_log = np.array([[Fx, Fy, Fz] 
                                    for Fx, Fy, Fz 
                                    in zip(df_log['Force_BODY_x [N]'], 
                                           df_log['Force_BODY_y [N]'], 
                                           df_log['Force_BODY_z [N]'])])
-        self.acc_ENU_log = np.array([[acc_east, acc_north, acc_up] 
-                                     for acc_east, acc_north, acc_up
+        self.acc_NED_log = np.array([[acc_north, acc_east, acc_down] 
+                                     for acc_north, acc_east, acc_down
                                      in zip(df_log['Acc_east [m/s2]'], 
                                             df_log['Acc_north [m/s2]'], 
                                             df_log['Acc_up [m/s2]'])])
@@ -128,7 +135,7 @@ class GraphPlotterTrajectory:
         self.index_coast = np.argmax(time_actuate < self.time_array)
         self.index_apogee = np.argmax(time_apogee < self.time_array)
 
-        self.point = [self.pos_ENU_log[-1, 0], self.pos_ENU_log[-1, 1], self.pos_ENU_log[-1, 2]]
+        self.point = [self.pos_NED_log[-1, 0], self.pos_NED_log[-1, 1], self.pos_NED_log[-1, 2]]
         self.Launch_LLH = launch_LLH
 
     def plot_graph(self,land_point):
@@ -156,13 +163,13 @@ class GraphPlotterTrajectory:
         fig.savefig(self.filepath + os.sep + flightType + os.sep + 'TimeStep.png')
 
         fig, ax = plt.subplots()
-        ax.set_title('Position ENU')
-        ax.plot(self.time_array[:self.index_coast], self.pos_ENU_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label='East')
-        ax.plot(self.time_array[:self.index_coast], self.pos_ENU_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label='North')
-        ax.plot(self.time_array[:self.index_coast], self.pos_ENU_log[:self.index_coast, 2], color='#03AF7A', linestyle='-', label='Up')
-        ax.plot(self.time_array[self.index_coast:], self.pos_ENU_log[self.index_coast:, 0], color='#FF4B00', linestyle='--')
-        ax.plot(self.time_array[self.index_coast:], self.pos_ENU_log[self.index_coast:, 1], color='#005AFF', linestyle='--')
-        ax.plot(self.time_array[self.index_coast:], self.pos_ENU_log[self.index_coast:, 2], color='#03AF7A', linestyle='--')
+        ax.set_title('Position NED')
+        ax.plot(self.time_array[:self.index_coast], self.pos_NED_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label='North')
+        ax.plot(self.time_array[:self.index_coast], self.pos_NED_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label='East')
+        ax.plot(self.time_array[:self.index_coast], self.pos_NED_log[:self.index_coast, 2], color='#03AF7A', linestyle='-', label='Down')
+        ax.plot(self.time_array[self.index_coast:], self.pos_NED_log[self.index_coast:, 0], color='#FF4B00', linestyle='--')
+        ax.plot(self.time_array[self.index_coast:], self.pos_NED_log[self.index_coast:, 1], color='#005AFF', linestyle='--')
+        ax.plot(self.time_array[self.index_coast:], self.pos_NED_log[self.index_coast:, 2], color='#03AF7A', linestyle='--')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Position [m]')
         ax.set_xlim(xmin=0.0, xmax=self.time_end)
@@ -172,7 +179,7 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'PositionENU.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'PositionNED.png')
 
         fig1 = plt.figure('Flightlog' + flightType)
         origin = np.zeros(3)
@@ -182,24 +189,25 @@ class GraphPlotterTrajectory:
         ax.set_ylabel('North [m]')
         ax.set_zlabel('Up [m]')
         ax.set_title('Trajectory')
-        ax.plot(self.pos_ENU_log[:self.index_coast, 0], self.pos_ENU_log[:self.index_coast, 1], self.pos_ENU_log[:self.index_coast, 2], color='#FF4B00', label='Powered')
-        ax.plot(self.pos_ENU_log[self.index_coast:self.index_apogee, 0], self.pos_ENU_log[self.index_coast:self.index_apogee, 1], self.pos_ENU_log[self.index_coast:self.index_apogee, 2], color='#005AFF', label='Coasting')
-        ax.plot(self.pos_ENU_log[self.index_apogee:, 0], self.pos_ENU_log[self.index_apogee:, 1], self.pos_ENU_log[self.index_apogee:, 2], color='#03AF7A', label='Trajectory')
+        ax.plot(self.pos_NED_log[:self.index_coast, 1], self.pos_NED_log[:self.index_coast, 0], - self.pos_NED_log[:self.index_coast, 2], color='#FF4B00', label='Powered')
+        ax.plot(self.pos_NED_log[self.index_coast:self.index_apogee, 1], self.pos_NED_log[self.index_coast:self.index_apogee, 0], - self.pos_NED_log[self.index_coast:self.index_apogee, 2], color='#005AFF', label='Coasting')
+        ax.plot(self.pos_NED_log[self.index_apogee:, 1], self.pos_NED_log[self.index_apogee:, 0], - self.pos_NED_log[self.index_apogee:, 2], color='#03AF7A', label='Trajectory')
         ax.scatter(origin[0], origin[1], origin[2], label='Launch Point', color='r', marker='o')
-        ax.scatter(self.pos_ENU_log[-1,0], self.pos_ENU_log[-1,1],self.pos_ENU_log[-1,2],label='Landing Point', color='y', marker='*',s=30)
+        ax.scatter(self.pos_NED_log[-1, 1], self.pos_NED_log[-1, 0], - self.pos_NED_log[-1, 2],label='Landing Point', color='y', marker='*',s=30)
         ax.grid()
         ax.legend()
         ax.set_zlim(bottom=0.0)
+        set_limits(ax)
         fig1.savefig(self.filepath + os.sep + flightType + os.sep + 'Flightlog.png')
 
         fig, ax = plt.subplots()
-        ax.set_title('Velocity ENU')
-        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label='East')
-        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label='North')
-        ax.plot(self.time_array[:self.index_coast], self.vel_ENU_log[:self.index_coast, 2], color='#03AF7A', linestyle='-', label='Up')
-        ax.plot(self.time_array[self.index_coast:], self.vel_ENU_log[self.index_coast:, 0], color='#FF4B00', linestyle='--')
-        ax.plot(self.time_array[self.index_coast:], self.vel_ENU_log[self.index_coast:, 1], color='#005AFF', linestyle='--')
-        ax.plot(self.time_array[self.index_coast:], self.vel_ENU_log[self.index_coast:, 2], color='#03AF7A', linestyle='--')
+        ax.set_title('Velocity NED')
+        ax.plot(self.time_array[:self.index_coast], self.vel_NED_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label='North')
+        ax.plot(self.time_array[:self.index_coast], self.vel_NED_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label='East')
+        ax.plot(self.time_array[:self.index_coast], self.vel_NED_log[:self.index_coast, 2], color='#03AF7A', linestyle='-', label='Down')
+        ax.plot(self.time_array[self.index_coast:], self.vel_NED_log[self.index_coast:, 0], color='#FF4B00', linestyle='--')
+        ax.plot(self.time_array[self.index_coast:], self.vel_NED_log[self.index_coast:, 1], color='#005AFF', linestyle='--')
+        ax.plot(self.time_array[self.index_coast:], self.vel_NED_log[self.index_coast:, 2], color='#03AF7A', linestyle='--')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Velocity [m/s]')
         ax.set_xlim(xmin=0.0, xmax=self.time_end)
@@ -209,7 +217,26 @@ class GraphPlotterTrajectory:
         ax.set_aspect('auto')
         ax.grid()
         ax.legend()
-        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'VelocityENU.png')
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'VelocityNED.png')
+
+        fig, ax = plt.subplots()
+        ax.set_title('Velocity BODY')
+        ax.plot(self.time_array[:self.index_coast], self.vel_BODY_log[:self.index_coast, 0], color='#FF4B00', linestyle='-', label='Roll')
+        ax.plot(self.time_array[:self.index_coast], self.vel_BODY_log[:self.index_coast, 1], color='#005AFF', linestyle='-', label='Pitch')
+        ax.plot(self.time_array[:self.index_coast], self.vel_BODY_log[:self.index_coast, 2], color='#03AF7A', linestyle='-', label='Yaw')
+        ax.plot(self.time_array[self.index_coast:], self.vel_BODY_log[self.index_coast:, 0], color='#FF4B00', linestyle='--')
+        ax.plot(self.time_array[self.index_coast:], self.vel_BODY_log[self.index_coast:, 1], color='#005AFF', linestyle='--')
+        ax.plot(self.time_array[self.index_coast:], self.vel_BODY_log[self.index_coast:, 2], color='#03AF7A', linestyle='--')
+        ax.set_xlabel('Time [sec]')
+        ax.set_ylabel('Velocity [m/s]')
+        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ymin, ymax = ax.get_ylim()
+        ax.set_ylim(ymin=ymin, ymax=ymax)
+        ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
+        ax.set_aspect('auto')
+        ax.grid()
+        ax.legend()
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'VelocityBODY.png')
 
         fig, ax = plt.subplots()
         ax.set_title('Angular Speed BODY')
@@ -329,11 +356,11 @@ class GraphPlotterTrajectory:
 
         fig, ax = plt.subplots()
         ax.set_title('Downrange')
-        ax.plot(self.pos_ENU_log[:self.index_coast, 0] / 1000, self.pos_ENU_log[:self.index_coast, 1] / 1000.0, color='#FF4B00', linestyle='-')
-        ax.plot(self.pos_ENU_log[self.index_coast:, 0] / 1000, self.pos_ENU_log[self.index_coast:, 1] / 1000.0, color='#FF4B00', linestyle='--')
-        ax.text(x=self.pos_ENU_log[self.index_coast, 0] / 1000, y=self.pos_ENU_log[self.index_coast, 1] / 1000, s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
-        ax.text(x=self.pos_ENU_log[-1, 0] / 1000, y=self.pos_ENU_log[-1, 1] / 1000, s='\n+\nLanding Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
-        ax.text(x=self.pos_ENU_log[0, 0] / 1000, y=self.pos_ENU_log[0, 1] / 1000, s='\n+\nLaunch Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.plot(self.pos_NED_log[:self.index_coast, 1] / 1000, self.pos_NED_log[:self.index_coast, 0] / 1000.0, color='#FF4B00', linestyle='-')
+        ax.plot(self.pos_NED_log[self.index_coast:, 1] / 1000, self.pos_NED_log[self.index_coast:, 0] / 1000.0, color='#FF4B00', linestyle='--')
+        ax.text(x=self.pos_NED_log[self.index_coast, 0] / 1000, y=self.pos_NED_log[self.index_coast, 1] / 1000, s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.pos_NED_log[-1, 1] / 1000, y=self.pos_NED_log[-1, 0] / 1000, s='\n+\nLanding Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.pos_NED_log[0 , 1] / 1000, y=self.pos_NED_log[0 , 0] / 1000, s='\n+\nLaunch Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
         xmin, xmax, ymin, ymax = update_limits(ax.get_xlim(), ax.get_ylim(), fig.get_figheight() / fig.get_figwidth())
         ax.set_xlim(xmin=xmin, xmax=xmax)
         ax.set_ylim(ymin=ymin, ymax=ymax)
@@ -388,6 +415,7 @@ class GraphPlotterTrajectory:
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Angle [deg]')
         ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_ylim(ymin=-180., ymax=180.)
         ymin, ymax = ax.get_ylim()
         ax.set_ylim(ymin=ymin, ymax=ymax)
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
@@ -398,8 +426,8 @@ class GraphPlotterTrajectory:
         
         fig, ax = plt.subplots()
         ax.set_title('AoA AoS')
-        ax.plot(self.time_array[self.index_launch_clear:self.index_coast] , self.alpha_log[self.index_launch_clear:self.index_coast], color='#FF4B00', linestyle='-', label='Angle of Attack')
-        ax.plot(self.time_array[self.index_launch_clear:self.index_coast] , self.beta_log[self.index_launch_clear:self.index_coast] , color='#005AFF', linestyle='-', label='Angle of Side-slip')
+        ax.plot(self.time_array[:self.index_coast] , self.alpha_log[:self.index_coast], color='#FF4B00', linestyle='-', label='Angle of Attack')
+        ax.plot(self.time_array[:self.index_coast] , self.beta_log[:self.index_coast] , color='#005AFF', linestyle='-', label='Angle of Side-slip')
         ax.plot(self.time_array[self.index_coast:], self.alpha_log[self.index_coast:], color='#FF4B00', linestyle='--')
         ax.plot(self.time_array[self.index_coast:], self.beta_log[self.index_coast:] , color='#005AFF', linestyle='--')
         ax.set_xlabel('Time [sec]')
@@ -488,15 +516,20 @@ class GraphPlotterTrajectory:
         
         fig, ax = plt.subplots()
         ax.set_title('Force Thrust')
-        ax.plot(self.time_array[:self.index_coast] , self.thrust_log[:self.index_coast], color='#FF4B00', linestyle='-', label='Thrust')
-        ax.plot(self.time_array[self.index_coast:] , self.thrust_log[self.index_coast:], color='#FF4B00', linestyle='--')
+        ax.plot(self.time_array[:self.index_apogee] , self.thrust_log[:self.index_apogee], color='#FF4B00', linestyle='-', label='Thrust All')
+        ax.plot(self.time_array[:self.index_apogee] , self.thrust_momentum_log[:self.index_apogee], color='#005AFF', linestyle='-', label='Momentum Thrust')
+        ax.plot(self.time_array[:self.index_apogee] , self.thrust_pressure_log[:self.index_apogee], color='#03AF7A', linestyle='-', label='Pressure Thrust')
+       #  ax.plot(self.time_array[self.index_coast:] , self.thrust_momentum_log[self.index_coast:], color='#005AFF', linestyle='--')
+       #  ax.plot(self.time_array[self.index_coast:] , self.thrust_log[self.index_coast:], color='#FF4B00', linestyle='--')
+       #  ax.plot(self.time_array[self.index_coast:] , self.thrust_pressure_log[self.index_coast:], color='#03AF7A', linestyle='--')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Force [N]')
-        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_xlim(xmin=0.0, xmax=self.time_array[self.index_apogee])
         ymin, ymax = ax.get_ylim()
         ax.set_ylim(ymin=ymin, ymax=ymax)
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
         ax.set_aspect('auto')
+        ax.legend()
         ax.grid()
         fig.savefig(self.filepath + os.sep + flightType + os.sep + 'ForceThrust.png')
 
@@ -618,7 +651,7 @@ class GraphPlotterTrajectory:
         fig.savefig(self.filepath + os.sep + flightType + os.sep + 'MomentBODY_Z-Axis.png')
 
         vENU2LLH = np.vectorize(ENU2LLH, excluded=['launch_LLH'], signature="(1),(3)->(3)")
-        log_LLH = vENU2LLH(self.Launch_LLH, self.pos_ENU_log)
+        log_LLH = vENU2LLH(self.Launch_LLH, self.pos_NED_log)
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
         gettrajectorypoint(point_LLH)
         post_kml(log_LLH, self.filepath, '_02_hard')

@@ -12,24 +12,24 @@ public class OutputFlightlogParachute {
 	private final String[] nameList = {
 			"time [sec]",
 			"time_step [sec]",
-			"pos_east [m]",
 			"pos_north [m]",
-			"pos_up [m]",
-			"vel_east [m/s]",
+			"pos_east [m]",
+			"pos_down [m]",
 			"vel_north [m/s]",
-			"vel_up [m/s]",
+			"vel_east [m/s]",
+			"vel_down [m/s]",
 			"altitude [km]",
 			"downrange [km]",
-			"vel_air_east [m/s]",
 			"vel_air_north [m/s]",
-			"vel_air_up [m/s]",
+			"vel_air_east [m/s]",
+			"vel_air_down [m/s]",
 			"vel_air_abs [m/s]"
 	};
 
 	private double[]   timeArray;
 	private double[]   timeStepArray;
-	private double[][] posENUArray;
-	private double[][] velENUArray;
+	private double[][] posNEDArray;
+	private double[][] velNEDArray;
 	private double[]   altitudeArray;
 	private double[]   downrangeArray;
 	private double[][] velAirENUArray;
@@ -43,8 +43,8 @@ public class OutputFlightlogParachute {
 
 		timeArray = lv.getTimeArray().clone();
 		timeStepArray = lv.getTimeStepArray();
-		posENUArray = lv.getPosENUArray().clone();
-		velENUArray = lv.getVelENUArray().clone();
+		posNEDArray = lv.getPosNEDArray().clone();
+		velNEDArray = lv.getVelNEDArray().clone();
 		altitudeArray = lv.getAltitudeArray().clone();
 		downrangeArray = lv.getDownrangeArray().clone();
 		velAirENUArray = lv.getVelAirENUArray().clone();
@@ -73,8 +73,8 @@ public class OutputFlightlogParachute {
 
 			storeResultArray(timeArray[i]);
 			storeResultArray(timeStepArray[i]);
-			storeResultArray(posENUArray[i]);
-			storeResultArray(velENUArray[i]);
+			storeResultArray(posNEDArray[i]);
+			storeResultArray(velNEDArray[i]);
 			storeResultArray(altitudeArray[i]);
 			storeResultArray(downrangeArray[i]);
 			storeResultArray(velAirENUArray[i]);

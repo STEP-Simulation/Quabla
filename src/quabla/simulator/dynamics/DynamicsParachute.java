@@ -8,7 +8,7 @@ public class DynamicsParachute extends AbstractDynamics{
 
 	private Rocket rocket;
 
-	MathematicalVector velENU = new MathematicalVector();
+	MathematicalVector velNED = new MathematicalVector();
 
 	DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
 
@@ -21,13 +21,13 @@ public class DynamicsParachute extends AbstractDynamics{
 		// Import variable
 		double t = variable.getTime();
 		double altitude = variable.getAltitude();
-		double VelDescent = variable.getVelDescent();
+		double velDescent = variable.getVelDescent();
 
 		double m = rocket.getMass(t);
 
 		//Wind , Velocity
-		double[] wind_ENU = rocket.wind.getWindENU(altitude);
-		velENU.set(wind_ENU[0], wind_ENU[1], VelDescent);
+		double[] windENU = rocket.wind.getWindNED(altitude);
+		velNED.set(windENU[0], windENU[1], velDescent);
 
 		//Environment
 		double g = rocket.atm.getGravity(altitude);
@@ -57,11 +57,11 @@ public class DynamicsParachute extends AbstractDynamics{
 			CdS = rocket.CdS1;
 		}
 
-		double drag = 0.5 * rho * CdS * Math.pow(VelDescent, 2);
-		double Acc = drag / m - g;
+		double drag = 0.5 * rho * CdS * Math.pow(velDescent, 2);
+		double acc = - drag / m + g;
 
-		delta.setDeltaPosENU(velENU);
-		delta.setDeltaVelDescent(Acc);
+		delta.setDeltaPosNED(velNED);
+		delta.setDeltaVelDescent(acc);
 		return delta;
 	}
 }

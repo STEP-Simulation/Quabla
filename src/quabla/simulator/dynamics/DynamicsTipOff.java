@@ -14,6 +14,8 @@ public class DynamicsTipOff extends AbstractDynamics {
 		this.rocket = rocket;
 	}
 
+	// TODO: revise velENU
+
 	@Override
 	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
 
@@ -21,7 +23,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double t = variable.getTime();
 		double altitude = variable.getAltitude();
 		double distanceLowerLug = variable.getDistanceLowerLug();
-		MathematicalVector velENU = variable.getVelENU();
+		MathematicalVector velENU = variable.getVelBODY();
 		MathematicalVector omegaBODY = variable.getOmegaBODY();
 		MathematicalVector quat = new MathematicalVector(Coordinate.nomalizeQuat(variable.getQuat().toDouble()));
 
@@ -32,7 +34,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double r = omegaBODY.toDouble(2);
 
 		// Transition coordinate
-		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat.toDouble()));
+		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDcmNED2BODYfromQuat(quat.toDouble()));
 		MathematicalMatrix dcmBODY2ENU = dcmENU2BODY.transpose();
 
 		double[] attitudeDeg = Coordinate.getEulerFromDCM(dcmENU2BODY.getDouble());
@@ -40,7 +42,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		double roll = Coordinate.deg2rad(attitudeDeg[2]);
 
 		// Wind
-		MathematicalVector windENU = new MathematicalVector(rocket.wind.getWindENU(altitude));
+		MathematicalVector windENU = new MathematicalVector(rocket.wind.getWindNED(altitude));
 		MathematicalVector velAirENU = velENU.sub(windENU);
 		MathematicalVector velAirBODY = dcmENU2BODY.dot(velAirENU);
 		double velAirAbs = velAirBODY.norm();
@@ -126,12 +128,12 @@ public class DynamicsTipOff extends AbstractDynamics {
 				moment.toDouble()[2] / Ij[2]);
 
 		// Kinematics Equation
-		MathematicalMatrix tensor = new MathematicalMatrix(Coordinate.Omega_tensor(p, q, r));
+		MathematicalMatrix tensor = new MathematicalMatrix(Coordinate.getOmegaTensor(p, q, r));
 		MathematicalVector quatdot = tensor.dot(quat).multiply(0.5);
 
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
-		delta.setDeltaPosENU(velENU);
-		delta.setDeltaVelENU(accENU);
+		delta.setDeltaPosNED(velENU);
+		delta.setDeltaVelNED(accENU);
 		delta.setDeltaOmegaBODY(omegadot);
 		delta.setDeltaQuat(quatdot);
 

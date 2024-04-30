@@ -17,9 +17,9 @@ public class Constant extends AbstractWind{
 	}
 
 	@Override
-	public double[] getWindENU(double alt) {
-		double azimuthRad = Coordinate.deg2rad(- azimuthDeg + 90.0 + magneticDecDeg);
-		return toWindENU(speed, azimuthRad);
+	public double[] getWindNED(double alt) {
+		double azimuthRad = Coordinate.deg2rad(getMagAzimuthNED(azimuthDeg, magneticDecDeg));
+		return toWindNED(speed, azimuthRad);
 	}
 
 	@Override

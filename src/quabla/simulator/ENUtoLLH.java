@@ -109,7 +109,7 @@ public class ENUtoLLH {
 		return newMatrix;
 	}
 
-	public static double[] ENU2LLH(double point_ENU[]) {
+	public static double[] ENU2LLH(double[] posNED) {
 
 		String launchSiteInfo = "input" + File.separator + "launch_site.json";
 		ObjectMapper mapper = new ObjectMapper();
@@ -150,11 +150,11 @@ public class ENUtoLLH {
 			}
 		}
 
-	    double east = point_ENU[0];
-	    double north = point_ENU[1];
-	    double up = point_ENU[2];
+	    // double north = posNED[0];
+	    // double east  = posNED[1];
+	    // double down  = posNED[2];
 
-	    double Pos_NED[] = {north, east, - up};
+	    // double[] posNED = {north, east, down};
 
 	    double lat = Math.toRadians(launch_LLH[0]);
 	    double lon = Math.toRadians(launch_LLH[1]);
@@ -163,11 +163,10 @@ public class ENUtoLLH {
 
 	    double launch_ECEF[] = LLH2ECEF(launch_LLH);
 	    double DCM_NED2ECEF[][] = ECEF2NED(LLH);
-	    double multiple[] = multiplicationOfMatrices(Pos_NED, DCM_NED2ECEF);
+	    double multiple[] = multiplicationOfMatrices(posNED, DCM_NED2ECEF);
 	    double point_ECEF[] = {multiple[0] + launch_ECEF[0], multiple[1] + launch_ECEF[1], multiple[2] + launch_ECEF[2]};
 
-	    double point_LLH[] = ECEF2LLH(point_ECEF);
-	    return point_LLH;
+	    return ECEF2LLH(point_ECEF);
 	}
 
 }

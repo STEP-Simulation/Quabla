@@ -55,9 +55,12 @@ public class Original extends AbstractWind{
 	}
 
 	@Override
-	public double[] getWindENU(double alt) {
-		double azimuthRad = Coordinate.deg2rad(- getWindAzimuth(alt) + 90.0 + magneticDecDeg);
-		return toWindENU(getWindSpeed(alt), azimuthRad);
+	public double[] getWindNED(double alt) {
+		// double azimuthRad = Coordinate.deg2rad(- getWindAzimuth(alt) + 90.0 + magneticDecDeg);
+		// double azimuthRad = Coordinate.deg2rad(getWindAzimuth(alt) - magneticDecDeg);
+		double azimuthRad = Coordinate.deg2rad(getMagAzimuthNED(getWindAzimuth(alt), magneticDecDeg));
+
+		return toWindNED(getWindSpeed(alt), azimuthRad);
 	}
 
 	@Override

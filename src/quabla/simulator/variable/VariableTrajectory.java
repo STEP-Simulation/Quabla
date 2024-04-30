@@ -17,74 +17,68 @@ public class VariableTrajectory extends AbstractVariable{
 	private Rocket rocket;
 
 	private double time;
-	// private final double h;
 
 	//Main parameters
-	private MathematicalVector posENU;
-	private MathematicalVector velENU;
+	private MathematicalVector posNED;
+	private MathematicalVector velBODY;
 	private MathematicalVector omegaBODY;
 	private MathematicalVector quat;
 
 	private double[] quat0;
-
+	private double[] posNED0;
 
 	public VariableTrajectory(Rocket rocket) {
 		this.rocket = rocket;
-		// h = rocket.dt;
 		setInitialVariable();
 	}
 
-	public void setInitialVariable() {//初期パラメータの取得
+	/**
+	 * set Initial Parameters
+	 * */ 
+	public void setInitialVariable() {
 		time = 0.0;
 
 		//Initial Euler Angle
 		double azimuth0, elevation0, roll0;
-		azimuth0 = Coordinate.deg2rad((- rocket.azimuthLauncher + 90.0) + rocket.magneticDec);
-		elevation0 = Coordinate.deg2rad(rocket.elevationLauncher);
-		if(elevation0 > 0.0) {
-			elevation0 *= -1.0;
-		}
-		roll0 = Math.PI;
-
-		//Initial Position_ENU
-		posENU = new MathematicalVector(
-				(rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.cos(azimuth0),
-				(rocket.L - rocket.lcgBef)*Math.cos(Math.abs(elevation0))*Math.sin(azimuth0),
-				(rocket.L - rocket.lcgBef)*Math.sin(Math.abs(elevation0)));
+		// ENU (East-North-Up)
+		// azimuth0   = Coordinate.deg2rad((- rocket.azimuthLauncher + 90.0) + rocket.magneticDec);
+		// elevation0 = - Math.abs(Coordinate.deg2rad(rocket.elevationLauncher));
+		// roll0      = Math.PI;
+		// NED (North-East-Down)
+		azimuth0   = Coordinate.deg2rad((rocket.azimuthLauncher) - rocket.magneticDec);
+		elevation0 = Math.abs(Coordinate.deg2rad(rocket.elevationLauncher));
+		roll0      = 0.0;
 
 		//Initial Attitude with Quaternion
 		quat0 = Coordinate.getQuatFromEuler(azimuth0, elevation0, roll0);
-
-		quat = new MathematicalVector(quat0);
+		quat  = new MathematicalVector(quat0);
+		double[][] dcm = Coordinate.getDcmBODY2NEDfromDcmNED2BODY(Coordinate.getDcmNED2BODYfromQuat(quat0));
+		
+		//Initial Position_ENU
+		double[] pos0BODY = {rocket.L - rocket.lcgBef, 0., 0.};
+		posNED0 = Coordinate.transVector(dcm, pos0BODY);
+		posNED = new MathematicalVector(posNED0);
 
 		//Initial Velocity
-		velENU = new MathematicalVector(0.0, 0.0, 0.0);
+		velBODY = new MathematicalVector(0.0, 0.0, 0.0);
 
 		//Initial Anguler Velocity
 		omegaBODY = new MathematicalVector(0.0, 0.0, 0.0);
 
 	}
 
-	public void setVariable(VariableTrajectory variable) {
-		this.time = variable.getTime();
-		this.posENU = variable.getPosENU();
-		this.velENU = variable.getVelENU();
-		this.omegaBODY = variable.getOmegaBODY();
-		this.quat = variable.getQuat();
-	}
-
 	public void setVariable(double time, MathematicalVector Pos_ENU, MathematicalVector Vel_ENU, MathematicalVector omega_Body, MathematicalVector quat) {
 		this.time = time;
-		this.posENU.set(Pos_ENU.toDouble());
-		this.velENU.set(Vel_ENU.toDouble());
+		this.posNED.set(Pos_ENU.toDouble());
+		this.velBODY.set(Vel_ENU.toDouble());
 		this.omegaBODY.set(omega_Body.toDouble());
 		this.quat.set(quat.toDouble());
 	}
 
 	public void setVariable(double time, double[] x) {
 		this.time = time;
-		this.posENU.set(x[0], x[1], x[2]);
-		this.velENU.set(x[3], x[4], x[5]);
+		this.posNED.set(x[0], x[1], x[2]);
+		this.velBODY.set(x[3], x[4], x[5]);
 		this.omegaBODY.set(x[6], x[7], x[8]);
 		this.quat.set(x[9], x[10], x[11], x[12]);
 	}
@@ -98,21 +92,22 @@ public class VariableTrajectory extends AbstractVariable{
 		return time;
 	}
 
-	public void setPos_ENU(MathematicalVector posENU) {
-		this.posENU = posENU;
-	}
-
-	public MathematicalVector getPosENU() {
-		return posENU;
-	}
-
-	public void setVelENU(MathematicalVector velENU) {
-		this.velENU = velENU;
+	public void setPosNED(MathematicalVector posNED) {
+		this.posNED = posNED;
 	}
 
 	@Override
-	public MathematicalVector getVelENU() {
-		return velENU;
+	public MathematicalVector getPosNED() {
+		return posNED;
+	}
+
+	private void setVelBODY(MathematicalVector velBODY) {
+		this.velBODY = velBODY;
+	}
+
+	@Override
+	public MathematicalVector getVelBODY() {
+		return velBODY;
 	}
 
 	public void setOmegaBODY(MathematicalVector omegaBODY) {
@@ -137,8 +132,8 @@ public class VariableTrajectory extends AbstractVariable{
 	 * origin(launch point) to C.G.
 	 * */
 	private MathematicalVector getDistanceBody() {
-		MathematicalMatrix dcmENU2BODY = new MathematicalMatrix(Coordinate.getDCM_ENU2BODYfromQuat(quat0));
-		return dcmENU2BODY.dot(posENU);
+		MathematicalMatrix dcmNED2BODY = new MathematicalMatrix(Coordinate.getDcmNED2BODYfromQuat(quat0));
+		return dcmNED2BODY.dot(posNED);
 	}
 
 	public double getDistanceUpperLug() {
@@ -156,41 +151,51 @@ public class VariableTrajectory extends AbstractVariable{
 
 	@Override
 	public double getVelDescent() {
-		return velENU.toDouble(2);
+		return velBODY.toDouble(2); // TODO: Fix velENU
 	}
 
 	@Override
 	public double getAltitude() {
-		return posENU.toDouble(2);
+		// return posENU.toDouble(2);
+		return - posNED.toDouble(2);
 	}
 
 	public VariableTrajectory getClone() {
+		// VariableTrajectory variable2 = this.clone();
 		VariableTrajectory variable2 = new VariableTrajectory(rocket);
-		variable2.setVariable(time, posENU, velENU, omegaBODY, quat);
+		variable2.setVariable(time, posNED, velBODY, omegaBODY, quat);
 		return variable2;
 	}
 
+	public double[] getInitinalPosNED(){
+		return posNED0;
+	} 
+
+	public double[] getInitinalQuat(){
+		return quat0;
+	} 
+	
 	public double[] toDouble() {
 		double[] x = new double[13];
-		System.arraycopy(posENU.toDouble(), 0, x, 0, 3);
-		System.arraycopy(velENU.toDouble(), 0, x, 3, 3);
+		System.arraycopy(posNED.toDouble(), 0, x, 0, 3);
+		System.arraycopy(velBODY.toDouble(), 0, x, 3, 3);
 		System.arraycopy(omegaBODY.toDouble(), 0, x, 6, 3);
 		System.arraycopy(quat.toDouble(), 0, x, 9, 4);
 
 		return x;
 	}
 
-	//TODO DynamicsMinuteChangeからVariableをセット
+	//TODO: DynamicsMinuteChangeからVariableをセット
 	@Override
 	public void update(double timeStep, AbstractDynamicsMinuteChange delta) {
 
 		setTime(time + timeStep);
-		setPos_ENU(posENU.add(delta.getDeltaPosENU().multiply(timeStep)));
-		setVelENU(velENU.add(delta.getDeltaVelENU().multiply(timeStep)));
+		setPosNED(posNED.add(delta.getDeltaPosNED().multiply(timeStep)));
+		setVelBODY(velBODY.add(delta.getDeltaVelNED().multiply(timeStep)));
 		setOmegaBODY(omegaBODY.add(delta.getDeltaOmegaBODY().multiply(timeStep)));
 		setQuat(quat.add(delta.getDeltaQuat().multiply(timeStep)));
+		quat.normalize();
 
 	}
-
 
 }

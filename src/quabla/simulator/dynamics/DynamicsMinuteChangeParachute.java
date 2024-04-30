@@ -4,25 +4,25 @@ import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
 public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 
-	private MathematicalVector deltaPosENU = new MathematicalVector(MathematicalVector.ZERO);
+	private MathematicalVector deltaPosNED = new MathematicalVector(MathematicalVector.ZERO);
 	private double deltaVelDescent;
 
 	public DynamicsMinuteChangeParachute() {
 
 	}
 
-	public DynamicsMinuteChangeParachute(MathematicalVector deltaPosENU, double deltaVelDescent) {
-		this.deltaPosENU = deltaPosENU;
+	public DynamicsMinuteChangeParachute(MathematicalVector deltaPosNED, double deltaVelDescent) {
+		this.deltaPosNED = deltaPosNED;
 		this.deltaVelDescent = deltaVelDescent;
 	}
 
 	public void setDelta(double[] dx) {
-		this.deltaPosENU.set(dx[0], dx[1], dx[2]);
+		this.deltaPosNED.set(dx[0], dx[1], dx[2]);
 		this.deltaVelDescent = dx[3];
 	}
 
-	public void setDeltaPosENU(MathematicalVector deltaPosENU) {
-		this.deltaPosENU = deltaPosENU;
+	public void setDeltaPosNED(MathematicalVector deltaPosNED) {
+		this.deltaPosNED = deltaPosNED;
 	}
 
 	public void setDeltaVelDescent(double deltaVelDescent) {
@@ -32,7 +32,7 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 	@Override
 	public DynamicsMinuteChangeParachute multiple(double a) {
 		DynamicsMinuteChangeParachute dmcp = new DynamicsMinuteChangeParachute();
-		dmcp.setDeltaPosENU(this.deltaPosENU.multiply(a));
+		dmcp.setDeltaPosNED(this.deltaPosNED.multiply(a));
 		dmcp.setDeltaVelDescent(this.deltaVelDescent * a);
 		return dmcp;
 	}
@@ -40,7 +40,7 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 	@Override
 	public double[] toDouble() {
 		double[] dx = new double[4];
-		System.arraycopy(deltaPosENU.toDouble(), 0, dx, 0, 3);
+		System.arraycopy(deltaPosNED.toDouble(), 0, dx, 0, 3);
 		dx[3] = deltaVelDescent;
 		return dx;
 	}
@@ -54,15 +54,15 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 
 	@Override
 	public DynamicsMinuteChangeParachute toDeltaPara() {
-		return new DynamicsMinuteChangeParachute(deltaPosENU, deltaVelDescent);
+		return new DynamicsMinuteChangeParachute(deltaPosNED, deltaVelDescent);
 	}
 
 	@Override
-	public MathematicalVector getDeltaPosENU() {
-		return deltaPosENU;
+	public MathematicalVector getDeltaPosNED() {
+		return deltaPosNED;
 	}
 	@Override
-	public MathematicalVector getDeltaVelENU() {
+	public MathematicalVector getDeltaVelNED() {
 		return  MathematicalVector.ZERO;
 	}
 

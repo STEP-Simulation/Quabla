@@ -8,7 +8,7 @@ package quabla.simulator;
  * */
 
 /**
- * Coordinate deals with coordinte transformation
+ * Coordinate deals with coordinate transformation
  * using DCM(Direct Cosine Matrix), euler angles(321 System) and quaternion.
  * */
 public class Coordinate {
@@ -18,34 +18,34 @@ public class Coordinate {
 	 * @param quat
 	 * @return dcm_ENU2BODY
 	 * */
-	public static double[][] getDCM_ENU2BODYfromQuat(double quat[]) {
-		double dcm_ENU2BODY[][] = new double[3][3];
+	public static double[][] getDcmNED2BODYfromQuat(double[] quat) {
 		double q0,q1,q2,q3;
 		q0 = quat[0];
 		q1 = quat[1];
 		q2 = quat[2];
 		q3 = quat[3];
+		
+		double[][] dcmNED2BODY = {
+			{q0*q0 + q1*q1 - q2*q2 - q3*q3, 2.*(q1*q2 + q0*q3)           , 2.*(q1*q3 - q0*q2)           }, 
+			{2.*(q1*q2 - q0*q3)           , q0*q0 - q1*q1 + q2*q2 - q3*q3, 2.*(q2*q3 + q0*q1)           }, 
+			{2.*(q1*q3 + q0*q2)           , 2.*(q2*q3 - q0*q1)           , q0*q0 - q1*q1 - q2*q2 + q3*q3}
+		};
 
-		dcm_ENU2BODY[0][0] = q0*q0 + q1*q1 - q2*q2 - q3*q3 ;
-		dcm_ENU2BODY[0][1] = 2*(q1*q2 + q0*q3);
-		dcm_ENU2BODY[0][2] = 2*(q1*q3 - q0*q2);
-		dcm_ENU2BODY[1][0] = 2*(q1*q2 - q0*q3);
-		dcm_ENU2BODY[1][1] = q0*q0 - q1*q1 + q2*q2 - q3*q3 ;
-		dcm_ENU2BODY[1][2] = 2*(q2*q3 + q0*q1);
-		dcm_ENU2BODY[2][0] = 2*(q1*q3 + q0*q2);
-		dcm_ENU2BODY[2][1] = 2*(q2*q3 - q0*q1);
-		dcm_ENU2BODY[2][2] = q0*q0 - q1*q1 - q2*q2 + q3*q3 ;
-
-		return dcm_ENU2BODY;
+		return dcmNED2BODY;
 	}
 
 
 
-	public static double[] nomalizeQuat(double quat[]) {
+	public static double[] nomalizeQuat(double[] quat) {
 		double norm;
 		double quatNomalized[] = new double[4];
 
-		norm = Math.sqrt(quat[0]*quat[0] + quat[1]*quat[1] + quat[2]*quat[2] + quat[3]*quat[3]) ;
+		norm = Math.sqrt(
+			   quat[0]*quat[0] 
+			 + quat[1]*quat[1] 
+			 + quat[2]*quat[2] 
+			 + quat[3]*quat[3] ) ;
+
 		for(int i = 0; i<4; i++) {
 			quatNomalized[i] = quat[i] / norm;
 		}
@@ -57,48 +57,33 @@ public class Coordinate {
 	/**
 	 * This function makes tensor used in Kinematic ODE.
 	 * */
-	public static double[][] Omega_tensor(double p, double q , double r){
-		double tensor[][] = new double[4][4];
-		double omega_Body[] = new double[3];
+	public static double[][] getOmegaTensor(double p, double q , double r){
 
-		omega_Body[0] = p;
-		omega_Body[1] = q;
-		omega_Body[2] = r;
-
-		for(int i = 0 ; i<4 ; i++) {
-			tensor[i][i] = 0.0;
-		}
-
-		for(int i = 0 ; i<3 ; i++) {
-			tensor[i+1][0] = omega_Body[i];
-			tensor[0][i+1] = - omega_Body[i];
-		}
-
-		tensor[1][2] = r;
-		tensor[2][1] = -r;
-		tensor[3][1] = q;
-		tensor[1][3] = -q;
-		tensor[2][3] = p;
-		tensor[3][2] = -p;
+		double[][] tensor = {
+			{.0, -p, -q, -r},
+			{ p, .0,  r, -q},
+			{ q, -r, .0,  p},
+			{ r,  q, -p, .0}
+		};
 
 		return tensor;
 	}
 
 
 	/**
-	 * @param dcm_ENU2BODY
+	 * @param dcmNED2BODY
 	 * @return dcm_BODY2ENU
 	 * */
-	public static double[][] getDCM_BODY2ENUFromDCM_ENU2BODY(double dcm_ENU2BODY[][]){
-		double dcm_BODY2ENU[][] = new double[3][3];
+	public static double[][] getDcmBODY2NEDfromDcmNED2BODY(double[][] dcmNED2BODY){
+		double dcmBODY2NED[][] = new double[3][3];
 
 		for(int i = 0 ; i<3 ; i++) {
 			for(int j = 0 ; j<3 ; j++) {
-				dcm_BODY2ENU[i][j] = dcm_ENU2BODY[j][i] ;
+				dcmBODY2NED[i][j] = dcmNED2BODY[j][i] ;
 			}
 		}
 
-		return dcm_BODY2ENU;
+		return dcmBODY2NED;
 	}
 
 
@@ -110,49 +95,49 @@ public class Coordinate {
 	 * @return quat
 	 * */
 	public static double[] getQuatFromEuler(double azimuth, double elevation, double roll) {
-		double DCM[][] = new double[3][3];
-		double quat[] = new double[4];
-		double quat_max = 0.0;
+		double dcm[][] = new double[3][3];
+		double quatMax = 0.0;
 		int count = 0;
 
-		DCM = getDCM_ENU2BODYfromEuler(azimuth , elevation , roll);
-		quat[0] = 0.5*Math.sqrt(1 + DCM[0][0] + DCM[1][1] + DCM[2][2]);
-		quat[1] = 0.5*Math.sqrt(1 + DCM[0][0] - DCM[1][1] - DCM[2][2]);
-		quat[2] = 0.5*Math.sqrt(1 - DCM[0][0] + DCM[1][1] - DCM[2][2]);
-		quat[3] = 0.5*Math.sqrt(1 - DCM[0][0] - DCM[1][1] + DCM[2][2]);
-
+		dcm = getDcmNED2BODYfromEuler(azimuth , elevation , roll);
+		double[] quat = {
+			.5*Math.sqrt(1. + dcm[0][0] + dcm[1][1] + dcm[2][2]),
+			.5*Math.sqrt(1. + dcm[0][0] - dcm[1][1] - dcm[2][2]),
+			.5*Math.sqrt(1. - dcm[0][0] + dcm[1][1] - dcm[2][2]),
+			.5*Math.sqrt(1. - dcm[0][0] - dcm[1][1] + dcm[2][2])
+		};
 
 		for(int i = 0 ; i<4 ; i++) {
-			if(quat[i] > quat_max) {
-				quat_max = quat[i];
+			if(quat[i] > quatMax) {
+				quatMax = quat[i];
 				count = i;
 			}
 		}
 
 		switch(count) {
 		case 0:
-			quat[0] = 0.5*Math.sqrt(1 + DCM[0][0] + DCM[1][1] + DCM[2][2]);
-			quat[1] = (DCM[1][2] - DCM[2][1]) / (4.0*quat[0]);
-			quat[2] = (DCM[2][0] - DCM[0][2]) / (4.0*quat[0]);
-			quat[3] = (DCM[0][1] - DCM[1][0]) / (4.0*quat[0]);
+			quat[0] = 0.5*Math.sqrt(1 + dcm[0][0] + dcm[1][1] + dcm[2][2]);
+			quat[1] = (dcm[1][2] - dcm[2][1]) / (4.0*quat[0]);
+			quat[2] = (dcm[2][0] - dcm[0][2]) / (4.0*quat[0]);
+			quat[3] = (dcm[0][1] - dcm[1][0]) / (4.0*quat[0]);
 			break;
 		case 1:
-			quat[1] = 0.5*Math.sqrt(1 + DCM[0][0] - DCM[1][1] - DCM[2][2]);
-			quat[0] = (DCM[1][2] - DCM[2][1]) / (4.0*quat[1]);
-			quat[2] = (DCM[0][1] + DCM[1][0]) / (4.0*quat[1]);
-			quat[3] = (DCM[2][0] + DCM[0][2]) / (4.0*quat[1]);
+			quat[1] = 0.5*Math.sqrt(1 + dcm[0][0] - dcm[1][1] - dcm[2][2]);
+			quat[0] = (dcm[1][2] - dcm[2][1]) / (4.0*quat[1]);
+			quat[2] = (dcm[0][1] + dcm[1][0]) / (4.0*quat[1]);
+			quat[3] = (dcm[2][0] + dcm[0][2]) / (4.0*quat[1]);
 			break;
 		case 2:
-			quat[2] = 0.5*Math.sqrt(1 - DCM[0][0] + DCM[1][1] - DCM[2][2]);
-			quat[0] = (DCM[2][0] - DCM[0][2]) / (4.0*quat[2]);
-			quat[1] = (DCM[0][1] + DCM[1][0]) / (4.0*quat[2]);
-			quat[3] = (DCM[1][2] + DCM[2][1]) / (4.0*quat[2]);
+			quat[2] = 0.5*Math.sqrt(1 - dcm[0][0] + dcm[1][1] - dcm[2][2]);
+			quat[0] = (dcm[2][0] - dcm[0][2]) / (4.0*quat[2]);
+			quat[1] = (dcm[0][1] + dcm[1][0]) / (4.0*quat[2]);
+			quat[3] = (dcm[1][2] + dcm[2][1]) / (4.0*quat[2]);
 			break;
 		case 3:
-			quat[3] = 0.5*Math.sqrt(1 - DCM[0][0] - DCM[1][1] + DCM[2][2]);
-			quat[0] = (DCM[0][1] - DCM[1][0]) / (4.0*quat[3]);
-			quat[1] = (DCM[2][0] + DCM[0][2]) / (4.0*quat[3]);
-			quat[2] = (DCM[1][2] + DCM[2][1]) / (4.0*quat[3]);
+			quat[3] = 0.5*Math.sqrt(1 - dcm[0][0] - dcm[1][1] + dcm[2][2]);
+			quat[0] = (dcm[0][1] - dcm[1][0]) / (4.0*quat[3]);
+			quat[1] = (dcm[2][0] + dcm[0][2]) / (4.0*quat[3]);
+			quat[2] = (dcm[1][2] + dcm[2][1]) / (4.0*quat[3]);
 			break;
 		}
 
@@ -166,43 +151,31 @@ public class Coordinate {
 	 * @param roll [rad]
 	 * @return dcm_ENU2BODY
 	 * */
-	public static double[][] getDCM_ENU2BODYfromEuler(double azimuth, double elevation , double roll){
-		double dcm[][] = new double[3][3];
-		double dcm_ENU2BODY[][] = new double[3][3];
+	public static double[][] getDcmNED2BODYfromEuler(double azimuth, double elevation , double roll){
 
-		dcm[0][0] = Math.cos(azimuth)*Math.cos(elevation);
-		dcm[0][1] = Math.sin(azimuth)*Math.cos(elevation);
-		dcm[0][2] = - Math.sin(elevation);
-		dcm[1][0] = Math.cos(azimuth)*Math.sin(elevation)*Math.sin(roll) - Math.sin(azimuth)*Math.cos(roll);
-		dcm[1][1] = Math.sin(azimuth)*Math.sin(elevation)*Math.sin(roll) + Math.cos(azimuth)*Math.cos(roll);
-		dcm[1][2] = Math.cos(elevation)*Math.sin(roll);
-		dcm[2][0] = Math.cos(azimuth)*Math.sin(elevation)*Math.cos(roll) + Math.sin(azimuth)*Math.sin(roll);
-		dcm[2][1] = Math.sin(azimuth)*Math.sin(elevation)*Math.cos(roll) - Math.cos(azimuth)*Math.sin(roll);
-		dcm[2][2] = Math.cos(elevation)*Math.cos(roll);
+		double[][] dcm = {
+			{Math.cos(azimuth)*Math.cos(elevation)                                                  , Math.sin(azimuth)*Math.cos(elevation)                                                  , - Math.sin(elevation)             },
+			{Math.cos(azimuth)*Math.sin(elevation)*Math.sin(roll) - Math.sin(azimuth)*Math.cos(roll), Math.sin(azimuth)*Math.sin(elevation)*Math.sin(roll) + Math.cos(azimuth)*Math.cos(roll), Math.cos(elevation)*Math.sin(roll)}, 
+			{Math.cos(azimuth)*Math.sin(elevation)*Math.cos(roll) + Math.sin(azimuth)*Math.sin(roll), Math.sin(azimuth)*Math.sin(elevation)*Math.cos(roll) - Math.cos(azimuth)*Math.sin(roll), Math.cos(elevation)*Math.cos(roll)}
+		};
 
-		for(int i = 0 ; i<3 ; i++) {
-			for(int j = 0 ; j<3 ; j++) {
-				dcm_ENU2BODY[i][j] = dcm[i][j];
-			}
-		}
-
-		return dcm_ENU2BODY;
+		return dcm;
 	}
 
 
 	/**
-	 * This function calucurate euler angles from DCM.
+	 * This function calculate euler angles from DCM.
 	 * This function is used to get result euler angles.
-	 * @param DCM
+	 * @param dcm
 	 * @return euler [deg]
 	 * */
-	public static double[] getEulerFromDCM(double DCM[][]) {
+	public static double[] getEulerFromDCM(double dcm[][]) {
 		double azimuth , elevation , roll;//[rad]
 		double euler[] = new double[3];//euler angle
 
-		azimuth = Math.atan2(DCM[0][1], DCM[0][0]);
-		elevation = Math.asin(-DCM[0][2]);
-		roll = Math.atan2(DCM[1][2], DCM[2][2]);
+		azimuth   = Math.atan2(dcm[0][1], dcm[0][0]);
+		elevation = Math.asin(-dcm[0][2]);
+		roll      = Math.atan2(dcm[1][2], dcm[2][2]);
 
 		euler[0] = azimuth;
 		euler[1] = elevation;
@@ -226,20 +199,19 @@ public class Coordinate {
 	}
 
 
-	public static double[] vec_trans(double Mat[][], double vec[]) {
+	public static double[] transVector(double[][] mat, double[] vec) {
 		int length = vec.length;
-		double vec_conversioned[] = new double[length];
-		for(int i = 0; i<length; i++) {
-			vec_conversioned[i] = 0.0;
-		}
+		double[] vecTrans = new double[length];
 
-		for(int i=0; i < length; i++) {
+		for(int i = 0; i < length; i++) {
+			vecTrans[i] = 0.0;
+
 			for(int j=0; j < length; j++) {
-				vec_conversioned[i] += Mat[i][j] * vec[j];
+				vecTrans[i] += mat[i][j] * vec[j];
 			}
 		}
 
-		return vec_conversioned;
+		return vecTrans;
 	}
 
 }

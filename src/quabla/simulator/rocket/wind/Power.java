@@ -35,9 +35,11 @@ public class Power extends AbstractWind{
 	}
 
 	@Override
-	public double[] getWindENU(double alt) {
-		double azimuthRad = Coordinate.deg2rad(- azimuthRef + 90.0 + magneticDecDeg);
-		return toWindENU(getWindSpeed(alt), azimuthRad);
+	public double[] getWindNED(double alt) {
+		// double azimuthRad = Coordinate.deg2rad(- azimuthRef + 90.0 + magneticDecDeg);
+		// double azimuthRad = Coordinate.deg2rad(azimuthRef - magneticDecDeg);
+		double azimuthRad = Coordinate.deg2rad(getMagAzimuthNED(azimuthRef, magneticDecDeg));
+		return toWindNED(getWindSpeed(alt), azimuthRad);
 	}
 
 	@Override
