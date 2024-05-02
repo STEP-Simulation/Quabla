@@ -4,6 +4,8 @@ public class MathematicalVector implements Cloneable {
 
 	// Constant Vector
 	public static final MathematicalVector ZERO = new MathematicalVector(0.0, 0.0, 0.0);
+	public static final MathematicalVector ZERO_3D = new MathematicalVector(0.0, 0.0, 0.0);
+	public static final MathematicalVector ZERO_4D = new MathematicalVector(0.0, 0.0, 0.0, 0.0);
 
 	private double[] vector;
 	private int length;
@@ -66,22 +68,36 @@ public class MathematicalVector implements Cloneable {
 	}
 
 	public MathematicalVector multiply(double a) {
+		
 		double[] vectorNew = new double[length];
 		int i = 0;
 		for(double vi : vector) {
 			vectorNew[i] = a * vi;
 			i ++;
 		}
-		return new MathematicalVector(vectorNew);
+
+		MathematicalVector clone = this.clone();
+		clone.set(vectorNew);
+
+		return clone;
 	}
 
 	public MathematicalVector add(MathematicalVector vector) {
+		
 		double[] vectorNew = new double[length];
-		for(int i=0; i<length; i++) {
-			vectorNew[i] = this.vector[i] + vector.toDouble(i);
+		// for(int i=0; i<length; i++) {
+		// 	vectorNew[i] = this.vector[i] + vector.toDouble(i);
+		// }
+		int i = 0;
+		for (double v : this.vector) {
+			vectorNew[i] = v + vector.toDouble(i);
+			i ++;
 		}
 
-		return new MathematicalVector(vectorNew);
+		MathematicalVector clone = this.clone();
+		clone.set(vectorNew);
+
+		return clone;
 	}
 
 	public MathematicalVector sub(MathematicalVector vector) {

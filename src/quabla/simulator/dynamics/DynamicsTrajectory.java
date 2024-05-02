@@ -12,10 +12,20 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 	OtherVariableTrajectory otherVariable;
 
+	private MathematicalVector velNED   ;
+	private MathematicalVector accBODY  ;
+	private MathematicalVector omegadot ;
+	private MathematicalVector quatdot  ;
+
 	DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
 
 	public DynamicsTrajectory(Rocket rocket) {
 		otherVariable = new OtherVariableTrajectory(rocket);
+
+		velNED   = new MathematicalVector(MathematicalVector.ZERO_3D);
+		accBODY  = new MathematicalVector(MathematicalVector.ZERO_3D);
+		omegadot = new MathematicalVector(MathematicalVector.ZERO_3D);
+		quatdot  = new MathematicalVector(MathematicalVector.ZERO_4D);
 	}
 
 	@Override
@@ -23,10 +33,14 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());
 
-		MathematicalVector velNED   = new MathematicalVector(otherVariable.getVelNED());
-		MathematicalVector accBODY  = new MathematicalVector(otherVariable.getAccBODY());
-		MathematicalVector omegadot = new MathematicalVector(otherVariable.getOmegaDot());
-		MathematicalVector quatdot  = new MathematicalVector(otherVariable.getQuatDot());
+		// MathematicalVector velNED   = new MathematicalVector(otherVariable.getVelNED());
+		// MathematicalVector accBODY  = new MathematicalVector(otherVariable.getAccBODY());
+		// MathematicalVector omegadot = new MathematicalVector(otherVariable.getOmegaDot());
+		// MathematicalVector quatdot  = new MathematicalVector(otherVariable.getQuatDot());
+		velNED.set(otherVariable.getVelNED());
+		accBODY.set(otherVariable.getAccBODY());
+		omegadot.set(otherVariable.getOmegaDot());
+		quatdot.set(otherVariable.getQuatDot());
 
 		// Store Minute Change
 		delta.setDeltaPosNED(velNED);
