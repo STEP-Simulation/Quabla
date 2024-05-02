@@ -155,8 +155,8 @@ public class Engine {
 		dth = engine.get("Nozzle Throat Diameter [mm]").asDouble() * Math.pow(10, -3);// [mm] => [m]
 		eps = engine.get("Nozzle Expansion Ratio").asDouble();
 		Ath = 0.25 * Math.PI * Math.pow(dth, 2);
-		Ae = Ath * eps;
-		de = Math.sqrt(Ae * 4 / Math.PI);
+		Ae  = Ath * eps;
+		de  = Math.sqrt(Ae * 4 / Math.PI);
 
 		// Fuel(grain)
 		dFuelInBef = engine.get("Fuel Inside Diameter [mm]").asDouble() * Math.pow(10, -3);
@@ -175,7 +175,7 @@ public class Engine {
 		//    Center of Gravity
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		//燃料は半径方向にのみ一様に減少するとし,重心が機軸方向に移動しない仮定
-		lcgFuel = engine.get("Length Fuel-C.G. from End [m]").asDouble();
+		lcgFuel  = engine.get("Length Fuel-C.G. from End [m]").asDouble();
 		lcgOxBef = distanceTank + 0.5 * lTank;
 		lcgOxAft = distanceTank;
 		double[] lcgOxLog = new double[thrustData.length];
@@ -198,12 +198,12 @@ public class Engine {
 		//     Moment of Inertia
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		IjFuelPitchBef = mFuelBef * ((Math.pow(dFuelInBef, 2) + Math.pow(dFuelOut, 2)) / 16.0 + Math.pow(lFuel, 2) / 12.0);
-		IjFuelRollBef = mFuelBef * (Math.pow(dFuelInBef, 2) + Math.pow(dFuelOut, 2)) / 8.0;
+		IjFuelRollBef  = mFuelBef * (Math.pow(dFuelInBef, 2) + Math.pow(dFuelOut, 2)) / 8.0;
 		IjFuelPitchAft = mFuelAft * ((Math.pow(dFuelInAft, 2) + Math.pow(dFuelOut, 2)) / 16.0 + Math.pow(lFuel, 2) / 12.0);
-		IjFuelRollAft = mFuelAft * ((Math.pow(dFuelInAft, 2) + Math.pow(dFuelOut, 2))) / 8.0;
+		IjFuelRollAft  = mFuelAft * ((Math.pow(dFuelInAft, 2) + Math.pow(dFuelOut, 2))) / 8.0;
 
 		IjOxPitchBef = mOxBef * (Math.pow(dTank, 2) / 16.0 + Math.pow(lTank, 2) / 12.0);
-		IjOxRollBef = mOxBef * Math.pow(dTank, 2) / 8.0;
+		IjOxRollBef  = mOxBef * Math.pow(dTank, 2) / 8.0;
 	}
 
 	/**
