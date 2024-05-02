@@ -113,6 +113,14 @@ def ENU2LLHforKml(launch_LLH, pos_NED):
     point_LLH = ECEF2LLH(point_ECEF)
     return np.array([point_LLH[1], point_LLH[0], 0.0])
 
+def ENU2NED(pos_ENU):
+
+    east  = pos_ENU[0]
+    north = pos_ENU[1]
+    up    = pos_ENU[2]
+
+    return np.array([north, east, - up])
+
 if __name__ == '__main__':
 
     import sys
@@ -184,36 +192,3 @@ if __name__ == '__main__':
 
     kml.save('PlotLandingScatter/launch_site/kml/' + file_name + '.kml')
     sys.exit()
-
-    launch_LLH = np.array([0.0, 0.0, 0.0])
-    pos_ENU = np.array([0.0, 0.0, 0.0])
-    while(1):
-        LLH_number = input('\n(1:oshima_land , 2:oshima_sea, 3:noshiro_land, 4:noshiro_sea, 5:other)\nEnter launch site number:')
-        if LLH_number == '1':
-            launch_LLH = [34.735972,139.420944, 0.0]
-            break
-        elif LLH_number == '2':
-            launch_LLH = [34.679730, 139.438373, 0.0]
-            break
-        elif LLH_number == '3':
-            launch_LLH = [40.138633, 139.984850, 0.0]
-            break
-        elif LLH_number == '4':
-            launch_LLH = [40.242865, 140.010450, 0.0]
-            break
-        elif LLH_number == '5':
-            launch_LLH[0] = float(input('\nPlease input latitude:'))
-            launch_LLH[1] = float(input('\nPlease input longitude:'))
-            launch_LLH[2] = float(input('\nPlease input height:'))
-            break
-        else:
-            print('\nPlease input 1 to 5')
-
-    print('\nPlease input x-y coordinate of landing point.')
-
-    pos_ENU[0] = float(input('\nPlease input latitude:'))
-    pos_ENU[1] = float(input('\nPlease input longitude:'))
-    pos_ENU[2] = 0
-
-    pos_LLH = ENU2LLH(launch_LLH, pos_ENU)
-    print('\npos_ENU : ' + str(pos_LLH))

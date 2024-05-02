@@ -11,11 +11,11 @@ class LandPoint:
         self.filepath = filepath
         self.img = img
 
-    def get_point_parachute(self,point_ENU):
-        self.point_NED_para = point_ENU
+    def set_point_parachute(self, pos_NED):
+        self.pos_NED_para = pos_NED
         
-    def get_point_trajectory(self,point_ENU):
-        self.point_NED_traj = point_ENU
+    def set_point_trajectory(self, pos_NED):
+        self.pos_NED_traj = pos_NED
         
     def make_land_point(self, launch_site_info, safety_exsist):
         self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
@@ -26,8 +26,8 @@ class LandPoint:
         ax = fig.add_subplot()
         ax.set_title(title)
         ax.scatter(0.0, 0.0, color='r', marker='o', label='Launch point')
-        ax.scatter(self.point_NED_traj[1], self.point_NED_traj[0], label='Trajectory', color='b', marker='o')
-        ax.scatter(self.point_NED_para[1], self.point_NED_para[0], label='Parachute', color='orange', marker='o')
+        ax.scatter(self.pos_NED_traj[1], self.pos_NED_traj[0], label='Trajectory', color='b', marker='o')
+        ax.scatter(self.pos_NED_para[1], self.pos_NED_para[0], label='Parachute', color='orange', marker='o')
         if safety_exsist:
             if launch_site_info.site_name == 'oshima_land' or launch_site_info.site_name == 'noshiro_land':
                 safety_ENU = [cd.LLH2ENU(launch_site_info.launch_LLH, LLH).tolist() for LLH in launch_site_info.safety_area_LLH]
@@ -50,6 +50,9 @@ class LandPoint:
         ax.legend()
         
         fig.savefig(self.filepath + os.sep + title + '.jpg')
+
+        pos_LLH_traj = cd.ENU2LLH(launch_site_info.launch_LLH, self.pos_NED_traj)
+        pos_LLH_para = cd.ENU2LLH(launch_site_info.launch_LLH, self.pos_NED_para)
 
 
 

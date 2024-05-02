@@ -220,6 +220,6 @@ class GraphPlotterParachute:
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
         getparachutepoint(point_LLH)
         post_kml(log_LLH, self.filepath, '_02_soft')
-        land_point.get_point_parachute(self.point)
+        land_point.set_point_parachute(self.point)
         
 

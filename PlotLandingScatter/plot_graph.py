@@ -74,8 +74,8 @@ class PlotGraph:
         
         i = 0
         for pos_ENU in self.pos_ENU_array:
-            pos_ENU = np.array([matrix.dot(point) for point in pos_ENU])
-            pos_LLH = [cd.ENU2LLHforKml(launch_LLH, point) for point in pos_ENU]
+            pos_NED = np.array([cd.ENU2NED(matrix.dot(point)) for point in pos_ENU])
+            pos_LLH = [cd.ENU2LLHforKml(launch_LLH, point) for point in pos_NED]
             linestring = kml.newlinestring(name=str(self.wind_array[i]))
             r = int(color_cm(i/len(self.pos_ENU_array))[0] * 255)
             g = int(color_cm(i/len(self.pos_ENU_array))[1] * 255)
@@ -84,6 +84,7 @@ class PlotGraph:
             # linestring.style.linestyle.color = kml_color
             linestring.style.linestyle.color = simplekml.Color.rgb(r, g, b)
             linestring.style.linestyle.width = 2
+            linestring.altitudemode = simplekml.AltitudeMode.relativetoground
             linestring.coords = pos_LLH
             i += 1
         #kml.save(self.result_dir + '/' + self.title + '.kml')

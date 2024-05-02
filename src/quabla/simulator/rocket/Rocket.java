@@ -24,50 +24,47 @@ public class Rocket {
 	public final Atmosphere atm;
 	public final AbstractWind wind;
 
-	public final double
-	L,
-	D,
-	S,
-	upperLug,
-	lowerLug;
-	public static int
-	site;
-	private final double
-	mBef,
-	mAft,
-	mSt,
-	mDry;
-	private final double
-	lcgDry,
-	lcgSt,
-	lcgAft;
+	public final double L, 
+	                    D, 
+	                    S,
+						upperLug,
+						lowerLug;
+	private final double mBef,
+						 mAft,
+						 mSt,
+						 mDry;
+	private final double lcgDry,
+						 lcgSt,
+						 lcgAft;
 	public final double lcgBef;
-	private final double
-	IjPitchBef,
-	IjPitchAft,
-	IjRollBef,
-	IjRollAft,
-	IjPitchDry,
-	IjRollDry,
-	// IjStPitchUnit,
-	IjStRollUnit;
-	public final double
-	CdS1,
-	CdS2;
+	private final double IjPitchBef,
+						 IjPitchAft,
+						 IjRollBef,
+						 IjRollAft,
+						 IjPitchDry,
+						 IjRollDry,
+						 IjStRollUnit;
+	public final double CdS1,
+						CdS2;
 	public final double timeParaLag;
 	public final boolean para2Exist, para2Timer;
 	public final double alt_para2, time_para2;
 	public final double dt;
 	public final boolean existTipOff;
-	public final double lengthLauncherRail, elevationLauncher, azimuthLauncher, magneticDec;
-	public static double point[] = {0, 0, 0};
-
+	public final double lengthLauncherRail, 
+						elevationLauncher, 
+						azimuthLauncher, 
+						magneticDec;
+	
+	public static int site;
+	public static double[] point = {0, 0, 0};
+						
 	private final Interpolation massAnaly,
-	                            lcgAnaly,
-	                            lcgPropAnaly,
-	                            IjPropPitchAnaly,
-	                            IjPitchAnaly,
-	                            IjDotPitchAnaly;
+								lcgAnaly,
+								lcgPropAnaly,
+								IjPropPitchAnaly,
+								IjPitchAnaly,
+								IjDotPitchAnaly;
 
 	public Rocket(JsonNode spec) {
 
@@ -239,6 +236,7 @@ public class Rocket {
 			upperLug = structure.get("Upper Launch Lug [m]").asDouble();
 			lowerLug = structure.get("Lower Launch Lug [m]").asDouble();
 		} else {
+			// 機体後端が抜けたときLaunch Clear
 			upperLug = L - 0.001;
 			lowerLug = L;
 			// launch clearは重心がランチャを抜けたとき
@@ -258,46 +256,24 @@ public class Rocket {
 
 		return massAnaly.linearInterp1column(t);
 		
-		// return mSt + engine.getMassFuel(t) + engine.getMassOx(t);
 	}
 
 	public double getLcg(double t) {
 		
 		return lcgAnaly.linearInterp1column(t);
 		
-		// if(t < engine.timeActuate) {
-		// 	double mFuel = engine.getMassFuel(t);
-		// 	double mOx = engine.getMassOx(t);
-		// 	return (lcgSt * mSt + (L - engine.lcgFuel) * mFuel + (L - engine.getLcgOx(t))* mOx) / (mSt + mFuel + mOx);
-		// }else {
-		// 	return lcgAft;
-		// }
 	}
 
 	public double getLcgProp(double t) {
 		
 		return lcgPropAnaly.linearInterp1column(t);
 
-		// if(t < engine.timeActuate) {
-		// 	double massFuel = engine.getMassFuel(t);
-		// 	double massOx = engine.getMassOx(t);
-		// 	return ((L - engine.lcgFuel) * massFuel + (L - engine.getLcgOx(t)) * massOx) / (massFuel + massOx);
-		// }else {
-		// 	return L - engine.lcgFuel;
-		// }
 	}
 
 	private double getIjPropPitch(double t) {
 		
 		return IjPropPitchAnaly.linearInterp1column(t);
 		
-		// if(t < engine.timeActuate) {
-		// 	double lcg = getLcg(t);
-		// 	return engine.getIjFuelPitch(t) + engine.getMassFuel(t) * Math.pow((L - engine.lcgFuel) - lcg, 2)
-		// 		 + engine.getIjOxPitch(t) + engine.getMassOx(t) * Math.pow((L - engine.getLcgOx(t)) - lcg, 2);
-		// }else {
-		// 	return engine.IjFuelPitchAft + engine.mFuelAft * Math.pow(lcgAft - (L - engine.lcgFuel), 2);
-		// }
 	}
 
 	private double getIjPropRoll(double t) {
@@ -312,15 +288,6 @@ public class Rocket {
 		
 		return IjPitchAnaly.linearInterp1column(t);
 		
-		// if(t < engine.timeActuate) {
-		// 	// return (IjStPitchUnit + mSt * Math.pow(getLcg(t) - lcgSt, 2))
-		// 	// 		+ getIjPropPitch(t);
-		// 	return (IjPitchDry + mDry * Math.pow(lcgDry - getLcg(t), 2))
-		// 			- ((engine.IjFuelPitchBef + engine.mFuelBef * Math.pow(lcgBef - (L - engine.lcgFuel), 2)))
-		// 			+ getIjPropPitch(t);
-		// }else {		
-		// 	return IjPitchAft;
-		// }	
 	}	
 
 	public double getIjRoll(double t) {
@@ -335,16 +302,6 @@ public class Rocket {
 
 		return IjDotPitchAnaly.linearInterp1column(t);
 
-		// if(t < engine.timeActuate) {
-		// 	if( t == 0.0) {
-		// 		return 0.0;
-		// 	}else {
-		// 		// return (getIjPropPitch(t) - getIjPropPitch(t - dt)) / dt;
-		// 		return (getIjPitch(t) - getIjPitch(t - dt)) / dt;
-		// 	}
-		// }else {
-		// 	return 0.0;
-		// }
 	}
 	
 	public void outputSpec(String resultDir, String simulationMode) {

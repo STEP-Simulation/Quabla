@@ -676,4 +676,4 @@ class GraphPlotterTrajectory:
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
         gettrajectorypoint(point_LLH)
         post_kml(log_LLH, self.filepath, '_02_hard')
-        land_point.get_point_trajectory(self.point)
+        land_point.set_point_trajectory(self.point)
