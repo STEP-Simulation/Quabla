@@ -27,6 +27,11 @@ def main():
         
         if os.path.exists(path_parameter) and path_parameter.endswith('.json'):
             break
+
+        elif path_parameter == 'deb':
+            path_parameter = 'config' + os.sep + 'sample_rocket.json'
+            break
+
         else:
             print('\nPlease enter again.\n')
 
