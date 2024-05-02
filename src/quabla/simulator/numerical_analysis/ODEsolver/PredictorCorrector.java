@@ -45,7 +45,7 @@ public class PredictorCorrector extends AbstractODEsolver
 			xPred[i] = x[i] + (55.0 * dx[i] - 59.0 * dx1[i] + 37.0 * dx2[i] - 9.0 * dx3[i]) * h / 24.0;
 		}
 
-		AbstractVariable variablePred = variable.getClone();
+		AbstractVariable variablePred = variable.clone();
 		variablePred.setVariable(variable.getTime() + h, xPred);
 		double[] dxPred = dyn.calculateDynamics(variablePred).toDouble();
 		double[] dxCorr = new double[length];

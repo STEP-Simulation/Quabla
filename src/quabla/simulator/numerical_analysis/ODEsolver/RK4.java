@@ -21,17 +21,17 @@ public class RK4 extends AbstractODEsolver{
 		k1 = dyn.calculateDynamics(variable);
 
 		// k2 = f(t + h / 2, x + k1* h / 2)
-		variable2 = variable.getClone();
+		variable2 = variable.clone();
 		variable2.update(0.5 * h, k1.multiple(0.5 * h));
 		k2 = dyn.calculateDynamics(variable2);
 
 		// k3 = f(t + h / 2, x + k2 * h / 2)
-		variable2 = variable.getClone();
+		variable2 = variable.clone();
 		variable2.update(0.5 * h, k2.multiple(0.5 * h));
 		k3 = dyn.calculateDynamics(variable2);
 
 		// k4 = f(t + h, x + k3 * h)
-		variable2 = variable.getClone();
+		variable2 = variable.clone();
 		variable2.update(h, k3.multiple(h));
 		k4 = dyn.calculateDynamics(variable2);
 

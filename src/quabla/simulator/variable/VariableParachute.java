@@ -7,7 +7,7 @@ import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
 import quabla.simulator.rocket.wind.AbstractWind;
 
-public class VariableParachute extends AbstractVariable{
+public class VariableParachute extends AbstractVariable implements Cloneable{
 
 	private AbstractWind wind;
 
@@ -112,9 +112,15 @@ public class VariableParachute extends AbstractVariable{
 		return 0.0;// Parachute開傘時は必ずランチクリアしてるので0を返す
 	}
 
-	public VariableParachute getClone() {
-		VariableParachute variable2 = new VariableParachute(this);
-		return variable2;
+	@Override
+	public VariableParachute clone() {
+
+		VariableParachute clone = (VariableParachute) super.clone();
+		clone.posNED  = this.posNED.clone();
+		clone.velNED  = this.velNED.clone();
+		clone.windNED = this.windNED.clone();
+
+		return clone;
 	}
 
 	@Override

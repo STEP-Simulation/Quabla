@@ -12,7 +12,7 @@ import quabla.simulator.rocket.Rocket;
  * <p> When you set initial variables, use {@link #setInitialVariable()}.
  * You are not able to set initial variables at making instance of Variable
  * */
-public class VariableTrajectory extends AbstractVariable{
+public class VariableTrajectory extends AbstractVariable implements Cloneable {
 
 	private Rocket rocket;
 
@@ -67,11 +67,11 @@ public class VariableTrajectory extends AbstractVariable{
 
 	}
 
-	public void setVariable(double time, MathematicalVector Pos_ENU, MathematicalVector Vel_ENU, MathematicalVector omega_Body, MathematicalVector quat) {
+	public void setVariable(double time, MathematicalVector posNED, MathematicalVector velNED, MathematicalVector omegaBODY, MathematicalVector quat) {
 		this.time = time;
-		this.posNED.set(Pos_ENU.toDouble());
-		this.velBODY.set(Vel_ENU.toDouble());
-		this.omegaBODY.set(omega_Body.toDouble());
+		this.posNED.set(posNED.toDouble());
+		this.velBODY.set(velNED.toDouble());
+		this.omegaBODY.set(omegaBODY.toDouble());
 		this.quat.set(quat.toDouble());
 	}
 
@@ -160,11 +160,18 @@ public class VariableTrajectory extends AbstractVariable{
 		return - posNED.toDouble(2);
 	}
 
-	public VariableTrajectory getClone() {
-		// VariableTrajectory variable2 = this.clone();
-		VariableTrajectory variable2 = new VariableTrajectory(rocket);
-		variable2.setVariable(time, posNED, velBODY, omegaBODY, quat);
-		return variable2;
+	@Override 
+	public VariableTrajectory clone() {
+		
+		VariableTrajectory clone = (VariableTrajectory) super.clone();
+		clone.posNED    = this.posNED.clone();
+		clone.velBODY   = this.velBODY.clone();
+		clone.omegaBODY = this.omegaBODY.clone();
+		clone.quat      = this.quat.clone();
+		clone.quat0     = this.quat0.clone();
+		clone.posNED0   = this.posNED0.clone();
+
+		return clone;
 	}
 
 	public double[] getInitinalPosNED(){

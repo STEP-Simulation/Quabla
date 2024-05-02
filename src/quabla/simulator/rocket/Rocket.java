@@ -17,6 +17,7 @@ import quabla.simulator.rocket.wind.Power;
 public class Rocket {
 
 	// TODO 離陸前，燃焼後の時の重量，慣性モーメントをcsvに出力
+	// TODO: make clone() function
 
 	public final Engine engine;
 	public final AeroParameter aero;

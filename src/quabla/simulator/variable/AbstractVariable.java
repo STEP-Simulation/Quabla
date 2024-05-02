@@ -5,7 +5,6 @@ import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
 public abstract class AbstractVariable {
 
-	public abstract AbstractVariable getClone();
 	public abstract double[] toDouble();
 	public abstract void update(double time, AbstractDynamicsMinuteChange delta);
 
@@ -19,4 +18,18 @@ public abstract class AbstractVariable {
 	public abstract double getAltitude();
 	public abstract double getDistanceLowerLug();
 	public abstract double getVelDescent();
+
+	@Override
+	public AbstractVariable clone() {
+
+		try {
+			
+			AbstractVariable clone = (AbstractVariable) super.clone();
+			return clone;
+
+		} catch (CloneNotSupportedException e) {
+			// TODO: handle exception
+			throw new InternalError(e);
+		}
+	}
 }

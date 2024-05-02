@@ -1,6 +1,6 @@
 package quabla.simulator.numerical_analysis.vectorOperation;
 
-public class MathematicalVector {
+public class MathematicalVector implements Cloneable {
 
 	// Constant Vector
 	public static final MathematicalVector ZERO = new MathematicalVector(0.0, 0.0, 0.0);
@@ -138,7 +138,7 @@ public class MathematicalVector {
 		for (int i = 0; i < vector.length; i++) {
 			vector[i] /= norm;
 		}
-		
+
 	}
 
 	public double[] toDouble() {
@@ -147,5 +147,20 @@ public class MathematicalVector {
 
 	public double toDouble(int i) {
 		return vector[i];
+	}
+
+	@Override
+	public MathematicalVector clone(){
+
+		try {
+
+			MathematicalVector clone = (MathematicalVector) super.clone();
+			clone.vector = this.vector.clone();
+			return clone;
+			
+		} catch (CloneNotSupportedException e) {
+			// TODO: handle exception
+			throw new InternalError(e);
+		}
 	}
 }
