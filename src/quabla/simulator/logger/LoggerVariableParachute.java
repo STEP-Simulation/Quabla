@@ -18,8 +18,11 @@ public class LoggerVariableParachute {
 	private double[][] windNEDlog;
 	private double[][] velAirNEDlog;
 	private double[] velAirAbsLog;
+	private double[] massLog;
 
 	private int length;
+
+	private int indexPara;
 
 	private ArrayList<Double> timeLogArrayList       = new ArrayList<>();
 	private ArrayList<Double> timeStepLogArrayList   = new ArrayList<>();
@@ -29,6 +32,7 @@ public class LoggerVariableParachute {
 	private ArrayList<Double> velNEDxlogArrayList    = new ArrayList<>();
 	private ArrayList<Double> velNEDylogArrayList    = new ArrayList<>();
 	private ArrayList<Double> velNEDzlogArrayList    = new ArrayList<>();
+	private ArrayList<Double> massLogArrayList       = new ArrayList<>();
 	private ArrayList<Double> velDescentLogArrayList = new ArrayList<>();
 
 	private final OtherVariableParachute ovp;
@@ -44,9 +48,6 @@ public class LoggerVariableParachute {
 		posNEDylogArrayList.add(variable.getPosNED().toDouble(1));
 		posNEDzlogArrayList.add(variable.getPosNED().toDouble(2));
 		velDescentLogArrayList.add(variable.getVelDescent());
-		velNEDxlogArrayList.add(variable.getVelNED().toDouble(0));
-		velNEDylogArrayList.add(variable.getVelNED().toDouble(1));
-		velNEDzlogArrayList.add(variable.getVelNED().toDouble(2));
 	}
 
 	public void makeArray() {
@@ -63,6 +64,7 @@ public class LoggerVariableParachute {
 		windNEDlog   = new double[length][3];
 		velAirNEDlog = new double[length][3];
 		velAirAbsLog = new double[length];
+		massLog      = new double[length];
 
 		for(int i = 0; i < length; i++) {
 			timeLog[i] = timeLogArrayList.get(i);
@@ -70,16 +72,22 @@ public class LoggerVariableParachute {
 			posNEDlog[i][0] = posNEDxlogArrayList.get(i);
 			posNEDlog[i][1] = posNEDylogArrayList.get(i);
 			posNEDlog[i][2] = posNEDzlogArrayList.get(i);
-			velNEDlog[i][0] = velNEDxlogArrayList.get(i);
-			velNEDlog[i][1] = velNEDylogArrayList.get(i);
-			velNEDlog[i][2] = velNEDzlogArrayList.get(i);
 			velDescentLog[i] = velDescentLogArrayList.get(i);
-
-			ovp.calculateOtherVariable(timeLog[i], posNEDlog[i], velNEDlog[i]);
+			
+			ovp.calculateOtherVariable(timeLog[i], posNEDlog[i], velDescentLog[i]);
+			if (i <= indexPara) {
+				velNEDlog[i][0] = velNEDxlogArrayList.get(i);
+				velNEDlog[i][1] = velNEDylogArrayList.get(i);
+				velNEDlog[i][2] = velNEDzlogArrayList.get(i);
+				massLog[i] = massLogArrayList.get(i);
+			} else {
+				System.arraycopy(ovp.getVelNED(), 0, velNEDlog[i], 0, 3);
+				massLog[i] = ovp.getMass();
+			}
 			altitudeLog[i] = ovp.getAltitude();
 			downrangeLog[i] = ovp.getDownrange();
-			System.arraycopy(ovp.getWindENU(), 0, windNEDlog[i], 0, 3);
-			System.arraycopy(ovp.getVelAirENU(), 0, velAirNEDlog[i], 0, 3);
+			System.arraycopy(ovp.getWindNED(), 0, windNEDlog[i], 0, 3);
+			System.arraycopy(ovp.getVelAirNED(), 0, velAirNEDlog[i], 0, 3);
 			velAirAbsLog[i] = ovp.getVelAirAbs();
 		}
 	}
@@ -148,7 +156,14 @@ public class LoggerVariableParachute {
 		return downrangeLog;
 	}
 
+	public double[] getMassArray() {
+		return massLog;
+	}
+
 	public void copy(int indexLimit, LoggerVariable logdata) {
+
+		indexPara = indexLimit;
+
 		for(int i = 0; i <= indexLimit; i++) {
 			timeLogArrayList.add(logdata.getTimeArrayList(i));
 			timeStepLogArrayList.add(logdata.getTimeStepArrayList(i));
@@ -159,6 +174,7 @@ public class LoggerVariableParachute {
 			velNEDxlogArrayList.add(logdata.getVelNEDlog(i)[0]);
 			velNEDylogArrayList.add(logdata.getVelNEDlog(i)[1]);
 			velNEDzlogArrayList.add(logdata.getVelNEDlog(i)[2]);
+			massLogArrayList.add(logdata.getMassLog(i));
 		}
 	}
 }

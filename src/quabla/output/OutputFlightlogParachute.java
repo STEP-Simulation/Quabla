@@ -23,7 +23,8 @@ public class OutputFlightlogParachute {
 			"vel_air_north [m/s]",
 			"vel_air_east [m/s]",
 			"vel_air_down [m/s]",
-			"vel_air_abs [m/s]"
+			"vel_air_abs [m/s]",
+			"mass [kg]"
 	};
 
 	private double[]   timeArray;
@@ -34,6 +35,7 @@ public class OutputFlightlogParachute {
 	private double[]   downrangeArray;
 	private double[][] velAirENUArray;
 	private double[]   velAirAbsArray;
+	private double[]   massArray;
 	
 	/**
 	 * @param filename 出力するcsvのfile名
@@ -41,14 +43,15 @@ public class OutputFlightlogParachute {
 	 * */
 	public OutputFlightlogParachute(LoggerVariableParachute lv) {
 
-		timeArray = lv.getTimeArray().clone();
-		timeStepArray = lv.getTimeStepArray();
-		posNEDArray = lv.getPosNEDArray().clone();
-		velNEDArray = lv.getVelNEDArray().clone();
-		altitudeArray = lv.getAltitudeArray().clone();
+		timeArray      = lv.getTimeArray().clone();
+		timeStepArray  = lv.getTimeStepArray().clone();
+		posNEDArray    = lv.getPosNEDArray().clone();
+		velNEDArray    = lv.getVelNEDArray().clone();
+		altitudeArray  = lv.getAltitudeArray().clone();
 		downrangeArray = lv.getDownrangeArray().clone();
 		velAirENUArray = lv.getVelAirENUArray().clone();
 		velAirAbsArray = lv.getVelAirAbsArray().clone();
+		massArray      = lv.getMassArray().clone();
 
 	}
 
@@ -79,6 +82,7 @@ public class OutputFlightlogParachute {
 			storeResultArray(downrangeArray[i]);
 			storeResultArray(velAirENUArray[i]);
 			storeResultArray(velAirAbsArray[i]);
+			storeResultArray(massArray[i]);
 
 			try {
 				flightlog.outputLine(result);

@@ -32,6 +32,7 @@ class GraphPlotterParachute:
                                                 df_log['vel_air_east [m/s]'], 
                                                 df_log['vel_air_down [m/s]'])])
         self.vel_air_abs_log = np.array(df_log['vel_air_abs [m/s]'])
+        self.mass_log = np.array(df_log['mass [kg]'])
 
         self.flighType = 'Parachute'
 
@@ -58,6 +59,29 @@ class GraphPlotterParachute:
 
         plt.close('all')
 
+        fig, ax = plt.subplots()
+        ax.set_title('Time Step')
+        ax.plot(self.time_array[:self.index_coast], self.time_step_array[:self.index_coast], color='#FF4B00', linestyle='-')
+        ax.plot(self.time_array[self.index_coast:self.index_para1], self.time_step_array[self.index_coast:self.index_para1], color='#FF4B00', linestyle='--')
+        ax.text(x=self.time_array[self.index_coast], y=self.time_step_array[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        if self.index_para2 > self.index_para1:
+            ax.plot(self.time_array[self.index_para1:self.index_para2], self.time_step_array[self.index_para1:self.index_para2], color='#FF4B00', linestyle=':')
+            ax.plot(self.time_array[self.index_para2:], self.time_step_array[self.index_para2:], color='#FF4B00', linestyle='-.')
+            ax.text(x=self.time_array[self.index_para1], y=self.time_step_array[self.index_para1], s='\n+\nDrogue Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+            ax.text(x=self.time_array[self.index_para2], y=self.time_step_array[self.index_para2], s='\n+\nMain Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        else:
+            ax.plot(self.time_array[self.index_para1:], self.time_step_array[self.index_para1:], color='#FF4B00', linestyle=':')
+            ax.text(x=self.time_array[self.index_para1], y=self.time_step_array[self.index_para1], s='\n+\nMain Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.set_xlabel('Time [sec]')
+        ax.set_ylabel('Time Step [sec]')
+        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_ylim(ymin=0.)
+        ymin, ymax = ax.get_ylim()
+        ax.set_ylim(ymin=ymin, ymax=ymax)
+        ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
+        ax.set_aspect('auto')
+        ax.grid()
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'TimeStep.png')
         fig, ax = plt.subplots()
         ax.set_title('Time Step')
         ax.plot(self.time_array[:self.index_coast], self.time_step_array[:self.index_coast], color='#FF4B00', linestyle='-')
@@ -214,6 +238,29 @@ class GraphPlotterParachute:
         ax.grid()
         ax.legend()
         fig.savefig(self.filepath + os.sep + flightType + os.sep + 'VelocityNED.png')
+
+        fig, ax = plt.subplots()
+        ax.set_title('Mass')
+        ax.plot(self.time_array[:self.index_coast], self.mass_log[:self.index_coast], color='#FF4B00', linestyle='-')
+        ax.plot(self.time_array[self.index_coast:self.index_para1], self.mass_log[self.index_coast:self.index_para1], color='#FF4B00', linestyle='--')
+        ax.text(x=self.time_array[self.index_coast], y=self.mass_log[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        if self.index_para2 > self.index_para1:
+            ax.plot(self.time_array[self.index_para1:self.index_para2], self.mass_log[self.index_para1:self.index_para2], color='#FF4B00', linestyle=':')
+            ax.plot(self.time_array[self.index_para2:], self.mass_log[self.index_para2:], color='#FF4B00', linestyle='-.')
+            ax.text(x=self.time_array[self.index_para1], y=self.mass_log[self.index_para1], s='\n+\nDrogue Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+            ax.text(x=self.time_array[self.index_para2], y=self.mass_log[self.index_para2], s='\n+\nMain Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        else:
+            ax.plot(self.time_array[self.index_para1:], self.mass_log[self.index_para1:], color='#FF4B00', linestyle=':')
+            ax.text(x=self.time_array[self.index_para1], y=self.mass_log[self.index_para1], s='\n+\nMain Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.set_xlabel('Time [sec]')
+        ax.set_ylabel('Mass [kg]')
+        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ymin, ymax = ax.get_ylim()
+        ax.set_ylim(ymin=ymin, ymax=ymax)
+        ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
+        ax.set_aspect('auto')
+        ax.grid()
+        fig.savefig(self.filepath + os.sep + flightType + os.sep + 'Mass.png')
 
         vENU2LLH = np.vectorize(ENU2LLH, excluded=['launch_LLH'], signature="(1),(3)->(3)")
         log_LLH = vENU2LLH(self.Launch_LLH, self.pos_NED_log)

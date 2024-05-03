@@ -259,6 +259,10 @@ public class LoggerVariable {
 		return quatLog[index];
 	}
 
+	public double getMassLog(int index) {
+		return massLog[index];
+	}
+
 	public double[] getTimeArray() {
 		return timeArray;
 	}

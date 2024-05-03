@@ -35,10 +35,6 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());
 
-		// MathematicalVector velNED   = new MathematicalVector(otherVariable.getVelNED());
-		// MathematicalVector accBODY  = new MathematicalVector(otherVariable.getAccBODY());
-		// MathematicalVector omegadot = new MathematicalVector(otherVariable.getOmegaDot());
-		// MathematicalVector quatdot  = new MathematicalVector(otherVariable.getQuatDot());
 		velNED.set(otherVariable.getVelNED());
 		accBODY.set(otherVariable.getAccBODY());
 		omegadot.set(otherVariable.getOmegaDot());
