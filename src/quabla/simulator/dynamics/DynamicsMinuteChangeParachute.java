@@ -2,7 +2,7 @@ package quabla.simulator.dynamics;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
+public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange implements Cloneable {
 
 	private MathematicalVector deltaPosNED = new MathematicalVector(MathematicalVector.ZERO);
 	private double deltaVelDescent;
@@ -16,7 +16,8 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 		this.deltaVelDescent = deltaVelDescent;
 	}
 
-	public void setDelta(double[] dx) {
+	@Override
+	public void set(double[] dx) {
 		this.deltaPosNED.set(dx[0], dx[1], dx[2]);
 		this.deltaVelDescent = dx[3];
 	}
@@ -31,10 +32,21 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 
 	@Override
 	public DynamicsMinuteChangeParachute multiple(double a) {
-		DynamicsMinuteChangeParachute dmcp = new DynamicsMinuteChangeParachute();
+		// DynamicsMinuteChangeParachute dmcp = new DynamicsMinuteChangeParachute();
+		DynamicsMinuteChangeParachute dmcp = this.clone();
 		dmcp.setDeltaPosNED(this.deltaPosNED.multiply(a));
 		dmcp.setDeltaVelDescent(this.deltaVelDescent * a);
+		// return dmcp;
+		
+		// DynamicsMinuteChangeParachute dmcp = this.clone();
+		// double[] dx = this.toDouble().clone();
+		// for (int i = 0; i < dx.length; i++) {
+		// 	dx[i] *= a;
+		// }
+		// dmcp.set(this.toDouble());
+
 		return dmcp;
+
 	}
 
 	@Override
@@ -46,11 +58,13 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange{
 	}
 
 	@Override
-	public DynamicsMinuteChangeParachute generate(double[] dx) {
-		DynamicsMinuteChangeParachute dmcp = new DynamicsMinuteChangeParachute();
-		dmcp.setDelta(dx);
-		return dmcp;
-	}
+	public DynamicsMinuteChangeParachute clone() {
+
+		DynamicsMinuteChangeParachute clone = (DynamicsMinuteChangeParachute) super.clone();
+		clone.deltaPosNED = this.deltaPosNED.clone();
+
+		return clone;
+ 	}
 
 	@Override
 	public DynamicsMinuteChangeParachute toDeltaPara() {

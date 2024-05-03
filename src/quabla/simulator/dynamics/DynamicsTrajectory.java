@@ -17,15 +17,17 @@ public class DynamicsTrajectory extends AbstractDynamics {
 	private MathematicalVector omegadot ;
 	private MathematicalVector quatdot  ;
 
-	DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
-
+	private DynamicsMinuteChangeTrajectory delta;
+	
 	public DynamicsTrajectory(Rocket rocket) {
 		otherVariable = new OtherVariableTrajectory(rocket);
-
+		
 		velNED   = new MathematicalVector(MathematicalVector.ZERO_3D);
 		accBODY  = new MathematicalVector(MathematicalVector.ZERO_3D);
 		omegadot = new MathematicalVector(MathematicalVector.ZERO_3D);
 		quatdot  = new MathematicalVector(MathematicalVector.ZERO_4D);
+
+		delta = new DynamicsMinuteChangeTrajectory();
 	}
 
 	@Override

@@ -8,12 +8,16 @@ public class DynamicsParachute extends AbstractDynamics{
 
 	private Rocket rocket;
 
-	MathematicalVector velNED = new MathematicalVector();
-
-	DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
-
+	private MathematicalVector velNED;
+	
+	private DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
+	
 	public DynamicsParachute(Rocket rocket) {
 		this.rocket = rocket;
+
+		velNED = new MathematicalVector();
+
+		delta = new DynamicsMinuteChangeParachute();
 	}
 
 	public DynamicsMinuteChangeParachute calculateDynamics(AbstractVariable variable) {

@@ -48,7 +48,10 @@ public class RK4 extends AbstractODEsolver{
 			dx[i] = (k1Dou[i] + 2.0 * k2Dou[i] + 2.0 * k3Dou[i] + k4Dou[i]) / 6.0;
 		}
 
-		return k1.generate(dx);
+		AbstractDynamicsMinuteChange dxNew = k1.clone();
+		dxNew.set(dx);
+
+		return dxNew;
 	}
 
 	@Override

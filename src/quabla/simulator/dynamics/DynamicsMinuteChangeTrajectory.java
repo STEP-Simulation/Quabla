@@ -2,14 +2,15 @@ package quabla.simulator.dynamics;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 
-public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange{
+public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange implements Cloneable {
 
 	private MathematicalVector deltaPosNED = new MathematicalVector(new double[3]);
 	private MathematicalVector deltaVelNED = new MathematicalVector(new double[3]);
 	private MathematicalVector deltaOmegaBODY = new MathematicalVector(new double[3]);
 	private MathematicalVector deltaQuat = new MathematicalVector(new double[4]);
 
-	public void setDelta(double[] dx) {
+	@Override
+	public void set(double[] dx) {
 		this.deltaPosNED.set(dx[0], dx[1], dx[2]);
 		this.deltaVelNED.set(dx[3], dx[4], dx[5]);
 		this.deltaOmegaBODY.set(dx[6], dx[7], dx[8]);
@@ -34,11 +35,22 @@ public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange
 
 	@Override
 	public DynamicsMinuteChangeTrajectory multiple(double a) {
-		DynamicsMinuteChangeTrajectory dmct = new DynamicsMinuteChangeTrajectory();
+		
+		// DynamicsMinuteChangeTrajectory dmct = new DynamicsMinuteChangeTrajectory();
+		DynamicsMinuteChangeTrajectory dmct = this.clone();
 		dmct.setDeltaPosNED(this.deltaPosNED.multiply(a));
 		dmct.setDeltaVelNED(this.deltaVelNED.multiply(a));
 		dmct.setDeltaOmegaBODY(this.deltaOmegaBODY.multiply(a));
 		dmct.setDeltaQuat(this.deltaQuat.multiply(a));
+		// return dmct;
+
+		// DynamicsMinuteChangeTrajectory dmct = this.clone();
+		// double[] dx = this.toDouble().clone();
+		// for (int i = 0; i < dx.length; i++) {
+		// 	dx[i] *= a;
+		// }
+		// dmct.set(dx);
+
 		return dmct;
 	}
 
@@ -58,13 +70,16 @@ public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange
 	}
 
 	@Override
-	/**
-	 * 受け取ったDouble値のdxから新しいDynamicsMinuteChangeTrajectoryを生成
-	 * */
-	public DynamicsMinuteChangeTrajectory generate(double[] dx) {
-		DynamicsMinuteChangeTrajectory dmct = new DynamicsMinuteChangeTrajectory();
-		dmct.setDelta(dx);
-		return dmct;
+	public DynamicsMinuteChangeTrajectory clone() {
+
+		DynamicsMinuteChangeTrajectory clone = (DynamicsMinuteChangeTrajectory) super.clone();
+		clone.deltaPosNED    = this.deltaPosNED.clone();
+		clone.deltaVelNED    = this.deltaVelNED.clone();
+		clone.deltaOmegaBODY = this.deltaOmegaBODY.clone();
+		clone.deltaQuat      = this.deltaQuat.clone();
+
+		return clone;
+
 	}
 
 	@Override
