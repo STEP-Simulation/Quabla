@@ -22,7 +22,7 @@ def main():
 
         # files = os.listdir("./config/")
         print('Rocket configuration files')
-        path_parameter = input("Enter the path of rocket parameter file (...json):\n >> ")
+        path_parameter = (input("Enter the path of rocket parameter file (...json):\n >> ")).strip()
         
         if os.path.exists(path_parameter) and path_parameter.endswith('.json'):
             break
