@@ -35,8 +35,9 @@ public class Solver {
 
 	private LoggerVariable trajectoryLog;
 	private LoggerVariableParachute parachuteLog;
+	private LoggerVariableParachute payloadLog;
 
-	private boolean is2ndPara;
+	private boolean is2ndPara, exitPayload;
 	private double timeBurnAct;
 
 	public Solver(String resultDir) {
@@ -46,10 +47,11 @@ public class Solver {
 
 	public void solveDynamics(Rocket rocket) {
 		int index = 0;
-		int indexLaunchClear, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0, index1stPara;
+		int indexLaunchClear, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0, index1stPara, indexLandingPayload;
 		double h = rocket.dt;
 		boolean isTipOff = false;
 		is2ndPara = rocket.para2Exist;
+		exitPayload = rocket.existPayload;
 		timeBurnAct = rocket.engine.timeActuate;
 
 		VariableTrajectory variableTrajectory = new VariableTrajectory(rocket);
@@ -57,7 +59,6 @@ public class Solver {
 		// Dynamics
 		AbstractDynamics dynTrajectory = new DynamicsTrajectory(rocket);
 		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(rocket);
-		DynamicsParachute dynParachute = new DynamicsParachute(rocket);
 
 		// ODE solver
 		AbstractODEsolver ODEsolver = new RK4(h); // 最初は4次ルンゲクッタで計算
@@ -145,12 +146,12 @@ public class Solver {
 		eventValue.setIndexLaunchClear(indexLaunchClear);
 		eventValue.setIndexLandingTrajectory(indexLandingTrajectory);
 
-		// indexApogee = eventValue.getIndexApogee();
 		index1stPara = eventValue.getIndex1stPara();
 		eventValue.setIndex1stPara(index1stPara);
 		parachuteLog.copy(index1stPara, trajectoryLog);
 		trajectoryLog.dumpArrayList();
 
+		
 		// Change ODE solver
 		h = 0.05;
 		ODEsolver = new RK4(h);
@@ -160,12 +161,56 @@ public class Solver {
 		// Parachute 用の変数にパラシュート放出時の変数を渡す
 		VariableParachute variablePara = new VariableParachute(rocket);
 		variablePara.set(trajectoryLog, index1stPara);
-
+		
+		// **************************************************************************************** /
+		//    Payload                                                                               /
+		// **************************************************************************************** /
+		if (exitPayload) {
+			rocket.deployPayload();
+			VariableParachute varPayload = new VariableParachute(rocket.payload);
+			varPayload.set(trajectoryLog, index1stPara);
+			DynamicsParachute dynPayload = new DynamicsParachute(rocket.payload, rocket.atm, rocket.wind);
+			payloadLog = new LoggerVariableParachute(rocket.payload, rocket.atm, rocket.wind);
+			deltaArray = new DynamicsMinuteChangeParachute[3];
+			
+			int indexPaylaod = 0;
+			index = index1stPara;
+			
+			for( ; ; ) {
+				index ++;
+				indexPaylaod ++;
+				
+				// Change ODE solver
+				if(indexPaylaod == 4) {
+					predCorr.setDelta(deltaArray[2], deltaArray[1], deltaArray[0]);
+					ODEsolver = predCorr;
+				}
+				
+				// solve ODE
+				AbstractDynamicsMinuteChange delta = ODEsolver.compute(varPayload, dynPayload);
+				if(indexPaylaod <= 3) {
+					deltaArray[indexPaylaod - 1] = delta;
+				}
+				
+				varPayload.update(ODEsolver.getTimeStep(), delta);
+				payloadLog.log(varPayload, ODEsolver.getTimeStep());
+				
+				if(eventJudgement.judgeLanding(varPayload)) {
+					indexLandingPayload = indexPaylaod - 1;
+					break;
+				}
+			}
+			payloadLog.makeArray();
+			eventValue.setIndexLandingPayload(indexLandingPayload);
+		}
+		
 		// indexの更新
 		index = index1stPara;
 		int index_para = 0;
+		DynamicsParachute dynParachute = new DynamicsParachute(rocket);
 		deltaArray = new DynamicsMinuteChangeParachute[3];
-
+		ODEsolver = new RK4(h);
+		
 		// **************************************************************************************** /
 		//    Parachute                                                                             /
 		// **************************************************************************************** /
@@ -202,7 +247,11 @@ public class Solver {
 		eventValue.setIndexLandingParachute(indexLandingParachute);
 
 		eventValue.setIndex2ndPara(index2ndPara);
-		eventValue.calculate(trajectoryLog, parachuteLog);
+		if (exitPayload) {
+			eventValue.calculate(trajectoryLog, parachuteLog, payloadLog);
+		} else {
+			eventValue.calculate(trajectoryLog, parachuteLog);
+		}
 
 	}
 
@@ -216,6 +265,9 @@ public class Solver {
 		OutputFlightlogParachute ofp = new OutputFlightlogParachute(parachuteLog);
 		oft.runOutputLine(resultDir + "flightlog_trajectory.csv");
 		ofp.runOutputLine(resultDir + "flightlog_parachute.csv");
+		if (exitPayload) {
+			new OutputFlightlogParachute(payloadLog).runOutputLine(resultDir + "flightlog_payload.csv");
+		}
 	}
 
 	/**
@@ -360,6 +412,67 @@ public class Solver {
 			throw new RuntimeException(e);
 		}
 
+	}
+
+	public void outputLandPoint() {
+		
+		OutputCsv landPointCsv;
+
+		String[] name;
+
+		if (exitPayload) {
+
+			name = new String[3];
+			name[0] = "Trajectory";
+			name[1] = "Parachute";
+			name[2] = "Payload";
+			
+		} else {
+			
+			name = new String[2];
+			name[0] = "Trajectory";
+			name[1] = "Parachute";
+
+		}
+
+		try {
+			landPointCsv = new OutputCsv(resultDir + "land_point_NED.csv", name);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		try {
+			landPointCsv.outputFirstLine();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+
+		
+		for (int i = 0; i < 3; i++) {
+
+			double[] results = new double[name.length];
+			
+			if (i < 2) {
+				results[0] = eventValue.getPosNEDlandingTrajectory()[i];
+				results[1] = eventValue.getPosNEDlandingParachute()[i];
+				if (exitPayload) {
+					results[2] = eventValue.getPosNEDlandingPayload()[i];
+				}
+			}
+			
+			try {
+				landPointCsv.outputLine(results);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		try {
+			landPointCsv.close();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
 	}
 
 }

@@ -15,6 +15,7 @@ public class EventValueMulti {
 	int row,column;
 
 	private double[] speedArray, azimuthArray;
+	private final boolean existPayload;
 
 	private double
 	velLaunchClearMin,
@@ -47,9 +48,12 @@ public class EventValueMulti {
 			timeLandingTrajectoryArray,
 			timeLandingParachuteArray;
 
-	private double[][][] posNEDlandingTrajectory, posNEDlandingParachute;
+	private double[][][] posNEDlandingTrajectory, posNEDlandingParachute, posNEDlandingPayload;
 
-	public EventValueMulti(double[] speedArray, double[] azimuthArray) {
+	public EventValueMulti(double[] speedArray, double[] azimuthArray, boolean existPayload) {
+		
+		this.existPayload = existPayload;
+		
 		row = speedArray.length;
 		column = azimuthArray.length;
 
@@ -70,6 +74,9 @@ public class EventValueMulti {
 		timeLandingParachuteArray  = new double[row][column];
 		posNEDlandingTrajectory    = new double[row][column][2];
 		posNEDlandingParachute     = new double[row][column][2];
+		if (existPayload) {
+			posNEDlandingPayload  = new double[row][column][2];
+		}
 	}
 
 	public void setResultArray(int i, int j, EventValueSingle evs) {
@@ -83,6 +90,9 @@ public class EventValueMulti {
 		timeLandingParachuteArray[i][j] = evs.getTimeLandingParachute();
 		System.arraycopy(evs.getPosNEDlandingTrajectory(), 0, posNEDlandingTrajectory[i][j], 0, 2);
 		System.arraycopy(evs.getPosNEDlandingParachute(), 0, posNEDlandingParachute[i][j], 0, 2);
+		if (existPayload) {
+			System.arraycopy(evs.getPosNEDlandingPayload(), 0, posNEDlandingPayload[i][j], 0, 2);
+		}
 	}
 
 	public void computeMinVelLaunchClear() {
@@ -155,6 +165,10 @@ public class EventValueMulti {
 
 	public double[][][] getPosNEDlandParachute(){
 		return posNEDlandingParachute;
+	}
+
+	public double[][][] getPosNEDlandPaylaod(){
+		return posNEDlandingPayload;
 	}
 
 	public void outputResultTxt(String filepath) {

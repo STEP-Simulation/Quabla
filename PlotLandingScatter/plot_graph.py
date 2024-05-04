@@ -6,7 +6,6 @@ from PIL import Image
 import simplekml
 from polycircles import polycircles
 import PlotLandingScatter.coordinate as cd
-from PlotLandingScatter.launch_site.launch_site import trans_matrix
 
 class PlotGraph:
 
@@ -114,3 +113,9 @@ class PlotGraph:
 
 
         kml.save(self.result_dir + '/' + self.title + '.kml')
+
+def trans_matrix(theta):
+    matrix = np.array([[np.cos(theta), -np.sin(theta), 0.0],
+                       [np.sin(theta), np.cos(theta) , 0.0],
+                       [0.0          , 0.0           , 1.0]])
+    return matrix

@@ -2,7 +2,10 @@ package quabla.simulator.logger;
 
 import java.util.ArrayList;
 
+import quabla.simulator.rocket.Atmosphere;
+import quabla.simulator.rocket.Payload;
 import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.wind.AbstractWind;
 import quabla.simulator.variable.OtherVariableParachute;
 import quabla.simulator.variable.VariableParachute;
 
@@ -22,7 +25,9 @@ public class LoggerVariableParachute {
 
 	private int length;
 
-	private int indexPara;
+	private boolean exitPayload = false;
+
+	private int indexPara = 0;
 
 	private ArrayList<Double> timeLogArrayList       = new ArrayList<>();
 	private ArrayList<Double> timeStepLogArrayList   = new ArrayList<>();
@@ -39,6 +44,11 @@ public class LoggerVariableParachute {
 
 	public LoggerVariableParachute(Rocket rocket) {
 		ovp = new OtherVariableParachute(rocket);
+	}
+
+	public LoggerVariableParachute(Payload payload, Atmosphere atm, AbstractWind wind) {
+		ovp = new OtherVariableParachute(payload, atm, wind);
+		exitPayload = true;
 	}
 
 	public void log(VariableParachute variable, double timeStep) {
@@ -75,7 +85,7 @@ public class LoggerVariableParachute {
 			velDescentLog[i] = velDescentLogArrayList.get(i);
 			
 			ovp.calculateOtherVariable(timeLog[i], posNEDlog[i], velDescentLog[i]);
-			if (i <= indexPara) {
+			if (!exitPayload && i <= indexPara) {
 				velNEDlog[i][0] = velNEDxlogArrayList.get(i);
 				velNEDlog[i][1] = velNEDylogArrayList.get(i);
 				velNEDlog[i][2] = velNEDzlogArrayList.get(i);

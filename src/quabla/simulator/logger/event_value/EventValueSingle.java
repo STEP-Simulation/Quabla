@@ -15,7 +15,7 @@ public class EventValueSingle {
 
 	private double fstMin, fstMax;
 	private double velLaunchClear;
-	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeNormalMax, timeSideMax, timeApogee, time1stPara, time2ndPara, timeLandingTrajectory, timeLandingParachute;
+	private double timeLaunchClear, timeMaxQ, timeMaxVelAir, timeMaxMach, timeNormalMax, timeSideMax, timeApogee, time1stPara, time2ndPara, timeLandingTrajectory, timeLandingParachute, timeLandingPaylaod;
 	private double altApogee, altMaxQ, altVelAirMax, altMachMax, altNormalMax, altSideMax, alt1stPara, alt2ndPara;
 	private double accLaunchClear;
 	private double dynamicsPressureMax;
@@ -23,10 +23,11 @@ public class EventValueSingle {
 	private double velDescent;
 	private double machMax;
 	private double normalMax, sideMax;
-	private double downrangeApogee, downrangeLandingTrajectory, downrangeLandingParachute;
+	private double downrangeApogee, downrangeLandingTrajectory, downrangeLandingParachute, downrangeLandingPayload;
 	private double[] posNEDlandingTrajectory = new double[2];
 	private double[] posNEDlandingParachute  = new double[2];
-	private int indexLaunchClear, indexMaxQ, index1stPara, index2ndPara, indexMaxVelAir, indexMaxMach, indexNormalMax, indexSideMax, indexApogee, indexLandingTrajectory, indexLandingParachute;
+	private double[] posNEDlandingPayload    = new double[2];
+	private int indexLaunchClear, indexMaxQ, index1stPara, index2ndPara, indexMaxVelAir, indexMaxMach, indexNormalMax, indexSideMax, indexApogee, indexLandingTrajectory, indexLandingParachute, indexLandingPayload;
 
 	public EventValueSingle(LoggerVariable lvt, Rocket rocket) {
 		// イベント発生時のインデックスを必要としないもの(最高高度など)のみ先に計算
@@ -53,6 +54,10 @@ public class EventValueSingle {
 
 	public void setIndexLandingParachute(int indexLandingParachute) {
 		this.indexLandingParachute = indexLandingParachute;
+	}
+
+	public void setIndexLandingPayload(int indexLandingPayload) {
+		this.indexLandingPayload = indexLandingPayload;
 	}
 
 	public void setIndex1stPara(int index1stPara) {
@@ -173,7 +178,23 @@ public class EventValueSingle {
 		velDescent = Math.abs(lvp.getVelDescentArray()[indexLandingParachute]);
 	}
 
+	private void calculateLandingPaylaod(LoggerVariableParachute lvp) {
+		timeLandingPaylaod = lvp.getTime(indexLandingPayload);
+		System.arraycopy(lvp.getPosNEDlog(indexLandingPayload), 0, posNEDlandingPayload, 0, 2);
+		downrangeLandingPayload = lvp.getDownrangeArray()[indexLandingPayload];
+		// velDescent = Math.abs(lvp.getVelDescentArray()[indexLandingPayload]);
+	}
+
 	// index入力後に実行する
+	public void calculate(LoggerVariable lvt, LoggerVariableParachute lvp, LoggerVariableParachute lvpp) {
+		calculateLaunchClear(lvt);
+		// compute1stPara(lvp);
+		compute2ndPara(lvp);
+		calculateLandingTrajectory(lvt);
+		calculateLandingParachute(lvp);
+		calculateLandingPaylaod(lvpp);
+	}
+
 	public void calculate(LoggerVariable lvt, LoggerVariableParachute lvp) {
 		calculateLaunchClear(lvt);
 		// compute1stPara(lvp);
@@ -365,6 +386,10 @@ public class EventValueSingle {
 
 	public double[] getPosNEDlandingParachute() {
 		return posNEDlandingParachute;
+	}
+
+	public double[] getPosNEDlandingPayload() {
+		return posNEDlandingPayload;
 	}
 
 	public double getDownrangeLandingParachute() {

@@ -1,6 +1,10 @@
 package quabla.simulator.variable;
 
+import quabla.simulator.rocket.AbstractRocket;
+import quabla.simulator.rocket.Atmosphere;
+import quabla.simulator.rocket.Payload;
 import quabla.simulator.rocket.Rocket;
+import quabla.simulator.rocket.wind.AbstractWind;
 
 public class OtherVariableParachute {
 
@@ -12,8 +16,10 @@ public class OtherVariableParachute {
 	 * downrange
 	 * */
 
-	private Rocket rocket;
-	// private AbstractWind wind;
+	// private Rocket rocket;
+	private final AbstractRocket rocket;
+	private final Atmosphere atm;
+	private final AbstractWind wind;
 
 	private double altitude;
 	private double downrange;
@@ -29,7 +35,16 @@ public class OtherVariableParachute {
 
 	public OtherVariableParachute(Rocket rocket) {
 		
+		this.atm  = rocket.atm;
+		this.wind = rocket.wind;
 		this.rocket = rocket;
+	}
+
+	public OtherVariableParachute(Payload payload, Atmosphere atm, AbstractWind wind) {
+		
+		this.atm  = atm;
+		this.wind = wind;
+		this.rocket = payload;
 	}
 
 	public void calculateOtherVariable(double time, double[] posNED, double velDescent) {
@@ -41,10 +56,10 @@ public class OtherVariableParachute {
 		                     + posNED[1]*posNED[1] );
 
 		//Environment
-		double g = rocket.atm.getGravity(altitude);
-		double rho = rocket.atm.getAirDensity(altitude);
+		double g   = atm.getGravity(altitude);
+		double rho = atm.getAirDensity(altitude);
 
-		windNED = rocket.wind.getWindNED(altitude);
+		windNED = wind.getWindNED(altitude);
 		velNED[0] = windNED[0];
 		velNED[1] = windNED[1];
 		velNED[2] = velDescent;
@@ -53,23 +68,25 @@ public class OtherVariableParachute {
 		                     + velAirNED[1]*velAirNED[1] 
 		                     + velAirNED[2]*velAirNED[2] );
 
-		if (rocket.para2Exist) {
-			if (rocket.para2Timer) {
-				if(time >= rocket.time_para2) {
-					CdS = rocket.CdS1 + rocket.CdS2;
-				}else {
-					CdS = rocket.CdS1;
-				}
-			}else {
-				if (altitude <= rocket.alt_para2) {
-					CdS = rocket.CdS1 + rocket.CdS2;
-				}else {
-					CdS = rocket.CdS1;
-				}
-			}
-		}else {
-			CdS = rocket.CdS1;
-		}
+		CdS = rocket.getCdS(time, altitude);
+
+		// if (rocket.para2Exist) {
+		// 	if (rocket.para2Timer) {
+		// 		if(time >= rocket.time_para2) {
+		// 			CdS = rocket.CdS1 + rocket.CdS2;
+		// 		}else {
+		// 			CdS = rocket.CdS1;
+		// 		}
+		// 	}else {
+		// 		if (altitude <= rocket.alt_para2) {
+		// 			CdS = rocket.CdS1 + rocket.CdS2;
+		// 		}else {
+		// 			CdS = rocket.CdS1;
+		// 		}
+		// 	}
+		// }else {
+		// 	CdS = rocket.CdS1;
+		// }
 
 		drag = 0.5 * rho * CdS * Math.pow(velDescent, 2);
 		acc = - drag / mass + g;

@@ -14,7 +14,7 @@ import quabla.simulator.rocket.wind.Constant;
 import quabla.simulator.rocket.wind.Original;
 import quabla.simulator.rocket.wind.Power;
 
-public class Rocket {
+public class Rocket extends AbstractRocket {
 
 	// TODO 離陸前，燃焼後の時の重量，慣性モーメントをcsvに出力
 	// TODO: make clone() function
@@ -23,6 +23,7 @@ public class Rocket {
 	public final AeroParameter aero;
 	public final Atmosphere atm;
 	public final AbstractWind wind;
+	public final Payload payload;
 
 	public final double L, 
 	                    D, 
@@ -51,6 +52,7 @@ public class Rocket {
 	public final double alt_para2, time_para2;
 	public final double dt;
 	public final boolean existTipOff;
+	public final boolean existPayload;
 	public final double lengthLauncherRail, 
 						elevationLauncher, 
 						azimuthLauncher, 
@@ -59,7 +61,9 @@ public class Rocket {
 	public static int site;
 	public static double[] point = {0, 0, 0};
 						
-	private final Interpolation massAnaly,
+	private Interpolation massAnaly;
+	private final Interpolation 
+								massDepAnaly,
 								lcgAnaly,
 								lcgPropAnaly,
 								IjPropPitchAnaly,
@@ -71,9 +75,16 @@ public class Rocket {
 		engine = new Engine(spec.get("Engine"));
 		aero   = new AeroParameter(spec.get("Aero"));
 		atm    = new Atmosphere(spec.get("Atmosphere").get("Temperature at 0 m [℃]").asDouble());
+
+		existPayload = spec.get("Payload").get("Payload Exist").asBoolean();
+		if (existPayload) {
+			payload = new Payload(spec.get("Payload"));
+		} else {
+			payload = null;
+		}
 		
-		JsonNode structure = spec.get("Structure");
-		JsonNode parachute = spec.get("Parachute");
+		JsonNode structure  = spec.get("Structure");
+		JsonNode parachute  = spec.get("Parachute");
 		JsonNode launchCond = spec.get("Launch Condition");
 		
 		if(spec.get("Wind").get("Wind File Exist").asBoolean() && QUABLA.simulationModeCheck.equals("single")) {
@@ -175,7 +186,7 @@ public class Rocket {
 			// 2nd-order Central Differential Scheme
 			IjDotPitchLog[i] = (IjPitchLog[i + 1] - IjPitchLog[i - 1]) / (timeArray[i + 1] - timeArray[i - 1]);
 		}
-		
+
 		// set Initial and Final Value
 		massLog[0] = mBef;
 		massLog[massLog.length - 1] = mAft;
@@ -188,7 +199,7 @@ public class Rocket {
 		IjPitchLog[IjPitchLog.length - 1] = IjPitchAft;
 		IjDotPitchLog[0] = 0.0;
 		IjDotPitchLog[IjDotPitchLog.length - 1] = 0.0;
-
+		
 		// Make Instance
 		massAnaly        = new Interpolation(timeArray, massLog);
 		lcgAnaly         = new Interpolation(timeArray, lcgLog);
@@ -196,7 +207,22 @@ public class Rocket {
 		IjPropPitchAnaly = new Interpolation(timeArray, IjPropPitchLog);
 		IjPitchAnaly     = new Interpolation(timeArray, IjPitchLog);
 		IjDotPitchAnaly  = new Interpolation(timeArray, IjDotPitchLog);
+		
+		if (existPayload) {
+			double[] massDepLog = new double[timeArray.length];
+			
+			for (int i = 0; i < massDepLog.length; i++) {
+				double massPayload = payload.getMass(timeArray[i]);
+				massDepLog[i] = massLog[i] - massPayload;
+			}
 
+			massDepLog[massDepLog.length - 1] = mAft - payload.getMass(engine.timeActuate);
+			massDepAnaly = new Interpolation(timeArray, massDepLog);
+
+		} else {
+			massDepAnaly = null;
+		}
+		
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		//    Parachute
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -252,6 +278,7 @@ public class Rocket {
 		return - engine.getMdotProp(t);
 	}
 
+	@Override
 	public double getMass(double t) {
 
 		return massAnaly.linearInterp1column(t);
@@ -302,6 +329,31 @@ public class Rocket {
 
 		return IjDotPitchAnaly.linearInterp1column(t);
 
+	}
+
+	public void deployPayload() {
+		massAnaly = massDepAnaly;
+	}
+
+	public double getCdS(double time, double altitude) {
+		
+		if (para2Exist) {
+			if (para2Timer) {
+				if(time >= time_para2) {
+					return CdS1 + CdS2;
+				}else {
+					return CdS1;
+				}
+			}else {
+				if (altitude <= alt_para2) {
+					return CdS1 + CdS2;
+				}else {
+					return CdS1;
+				}
+			}
+		}else {
+			return CdS1;
+		}
 	}
 	
 	public void outputSpec(String resultDir, String simulationMode) {

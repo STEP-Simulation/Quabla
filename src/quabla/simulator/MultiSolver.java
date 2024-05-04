@@ -12,14 +12,17 @@ import quabla.simulator.rocket.Rocket;
  * MultiSolver mangages solver and store values in multiple conditions.
  * */
 public class MultiSolver {
+
 	double speed_min,speed_step,base_azimuth;
 	int speed_num,angle_num;
 	private double[] speedArray, azimuthArray;
 	private String filepathResult;
 
+	private final boolean existPayload;
+
 	private EventValueMulti evm;
 
-	public MultiSolver(String filepath, JsonNode multiCond) {
+	public MultiSolver(String filepath, JsonNode multiCond, boolean existPayload) {
 		filepathResult = filepath;
 
 		this.speed_min = multiCond.get("Minimum Wind Speed [m/s]").asDouble();
@@ -27,6 +30,8 @@ public class MultiSolver {
 		this.speed_num = multiCond.get("Number of Wind Speed").asInt();
 		this.angle_num = multiCond.get("Number of Wind Azimuth").asInt();
 		this.base_azimuth = multiCond.get("Base Wind Azimuth [deg]").asDouble();
+
+		this.existPayload = existPayload;
 
 		speedArray = new double[speed_num];
 		azimuthArray = new double[angle_num + 1];
@@ -42,7 +47,7 @@ public class MultiSolver {
 			}
 		}
 
-		evm = new EventValueMulti(speedArray, azimuthArray);
+		evm = new EventValueMulti(speedArray, azimuthArray, existPayload);
 
 	}
 
@@ -71,10 +76,10 @@ public class MultiSolver {
 
 		double[][] windMapTrajectory = getWindMap(evm.getPosNEDlandTrajectory());
 		double[][] windMapParachute = getWindMap(evm.getPosNEDlandParachute());
-
+		
 		evm.outputResultTxt(filepathResult);
 		evm.outputCsv(filepathResult);
-
+		
 		double launchElev = spec.get("Launch Condition").get("Launch Elevation [deg]").asDouble();
 		OutputLandingScatter trajectory = new OutputLandingScatter();
 		try {
@@ -82,12 +87,24 @@ public class MultiSolver {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+		
 		OutputLandingScatter parachute = new OutputLandingScatter();
 		try {
 			parachute.output(filepathResult + "parachute"+ launchElev +"[deg].csv",windMapParachute, speedArray);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+		
+		if (existPayload) {
+			
+			double[][] windMapPayload = getWindMap(evm.getPosNEDlandPaylaod());
+			OutputLandingScatter payload = new OutputLandingScatter();
+			try {
+				payload.output(filepathResult + "payload"+ launchElev +"[deg].csv", windMapPayload, speedArray);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 	}
 

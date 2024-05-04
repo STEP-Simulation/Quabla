@@ -15,23 +15,29 @@ from PlotLandingScatter.launch_site.launch_site import magnetic_declination
 
 class NoshiroSea(LaunchSite):
 
-    def __init__(self,elevation, magnetic_dec_exist, result_dir, glp_list, launch_site_info, safety_exist):
+    def __init__(self, elevation, exist_payload, magnetic_dec_exist, result_dir, glp_list, launch_site_info, safety_exist):
         # self.img = 'PlotLandingScatter/noshiro_sea.png'
         self.img = launch_site_info.img
+        self.exist_payload = exist_payload
 
         self.glp_tra = glp_list[0]
         self.glp_par = glp_list[1]
         self.wind_array = self.glp_tra.get_wind_name()
-        self.radius = launch_site_info.radius
-        self.safety_line1 = launch_site_info.edge1_LLH
-        self.safety_line2 = launch_site_info.edge2_LLH
         self.safety_exist = safety_exist
 
         self.trajectory = PlotGraph("Trajectory " + elevation + "[deg]", result_dir, self.glp_tra)
-        self.parachute = PlotGraph("Parachute " + elevation + "[deg]", result_dir, self.glp_par)
+        self.parachute  = PlotGraph("Parachute " + elevation + "[deg]", result_dir, self.glp_par)
+        if exist_payload:
+            self.glp_pay = glp_list[2]
+            self.payload = PlotGraph("Payload " + elevation + "[deg]", result_dir, self.glp_pay)
 
         # 射点
         self.launch_LLH = launch_site_info.launch_LLH
+        # 保安円半径
+        self.radius = launch_site_info.radius
+        # 端点
+        self.safety_line1 = launch_site_info.edge1_LLH
+        self.safety_line2 = launch_site_info.edge2_LLH
         # 保安円中心
         self.center_circle_LLH = launch_site_info.center_circle_LLH
         # 境界線端点
@@ -59,6 +65,9 @@ class NoshiroSea(LaunchSite):
     def plot_landing_scatter(self):
         flight_mode = [self.trajectory, self.parachute]
         color_cm = [cm.cool, cm.spring]
+        if self.exist_payload:
+            flight_mode.append(self.payload)
+            color_cm.append(cm.autumn)
 
         for index, obj in enumerate(flight_mode):
             obj.ax.plot(0.0, 0.0, marker='o', markersize=3, color='r')

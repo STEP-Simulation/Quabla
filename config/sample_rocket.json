@@ -110,5 +110,11 @@
 		"Constant CNa": 7.2,
 		"Roll Dumping Moment Coefficient Clp": -0.019,
 		"Pitch Dumping Moment Coefficient Cmq": -2.5
+	},
+
+	"Payload":{
+		"Payload Exist": true,
+		"Mass [kg]": 1.0,
+		"Parachute CdS [m2]": 0.1
 	}
 }

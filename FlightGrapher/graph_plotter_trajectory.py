@@ -138,7 +138,7 @@ class GraphPlotterTrajectory:
         self.point = [self.pos_NED_log[-1, 0], self.pos_NED_log[-1, 1], self.pos_NED_log[-1, 2]]
         self.Launch_LLH = launch_LLH
 
-    def plot_graph(self,land_point):
+    def plot_graph(self):
         flightType = '_01_trajectory'
 
         img_logo = Image.open('Quabla_logo.png')
@@ -379,7 +379,7 @@ class GraphPlotterTrajectory:
         ax.set_title('Downrange')
         ax.plot(self.pos_NED_log[:self.index_coast, 1] / 1000, self.pos_NED_log[:self.index_coast, 0] / 1000.0, color='#FF4B00', linestyle='-')
         ax.plot(self.pos_NED_log[self.index_coast:, 1] / 1000, self.pos_NED_log[self.index_coast:, 0] / 1000.0, color='#FF4B00', linestyle='--')
-        ax.text(x=self.pos_NED_log[self.index_coast, 0] / 1000, y=self.pos_NED_log[self.index_coast, 1] / 1000, s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.pos_NED_log[self.index_coast, 1] / 1000, y=self.pos_NED_log[self.index_coast, 0] / 1000, s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
         ax.text(x=self.pos_NED_log[-1, 1] / 1000, y=self.pos_NED_log[-1, 0] / 1000, s='\n+\nLanding Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
         ax.text(x=self.pos_NED_log[0 , 1] / 1000, y=self.pos_NED_log[0 , 0] / 1000, s='\n+\nLaunch Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
         xmin, xmax, ymin, ymax = update_limits(ax.get_xlim(), ax.get_ylim(), fig.get_figheight() / fig.get_figwidth())
@@ -676,4 +676,4 @@ class GraphPlotterTrajectory:
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
         gettrajectorypoint(point_LLH)
         post_kml(log_LLH, self.filepath, '_02_hard')
-        land_point.set_point_trajectory(self.point)
+       #  land_point.set_point_trajectory(self.point)

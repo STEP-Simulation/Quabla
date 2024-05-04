@@ -20,7 +20,7 @@ Args
     img           : File path of lauch site image
     safety_exsist : True or false of safety area
 '''
-def flightgrapher(path, launch_site_info, safety_exist):
+def flightgrapher(path, launch_site_info, safety_exist, exist_payload):
 
     print("\n[Post Proc.] Start...")
 
@@ -38,11 +38,19 @@ def flightgrapher(path, launch_site_info, safety_exist):
     land_point = LandPoint(path, launch_site_info.img)
 
     # グラフのプロット
-    graph_trajectory.plot_graph(land_point)
-    graph_parachute.plot_graph(land_point)
+    graph_trajectory.plot_graph()
+    graph_parachute.plot_graph('_01_parachute')
+
+    if exist_payload:
+        os.mkdir(path + os.sep +'_01_payload')
+        df_log_payl, df_summary_payl = FileReader(path, 'flightlog_payload.csv').get_df()
+        graph_paylaod = GraphPlotterParachute(df_log_payl, df_summary_payl, path, launch_site_info.launch_LLH)
+        graph_paylaod.plot_graph('_01_payload')
 
     makekml(path, launch_site_info.center_circle_LLH, launch_site_info.radius, launch_site_info.safety_area_LLH, \
             launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
+    
+    land_point.set_land_point(path, exist_payload)
     land_point.make_land_point(launch_site_info, safety_exist)
 
     print('[Post Proc.] Done!\n')

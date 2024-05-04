@@ -4,6 +4,7 @@ import quabla.simulator.Coordinate;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
+import quabla.simulator.rocket.Payload;
 import quabla.simulator.rocket.Rocket;
 import quabla.simulator.rocket.wind.AbstractWind;
 
@@ -34,6 +35,14 @@ public class VariableParachute extends AbstractVariable implements Cloneable{
 		// velNED = new MathematicalVector(0.0, 0.0, 0.0);
 		velDescent = 0.0;
 		wind = rocket.wind;
+	}
+
+	public VariableParachute(Payload payload) {
+
+		time = 0.0;
+		posNED = new MathematicalVector(0.0, 0.0, 0.0);
+		velDescent = 0.0;
+		
 	}
 
 	public void set(VariableParachute variable) {

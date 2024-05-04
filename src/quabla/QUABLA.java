@@ -63,6 +63,7 @@ public class QUABLA {
 			solver.makeResult();
 			solver.outputResultTxt();
 			solver.outputResultSummary();
+			solver.outputLandPoint();
 			break;
 
 		case "multi":
@@ -71,7 +72,7 @@ public class QUABLA {
 			String filepathResultMulti = args[2];
 			String filepathResultMultiFinal = filepathResultMulti + File.separator;
 
-			MultiSolver multi_solver = new MultiSolver(filepathResultMultiFinal, node.get("Multi Solver"));
+			MultiSolver multi_solver = new MultiSolver(filepathResultMultiFinal, node.get("Multi Solver"), node.get("Payload").get("Payload Exist").asBoolean());
 			multi_solver.solveMulti(node);
 			break;
 		}

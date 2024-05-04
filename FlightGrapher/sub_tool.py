@@ -22,13 +22,23 @@ def update_limits(xlim, ylim, aspect):
         xmax_new = xmax 
         xmin_new = xmin
         ratio = xlen * aspect / ylen
-        ymax_new = ymax * ratio
-        ymin_new = ymin * ratio
+        if ymin == 0.0:
+            ymax_new = ymax * ratio
+            ymin_new = ymin * ratio
+
+        else:
+            ylen *= ratio
+            ymid = 0.5 * (ymin + ymax)
+            ymax_new = ymid + 0.5 * ylen
+            ymin_new = ymid - 0.5 * ylen
+
 
     else:
         ratio = ylen / aspect / xlen
-        xmax_new = xmax * ratio
-        xmin_new = xmin * ratio
+        xmid = (xmax + xmin) / 2.0
+        xlen *= ratio
+        xmax_new = xmid + 0.5 * xlen
+        xmin_new = xmid - 0.5 * xlen
         ymax_new = ymax
         ymin_new = ymin
 

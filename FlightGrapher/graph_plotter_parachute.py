@@ -40,6 +40,7 @@ class GraphPlotterParachute:
         time_apogee = df_summary['Time Apogee [sec]'].to_numpy()
         time_para1 = df_summary['Time 1st Parachute Open [sec]'].to_numpy()
         time_para2 = df_summary['Time 2nd Parachute Open [sec]'].to_numpy()
+        self.time_sta = self.time_array[0]
         self.time_end = self.time_array[-1]
         self.index_coast = np.argmax(time_actuate < self.time_array)
         self.index_apogee = np.argmax(time_apogee < self.time_array)
@@ -50,8 +51,8 @@ class GraphPlotterParachute:
         self.point = [self.pos_NED_log[-1, 0], self.pos_NED_log[-1, 1], self.pos_NED_log[-1, 2]]
         self.Launch_LLH = launch_LLH
 
-    def plot_graph(self, land_point):
-        flightType = '_01_parachute'
+    def plot_graph(self, flightType):
+        # flightType = '_01_parachute'
 
         # img_logo = 'Quabla_logo.png'
         img_logo = Image.open('Quabla_logo.png')
@@ -97,7 +98,7 @@ class GraphPlotterParachute:
             ax.text(x=self.time_array[self.index_para1], y=self.time_step_array[self.index_para1], s='\n+\nMain Chute Open', fontsize='large', horizontalalignment='center', verticalalignment='center')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Time Step [sec]')
-        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_xlim(xmin=self.time_sta, xmax=self.time_end)
         ax.set_ylim(ymin=0.)
         ymin, ymax = ax.get_ylim()
         ax.set_ylim(ymin=ymin, ymax=ymax)
@@ -127,7 +128,7 @@ class GraphPlotterParachute:
             ax.plot(self.time_array[self.index_para1:], self.pos_NED_log[self.index_para1:,2], color='#03AF7A', linestyle=':')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Position [m]')
-        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_xlim(xmin=self.time_sta, xmax=self.time_end)
         ymin, ymax = ax.get_ylim()
         ax.set_ylim(ymin=ymin, ymax=ymax)
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
@@ -230,7 +231,7 @@ class GraphPlotterParachute:
 
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Velocity [m/s]')
-        ax.set_xlim(xmin=0.0, xmax=self.time_end)
+        ax.set_xlim(xmin=self.time_sta, xmax=self.time_end)
         ymin, ymax = ax.get_ylim()
         ax.set_ylim(ymin=ymin, ymax=ymax)
         ax.imshow(img_logo, extent=(get_extent_values(fig, ax, aspect_logo)), alpha=0.5)
@@ -267,6 +268,6 @@ class GraphPlotterParachute:
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
         getparachutepoint(point_LLH)
         post_kml(log_LLH, self.filepath, '_02_soft')
-        land_point.set_point_parachute(self.point)
+        # land_point.set_point_parachute(self.point)
         
 

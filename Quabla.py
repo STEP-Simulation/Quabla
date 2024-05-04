@@ -9,14 +9,13 @@ import numpy as np
 from flightgrapher import flightgrapher
 from plotlandingscatter import plotlandingscatter
 from PlotLandingScatter.launch_site.launch_site_info import OshimaLand, OshimaSea, NoshiroLand, NoshiroSea, OtherSite
+from PlotLandingScatter.launch_site.launch_site_info import LaunchSiteInfo
 
 def main():
 
     print("\n6DoF Rocket Simulator QUABLA by STEP... \n")
     print("-----------\n")
 
-    # Get launch site information
-    launch_site_json = json.load(open('./input/launch_site.json', 'r', encoding='utf-8'))
 
     # ロケットの諸元ファイルの絶対pathを入力させる それがPC内に存在するものかつ拡張子が.jsonならば受け取るがそれ以外なら拒否する
     while(1):
@@ -66,6 +65,7 @@ def main():
     model_name = json_load['Solver']['Name']
     launch_site = json_load["Launch Condition"]["Site"]
     safety_exist = json_load["Launch Condition"]["Safety Area Exist"]
+    exist_payload = json_load["Payload"]["Payload Exist"]
 
     # Resultフォラウダに何も指定されていない時，デフォルトで直下のフォルダを指定
     if not resultrootpath: resultrootpath = '.' 
@@ -91,7 +91,7 @@ def main():
         dir_summary = result_dir + os.sep + '_01_summary'
         os.mkdir(dir_summary)
 
-    copy_config_files(json_load, path_parameter, result_dir)
+    copy_config_files(json_load, result_dir)
 
     print('-------------------- INFORMATION --------------------')
     print('  Config File:     ', os.path.basename(path_parameter))
@@ -107,46 +107,32 @@ def main():
         launch_site_info.launch_LLH[2] = float(json_load['Launch Condition']['Launch height'])
         launch_site_info.center_circle_LLH = launch_site_info.launch_LLH
 
-    elif launch_site == '1':
-        launch_site_info = OshimaLand(launch_site_json.get('oshima_land'))
+    else:
+        launch_site_info = LaunchSiteInfo(launch_site)
 
-    elif launch_site == '2':
-        launch_site_info = OshimaSea(launch_site_json.get('oshima_sea'))
-
-    elif launch_site == '3':
-        launch_site_info = NoshiroLand(launch_site_json.get('noshiro_land'))
-
-    elif launch_site == '4':
-        launch_site_info = NoshiroSea(launch_site_json.get('noshiro_sea'))
-
-
-    # Execute Quabla.jar
+    # Execute Quabla.jar ##########################################################################
     subprocess.run(["java", "-jar", "Quabla.jar", path_parameter, mode_simulation, result_dir], \
                     check=True)
+    ###############################################################################################
 
     resultpath = result_dir + os.sep
 
     #射角を諸元ファイルから取得
     launcher_elevation = str(json_load['Launch Condition']['Launch Elevation [deg]'])
 
-    #磁気偏角を考慮しているかどうかを取得 考慮されてたら下のパラメータは0でないはずなのでそこを参照
-    # if json_load['Launch Condition']['Input Magnetic Azimuth [deg]'] == '0.0':
-    #     magneticdec = 'n'
-    # else:
-    #     magneticdec = 'y'
     # 地図そのものを回転させて対処する機能は廃止
     magneticdec = 'y'
 
     #グラフの描画
     if mode_simulation == "single":
         
-        flightgrapher(resultpath, launch_site_info, safety_exist)
+        flightgrapher(resultpath, launch_site_info, safety_exist, exist_payload)
 
     elif mode_simulation == "multi":
         
-        plotlandingscatter(resultpath, launcher_elevation, launch_site, launch_site_info, magneticdec, safety_exist)
+        plotlandingscatter(resultpath, launcher_elevation, launch_site_info, exist_payload, magneticdec, safety_exist)
 
-def copy_config_files(json_config, path_config, path_result):
+def copy_config_files(json_config, path_result):
 
     dir_config = path_result + os.sep + '_00_config'
     model_name = json_config['Solver']['Name']
