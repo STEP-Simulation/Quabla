@@ -224,8 +224,7 @@ Enter simulation mode (single or multi):
 |項目|単位|備考|
 |---|---|---|
 |Thrust Curve|-|推力履歴のcsvファイルのパス。|
-|Nozzle Throat Diameter|mm|ノズルスロートの直径|
-|Nozzle Expansion Ratio|-|ノズル開口比。ノズルの出口面積とスロートの面積比とすること。|
+|Nozzle Exit Ratio|mm|ノズル出口（出力）径 |
 |Burn Time|sec|燃焼時間。作動時間とは異なる。|
 |Tank Volume|cc|酸化剤タンクの容量。|
 |Oxidizer Density|kg/m^3|酸化剤密度。
