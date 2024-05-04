@@ -8,6 +8,7 @@ coding UTF-8
 ## Flight Event
 以下の飛行イベントに対応している。
 * ノミナルフライト（べき法則）
+* ランチャ上での挙動
 * 予報風，統計風を用いた飛翔シミュレーション（csvによる風データの入力）
 * パラシュートによる減速落下
    * タイマー指令，頂点検知可能
@@ -194,7 +195,7 @@ Enter simulation mode (single or multi):
 |項目|単位|備考|
 |---|---|---|
 |Date|N/A|打上げ日時。現状このパラメータは使用していない。|
-|Site|N/A|射場の選択。`1:大島_陸，1:大島_海，1:能代_陸，1:能代_海，5:任意の射場`。 `5`を選んだ場合，射点の絶対座標（緯度，経度，高度）を指定する。|
+|Site|N/A|射場の選択。`1:大島_陸，1:大島_海，1:能代_陸，1:能代_海，5:任意の射場`。 `0`を選んだ場合，射点の絶対座標（緯度，経度，高度）を指定する。各射場の番号の対応は[こちらのファイル](input/key_launch_site.json)に準ずる。|
 |Launch lat|deg|緯度|
 |Launch lon|deg|経度|
 |Launch height|deg|高度|
@@ -285,7 +286,7 @@ Enter simulation mode (single or multi):
 |`constant`|定常風。風向・風速が高度分布をもたない。|
 
 ### Payload
-|||
+|項目|説明|
 |--|--|
 |`Payload Exist`|ペイロードの分離を行うかどうか|
 |`Mass [kg]`|ペイロードの重量。分離前はロケット側の構造質量に含まれ，分離後は燃焼終了時の質量からこの値がまるまる差し引かれる。|
@@ -293,6 +294,7 @@ Enter simulation mode (single or multi):
 
 ## Other
 * 射場情報の更新，マップ更新，射場追加は[こちら](PlotLandingScatter/launch_site/README.md)
+* シミュレータの仕様，支配方程式の解法などは[こちら](src/quabla/simulator/README.md)
 
 ## Future Works
 * 変数が発散したときの例外処理
