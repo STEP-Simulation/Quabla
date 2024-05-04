@@ -1,7 +1,7 @@
 package quabla.simulator.rocket;
 
 /**
- * Atmospere offers values about atmospher.
+ * Atmosphere offers values about atmosphere.
  *
  * <p> Atmosphere copes with geopotential altitude under 11 km.
  *
