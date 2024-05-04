@@ -10,9 +10,9 @@ import quabla.simulator.numerical_analysis.Interpolation;
 public class Engine {
 
 	public final double
-	dth, // Diameter of throat
-	eps, // Expansion ratio
-	Ath, // Area of throat
+	// dth, // Diameter of throat
+	// eps, // Expansion ratio
+	// Ath, // Area of throat
 	Ae, // Area of outlet
 	de; // diameter of throat
 	private double
@@ -152,11 +152,13 @@ public class Engine {
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 		//    Length, Diameter
 		// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-		dth = engine.get("Nozzle Throat Diameter [mm]").asDouble() * Math.pow(10, -3);// [mm] => [m]
-		eps = engine.get("Nozzle Expansion Ratio").asDouble();
-		Ath = 0.25 * Math.PI * Math.pow(dth, 2);
-		Ae  = Ath * eps;
-		de  = Math.sqrt(Ae * 4 / Math.PI);
+		// dth = engine.get("Nozzle Throat Diameter [mm]").asDouble() * Math.pow(10, -3);// [mm] => [m]
+		// eps = engine.get("Nozzle Expansion Ratio").asDouble();
+		// Ath = 0.25 * Math.PI * Math.pow(dth, 2);
+		// Ae  = Ath * eps;
+		// de  = Math.sqrt(Ae * 4 / Math.PI);
+		de = engine.get("Nozzle Exit Diameter [mm]").asDouble() * Math.pow(10, -3);// [mm] => [m]
+		Ae = 0.25 * Math.PI * Math.pow(de, 2);
 
 		// Fuel(grain)
 		dFuelInBef = engine.get("Fuel Inside Diameter [mm]").asDouble() * Math.pow(10, -3);

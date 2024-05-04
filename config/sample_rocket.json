@@ -72,8 +72,7 @@
 
 	"Engine":{
 		"Thrust Curve":"config/thrust.csv",
-		"Nozzle Throat Diameter [mm]": 11.45,
-		"Nozzle Expansion Ratio": 2.6951,
+		"Nozzle Exit Diameter [mm]": 18.8,
 		"Burn Time [sec]": 3.6,
 		"Tank Volume [cc]": 835,
 		"Oxidizer Density [kg/m^3]": 795,
