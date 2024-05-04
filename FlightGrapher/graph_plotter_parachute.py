@@ -4,9 +4,9 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from FlightGrapher.sub_tool import get_extent_values, update_limits, set_limits
 from PlotLandingScatter.coordinate import ENU2LLH
-from FlightGrapher.make_kml import getparachutepoint, post_kml
 import os
 from PIL import Image
+from FlightGrapher.make_kml import post_kml
 
 class GraphPlotterParachute:
     def __init__(self, df_log, df_summary, filepath, launch_LLH):
@@ -51,10 +51,13 @@ class GraphPlotterParachute:
         self.point = [self.pos_NED_log[-1, 0], self.pos_NED_log[-1, 1], self.pos_NED_log[-1, 2]]
         self.Launch_LLH = launch_LLH
 
-    def plot_graph(self, flightType):
-        # flightType = '_01_parachute'
+    def plot_graph(self, make_kml, flag):
 
-        # img_logo = 'Quabla_logo.png'
+        if flag:
+            flightType = '_01_parachute'
+        else:
+            flightType = '_01_payload'
+
         img_logo = Image.open('Quabla_logo.png')
         aspect_logo = img_logo.height / img_logo.width
 
@@ -266,8 +269,11 @@ class GraphPlotterParachute:
         vENU2LLH = np.vectorize(ENU2LLH, excluded=['launch_LLH'], signature="(1),(3)->(3)")
         log_LLH = vENU2LLH(self.Launch_LLH, self.pos_NED_log)
         point_LLH = ENU2LLH(self.Launch_LLH, self.point)
-        getparachutepoint(point_LLH)
-        post_kml(log_LLH, self.filepath, '_02_soft')
-        # land_point.set_point_parachute(self.point)
+        if flag:
+            make_kml.get_parachute_point(point_LLH)
+            post_kml(log_LLH, self.filepath, '_02_soft')
+        else:
+            make_kml.get_payload_point(point_LLH)
+            post_kml(log_LLH, self.filepath, '_02_payload')
         
 

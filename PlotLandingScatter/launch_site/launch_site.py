@@ -6,6 +6,7 @@ from PlotLandingScatter.judge_inside.judge_inside_circle import JudgeInsideCircl
 from PlotLandingScatter.judge_inside.judge_inside_border import JudgeInsideBorder
 from PlotLandingScatter.judge_inside.judge_inside_poly import JudgeInsidePoly
 import pandas as pd
+import os
 
 class LaunchSite():
 
@@ -72,8 +73,6 @@ class LaunchSite():
         self.xlim = launch_site_info.x_offset + np.array(launch_site_info.xlim)
         self.ylim = launch_site_info.y_offset + np.array(launch_site_info.ylim)
 
-
-    # @abstractmethod
     def plot_landing_scatter(self):
         flight_mode = [self.trajectory, self.parachute]
         color_cm = [cm.cool, cm.spring]
@@ -96,7 +95,6 @@ class LaunchSite():
             obj.plot_scatter(self.img, self.xlim, self.ylim, color_cm[index], self.magnetic_dec)
             obj.save_fig()
 
-    # @abstractmethod
     def judge_inside(self):
         # Polygon
         if self.type_safety == 'polygon':
@@ -129,13 +127,10 @@ class LaunchSite():
                 
                 judge_list.append([rocket and payload for rocket, payload in zip(judge_rocket, judge)])
 
-            # judge_list = [rocket and payload for rocket, payload in zip(judge_list, judge)]
-
         angle_step = 360 / self.glp_tra.num_angle
         angle_array = np.arange(0.0, 360 + angle_step, angle_step)
-        pd.DataFrame(judge_list, index=self.wind_array, columns=angle_array).to_csv(self.trajectory.result_dir + '/judge.csv')
+        pd.DataFrame(judge_list, index=self.wind_array, columns=angle_array).to_csv(self.trajectory.result_dir + os.sep + 'judge.csv')
 
-    # @abstractmethod
     def output_kml(self):
         self.trajectory.output_kml(self.launch_LLH, self.magnetic_dec, cm.cool  , self.radius, self.safety_line1,self.safety_line2, self.center_circle_LLH, self.safety_LLH, self.safety_exist)
         self.parachute.output_kml( self.launch_LLH, self.magnetic_dec, cm.spring, self.radius, self.safety_line1,self.safety_line2, self.center_circle_LLH, self.safety_LLH, self.safety_exist)

@@ -113,7 +113,7 @@
 	},
 
 	"Payload":{
-		"Payload Exist": true,
+		"Payload Exist": false,
 		"Mass [kg]": 1.0,
 		"Parachute CdS [m2]": 0.1
 	}

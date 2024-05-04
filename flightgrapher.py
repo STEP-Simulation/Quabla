@@ -4,7 +4,7 @@ import os
 import sys
 from FlightGrapher.graph_plotter_parachute import GraphPlotterParachute
 from FlightGrapher.land_point import LandPoint
-from FlightGrapher.make_kml import makekml
+from FlightGrapher.make_kml import MakeKml
 
 '''
 Args
@@ -36,19 +36,21 @@ def flightgrapher(path, launch_site_info, safety_exist, exist_payload):
     graph_parachute = GraphPlotterParachute(df_log_para, df_summary_para, path, launch_site_info.launch_LLH)
 
     land_point = LandPoint(path, launch_site_info.img)
+    make_kml = MakeKml(exist_payload)
 
     # グラフのプロット
-    graph_trajectory.plot_graph()
-    graph_parachute.plot_graph('_01_parachute')
+    graph_trajectory.plot_graph(make_kml)
+    graph_parachute.plot_graph(make_kml, True)
 
     if exist_payload:
         os.mkdir(path + os.sep +'_01_payload')
         df_log_payl, df_summary_payl = FileReader(path, 'flightlog_payload.csv').get_df()
         graph_paylaod = GraphPlotterParachute(df_log_payl, df_summary_payl, path, launch_site_info.launch_LLH)
-        graph_paylaod.plot_graph('_01_payload')
+        graph_paylaod.plot_graph(make_kml, False)
 
-    makekml(path, launch_site_info.center_circle_LLH, launch_site_info.radius, launch_site_info.safety_area_LLH, \
-            launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
+    make_kml.make_kml(path, launch_site_info.center_circle_LLH, launch_site_info.radius, launch_site_info.safety_area_LLH, \
+                     launch_site_info.edge1_LLH, launch_site_info.edge2_LLH, safety_exist)
+    make_kml.make_csv(path)
     
     land_point.set_land_point(path, exist_payload)
     land_point.make_land_point(launch_site_info, safety_exist)

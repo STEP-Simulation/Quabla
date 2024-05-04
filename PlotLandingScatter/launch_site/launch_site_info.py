@@ -19,6 +19,10 @@ class LaunchSiteInfo:
             # Additional setting
             # self.headquarters_LLH = np.zeros(3)
             # self.fire_LLH = np.zeros(3)
+            self.center_circle_LLH = 0.0
+            self.radius            = 0.0
+            self.edge1_LLH         = 0.0
+            self.edge2_LLH         = 0.0
 
         # Circle
         elif self.type_safety == 'circle':
@@ -26,6 +30,8 @@ class LaunchSiteInfo:
             self.radius            = np.array(config.get('radius'))
             self.edge1_LLH         = np.array(config.get('edge1_LLH'))
             self.edge2_LLH         = np.array(config.get('edge2_LLH'))
+
+            self.safety_area_LLH = 0.0
         
         self.img      = config.get('img')
         self.xlim     = config.get('xlim_ENU')
