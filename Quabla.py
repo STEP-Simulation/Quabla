@@ -134,6 +134,17 @@ def main():
 
 def copy_config_files(json_config, path_result):
 
+    plt.rcParams['font.family'] = 'Arial'
+    plt.rcParams['font.size']   = 12
+    plt.rcParams['figure.titlesize'] = 13
+    plt.rcParams["xtick.direction"]   = "in"
+    plt.rcParams["ytick.direction"]   = "in"
+    plt.rcParams["xtick.top"]         = True
+    plt.rcParams["ytick.right"]       = True
+    plt.rcParams["xtick.major.width"] = 1.5
+    plt.rcParams["ytick.major.width"] = 1.5
+    plt.rcParams["axes.linewidth"] = 1.5
+
     dir_config = path_result + os.sep + '_00_config'
     model_name = json_config['Solver']['Name']
     os.mkdir(dir_config)
@@ -159,14 +170,25 @@ def copy_config_files(json_config, path_result):
         shutil.copy(json_config["Wind"]["Wind File"], dir_config + os.sep + model_name + '_wind.csv')
         json_copy["Wind"]["Wind File"] = dir_config + os.sep + model_name + '_wind.csv'
 
-        fig, ax = plt.subplots()
-        ax.set_title('Wind Speed vs. Altitude')
+        # fig, ax = plt.subplots()
         wind_array = np.loadtxt(json_config["Wind"]["Wind File"], delimiter=',', skiprows=1)
-        ax.plot(wind_array[:, 1], wind_array[:, 0], color='#FF4B00', marker='o')
-        ax.set_ylim(ymin=0.)
-        ax.set_xlabel('Wind Speed [m/s]')
-        ax.set_ylabel('Altitude [m]')
-        ax.grid()
+        # fig = plt.figure('Wind')
+        fig, axes = plt.subplots(nrows=1, ncols=2)
+        # ax1 = fig.add_subplot(121)
+        axes[0].set_title('Wind Speed vs. Altitude')
+        axes[0].plot(wind_array[:, 1], wind_array[:, 0], color='#FF4B00', marker='o')
+        axes[0].set_ylim(ymin=0.)
+        axes[0].set_xlabel('Wind Speed [m/s]')
+        axes[0].set_ylabel('Altitude [m]')
+        axes[0].grid()
+        # ax2 = fig.add_subplot(122)
+        axes[1].set_title('Wind Direction vs. Altitude')
+        axes[1].plot(wind_array[:, 2], wind_array[:, 0], color='#FF4B00', marker='o')
+        axes[1].set_ylim(ymin=0.)
+        axes[1].set_xlabel('Wind Direction [deg]')
+        axes[1].set_ylabel('Altitude [m]')
+        axes[1].grid()
+        fig.subplots_adjust(wspace=0.4)
         fig.savefig(dir_config + os.sep + '_wind.png')
 
     else:

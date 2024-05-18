@@ -143,6 +143,17 @@ class GraphPlotterTrajectory:
 
         img_logo = Image.open('Quabla_logo.png')
         aspect_logo = img_logo.height / img_logo.width
+        
+        plt.rcParams['font.family'] = 'Arial'
+        plt.rcParams['font.size']   = 12
+        plt.rcParams['figure.titlesize'] = 13
+        plt.rcParams["xtick.direction"]   = "in"
+        plt.rcParams["ytick.direction"]   = "in"
+        plt.rcParams["xtick.top"]         = True
+        plt.rcParams["ytick.right"]       = True
+        plt.rcParams["xtick.major.width"] = 1.5
+        plt.rcParams["ytick.major.width"] = 1.5
+        plt.rcParams["axes.linewidth"] = 1.5
 
         plt.close('all')
 
@@ -150,7 +161,7 @@ class GraphPlotterTrajectory:
         ax.set_title('Time Step')
         ax.plot(self.time_array[:self.index_coast], self.time_step_array[:self.index_coast], color='#FF4B00', linestyle='-')
         ax.plot(self.time_array[self.index_coast:], self.time_step_array[self.index_coast:], color='#FF4B00', linestyle='--')
-        ax.text(x=self.time_array[self.index_coast], y=self.time_step_array[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.time_array[self.index_coast], y=self.time_step_array[self.index_coast], s='\n+\nEngine cut-off', fontsize='medium', horizontalalignment='center', verticalalignment='center')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Time Step [sec]')
         ax.set_xlim(xmin=0.0, xmax=self.time_end)
@@ -361,7 +372,7 @@ class GraphPlotterTrajectory:
         trajectory.set_title('Trajectory')
         trajectory.plot(self.downrange_log[:self.index_coast], self.altitude_log[:self.index_coast], color='#FF4B00', linestyle='-')
         trajectory.plot(self.downrange_log[self.index_coast:], self.altitude_log[self.index_coast:], color='#FF4B00', linestyle='--')
-        trajectory.text(x=self.downrange_log[self.index_coast], y=self.altitude_log[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        trajectory.text(x=self.downrange_log[self.index_coast], y=self.altitude_log[self.index_coast], s='\n+\nEngine cut-off', fontsize='medium', horizontalalignment='center', verticalalignment='center')
         trajectory.set_xlabel('Downrange [km]')
         trajectory.set_ylabel('Altitude [km]')
         trajectory.set_ylim(ymin=0.0)
@@ -379,9 +390,9 @@ class GraphPlotterTrajectory:
         ax.set_title('Downrange')
         ax.plot(self.pos_NED_log[:self.index_coast, 1] / 1000, self.pos_NED_log[:self.index_coast, 0] / 1000.0, color='#FF4B00', linestyle='-')
         ax.plot(self.pos_NED_log[self.index_coast:, 1] / 1000, self.pos_NED_log[self.index_coast:, 0] / 1000.0, color='#FF4B00', linestyle='--')
-        ax.text(x=self.pos_NED_log[self.index_coast, 1] / 1000, y=self.pos_NED_log[self.index_coast, 0] / 1000, s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
-        ax.text(x=self.pos_NED_log[-1, 1] / 1000, y=self.pos_NED_log[-1, 0] / 1000, s='\n+\nLanding Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
-        ax.text(x=self.pos_NED_log[0 , 1] / 1000, y=self.pos_NED_log[0 , 0] / 1000, s='\n+\nLaunch Point', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.pos_NED_log[self.index_coast, 1] / 1000, y=self.pos_NED_log[self.index_coast, 0] / 1000, s='\n+\nEngine cut-off', fontsize='medium', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.pos_NED_log[-1, 1] / 1000, y=self.pos_NED_log[-1, 0] / 1000, s='\n+\nLanding Point', fontsize='medium', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.pos_NED_log[0 , 1] / 1000, y=self.pos_NED_log[0 , 0] / 1000, s='\n+\nLaunch Point', fontsize='medium', horizontalalignment='center', verticalalignment='center')
         xmin, xmax, ymin, ymax = update_limits(ax.get_xlim(), ax.get_ylim(), fig.get_figheight() / fig.get_figwidth())
         ax.set_xlim(xmin=xmin, xmax=xmax)
         ax.set_ylim(ymin=ymin, ymax=ymax)
@@ -491,7 +502,7 @@ class GraphPlotterTrajectory:
         ax.plot(self.time_array[self.index_coast:] , self.Fst_log[self.index_coast:], color='#FF4B00', linestyle='--')
         ax.axhline(y=10., color='black', linestyle=':')
         ax.axhline(y=20., color='black', linestyle=':')
-        ax.text(x=self.time_array[self.index_coast], y=self.Fst_log[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.time_array[self.index_coast], y=self.Fst_log[self.index_coast], s='\n+\nEngine cut-off', fontsize='medium', horizontalalignment='center', verticalalignment='center')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Ratio[%]')
         ax.set_xlim(xmin=0.0, xmax=self.time_end)
@@ -505,7 +516,7 @@ class GraphPlotterTrajectory:
         ax.set_title('Dynamics Pressure')
         ax.plot(self.time_array[:self.index_coast] , self.dynamics_pressure_log[:self.index_coast], color='#FF4B00', linestyle='-')
         ax.plot(self.time_array[self.index_coast:] , self.dynamics_pressure_log[self.index_coast:], color='#FF4B00', linestyle='--')
-        ax.text(x=self.time_array[self.index_coast], y=self.dynamics_pressure_log[self.index_coast], s='\n+\nEngine cut-off', fontsize='large', horizontalalignment='center', verticalalignment='center')
+        ax.text(x=self.time_array[self.index_coast], y=self.dynamics_pressure_log[self.index_coast], s='\n+\nEngine cut-off', fontsize='medium', horizontalalignment='center', verticalalignment='center')
         ax.set_xlabel('Time [sec]')
         ax.set_ylabel('Pressure [kPa]')
         ax.set_xlim(xmin=0.0, xmax=self.time_end)
