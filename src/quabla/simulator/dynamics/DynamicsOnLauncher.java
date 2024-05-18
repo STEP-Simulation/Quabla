@@ -4,10 +4,9 @@ import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.AbstractVariable;
 import quabla.simulator.variable.OtherVariableOnLauncher;
 
-
 public class DynamicsOnLauncher extends AbstractDynamics {
 
-	OtherVariableOnLauncher otherVariable;
+	private OtherVariableOnLauncher otherVariable;
 
 	public DynamicsOnLauncher(Rocket rocket) {
 		

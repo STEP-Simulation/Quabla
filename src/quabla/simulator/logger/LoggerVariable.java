@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
-import quabla.simulator.variable.OtherVariableOnLauncher;
+import quabla.simulator.variable.OtherVariableTipOff;
 import quabla.simulator.variable.OtherVariableTrajectory;
 import quabla.simulator.variable.VariableTrajectory;
 
@@ -150,7 +150,7 @@ public class LoggerVariable {
 		pAirLog = new double[length];
 
 		boolean flag = true;
-		ov = new OtherVariableOnLauncher(rocket);
+		ov = new OtherVariableTipOff(rocket);
 
 		for(int i = 0; i < length; i++) {
 			if (flag && i > indexLaunchClear) {
