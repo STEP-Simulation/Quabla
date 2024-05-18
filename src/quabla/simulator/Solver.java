@@ -159,7 +159,7 @@ public class Solver {
 		predCorr.effectiveATS();
 		
 		// Parachute 用の変数にパラシュート放出時の変数を渡す
-		VariableParachute variablePara = new VariableParachute(rocket);
+		VariableParachute variablePara = new VariableParachute();
 		variablePara.set(trajectoryLog, index1stPara);
 		
 		// **************************************************************************************** /
@@ -167,7 +167,7 @@ public class Solver {
 		// **************************************************************************************** /
 		if (exitPayload) {
 			rocket.deployPayload();
-			VariableParachute varPayload = new VariableParachute(rocket.payload);
+			VariableParachute varPayload = new VariableParachute();
 			varPayload.set(trajectoryLog, index1stPara);
 			DynamicsParachute dynPayload = new DynamicsParachute(rocket.payload, rocket.atm, rocket.wind);
 			payloadLog = new LoggerVariableParachute(rocket.payload, rocket.atm, rocket.wind);
