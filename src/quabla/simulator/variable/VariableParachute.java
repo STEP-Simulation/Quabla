@@ -15,9 +15,7 @@ public class VariableParachute extends AbstractVariable implements Cloneable{
 	private double time;
 
 	private MathematicalVector posNED = new MathematicalVector(MathematicalVector.ZERO);
-	// private MathematicalVector velNED = new MathematicalVector(MathematicalVector.ZERO);
 	private double velDescent;
-	// private double[] windNED = new double[2];
 
 	/**
 	 * @param variable 開傘時のvariable
@@ -32,7 +30,6 @@ public class VariableParachute extends AbstractVariable implements Cloneable{
 	public VariableParachute(Rocket rocket) {
 		time = 0.0;
 		posNED = new MathematicalVector(0.0, 0.0, 0.0);
-		// velNED = new MathematicalVector(0.0, 0.0, 0.0);
 		velDescent = 0.0;
 		wind = rocket.wind;
 	}
@@ -87,10 +84,6 @@ public class VariableParachute extends AbstractVariable implements Cloneable{
 		return posNED;
 	}
 
-	// public MathematicalVector getVelNED() {
-	// 	return velNED;
-	// }
-
 	@Override
 	public MathematicalVector getVelBODY() {
 		return null;
@@ -126,8 +119,6 @@ public class VariableParachute extends AbstractVariable implements Cloneable{
 
 		VariableParachute clone = (VariableParachute) super.clone();
 		clone.posNED  = this.posNED.clone();
-		// clone.velNED  = this.velNED.clone();
-		// clone.windNED = this.windNED.clone();
 
 		return clone;
 	}
@@ -142,12 +133,10 @@ public class VariableParachute extends AbstractVariable implements Cloneable{
 
 	public void update(double timeStep, AbstractDynamicsMinuteChange delta) {
 
+		AbstractDynamicsMinuteChange delta2 = delta.multiple(timeStep);
 		setTime(time + timeStep);
-		setPosNED(posNED.add(delta.getDeltaPosNED().multiply(timeStep)));
-		setVelDescent(velDescent + delta.getDeltaVelDescent() * timeStep);
-		// double altitude = getAltitude();
-		// System.arraycopy(wind.getWindNED(altitude), 0, windNED, 0, 2);
-		// velNED.set(windNED[0], windNED[1], velDescent);
+		setPosNED(posNED.add(delta2.getDeltaPosNED()));
+		setVelDescent(velDescent + delta2.getDeltaVelDescent());
 
 	}
 }

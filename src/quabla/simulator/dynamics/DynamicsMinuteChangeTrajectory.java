@@ -1,88 +1,78 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
-
 public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange implements Cloneable {
 
-	private MathematicalVector deltaPosNED = new MathematicalVector(new double[3]);
-	private MathematicalVector deltaVelNED = new MathematicalVector(new double[3]);
-	private MathematicalVector deltaOmegaBODY = new MathematicalVector(new double[3]);
-	private MathematicalVector deltaQuat = new MathematicalVector(new double[4]);
+	private double[] deltaPosNED    = new double[3];
+	private double[] deltaVelNED    = new double[3];
+	private double[] deltaOmegaBODY = new double[3];
+	private double[] deltaQuat      = new double[4];
 
 	@Override
 	public void set(double[] dx) {
-		this.deltaPosNED.set(dx[0], dx[1], dx[2]);
-		this.deltaVelNED.set(dx[3], dx[4], dx[5]);
-		this.deltaOmegaBODY.set(dx[6], dx[7], dx[8]);
-		this.deltaQuat.set(dx[9], dx[10], dx[11], dx[12]);
-	}
 
-	public void setDeltaPosNED(MathematicalVector deltaPosENU) {
-		this.deltaPosNED = deltaPosENU;
-	}
-
-	public void setDeltaVelNED(MathematicalVector deltaVelNED) {
-		this.deltaVelNED = deltaVelNED;
-	}
-
-	public void setDeltaOmegaBODY(MathematicalVector deltaOmegaBODY) {
-		this.deltaOmegaBODY = deltaOmegaBODY;
-	}
-
-	public void setDeltaQuat(MathematicalVector deltaQuat) {
-		this.deltaQuat = deltaQuat;
+		int index = 0;
+		System.arraycopy(dx, index, deltaPosNED, 0, deltaPosNED.length);
+		index += deltaPosNED.length;
+		System.arraycopy(dx, index, deltaVelNED, 0, deltaVelNED.length);
+		index += deltaVelNED.length;
+		System.arraycopy(dx, index, deltaOmegaBODY, 0, deltaOmegaBODY.length);
+		index += deltaOmegaBODY.length;
+		System.arraycopy(dx, index, deltaQuat, 0, deltaQuat.length);
 	}
 
 	public void setDeltaPosNED(double[] deltaPosENU) {
-		this.deltaPosNED = new MathematicalVector(deltaPosENU);
+		this.deltaPosNED = deltaPosENU.clone();
 	}
 
 	public void setDeltaVelNED(double[] deltaVelNED) {
-		this.deltaVelNED = new MathematicalVector(deltaVelNED);
+		this.deltaVelNED = deltaVelNED.clone();
 	}
 
 	public void setDeltaOmegaBODY(double[] deltaOmegaBODY) {
-		this.deltaOmegaBODY = new MathematicalVector(deltaOmegaBODY);
+		this.deltaOmegaBODY = deltaOmegaBODY.clone();
 	}
 
 	public void setDeltaQuat(double[] deltaQuat) {
-		this.deltaQuat = new MathematicalVector(deltaQuat);
+		this.deltaQuat = deltaQuat.clone();
 	}
 
 	@Override
 	public DynamicsMinuteChangeTrajectory multiple(double a) {
 		
-		// DynamicsMinuteChangeTrajectory dmct = new DynamicsMinuteChangeTrajectory();
 		DynamicsMinuteChangeTrajectory dmct = this.clone();
-		dmct.setDeltaPosNED(this.deltaPosNED.multiply(a));
-		dmct.setDeltaVelNED(this.deltaVelNED.multiply(a));
-		dmct.setDeltaOmegaBODY(this.deltaOmegaBODY.multiply(a));
-		dmct.setDeltaQuat(this.deltaQuat.multiply(a));
-		// return dmct;
 
-		// DynamicsMinuteChangeTrajectory dmct = this.clone();
-		// double[] dx = this.toDouble().clone();
-		// for (int i = 0; i < dx.length; i++) {
-		// 	dx[i] *= a;
-		// }
-		// dmct.set(dx);
+		for (int i = 0; i < 3; i++) {
+			dmct.deltaPosNED[i]    = a * this.deltaPosNED[i];
+			dmct.deltaVelNED[i]    = a * this.deltaVelNED[i];
+			dmct.deltaOmegaBODY[i] = a * this.deltaOmegaBODY[i];
+		}
+		for (int i = 0; i < 4; i++) {
+			dmct.deltaQuat[i] = a * this.deltaQuat[i];
+		}
 
 		return dmct;
 	}
 
 	@Override
 	public double[] toDouble() {
+		
 		double[] dx = new double[13];
-		System.arraycopy(deltaPosNED.toDouble(), 0, dx, 0, 3);
-		System.arraycopy(deltaVelNED.toDouble(), 0, dx, 3, 3);
-		System.arraycopy(deltaOmegaBODY.toDouble(), 0, dx, 6, 3);
-		System.arraycopy(deltaQuat.toDouble(), 0, dx, 9, 4);
+		int index = 0;
+		System.arraycopy(deltaPosNED   , 0, dx, index, deltaPosNED.length);
+		index += deltaPosNED.length;
+		System.arraycopy(deltaVelNED   , 0, dx, index, deltaVelNED.length);
+		index += deltaVelNED.length;
+		System.arraycopy(deltaOmegaBODY, 0, dx, index, deltaOmegaBODY.length);
+		index += deltaOmegaBODY.length;
+		System.arraycopy(deltaQuat     , 0, dx, index, deltaQuat.length);
+		index += deltaQuat.length;
+
 		return dx;
 	}
 
 	@Override
 	public DynamicsMinuteChangeParachute toDeltaPara() {
-		return new DynamicsMinuteChangeParachute(deltaPosNED, deltaVelNED.toDouble(2));
+		return new DynamicsMinuteChangeParachute(deltaPosNED, deltaVelNED[2]);
 	}
 
 	@Override
@@ -99,32 +89,32 @@ public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange
 	}
 
 	@Override
-	public MathematicalVector getDeltaPosNED() {
+	public double[] getDeltaPosNED() {
 		return deltaPosNED;
 	}
 
 	@Override
-	public MathematicalVector getDeltaVelNED() {
+	public double[] getDeltaVelNED() {
 		return deltaVelNED;
 	}
 
 	@Override
-	public MathematicalVector getDeltaOmegaBODY() {
+	public double[] getDeltaOmegaBODY() {
 		return deltaOmegaBODY;
 	}
 
 	@Override
-	public MathematicalVector getDeltaQuat() {
+	public double[] getDeltaQuat() {
 		return deltaQuat;
 	}
 
 	@Override
 	public double getDeltaVelDescent() {
-		return deltaVelNED.toDouble(2);
+		return deltaVelNED[2];
 	}
 
 	public DynamicsMinuteChangeParachute getDelatPar() {
-		return new DynamicsMinuteChangeParachute(deltaPosNED, deltaVelNED.toDouble(2));
+		return new DynamicsMinuteChangeParachute(deltaPosNED, deltaVelNED[2]);
 	}
 
 }

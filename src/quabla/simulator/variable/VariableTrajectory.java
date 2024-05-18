@@ -197,10 +197,11 @@ public class VariableTrajectory extends AbstractVariable implements Cloneable {
 	public void update(double timeStep, AbstractDynamicsMinuteChange delta) {
 
 		setTime(time + timeStep);
-		setPosNED(posNED.add(delta.getDeltaPosNED().multiply(timeStep)));
-		setVelBODY(velBODY.add(delta.getDeltaVelNED().multiply(timeStep)));
-		setOmegaBODY(omegaBODY.add(delta.getDeltaOmegaBODY().multiply(timeStep)));
-		setQuat(quat.add(delta.getDeltaQuat().multiply(timeStep)));
+		AbstractDynamicsMinuteChange delta2 = delta.multiple(timeStep);
+		setPosNED(posNED.add(delta2.getDeltaPosNED()));
+		setVelBODY(velBODY.add(delta2.getDeltaVelNED()));
+		setOmegaBODY(omegaBODY.add(delta2.getDeltaOmegaBODY()));
+		setQuat(quat.add(delta2.getDeltaQuat()));
 		quat.normalize();
 
 	}

@@ -1,33 +1,27 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
-
 public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange implements Cloneable {
 
-	private MathematicalVector deltaPosNED = new MathematicalVector(MathematicalVector.ZERO);
+	private double[] deltaPosNED = new double[3];
 	private double deltaVelDescent;
 
 	public DynamicsMinuteChangeParachute() {
 
 	}
 
-	public DynamicsMinuteChangeParachute(MathematicalVector deltaPosNED, double deltaVelDescent) {
-		this.deltaPosNED = deltaPosNED;
+	public DynamicsMinuteChangeParachute(double[] deltaPosNED, double deltaVelDescent) {
+		System.arraycopy(deltaPosNED, 0, this.deltaPosNED, 0, deltaPosNED.length);
 		this.deltaVelDescent = deltaVelDescent;
 	}
 
 	@Override
 	public void set(double[] dx) {
-		this.deltaPosNED.set(dx[0], dx[1], dx[2]);
+		System.arraycopy(dx, 0, deltaPosNED, 0, deltaPosNED.length);
 		this.deltaVelDescent = dx[3];
 	}
 
-	public void setDeltaPosNED(MathematicalVector deltaPosNED) {
-		this.deltaPosNED = deltaPosNED;
-	}
-
 	public void setDeltaPosNED(double[] deltaPosNED) {
-		this.deltaPosNED = new MathematicalVector(deltaPosNED);
+		System.arraycopy(deltaPosNED, 0, this.deltaPosNED, 0, deltaPosNED.length);
 	}
 
 	public void setDeltaVelDescent(double deltaVelDescent) {
@@ -36,18 +30,11 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange 
 
 	@Override
 	public DynamicsMinuteChangeParachute multiple(double a) {
-		// DynamicsMinuteChangeParachute dmcp = new DynamicsMinuteChangeParachute();
 		DynamicsMinuteChangeParachute dmcp = this.clone();
-		dmcp.setDeltaPosNED(this.deltaPosNED.multiply(a));
-		dmcp.setDeltaVelDescent(this.deltaVelDescent * a);
-		// return dmcp;
-		
-		// DynamicsMinuteChangeParachute dmcp = this.clone();
-		// double[] dx = this.toDouble().clone();
-		// for (int i = 0; i < dx.length; i++) {
-		// 	dx[i] *= a;
-		// }
-		// dmcp.set(this.toDouble());
+		for (int i = 0; i < 3; i++) {
+			dmcp.deltaPosNED[i]    = a * this.deltaPosNED[i];
+		}
+		dmcp.deltaVelDescent = a * this.deltaVelDescent;
 
 		return dmcp;
 
@@ -56,7 +43,7 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange 
 	@Override
 	public double[] toDouble() {
 		double[] dx = new double[4];
-		System.arraycopy(deltaPosNED.toDouble(), 0, dx, 0, 3);
+		System.arraycopy(deltaPosNED, 0, dx, 0, 3);
 		dx[3] = deltaVelDescent;
 		return dx;
 	}
@@ -76,22 +63,22 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange 
 	}
 
 	@Override
-	public MathematicalVector getDeltaPosNED() {
+	public double[] getDeltaPosNED() {
 		return deltaPosNED;
 	}
 	@Override
-	public MathematicalVector getDeltaVelNED() {
-		return  MathematicalVector.ZERO;
+	public double[] getDeltaVelNED() {
+		return  new double[3];
 	}
-
+	
 	@Override
-	public MathematicalVector getDeltaOmegaBODY() {
-		return MathematicalVector.ZERO;
+	public double[] getDeltaOmegaBODY() {
+		return  new double[3];
 	}
-
+	
 	@Override
-	public MathematicalVector getDeltaQuat() {
-		return new MathematicalVector(0.0, 0.0, 0.0, 0.0);
+	public double[] getDeltaQuat() {
+		return  new double[4];
 	}
 
 	@Override

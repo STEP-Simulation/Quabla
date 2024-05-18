@@ -100,6 +100,21 @@ public class MathematicalVector implements Cloneable {
 		return clone;
 	}
 
+	public MathematicalVector add(double[] vector) {
+		
+		double[] vector2 = new double[length];
+		int i = 0;
+		for (double v : this.vector) {
+			vector2[i] = v + vector[i];
+			i ++;
+		}
+
+		MathematicalVector clone = this.clone();
+		clone.set(vector2);
+
+		return clone;
+	}
+
 	public MathematicalVector sub(MathematicalVector vector) {
 		double[] vectorNew = new double[length];
 		for(int i=0; i<length; i++) {
