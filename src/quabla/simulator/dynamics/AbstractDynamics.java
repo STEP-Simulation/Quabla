@@ -9,6 +9,7 @@ import quabla.simulator.variable.AbstractVariable;
  * */
 public abstract class AbstractDynamics {
 
-	public abstract AbstractDynamicsMinuteChange calculateDynamics(AbstractVariable variable);
+	// public abstract AbstractDynamicsMinuteChange calculateDynamics(AbstractVariable variable);
+	public abstract double[] calculateDynamics(AbstractVariable variable);
 
 }

@@ -9,32 +9,27 @@ import quabla.simulator.variable.OtherVariableParachute;
 
 public class DynamicsParachute extends AbstractDynamics{
 
-	// private MathematicalVector velNED;
-	
-	private DynamicsMinuteChangeParachute delta;
-
 	private OtherVariableParachute otherVariable;
 	
 	public DynamicsParachute(Rocket rocket) {
-
-		// velNED = new MathematicalVector();
-		delta = new DynamicsMinuteChangeParachute();
+		
 		otherVariable = new OtherVariableParachute(rocket);
 	}
-
+	
 	public DynamicsParachute(Payload payload, Atmosphere atm, AbstractWind wind) {
 		
-		// velNED = new MathematicalVector();
-		delta  = new DynamicsMinuteChangeParachute();
 		otherVariable = new OtherVariableParachute(payload, atm, wind);
 	}
-
-	public DynamicsMinuteChangeParachute calculateDynamics(AbstractVariable variable) {
-
+	
+	@Override
+	public double[] calculateDynamics(AbstractVariable variable) {
+		
 		otherVariable.calculateOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelDescent());
-
+		
+		DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
 		delta.setDeltaPosNED(otherVariable.getVelNED());
 		delta.setDeltaVelDescent(otherVariable.getAcc());
-		return delta;
+
+		return delta.toDouble();
 	}
 }

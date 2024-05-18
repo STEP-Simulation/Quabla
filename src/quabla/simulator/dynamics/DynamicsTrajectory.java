@@ -11,25 +11,23 @@ public class DynamicsTrajectory extends AbstractDynamics {
 
 	OtherVariableTrajectory otherVariable;
 
-	private DynamicsMinuteChangeTrajectory delta;
-	
 	public DynamicsTrajectory(Rocket rocket) {
 		otherVariable = new OtherVariableTrajectory(rocket);
 		
-		delta = new DynamicsMinuteChangeTrajectory();
 	}
-
+	
 	@Override
-	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
-
+	public double[] calculateDynamics(AbstractVariable variable) {
+		
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());
-
+		
+		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
 		delta.setDeltaPosNED(otherVariable.getVelNED());
 		delta.setDeltaVelNED(otherVariable.getAccBODY());
 		delta.setDeltaOmegaBODY(otherVariable.getOmegaDot());
 		delta.setDeltaQuat(otherVariable.getQuatDot());
 
-		return delta;
+		return delta.toDouble();
 	}
 
 }

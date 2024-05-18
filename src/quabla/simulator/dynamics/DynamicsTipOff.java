@@ -17,7 +17,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 	// TODO: revise velENU
 
 	@Override
-	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
+	public double[] calculateDynamics(AbstractVariable variable) {
 
 		// Import variable
 		double t = variable.getTime();
@@ -137,7 +137,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		delta.setDeltaOmegaBODY(omegadot.toDouble());
 		delta.setDeltaQuat(quatdot.toDouble());
 
-		return delta;
+		return delta.toDouble();
 	}
 
 }

@@ -7,7 +7,6 @@ import quabla.simulator.variable.OtherVariableOnLauncher;
 
 public class DynamicsOnLauncher extends AbstractDynamics {
 
-	// private final Rocket rocket ;
 	OtherVariableOnLauncher otherVariable;
 
 	public DynamicsOnLauncher(Rocket rocket) {
@@ -17,7 +16,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 	}
 
 	@Override
-	public DynamicsMinuteChangeTrajectory calculateDynamics(AbstractVariable variable) {
+	public double[] calculateDynamics(AbstractVariable variable) {
 		
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());
 
@@ -27,7 +26,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		delta.setDeltaOmegaBODY(otherVariable.getOmegaDot());
 		delta.setDeltaQuat(otherVariable.getQuatDot());
 
-		return delta;
+		return delta.toDouble();
 
 	}
 }
