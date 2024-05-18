@@ -27,13 +27,13 @@ public class PredictorCorrector extends AbstractODEsolver
 		h = h0;
 	}
 
-	public void setDelta(AbstractDynamicsMinuteChange dx1, AbstractDynamicsMinuteChange dx2, AbstractDynamicsMinuteChange dx3) {
-		this.dx1 = dx1.toDouble();
-		this.dx2 = dx2.toDouble();
-		this.dx3 = dx3.toDouble();
+	public void setDelta(double[] dx1, double[] dx2, double[] dx3) {
+		this.dx1 = dx1.clone();
+		this.dx2 = dx2.clone();
+		this.dx3 = dx3.clone();
 	}
 
-	public AbstractDynamicsMinuteChange compute(AbstractVariable variable, AbstractDynamics dyn) {
+	public double[] compute(AbstractVariable variable, AbstractDynamics dyn) {
 		AbstractDynamicsMinuteChange dxDmc = dyn.calculateDynamics(variable);
 		double[] dx = dxDmc.toDouble();
 		int length = dx.length;
@@ -78,7 +78,8 @@ public class PredictorCorrector extends AbstractODEsolver
 		AbstractDynamicsMinuteChange dxNew = dxDmc.clone();
 		dxNew.set(dxCorr);
 
-		return dxNew;// dxDmcを使ってdxCorrを作ることで，子クラスで値を返せる
+		// return dxNew;// dxDmcを使ってdxCorrを作ることで，子クラスで値を返せる
+		return dxCorr;
 	}
 	
 	@Override

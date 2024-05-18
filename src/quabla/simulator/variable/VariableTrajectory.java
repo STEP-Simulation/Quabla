@@ -2,6 +2,7 @@ package quabla.simulator.variable;
 
 import quabla.simulator.Coordinate;
 import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
+import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
@@ -206,4 +207,18 @@ public class VariableTrajectory extends AbstractVariable implements Cloneable {
 
 	}
 
+	@Override
+	public void update(double timeStep, double[] dx) {
+
+		setTime(time + timeStep);
+		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
+		delta.set(dx);
+		DynamicsMinuteChangeTrajectory delta2 = delta.multiple(timeStep);
+		setPosNED(posNED.add(delta2.getDeltaPosNED()));
+		setVelBODY(velBODY.add(delta2.getDeltaVelNED()));
+		setOmegaBODY(omegaBODY.add(delta2.getDeltaOmegaBODY()));
+		setQuat(quat.add(delta2.getDeltaQuat()));
+		quat.normalize();
+
+	}
 }

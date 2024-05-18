@@ -7,9 +7,6 @@ import quabla.output.OutputFlightlogParachute;
 import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
 import quabla.simulator.dynamics.AbstractDynamics;
-import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
-import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
-import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
 import quabla.simulator.dynamics.DynamicsTipOff;
@@ -65,7 +62,8 @@ public class Solver {
 		PredictorCorrector predCorr = new PredictorCorrector(h);
 
 		// Predictor-Corrector法で用いる過去の微分値を保存するための配列
-		AbstractDynamicsMinuteChange[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
+		// AbstractDynamicsMinuteChange[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
+		double[][] deltaArray = new double[3][13];
 
 		// どの飛行状態に遷移したかを判定
 		FlightEventJudgement eventJudgement = new FlightEventJudgement(rocket) ;
@@ -90,7 +88,7 @@ public class Solver {
 			}
 
 			//  solve ODE
-			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
+			double[] delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
 			
 			// 最初の3回はRunge-Kuttaで解く
 			if(index <= 3) {
@@ -124,7 +122,7 @@ public class Solver {
 		for(;;) {
 			index ++;
 
-			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
+			double[] delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
 			variableTrajectory.update(ODEsolver.getTimeStep(), delta);
 			trajectoryLog.log(variableTrajectory, ODEsolver.getTimeStep());
 
@@ -171,7 +169,7 @@ public class Solver {
 			varPayload.set(trajectoryLog, index1stPara);
 			DynamicsParachute dynPayload = new DynamicsParachute(rocket.payload, rocket.atm, rocket.wind);
 			payloadLog = new LoggerVariableParachute(rocket.payload, rocket.atm, rocket.wind);
-			deltaArray = new DynamicsMinuteChangeParachute[3];
+			deltaArray = new double[3][4];
 			
 			int indexPaylaod = 0;
 			index = index1stPara;
@@ -187,7 +185,7 @@ public class Solver {
 				}
 				
 				// solve ODE
-				AbstractDynamicsMinuteChange delta = ODEsolver.compute(varPayload, dynPayload);
+				double[] delta = ODEsolver.compute(varPayload, dynPayload);
 				if(indexPaylaod <= 3) {
 					deltaArray[indexPaylaod - 1] = delta;
 				}
@@ -208,7 +206,7 @@ public class Solver {
 		index = index1stPara;
 		int index_para = 0;
 		DynamicsParachute dynParachute = new DynamicsParachute(rocket);
-		deltaArray = new DynamicsMinuteChangeParachute[3];
+		deltaArray = new double[3][4];
 		ODEsolver = new RK4(h);
 		
 		// **************************************************************************************** /
@@ -225,7 +223,7 @@ public class Solver {
 			}
 			
 			// solve ODE
-			AbstractDynamicsMinuteChange delta = ODEsolver.compute(variablePara, dynParachute);
+			double[] delta = ODEsolver.compute(variablePara, dynParachute);
 			if(index_para <= 3) {
 				deltaArray[index_para - 1] = delta;
 			}

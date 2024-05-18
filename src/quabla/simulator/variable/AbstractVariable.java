@@ -7,6 +7,7 @@ public abstract class AbstractVariable {
 
 	public abstract double[] toDouble();
 	public abstract void update(double time, AbstractDynamicsMinuteChange delta);
+	public abstract void update(double time, double[] delta);
 
 	public abstract void setVariable(double time, double[] x);
 

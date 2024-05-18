@@ -13,7 +13,7 @@ public class RK4 extends AbstractODEsolver{
 	}
 
 	@Override
-	public AbstractDynamicsMinuteChange compute(AbstractVariable variable, AbstractDynamics dyn) {
+	public double[] compute(AbstractVariable variable, AbstractDynamics dyn) {
 		AbstractDynamicsMinuteChange k1, k2, k3, k4;
 		AbstractVariable variable2;
 
@@ -51,7 +51,8 @@ public class RK4 extends AbstractODEsolver{
 		AbstractDynamicsMinuteChange dxNew = k1.clone();
 		dxNew.set(dx);
 
-		return dxNew;
+		// return dxNew;
+		return dx;
 	}
 
 	@Override
