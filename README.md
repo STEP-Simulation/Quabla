@@ -1,13 +1,32 @@
 Quabla
 ==
 6-DoF Rocket Simulator for STEP<br>
-coding UTF-8
+coding UTF-8<br>
+released under [MIT License](LICENSE)
 
 <img src="./Quabla_logo.png" width="400px">
 
-## Flight Event
+# Features
+* 高速な軌道計算ソルバー
+   * Javaによる高速な計算実行
+   * メモリ使用量などに配慮したチューニングの実施
+   * 時間刻み自動調整機能（適応時間刻み，Adaptive Time Stepping）付き微分方程式ソルバーを用いた計算ステップの省略
+* Pythonを用いた豊富なグラフ描画
+   * 審査書作成に必要な図のほとんどを網羅
+   * グラフの見やすさに配慮した配色
+   * 飛翔モードごとに線種の使い分け
+   * 落下分散や飛翔軌道などのkmlファイル出力
+* 容易な環境構築
+   * 導入が比較的簡単なJavaとPythonのインストールのみ
+   * Java関係のライブラリはセットアッププログラムによる自動インストール
+   * Python関係のライブラリはAnacondaを併用することで大幅短縮可能
+* その他便利機能の搭載
+   * 機体諸元の簡易サマリー(rocket_param.txt)，計算結果サマリー(result.txt)の出力
+   * 風向風速制限自動判定および制限表出力(judge.csv)
+
+# Flight Event
 以下の飛行イベントに対応している。
-* ノミナルフライト（べき法則）
+* ノミナルフライト
 * ランチャ上での挙動
 * 予報風，統計風を用いた飛翔シミュレーション（csvによる風データの入力）
 * パラシュートによる減速落下
@@ -15,18 +34,19 @@ coding UTF-8
    * 開傘ラグの考慮（頂点到達からパラシュート放出までの遅れ時間）
    * 二段分離（高度検知，タイマー指令可能）
 * 超音速パラメータのマッハ数依存性考慮
-   * 抗力（軸力）係数，法線力係数傾斜，圧力中心のマッハ数変化
+   * 抗力（軸力）係数，法線力係数傾斜，圧力中心のマッハ数変化のcsvファイルの読み込み
 * ペイロード分離
 
-## Reference
+# Reference
 * 戸川隼人，石黒登美子；スピンを伴うロケットの運動を計算するプログラム，航空宇宙技術研究所資料 NAL TM-145，1968
 * 嶋田有三，佐々修一；飛行力学，森北出版，2017
 
-## 作業環境
+# 開発環境
 * [Eclipse](https://mergedoc.osdn.jp/) <br>
+* VsCode (2024/05現在)
 
-## 前提環境
-### Java
+# Requirements
+## Java
   以下のサイトから最新のjdkをインストール  
   https://www.oracle.com/java/technologies/javase-jdk16-downloads.html  
   その後，以下のサイトを参考に環境変数を通す(Windowsのみ)  
@@ -49,7 +69,7 @@ coding UTF-8
   ```
    (Macはターミナルで`java --version`)  
 
-### Python
+## Python
   PythonもJavaと同様にインストールを行い，パスを通す。
   以下のコマンドでパスが通ってるか確認する。
   ```
@@ -60,7 +80,7 @@ coding UTF-8
 Pythonを使用する場合，あらかじめライブラリがそろっているAnacondaが便利である。
 Anacondaを用いる場合，使用法は以下の通り。
 
-#### anacondaの使用方法
+### anacondaの使用方法
   以下のサイトからダウンロード。  
   https://www.anaconda.com/products/individual  
 
@@ -82,8 +102,8 @@ Anacondaを用いる場合，使用法は以下の通り。
   `conda deactivate`  
   `conda config --set auto_activate_base False`
 
-## Libraries
-### Java
+# Libraries
+## Java
 Jsonファイルを読み込むために，以下のライブラリが必要。
 Jacksonで読み込んでいる。
 * jacson-core
@@ -92,7 +112,7 @@ Jacksonで読み込んでいる。
 以上のJava用のライブラリは`setup_jackson.py`実行時にダウンロードされるため，
 後述のInstallationのコマンドをすべて実行している場合はインストール不要である．
 
-## Installation
+# Installation(Compile)
 gitからcloneしたらQuablaのフォルダに移動する。
 ```
 $ cd lib
@@ -103,7 +123,7 @@ $ python setup.py
 <!-- `results`フォルダは`sample_rocket.json`でデフォルトで指定されてる計算結果格納フォルダである．
 後述の`Result Filepath`に`results`以外のフォルダを指定した場合，別途指定したフォルダを作成する必要がある． -->
 
-## Useage(Eclipseを用いて実行可能jarを作る場合)
+# 【読まなくていいです】Useage(Eclipseを用いて実行可能jarを作る場合)
 Eclipseを用いて実行可能jarを作る場合，以下の手順に従う。
 開発者以外は読み飛ばして問題ない。
 1. 最新のEclipseをインストールする。JavaのFull Editionでよい。（すでにEclipseをインストールしてる場合は飛ばす。）
@@ -122,7 +142,7 @@ Eclipseを使用して編集したい場合はPyDevとPythonをインストー�
 コマンドライン引数は`C:\hoge\rocket_config.json`となる。
 2. `QUABLA.java`を実行。 -->
 
-## Execute
+# Execute
 
 0. anaconda promptを起動し，`Quabla.py`がある階層まで移動する(Windows)。
 Macの場合は，ターミナルで`conda activate`と入力。
@@ -136,12 +156,13 @@ $ python Quabla.py
 ```
 Rocket configuration files
 Enter the path of rocket paramater file (...json):
+ >>
 ```
 <!-- `config/`フォルダ内の`.json`ファイルのみ一覧に表示される。
 機体のconfigファイルは`config`フォルダ内に格納する。
 例えば，上の`sample_rocket.json`を指定する場合，`sample_rocket.json`と入力して，Enterキーを押す。 -->
-計算したい機体データの`**.json`ファイルをanaconda prompt（Macはterminal）にドラッグ&ドロップし，Enterキーを押す．
-（Macの場合，ファイル末尾に半角スペースが追加されてしまうため，末尾の半角スペースを消す．）
+計算したい機体データの`**.json`ファイルをanaconda prompt（Macはterminal）にドラッグ&ドロップし，Enterキーを押す．**（ドラッグ&ドロップ推奨）**
+~~（Macの場合，ファイル末尾に半角スペースが追加されてしまうため，末尾の半角スペースを消す．）~~<br>
 `**.json`ファイルの絶対パスまたは相対パスを直接入力しても問題ない．
 ここで相対パスを用いた場合，jsonファイル内でパスを使用しているファイルのパスも相対パスで指定する必要がある。
 絶対パスを用いた場合は、jsonファイル内でも推力履歴等のファイルの場所を絶対パスで指定する必要がある。
@@ -152,6 +173,7 @@ Enter the path of rocket paramater file (...json):
 3. 次に，以下のようにシミュレーションモードを聞かれるので指定する。
 ```
 Enter simulation mode (single or multi):
+ >>
 ```
 `single`か`multi`を指定する。
 `single`,  `multi`の各モードについては以下の通り。<br>
@@ -160,6 +182,7 @@ Enter simulation mode (single or multi):
 |`single`|単一条件での計算。位置や姿勢角の時間履歴などを見たい場合はこのモードを選択。|
 |`multi`|複数条件での計算。落下分散を計算したい場合に選択。singleモードと異なり位置などの時間履歴は出力されず，落下地点や最高高度などの表のみ出力。|
 
+# Input
 ## Rocket Configurations
 ### Caution
 * jsonの文法に従って記入すること。
@@ -291,10 +314,15 @@ Enter simulation mode (single or multi):
 |`Mass [kg]`|ペイロードの重量。分離前はロケット側の構造質量に含まれ，分離後は燃焼終了時の質量からこの値がまるまる差し引かれる。|
 |`Parachute CdS [m2]`|ペイロードのパラシュートの抗力特性|
 
-## Other
+# Other Information
 * 射場情報の更新，マップ更新，射場追加は[こちら](PlotLandingScatter/launch_site/README.md)
 * シミュレータの仕様，支配方程式の解法などは[こちら](src/quabla/simulator/README.md)
 
-## Future Works
+# Future Works
+* 審査書の諸元表から諸元ファイル作成
+* 入力諸元のプレチェック実施（パラメータの不整合）
+* 入力された推力履歴から推力解析の実施
+* ForRocket用の諸元ファイル自動生成
 * 変数が発散したときの例外処理
-* マルチスレッド化（現状のコードでも速度自体は十分。今後計算条件が増えるなら実装の必要あり）
+* ~~マルチスレッド化（現状のコードでも速度自体は十分。今後計算条件が増えるなら実装の必要あり）~~ →実施予定なし
+* README加筆(プログラム構造回り)
