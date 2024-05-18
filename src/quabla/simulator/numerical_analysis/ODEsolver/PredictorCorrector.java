@@ -75,10 +75,6 @@ public class PredictorCorrector extends AbstractODEsolver
 		System.arraycopy(dx1, 0, dx2, 0, length);
 		System.arraycopy(dx, 0, dx1, 0, length);
 
-		AbstractDynamicsMinuteChange dxNew = dxDmc.clone();
-		dxNew.set(dxCorr);
-
-		// return dxNew;// dxDmcを使ってdxCorrを作ることで，子クラスで値を返せる
 		return dxCorr;
 	}
 	
