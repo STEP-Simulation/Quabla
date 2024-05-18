@@ -19,7 +19,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
 		delta.setDeltaPosNED(otherVariable.getVelNED());
-		delta.setDeltaVelNED(otherVariable.getAccBODY());
+		delta.setDeltaVelBODY(otherVariable.getAccBODY());
 		delta.setDeltaOmegaBODY(otherVariable.getOmegaDot());
 		delta.setDeltaQuat(otherVariable.getQuatDot());
 

@@ -1,7 +1,7 @@
 package quabla.simulator.variable;
 
 import quabla.simulator.Coordinate;
-import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
+// import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.dynamics.DynamicsMinuteChangeParachute;
 import quabla.simulator.logger.LoggerVariable;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
@@ -119,20 +119,12 @@ public class VariableParachute extends AbstractVariable implements Cloneable{
 		return x;
 	}
 
-	public void update(double timeStep, AbstractDynamicsMinuteChange delta) {
-
-		AbstractDynamicsMinuteChange delta2 = delta.multiple(timeStep);
-		setTime(time + timeStep);
-		setPosNED(posNED.add(delta2.getDeltaPosNED()));
-		setVelDescent(velDescent + delta2.getDeltaVelDescent());
-
-	}
-
+	@Override
 	public void update(double timeStep, double[] dx) {
 
 		DynamicsMinuteChangeParachute delta = new DynamicsMinuteChangeParachute();
 		delta.set(dx);
-		AbstractDynamicsMinuteChange delta2 = delta.multiple(timeStep);
+		DynamicsMinuteChangeParachute delta2 = delta.multiple(timeStep);
 		setTime(time + timeStep);
 		setPosNED(posNED.add(delta2.getDeltaPosNED()));
 		setVelDescent(velDescent + delta2.getDeltaVelDescent());

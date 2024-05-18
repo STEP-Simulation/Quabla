@@ -1,7 +1,7 @@
 package quabla.simulator.variable;
 
 import quabla.simulator.Coordinate;
-import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
+// import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
 import quabla.simulator.dynamics.DynamicsMinuteChangeTrajectory;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalMatrix;
 import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
@@ -193,20 +193,6 @@ public class VariableTrajectory extends AbstractVariable implements Cloneable {
 		return x;
 	}
 
-	//TODO: DynamicsMinuteChangeからVariableをセット
-	@Override
-	public void update(double timeStep, AbstractDynamicsMinuteChange delta) {
-
-		setTime(time + timeStep);
-		AbstractDynamicsMinuteChange delta2 = delta.multiple(timeStep);
-		setPosNED(posNED.add(delta2.getDeltaPosNED()));
-		setVelBODY(velBODY.add(delta2.getDeltaVelNED()));
-		setOmegaBODY(omegaBODY.add(delta2.getDeltaOmegaBODY()));
-		setQuat(quat.add(delta2.getDeltaQuat()));
-		quat.normalize();
-
-	}
-
 	@Override
 	public void update(double timeStep, double[] dx) {
 
@@ -215,7 +201,7 @@ public class VariableTrajectory extends AbstractVariable implements Cloneable {
 		delta.set(dx);
 		DynamicsMinuteChangeTrajectory delta2 = delta.multiple(timeStep);
 		setPosNED(posNED.add(delta2.getDeltaPosNED()));
-		setVelBODY(velBODY.add(delta2.getDeltaVelNED()));
+		setVelBODY(velBODY.add(delta2.getDeltaVelBODY()));
 		setOmegaBODY(omegaBODY.add(delta2.getDeltaOmegaBODY()));
 		setQuat(quat.add(delta2.getDeltaQuat()));
 		quat.normalize();
