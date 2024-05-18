@@ -4,7 +4,8 @@ import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.AbstractVariable;
 import quabla.simulator.variable.OtherVariableTipOff;
 
-public class DynamicsTipOff extends AbstractDynamics {
+// public class DynamicsTipOff extends AbstractDynamics {
+public class DynamicsTipOff {
 
 	private OtherVariableTipOff otherVariable;
 
@@ -12,7 +13,7 @@ public class DynamicsTipOff extends AbstractDynamics {
 		otherVariable = new OtherVariableTipOff(rocket);
 	}
 
-	@Override
+	// @Override
 	public double[] calculateDynamics(AbstractVariable variable) {
 
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());

@@ -7,7 +7,8 @@ import quabla.simulator.rocket.wind.AbstractWind;
 import quabla.simulator.variable.AbstractVariable;
 import quabla.simulator.variable.OtherVariableParachute;
 
-public class DynamicsParachute extends AbstractDynamics{
+// public class DynamicsParachute extends AbstractDynamics{
+public class DynamicsParachute {
 
 	private OtherVariableParachute otherVariable;
 	
@@ -21,7 +22,7 @@ public class DynamicsParachute extends AbstractDynamics{
 		otherVariable = new OtherVariableParachute(payload, atm, wind);
 	}
 	
-	@Override
+	// @Override
 	public double[] calculateDynamics(AbstractVariable variable) {
 		
 		otherVariable.calculateOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelDescent());

@@ -1,12 +1,12 @@
 package quabla.simulator;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import quabla.output.OutputCsv;
 import quabla.output.OutputFlightlogParachute;
 import quabla.output.OutputFlightlogTrajectory;
 import quabla.output.OutputTxt;
-import quabla.simulator.dynamics.AbstractDynamics;
 import quabla.simulator.dynamics.DynamicsOnLauncher;
 import quabla.simulator.dynamics.DynamicsParachute;
 import quabla.simulator.dynamics.DynamicsTipOff;
@@ -18,6 +18,7 @@ import quabla.simulator.numerical_analysis.ODEsolver.AbstractODEsolver;
 import quabla.simulator.numerical_analysis.ODEsolver.PredictorCorrector;
 import quabla.simulator.numerical_analysis.ODEsolver.RK4;
 import quabla.simulator.rocket.Rocket;
+import quabla.simulator.variable.AbstractVariable;
 import quabla.simulator.variable.VariableParachute;
 import quabla.simulator.variable.VariableTrajectory;
 
@@ -54,15 +55,15 @@ public class Solver {
 		VariableTrajectory variableTrajectory = new VariableTrajectory(rocket);
 
 		// Dynamics
-		AbstractDynamics dynTrajectory = new DynamicsTrajectory(rocket);
-		AbstractDynamics dynOnLauncher = new DynamicsOnLauncher(rocket);
+		DynamicsTrajectory dynTrajectory = new DynamicsTrajectory(rocket);
+		DynamicsOnLauncher dynOnLauncher = new DynamicsOnLauncher(rocket);
+		Function<AbstractVariable, double[]> dynamics;
 
 		// ODE solver
 		AbstractODEsolver ODEsolver = new RK4(h); // 最初は4次ルンゲクッタで計算
 		PredictorCorrector predCorr = new PredictorCorrector(h);
 
 		// Predictor-Corrector法で用いる過去の微分値を保存するための配列
-		// AbstractDynamicsMinuteChange[] deltaArray = new DynamicsMinuteChangeTrajectory[3];
 		double[][] deltaArray = new double[3][13];
 
 		// どの飛行状態に遷移したかを判定
@@ -77,6 +78,7 @@ public class Solver {
 		// **************************************************************************************** /
 		//    on Launcher                                                                           /
 		// **************************************************************************************** /
+		dynamics = dynOnLauncher::calculateDynamics;
 		for(;;) {
 			index ++;
 
@@ -88,23 +90,22 @@ public class Solver {
 			}
 
 			//  solve ODE
-			double[] delta = ODEsolver.compute(variableTrajectory, dynOnLauncher);
+			double[] delta = ODEsolver.compute(variableTrajectory, dynamics);
+			variableTrajectory.update(ODEsolver.getTimeStep(), delta);
+			trajectoryLog.log(variableTrajectory, ODEsolver.getTimeStep());
 			
 			// 最初の3回はRunge-Kuttaで解く
 			if(index <= 3) {
 				deltaArray[index - 1] = delta;
 			}
 
-			variableTrajectory.update(ODEsolver.getTimeStep(), delta);
-			// store flightlog
-			trajectoryLog.log(variableTrajectory, ODEsolver.getTimeStep());
-
 			// ------------------------------------------------------------------------------------ /
 			//    Tip-Off                                                                             /
 			// ------------------------------------------------------------------------------------ /
 			if(rocket.existTipOff && eventJudgement.judgeTipOff(variableTrajectory) && !isTipOff) {// 1回のみ実行
 				// indexTipOff = index;
-				dynOnLauncher = new DynamicsTipOff(rocket);
+				DynamicsTipOff dynTipOff = new DynamicsTipOff(rocket);
+				dynamics = dynTipOff::calculateDynamics;
 				isTipOff = true;
 			}
 
@@ -119,10 +120,11 @@ public class Solver {
 		//    Trajectory                                                                            /
 		// **************************************************************************************** /
 		boolean flag = true;
+		dynamics = dynTrajectory::calculateDynamics;
 		for(;;) {
 			index ++;
 
-			double[] delta = ODEsolver.compute(variableTrajectory, dynTrajectory);
+			double[] delta = ODEsolver.compute(variableTrajectory, dynamics);
 			variableTrajectory.update(ODEsolver.getTimeStep(), delta);
 			trajectoryLog.log(variableTrajectory, ODEsolver.getTimeStep());
 
@@ -168,6 +170,7 @@ public class Solver {
 			VariableParachute varPayload = new VariableParachute();
 			varPayload.set(trajectoryLog, index1stPara);
 			DynamicsParachute dynPayload = new DynamicsParachute(rocket.payload, rocket.atm, rocket.wind);
+			dynamics = dynPayload::calculateDynamics;
 			payloadLog = new LoggerVariableParachute(rocket.payload, rocket.atm, rocket.wind);
 			deltaArray = new double[3][4];
 			
@@ -185,13 +188,13 @@ public class Solver {
 				}
 				
 				// solve ODE
-				double[] delta = ODEsolver.compute(varPayload, dynPayload);
+				double[] delta = ODEsolver.compute(varPayload, dynamics);
+				varPayload.update(ODEsolver.getTimeStep(), delta);
+				payloadLog.log(varPayload, ODEsolver.getTimeStep());
+				
 				if(indexPaylaod <= 3) {
 					deltaArray[indexPaylaod - 1] = delta;
 				}
-				
-				varPayload.update(ODEsolver.getTimeStep(), delta);
-				payloadLog.log(varPayload, ODEsolver.getTimeStep());
 				
 				if(eventJudgement.judgeLanding(varPayload)) {
 					indexLandingPayload = indexPaylaod - 1;
@@ -212,6 +215,7 @@ public class Solver {
 		// **************************************************************************************** /
 		//    Parachute                                                                             /
 		// **************************************************************************************** /
+		dynamics = dynParachute::calculateDynamics;
 		for( ; ; ) {
 			index ++;
 			index_para ++;
@@ -223,13 +227,13 @@ public class Solver {
 			}
 			
 			// solve ODE
-			double[] delta = ODEsolver.compute(variablePara, dynParachute);
+			double[] delta = ODEsolver.compute(variablePara, dynamics);
+			variablePara.update(ODEsolver.getTimeStep(), delta);
+			parachuteLog.log(variablePara, ODEsolver.getTimeStep());
+			
 			if(index_para <= 3) {
 				deltaArray[index_para - 1] = delta;
 			}
-			
-			variablePara.update(ODEsolver.getTimeStep(), delta);
-			parachuteLog.log(variablePara, ODEsolver.getTimeStep());
 
 			if(eventJudgement.judge2ndPara(variablePara)) {
 				index2ndPara = index;

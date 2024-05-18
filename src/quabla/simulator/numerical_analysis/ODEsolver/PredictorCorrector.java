@@ -1,7 +1,7 @@
 package quabla.simulator.numerical_analysis.ODEsolver;
 
-import quabla.simulator.dynamics.AbstractDynamics;
-// import quabla.simulator.dynamics.AbstractDynamicsMinuteChange;
+import java.util.function.Function;
+
 import quabla.simulator.variable.AbstractVariable;
 
 /**
@@ -33,9 +33,10 @@ public class PredictorCorrector extends AbstractODEsolver
 		this.dx3 = dx3.clone();
 	}
 
-	public double[] compute(AbstractVariable variable, AbstractDynamics dyn) {
+	@Override
+	public double[] compute(AbstractVariable variable, Function<AbstractVariable, double[]> dynamics) {
 		
-		double[] dx = dyn.calculateDynamics(variable);
+		double[] dx = dynamics.apply(variable);
 		int length = dx.length;
 		double[] x = variable.toDouble();
 		double[] xPred = new double[length];
@@ -47,7 +48,7 @@ public class PredictorCorrector extends AbstractODEsolver
 
 		AbstractVariable variablePred = variable.clone();
 		variablePred.setVariable(variable.getTime() + h, xPred);
-		double[] dxPred = dyn.calculateDynamics(variablePred);
+		double[] dxPred = dynamics.apply(variablePred);
 		double[] dxCorr = new double[length];
 
 		// Corrector (Adams-Moulton)

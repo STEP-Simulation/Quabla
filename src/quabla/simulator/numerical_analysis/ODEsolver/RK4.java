@@ -1,6 +1,7 @@
 package quabla.simulator.numerical_analysis.ODEsolver;
 
-import quabla.simulator.dynamics.AbstractDynamics;
+import java.util.function.Function;
+
 import quabla.simulator.variable.AbstractVariable;
 
 public class RK4 extends AbstractODEsolver{
@@ -12,13 +13,13 @@ public class RK4 extends AbstractODEsolver{
 	}
 
 	@Override
-	public double[] compute(AbstractVariable variable, AbstractDynamics dyn) {
+	public double[] compute(AbstractVariable variable, Function<AbstractVariable, double[]> dynamics) {
 		
 		double[] k1, k2, k3, k4;
 		AbstractVariable variable2;
 		
 		// k1 = f(t, x)
-		k1 = dyn.calculateDynamics(variable);
+		k1 = dynamics.apply(variable);
 		double[] dx2 = new double[k1.length];;
 
 		// k2 = f(t + h / 2, x + k1* h / 2)
@@ -27,7 +28,7 @@ public class RK4 extends AbstractODEsolver{
 		}
 		variable2 = variable.clone();
 		variable2.update(0.5 * h, dx2);
-		k2 = dyn.calculateDynamics(variable2);
+		k2 = dynamics.apply(variable2);
 		
 		// k3 = f(t + h / 2, x + k2 * h / 2)
 		for (int i = 0; i < dx2.length; i++) {
@@ -35,7 +36,7 @@ public class RK4 extends AbstractODEsolver{
 		}
 		variable2 = variable.clone();
 		variable2.update(0.5 * h, dx2);
-		k3 = dyn.calculateDynamics(variable2);
+		k3 = dynamics.apply(variable2);
 		
 		// k4 = f(t + h, x + k3 * h)
 		for (int i = 0; i < dx2.length; i++) {
@@ -43,7 +44,7 @@ public class RK4 extends AbstractODEsolver{
 		}
 		variable2 = variable.clone();
 		variable2.update(h, dx2);
-		k4 = dyn.calculateDynamics(variable2);
+		k4 = dynamics.apply(variable2);
 
 		// dx/dt = (k1 + 2 * k2 + 2 * k3 + k4) / 6
 		// 時間変化率dx/dtで返したいので時間ステップhはかけない

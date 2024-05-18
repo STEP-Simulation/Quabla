@@ -4,7 +4,8 @@ import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.AbstractVariable;
 import quabla.simulator.variable.OtherVariableOnLauncher;
 
-public class DynamicsOnLauncher extends AbstractDynamics {
+// public class DynamicsOnLauncher extends AbstractDynamics {
+public class DynamicsOnLauncher {
 
 	private OtherVariableOnLauncher otherVariable;
 
@@ -14,7 +15,7 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 
 	}
 
-	@Override
+	// @Override
 	public double[] calculateDynamics(AbstractVariable variable) {
 		
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());

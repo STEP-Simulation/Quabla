@@ -7,7 +7,8 @@ import quabla.simulator.variable.OtherVariableTrajectory;
 /**
  * DynamicsTrajectory is an extension of {@link quabla.simulator.dynamics.AbstractDynamics}.
  * */
-public class DynamicsTrajectory extends AbstractDynamics {
+// public class DynamicsTrajectory extends AbstractDynamics {
+public class DynamicsTrajectory {
 
 	OtherVariableTrajectory otherVariable;
 
@@ -16,7 +17,7 @@ public class DynamicsTrajectory extends AbstractDynamics {
 		
 	}
 	
-	@Override
+	// @Override
 	public double[] calculateDynamics(AbstractVariable variable) {
 		
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());
