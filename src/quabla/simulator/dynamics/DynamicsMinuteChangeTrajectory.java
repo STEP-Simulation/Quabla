@@ -33,6 +33,22 @@ public class DynamicsMinuteChangeTrajectory extends AbstractDynamicsMinuteChange
 		this.deltaQuat = deltaQuat;
 	}
 
+	public void setDeltaPosNED(double[] deltaPosENU) {
+		this.deltaPosNED = new MathematicalVector(deltaPosENU);
+	}
+
+	public void setDeltaVelNED(double[] deltaVelNED) {
+		this.deltaVelNED = new MathematicalVector(deltaVelNED);
+	}
+
+	public void setDeltaOmegaBODY(double[] deltaOmegaBODY) {
+		this.deltaOmegaBODY = new MathematicalVector(deltaOmegaBODY);
+	}
+
+	public void setDeltaQuat(double[] deltaQuat) {
+		this.deltaQuat = new MathematicalVector(deltaQuat);
+	}
+
 	@Override
 	public DynamicsMinuteChangeTrajectory multiple(double a) {
 		

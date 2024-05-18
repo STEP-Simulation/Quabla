@@ -1,6 +1,5 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Rocket;
 import quabla.simulator.variable.AbstractVariable;
 import quabla.simulator.variable.OtherVariableOnLauncher;
@@ -22,18 +21,11 @@ public class DynamicsOnLauncher extends AbstractDynamics {
 		
 		otherVariable.setOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelBODY().toDouble(), variable.getOmegaBODY().toDouble(), variable.getQuat().toDouble());
 
-		MathematicalVector velNED   = new MathematicalVector(otherVariable.getVelNED());
-		MathematicalVector accBODY  = new MathematicalVector(otherVariable.getAccBODY());
-		MathematicalVector omegadot = new MathematicalVector(otherVariable.getOmegaDot());
-		MathematicalVector quatdot  = new MathematicalVector(otherVariable.getQuatDot());
-
-
-		// Store Minute Change
 		DynamicsMinuteChangeTrajectory delta = new DynamicsMinuteChangeTrajectory();
-		delta.setDeltaPosNED(velNED);
-		delta.setDeltaVelNED(accBODY);
-		delta.setDeltaOmegaBODY(omegadot);
-		delta.setDeltaQuat(quatdot);
+		delta.setDeltaPosNED(otherVariable.getVelNED());
+		delta.setDeltaVelNED(otherVariable.getAccBODY());
+		delta.setDeltaOmegaBODY(otherVariable.getOmegaDot());
+		delta.setDeltaQuat(otherVariable.getQuatDot());
 
 		return delta;
 

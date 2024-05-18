@@ -26,6 +26,10 @@ public class DynamicsMinuteChangeParachute extends AbstractDynamicsMinuteChange 
 		this.deltaPosNED = deltaPosNED;
 	}
 
+	public void setDeltaPosNED(double[] deltaPosNED) {
+		this.deltaPosNED = new MathematicalVector(deltaPosNED);
+	}
+
 	public void setDeltaVelDescent(double deltaVelDescent) {
 		this.deltaVelDescent = deltaVelDescent;
 	}

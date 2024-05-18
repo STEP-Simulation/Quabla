@@ -1,6 +1,5 @@
 package quabla.simulator.dynamics;
 
-import quabla.simulator.numerical_analysis.vectorOperation.MathematicalVector;
 import quabla.simulator.rocket.Atmosphere;
 import quabla.simulator.rocket.Payload;
 import quabla.simulator.rocket.Rocket;
@@ -10,7 +9,7 @@ import quabla.simulator.variable.OtherVariableParachute;
 
 public class DynamicsParachute extends AbstractDynamics{
 
-	private MathematicalVector velNED;
+	// private MathematicalVector velNED;
 	
 	private DynamicsMinuteChangeParachute delta;
 
@@ -18,16 +17,14 @@ public class DynamicsParachute extends AbstractDynamics{
 	
 	public DynamicsParachute(Rocket rocket) {
 
-		velNED = new MathematicalVector();
-
+		// velNED = new MathematicalVector();
 		delta = new DynamicsMinuteChangeParachute();
-
 		otherVariable = new OtherVariableParachute(rocket);
 	}
 
 	public DynamicsParachute(Payload payload, Atmosphere atm, AbstractWind wind) {
 		
-		velNED = new MathematicalVector();
+		// velNED = new MathematicalVector();
 		delta  = new DynamicsMinuteChangeParachute();
 		otherVariable = new OtherVariableParachute(payload, atm, wind);
 	}
@@ -36,11 +33,8 @@ public class DynamicsParachute extends AbstractDynamics{
 
 		otherVariable.calculateOtherVariable(variable.getTime(), variable.getPosNED().toDouble(), variable.getVelDescent());
 
-		velNED.set(otherVariable.getVelNED());
-		double acc = otherVariable.getAcc();
-
-		delta.setDeltaPosNED(velNED);
-		delta.setDeltaVelDescent(acc);
+		delta.setDeltaPosNED(otherVariable.getVelNED());
+		delta.setDeltaVelDescent(otherVariable.getAcc());
 		return delta;
 	}
 }
