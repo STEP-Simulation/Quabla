@@ -18,29 +18,23 @@ def main():
 
 
     # ロケットの諸元ファイルの絶対pathを入力させる それがPC内に存在するものかつ拡張子が.jsonならば受け取るがそれ以外なら拒否する
-    while(1):
-
-        # files = os.listdir("./config/")
-        print('Rocket configuration files')
-        path_parameter = (input("Enter the path of rocket parameter file (...json):\n >> ")).strip()
+    print('Rocket configuration files')
+    path_parameter = (input("Enter the path of rocket parameter file (...json):\n >> ")).strip()
+    while(not (os.path.exists(path_parameter) and path_parameter.endswith('.json')) ):
         
-        if os.path.exists(path_parameter) and path_parameter.endswith('.json'):
-            break
-
-        elif path_parameter == 'deb':
+        # Debug mode
+        if path_parameter == 'deb':
             path_parameter = 'config' + os.sep + 'sample_rocket.json'
             break
 
-        else:
-            print('\nPlease enter again.\n')
+        path_parameter = (input('\nPlease enter again. \
+                                 \nEnter the path of rocket parameter file (...json): \
+                                 \n >> ')).strip()
 
     # シミュレーションモードをsingleかmultiか選ばせる　それ以外の入力を受け付けない
-    while(1):
+    mode_simulation = input("\nEnter simulation mode (single or multi):\n >> ")
+    while(mode_simulation != 'single' and mode_simulation != 'multi'):
         mode_simulation = input("\nEnter simulation mode (single or multi):\n >> ")
-        if mode_simulation != 'single' and mode_simulation != 'multi':
-            print('\nPlease enter single or multi')
-        else:
-            break
 
     print('''\
 
