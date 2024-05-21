@@ -47,7 +47,8 @@ class MakeKml:
                 lin.altitudemode = simplekml.AltitudeMode.relativetoground
                 lin.style.linestyle.color = \
                     simplekml.Color.changealphaint(255, simplekml.Color.aqua)
-            elif safety_circle.all() == 0:
+            # elif safety_circle.all() == 0:
+            elif safety_circle == 0:
                 safety_area = np.vstack([safety_area,safety_area[0]])
                 lin = kml.newlinestring(name="breakwater line")
                 lin.coords = (safety_area[ : ,[1,0,2]])
