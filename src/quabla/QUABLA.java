@@ -71,9 +71,10 @@ public class QUABLA {
 
 			String filepathResultMulti = args[2];
 			String filepathResultMultiFinal = filepathResultMulti + File.separator;
+			int procCpuMax = Integer.parseInt(args[3]);
 
-			MultiSolver multi_solver = new MultiSolver(filepathResultMultiFinal, node.get("Multi Solver"), node.get("Payload").get("Payload Exist").asBoolean());
-			multi_solver.solveMulti(node);
+			MultiSolver multiSolver = new MultiSolver(filepathResultMultiFinal, node.get("Multi Solver"), node.get("Payload").get("Payload Exist").asBoolean(), procCpuMax);
+			multiSolver.solveMulti(node);
 			break;
 		}
 

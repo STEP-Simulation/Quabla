@@ -2,6 +2,7 @@ import shutil
 import subprocess
 import numpy as np
 import sys
+import multiprocessing
 import json
 import os
 import matplotlib.pyplot as plt
@@ -104,8 +105,10 @@ def main():
     else:
         launch_site_info = LaunchSiteInfo(launch_site)
 
+    nproc = multiprocessing.cpu_count() - 1
+
     # Execute Quabla.jar ##########################################################################
-    subprocess.run(["java", "-jar", "Quabla.jar", path_parameter, mode_simulation, result_dir], \
+    subprocess.run(["java", "-jar", "Quabla.jar", path_parameter, mode_simulation, result_dir, str(nproc)], \
                     check=True)
     ###############################################################################################
 

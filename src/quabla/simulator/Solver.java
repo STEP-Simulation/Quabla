@@ -42,7 +42,6 @@ public class Solver {
 		this.resultDir = resultDir;
 	}
 
-
 	public void solveDynamics(Rocket rocket) {
 		int index = 0;
 		int indexLaunchClear, indexLandingTrajectory, indexLandingParachute, index2ndPara = 0, index1stPara, indexLandingPayload;
@@ -259,6 +258,14 @@ public class Solver {
 
 	public EventValueSingle getEventValueSingle() {
 		return eventValue;
+	}
+
+	public void dumpFlightLog() {
+		trajectoryLog = null;
+		parachuteLog = null;
+		if (exitPayload) {
+			payloadLog = null;
+		}
 	}
 
 	public void makeResult() {

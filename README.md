@@ -11,6 +11,7 @@ released under [MIT License](LICENSE)
    * Javaによる高速な計算実行
    * メモリ使用量などに配慮したチューニングの実施
    * 時間刻み自動調整機能（適応時間刻み，Adaptive Time Stepping）付き微分方程式ソルバーを用いた計算ステップの省略
+   * Javaのマルチスレッドを用いた落下分散計算次の並列処理
 * Pythonを用いた豊富なグラフ描画
    * 審査書作成に必要な図のほとんどを網羅
    * グラフの見やすさに配慮した配色
@@ -120,8 +121,6 @@ $ python setup_jackson.py
 $ cd ..
 $ python setup.py
 ```
-<!-- `results`フォルダは`sample_rocket.json`でデフォルトで指定されてる計算結果格納フォルダである．
-後述の`Result Filepath`に`results`以外のフォルダを指定した場合，別途指定したフォルダを作成する必要がある． -->
 
 # 【読まなくていいです】Useage(Eclipseを用いて実行可能jarを作る場合)
 Eclipseを用いて実行可能jarを作る場合，以下の手順に従う。
@@ -324,5 +323,4 @@ Enter simulation mode (single or multi):
 * 入力された推力履歴から推力解析の実施
 * ForRocket用の諸元ファイル自動生成
 * 変数が発散したときの例外処理
-* ~~マルチスレッド化（現状のコードでも速度自体は十分。今後計算条件が増えるなら実装の必要あり）~~ →実施予定なし
 * README加筆(プログラム構造回り)
