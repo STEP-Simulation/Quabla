@@ -160,8 +160,12 @@ public class MultiSolver {
 
 		for(int i = 0; i < 40; i++) {
 			if(i < (int)(processDouble * 40)) {
-				process += "*";
-			}else {
+				process += "-";
+			}
+		}
+		process += ">";
+		for(int i = 0; i < 40; i++) {
+			if (i >= (int)(processDouble * 40)) {
 				process += " ";
 			}
 		}
@@ -200,12 +204,12 @@ public class MultiSolver {
 
 class InnerMultiSolver implements Callable<EventValueSingle> {
 
-	private final int no;
+	// private final int no;
 	private final Rocket rocket;
 	private final Solver solver;
 
 	public InnerMultiSolver(int no, Solver solver, Rocket rocket){
-		this.no = no;
+		// this.no = no;
 		this.rocket = rocket;
 		this.solver = solver;
 	}
