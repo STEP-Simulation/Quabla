@@ -46,7 +46,7 @@ public class VariableTrajectory extends AbstractVariable implements Cloneable {
 		// elevation0 = - Math.abs(Coordinate.deg2rad(rocket.elevationLauncher));
 		// roll0      = Math.PI;
 		// NED (North-East-Down)
-		azimuth0   = Coordinate.deg2rad((rocket.azimuthLauncher) - rocket.magneticDec);
+		azimuth0   = Coordinate.deg2rad(rocket.azimuthLauncher - rocket.magneticDec);
 		elevation0 = Math.abs(Coordinate.deg2rad(rocket.elevationLauncher));
 		roll0      = 0.0;
 
