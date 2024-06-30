@@ -50,16 +50,16 @@
     },
 
     "noshiro_sea": {
-        "launch_LLH": [40.242865, 140.010450, 5.3],
-        "type_safety":"circle",
-        "center_circle_LLH":[40.24680277, 139.98753611, 5.0],
-        "radius":2000,
-        "edge1_LLH":[40.243015, 140.007566, 1.0],
-        "edge2_LLH":[40.235585, 140.005619, 1.0],
-        "xlim_ENU":[-3500, 500],
-        "ylim_ENU":[-1500, 2000],
+        "launch_LLH": [40.242865, 140.010450, 0.0],
+        "type_safety":"polygon",
+        "safety_area_LLH":[[40.273697, 140.012675, 0.0],
+                           [40.273697, 139.950365, 0.0],
+                           [40.225331, 139.950365, 0.0],
+                           [40.225331, 140.000024, 0.0]],
+        "xlim_ENU":[-6000, 500],
+        "ylim_ENU":[-2500, 4000],
         "x_offset":0.0,
         "y_offset":0.0,
-        "img":"PlotLandingScatter/launch_site/img/noshiro_sea.png"
+        "img":"PlotLandingScatter/launch_site/img/noshiro_sea_ver2.png"
     }
 }

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2">
+    <Document id="1">
+        <Style id="4">
+            <LineStyle id="5">
+                <color>ff000000</color>
+                <colorMode>normal</colorMode>
+            </LineStyle>
+        </Style>
+        <Style id="8">
+            <IconStyle id="9">
+                <color>ff0000ff</color>
+                <colorMode>normal</colorMode>
+                <scale>1</scale>
+                <heading>0</heading>
+                <Icon id="10">
+                    <href>http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png</href>
+                </Icon>
+            </IconStyle>
+        </Style>
+        <Style id="13">
+            <LineStyle id="14">
+                <color>ff00d7ff</color>
+                <colorMode>normal</colorMode>
+            </LineStyle>
+        </Style>
+        <Placemark id="3">
+            <name>Area Range</name>
+            <styleUrl>#4</styleUrl>
+            <LineString id="2">
+                <coordinates>140.01632920884697,40.27888801417422,0.0 140.01632414668123,40.22035025770765,0.0 139.93996027514214,40.22032894331201,0.0 139.9398995292447,40.27886665586838,0.0 140.01632920884697,40.27888801417422,0.0</coordinates>
+            </LineString>
+        </Placemark>
+        <Placemark id="7">
+            <name>Launch</name>
+            <styleUrl>#8</styleUrl>
+            <Point id="6">
+                <coordinates>140.01045,40.242865,0.0</coordinates>
+            </Point>
+        </Placemark>
+        <Placemark id="12">
+            <name>Safety Area</name>
+            <styleUrl>#13</styleUrl>
+            <LineString id="11">
+                <coordinates>140.012675,40.273697,0.0 139.950365,40.273697,0.0 139.950365,40.225331,0.0 140.000024,40.225331,0.0 140.012675,40.273697,0.0</coordinates>
+            </LineString>
+        </Placemark>
+    </Document>
+</kml>

@@ -127,32 +127,20 @@ if __name__ == '__main__':
     import json
     import simplekml
     from launch_site.launch_site_info import OshimaLand, OshimaSea, NoshiroLand, NoshiroSea, OtherSite
+    from launch_site.launch_site_info import LaunchSiteInfo
 
     launch_site_json = json.load(open('./input/launch_site.json', 'r', encoding='utf-8'))
 
-    launch_site = '3'
+    launch_site = '4'
 
-    if launch_site == '1':
-        launch_site_info = OshimaLand(launch_site_json.get('oshima_land'))
-        file_name = 'oshima_land'
+    launch_site_info = LaunchSiteInfo(launch_site)
+    file_name = launch_site_info.site_name
 
-    elif launch_site == '2':
-        launch_site_info = OshimaSea(launch_site_json.get('oshima_sea'))
-        file_name = 'oshima_sea'
-
-    elif launch_site == '3':
-        launch_site_info = NoshiroLand(launch_site_json.get('noshiro_land'))
-        file_name = 'noshiro_land'
-
-    elif launch_site == '4':
-        launch_site_info = NoshiroSea(launch_site_json.get('noshiro_sea'))
-        file_name = 'noshiro_sea'
-
-    area_range_ENU = [[launch_site_info.xlim[0], launch_site_info.ylim[0], 0.],
-                      [launch_site_info.xlim[1], launch_site_info.ylim[0], 0.],
-                      [launch_site_info.xlim[1], launch_site_info.ylim[1], 0.],
-                      [launch_site_info.xlim[0], launch_site_info.ylim[1], 0.],
-                      [launch_site_info.xlim[0], launch_site_info.ylim[0], 0.]]
+    area_range_ENU = [[launch_site_info.ylim[0], launch_site_info.xlim[0], 0.],
+                      [launch_site_info.ylim[1], launch_site_info.xlim[0], 0.],
+                      [launch_site_info.ylim[1], launch_site_info.xlim[1], 0.],
+                      [launch_site_info.ylim[0], launch_site_info.xlim[1], 0.],
+                      [launch_site_info.ylim[0], launch_site_info.xlim[0], 0.]]
     area_range_LLH = []
     for pos in area_range_ENU:
         area_range_LLH.append(ENU2LLHforKml(launch_site_info.launch_LLH, pos))
@@ -167,7 +155,7 @@ if __name__ == '__main__':
     point_launch.coords = [(launch_site_info.launch_LLH[1],
                            launch_site_info.launch_LLH[0])]
 
-    if launch_site == '1' or launch_site == '3':
+    if launch_site_info.type_safety == 'polygon':
         linestring_safety = kml.newlinestring(name='Safety Area')
         linestring_safety.style.linestyle.color = simplekml.Color.gold
         safety_area_LLH_kml = []
@@ -176,7 +164,7 @@ if __name__ == '__main__':
         safety_area_LLH_kml.append(safety_area_LLH_kml[0])
         linestring_safety.coords = safety_area_LLH_kml
 
-    elif launch_site == '2' or launch_site == '4':
+    else:
         point_center = kml.newpoint(name='Center of Circle')
         point_edge1 = kml.newpoint(name='Edge 1')
         point_edge2 = kml.newpoint(name='Edge 2')

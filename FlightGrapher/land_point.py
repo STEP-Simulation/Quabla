@@ -42,13 +42,14 @@ class LandPoint:
         if self.exist_payload:
             ax.scatter(self.pos_NED_payl[1], self.pos_NED_payl[0], label='Payload', color='teal', marker='o')
         if safety_exsist:
-            if launch_site_info.site_name == 'oshima_land' or launch_site_info.site_name == 'noshiro_land':
+            # if launch_site_info.site_name == 'oshima_land' or launch_site_info.site_name == 'noshiro_land':
+            if launch_site_info.type_safety == 'polygon':
                 safety_ENU = [cd.LLH2ENU(launch_site_info.launch_LLH, LLH).tolist() for LLH in launch_site_info.safety_area_LLH]
                 if not safety_ENU[-1] == safety_ENU[0]:
                     safety_ENU.append(safety_ENU[0])
                 apex = np.array(safety_ENU)
                 ax.plot(apex[:, 0], apex[:, 1], color='y', ls='dashed')
-            elif launch_site_info.site_name == 'oshima_sea' or launch_site_info.site_name == 'noshiro_sea':
+            elif launch_site_info.type_safety == 'circle':
                 center_circle_ENU = cd.LLH2ENU(launch_site_info.launch_LLH, launch_site_info.center_circle_LLH)
                 ax.scatter(center_circle_ENU[0], center_circle_ENU[1], color='red', marker='o')
                 ax.add_patch(patches.Circle(xy=(center_circle_ENU[0], center_circle_ENU[1]), radius=launch_site_info.radius, ls='dashed', ec='y', fc='None'))
