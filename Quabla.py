@@ -150,35 +150,37 @@ def copy_config_files(json_config, path_result):
     json_copy['Solver']["Result Filepath"] = dir_config
 
     shutil.copy(json_config["Engine"]["Thrust Curve"], dir_config + os.sep + model_name + '_thrust.csv')
+    time_burn = json_config["Engine"]["Burn Time [sec]"]
     json_copy["Engine"]["Thrust Curve"] = dir_config + os.sep + model_name + '_thrust.csv'
 
+    # Thrust
     fig, ax = plt.subplots()
     ax.set_title('Thrust vs. Time')
     thrust_array = np.loadtxt(json_config["Engine"]["Thrust Curve"], delimiter=',', skiprows=1)
     ax.plot(thrust_array[:, 0], thrust_array[:, 1], color='#FF4B00')
+    ax.axvline(x=time_burn, color='black', linestyle='--', linewidth=2)
     ax.set_xlim(xmin=0., xmax=thrust_array[-1, 0])
     ax.set_ylim(ymin=0.)
+    ymin, ymax = ax.get_ylim()
+    ax.text(x=time_burn, y=.5*(ymin + ymax), s=' Burning Time', horizontalalignment='left', verticalalignment='center')
     ax.set_xlabel('Time [sec]')
     ax.set_ylabel('Thrust [N]')
     ax.grid()
     fig.savefig(dir_config + os.sep + '_thrust.png')
 
+    # Wind
     if json_copy["Wind"]["Wind File Exist"]:
         shutil.copy(json_config["Wind"]["Wind File"], dir_config + os.sep + model_name + '_wind.csv')
         json_copy["Wind"]["Wind File"] = dir_config + os.sep + model_name + '_wind.csv'
 
-        # fig, ax = plt.subplots()
         wind_array = np.loadtxt(json_config["Wind"]["Wind File"], delimiter=',', skiprows=1)
-        # fig = plt.figure('Wind')
         fig, axes = plt.subplots(nrows=1, ncols=2)
-        # ax1 = fig.add_subplot(121)
         axes[0].set_title('Wind Speed vs. Altitude')
         axes[0].plot(wind_array[:, 1], wind_array[:, 0], color='#FF4B00', marker='o')
         axes[0].set_ylim(ymin=0.)
         axes[0].set_xlabel('Wind Speed [m/s]')
         axes[0].set_ylabel('Altitude [m]')
         axes[0].grid()
-        # ax2 = fig.add_subplot(122)
         axes[1].set_title('Wind Direction vs. Altitude')
         axes[1].plot(wind_array[:, 2], wind_array[:, 0], color='#FF4B00', marker='o')
         axes[1].set_ylim(ymin=0.)
@@ -191,6 +193,7 @@ def copy_config_files(json_config, path_result):
     else:
         json_copy["Wind"]["Wind File"] = ''
 
+    # Cd
     if json_copy["Aero"]["Cd File Exist"]:
         shutil.copy(json_config["Aero"]["Cd File"], dir_config + os.sep + model_name + '_Cd.csv')
         json_copy["Aero"]["Cd File"] = dir_config + os.sep + model_name + '_Cd.csv'
@@ -200,7 +203,6 @@ def copy_config_files(json_config, path_result):
         Cd_array = np.loadtxt(json_config["Aero"]["Cd File"], delimiter=',', skiprows=1)
         ax.plot(Cd_array[:, 0], Cd_array[:, 1], color='#FF4B00', marker='o')
         ax.set_xlim(xmin=0.)
-        # ax.set_ylim(ymin=0.)
         ax.set_xlabel('Mach Number [-]')
         ax.set_ylabel('$C_D$ [-]')
         ax.grid()
@@ -209,6 +211,7 @@ def copy_config_files(json_config, path_result):
     else:
         json_copy["Aero"]["Cd File"] = ''
 
+    # Lcp
     if json_copy["Aero"]["Length-C.P. File Exist"]:
         shutil.copy(json_config["Aero"]["Length-C.P. File"], dir_config + os.sep + model_name + '_Lcp.csv')
         json_copy["Aero"]["Length-C.P. File"] = dir_config + os.sep + model_name + '_Lcp.csv'
@@ -218,7 +221,6 @@ def copy_config_files(json_config, path_result):
         lcp_array = np.loadtxt(json_config["Aero"]["Length-C.P. File"], delimiter=',', skiprows=1)
         ax.plot(lcp_array[:, 0], lcp_array[:, 1], color='#FF4B00', marker='o')
         ax.set_xlim(xmin=0.)
-        # ax.set_ylim(ymin=0.)
         ax.set_xlabel('Mach Number [-]')
         ax.set_ylabel('$L_{C.P.}$ [m]')
         ax.grid()
@@ -227,6 +229,7 @@ def copy_config_files(json_config, path_result):
     else:
         json_copy["Aero"]["Length-C.P. File"] = ''
 
+    # CNa
     if json_copy["Aero"]["CNa File Exist"]:
         shutil.copy(json_config["Aero"]["CNa File"], dir_config + os.sep + model_name + '_CNa.csv')
         json_copy["Aero"]["CNa File"] = dir_config + os.sep + model_name + '_CNa.csv'
