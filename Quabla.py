@@ -162,7 +162,7 @@ def copy_config_files(json_config, path_result):
     ax.set_xlim(xmin=0., xmax=thrust_array[-1, 0])
     ax.set_ylim(ymin=0.)
     ymin, ymax = ax.get_ylim()
-    ax.text(x=time_burn, y=.5*(ymin + ymax), s=' Burning Time', horizontalalignment='left', verticalalignment='center')
+    ax.text(x=time_burn, y=0.8*ymax, s=' Burning Time', horizontalalignment='left', verticalalignment='center', rotation=270)
     ax.set_xlabel('Time [sec]')
     ax.set_ylabel('Thrust [N]')
     ax.grid()
