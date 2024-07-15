@@ -154,7 +154,8 @@ def copy_config_files(json_config, path_result):
     json_copy["Engine"]["Thrust Curve"] = dir_config + os.sep + model_name + '_thrust.csv'
 
     # Thrust
-    fig, ax = plt.subplots()
+    fig = plt.figure(figsize=(9, 3))
+    ax = fig.add_subplot()
     ax.set_title('Thrust vs. Time')
     thrust_array = np.loadtxt(json_config["Engine"]["Thrust Curve"], delimiter=',', skiprows=1)
     ax.plot(thrust_array[:, 0], thrust_array[:, 1], color='#FF4B00')
@@ -162,11 +163,11 @@ def copy_config_files(json_config, path_result):
     ax.set_xlim(xmin=0., xmax=thrust_array[-1, 0])
     ax.set_ylim(ymin=0.)
     ymin, ymax = ax.get_ylim()
-    ax.text(x=time_burn, y=0.8*ymax, s=' Burning Time', horizontalalignment='left', verticalalignment='center', rotation=270)
+    ax.text(x=time_burn, y=0.95*ymax, s=' Burning Time', horizontalalignment='right', verticalalignment='top', rotation=90)
     ax.set_xlabel('Time [sec]')
     ax.set_ylabel('Thrust [N]')
     ax.grid()
-    fig.savefig(dir_config + os.sep + '_thrust.png')
+    fig.savefig(dir_config + os.sep + '_thrust.png', bbox_inches='tight', pad_inches=0.1)
 
     # Wind
     if json_copy["Wind"]["Wind File Exist"]:
