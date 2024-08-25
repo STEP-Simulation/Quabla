@@ -88,12 +88,6 @@ def main():
 
     copy_config_files(json_load, result_dir)
 
-    print('-------------------- INFORMATION --------------------')
-    print('  Config File:     ', os.path.basename(path_parameter))
-    print('  Model Name:      ', model_name)
-    print('  Simulation Mode: ', mode_simulation)
-    print('  Result File:      ' + os.path.basename(result_dir))
-    print('-----------------------------------------------------\n')
 
     if launch_site == '0' :
         launch_site_info = OtherSite()
@@ -106,6 +100,15 @@ def main():
         launch_site_info = LaunchSiteInfo(launch_site)
 
     nproc = multiprocessing.cpu_count() - 1
+
+    print('-------------------- INFORMATION --------------------')
+    print('  Config File:     ', os.path.basename(path_parameter))
+    print('  Model Name:      ', model_name)
+    print('  Simulation Mode: ', mode_simulation)
+    print('  CPU Count:       ', str(nproc))
+    print('  Result File:     ', os.path.basename(result_dir))
+    print('  Launch Site:     ', launch_site_info.site_name)
+    print('-----------------------------------------------------\n')
 
     # Execute Quabla.jar ##########################################################################
     subprocess.run(["java", "-jar", "Quabla.jar", path_parameter, mode_simulation, result_dir, str(nproc)], \
